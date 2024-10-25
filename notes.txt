@@ -1,0 +1,76 @@
+MISO RT data API examples:
+There are 2 places to check for this but on the main page they are missing some of these:
+    https://api.misoenergy.org/MISORTWDDataBroker/
+    https://api.misoenergy.org/MISORTWDBIReporter/
+
+
+API Version			JSON
+Fuel Mix	CSV	XML	JSON
+ACE Chart	CSV	XML	JSON
+Ancillary Services MCP	CSV	XML	JSON
+Coordinated Transaction Scheduling	CSV	XML	JSON
+Combined Day Ahead and Realtime Wind and Solar	CSV	XML	JSON
+Day Ahead Wind Forecast		XML	JSON
+Day Ahead And Real Time Wind Generation	CSV	XML	JSON
+Day Ahead Solar Forecast		XML	JSON
+Day Ahead And Real Time Solar Generation	CSV	XML	JSON
+ExAnte LMP	CSV	XML	JSON
+LMP Consolidated Table	CSV	XML	JSON
+Real-Time Five Minute ExPost Intervals	Current Interval	Rolling Current Day	Previous Day
+Net Scheduled Interchange - 1 Minute Interval	CSV	XML	JSON
+Net Scheduled Interchange - 5 Minute Interval	CSV	XML	JSON
+Net Scheduled Interchange (MISO) - 1 Minute Interval	CSV	XML	JSON
+Net Scheduled Interchange (MISO) - 5 Minute Interval	CSV	XML	JSON
+Net Actual Interchange (Imports) - 5 Minute Interval	CSV	XML	JSON
+Real-Time Transmission Binding Constraints	CSV	XML	JSON
+Real-Time Binding Sub-Regional Power Balance Constraints	CSV	XML	JSON
+Reserve Products Binding Constraints	CSV	XML	JSON
+Real-Time RSG Commitments	CSV	XML	JSON
+Real-Time Total Load	CSV	XML	JSON
+Real-Time Wind Generation		XML	JSON
+Real-Time Solar Generation		XML	JSON
+Tie Flow / NAI	CSV	XML	JSON
+Regional Directional Transfer	CSV	XML	JSON
+Generation Outages Plus or Minus Five Days	CSV	XML	JSON
+
+
+https://api.misoenergy.org/MISORTWDDataBroker/DataBrokerServices.asmx?messageType=getapiversion&returnType=json JSON
+https://api.misoenergy.org/MISORTWDDataBroker/DataBrokerServices.asmx?messageType=getfuelmix&returnType=csv CSV	XML	JSON
+https://api.misoenergy.org/MISORTWDDataBroker/DataBrokerServices.asmx?messageType=getace&returnType=csv CSV	XML	JSON
+https://api.misoenergy.org/MISORTWDDataBroker/DataBrokerServices.asmx?messageType=getAncillaryServicesMCP&returnType=csv CSV	XML	JSON
+https://api.misoenergy.org/MISORTWDDataBroker/DataBrokerServices.asmx?messageType=getcts&returnType=csv CSV	XML	JSON
+https://api.misoenergy.org/MISORTWDDataBroker/DataBrokerServices.asmx?messageType=getcombinedwindsolar&returnType=csv CSV	XML	JSON
+https://api.misoenergy.org/MISORTWDDataBroker/DataBrokerServices.asmx?messageType=getWindForecast&returnType=xml XML	JSON
+https://api.misoenergy.org/MISORTWDDataBroker/DataBrokerServices.asmx?messageType=getWind&returnType=csv CSV	XML	JSON
+https://api.misoenergy.org/MISORTWDDataBroker/DataBrokerServices.asmx?messageType=getSolarForecast&returnType=xml XML	JSON
+https://api.misoenergy.org/MISORTWDDataBroker/DataBrokerServices.asmx?messageType=getSolar&returnType=csv CSV	XML	JSON
+https://api.misoenergy.org/MISORTWDDataBroker/DataBrokerServices.asmx?messageType=getexantelmp&returnType=csv CSV	XML	JSON
+https://api.misoenergy.org/MISORTWDDataBroker/DataBrokerServices.asmx?messageType=getlmpconsolidatedtable&returnType=csv CSV	XML	JSON
+https://api.misoenergy.org/MISORTWDBIReporter/Reporter.asmx?messageType=currentinterval&returnType=csv Current Interval	 Rolling Current Day 	Previous Day
+https://api.misoenergy.org/MISORTWDDataBroker/DataBrokerServices.asmx?messageType=getnsi1&returnType=csv CSV	XML	JSON
+https://api.misoenergy.org/MISORTWDDataBroker/DataBrokerServices.asmx?messageType=getnsi5&returnType=csv CSV	XML	JSON
+https://api.misoenergy.org/MISORTWDDataBroker/DataBrokerServices.asmx?messageType=getnsi1miso&returnType=csv CSV	XML	JSON
+https://api.misoenergy.org/MISORTWDDataBroker/DataBrokerServices.asmx?messageType=getnsi5miso&returnType=csv CSV	XML	JSON
+https://api.misoenergy.org/MISORTWDDataBroker/DataBrokerServices.asmx?messageType=getimporttotal5&returnType=csv CSV	XML	JSON
+https://api.misoenergy.org/MISORTWDDataBroker/DataBrokerServices.asmx?messageType=getrealtimebindingconstraints&returnType=csv CSV	XML	JSON
+https://api.misoenergy.org/MISORTWDDataBroker/DataBrokerServices.asmx?messageType=getrealtimebindingsrpbconstraints&returnType=csv CSV	XML	JSON
+https://api.misoenergy.org/MISORTWDDataBroker/DataBrokerServices.asmx?messageType=getreservebindingconstraints&returnType=csv CSV	XML	JSON
+https://api.misoenergy.org/MISORTWDDataBroker/DataBrokerServices.asmx?messageType=getRSG&returnType=csv CSV	XML	JSON
+https://api.misoenergy.org/MISORTWDDataBroker/DataBrokerServices.asmx?messageType=gettotalload&returnType=csv CSV	XML	JSON
+https://api.misoenergy.org/MISORTWDDataBroker/DataBrokerServices.asmx?messageType=getWindActual&returnType=xml XML	JSON
+https://api.misoenergy.org/MISORTWDDataBroker/DataBrokerServices.asmx?messageType=getSolarActual&returnType=xml XML	JSON
+https://api.misoenergy.org/MISORTWDDataBroker/DataBrokerServices.asmx?messageType=getNAI&returnType=csv CSV	XML	JSON
+https://api.misoenergy.org/MISORTWDDataBroker/DataBrokerServices.asmx?messageType=getregionaldirectionaltransfer&returnType=csv CSV	XML	JSON
+https://api.misoenergy.org/MISORTWDDataBroker/DataBrokerServices.asmx?messageType=getgenerationoutagesplusminusfivedays&returnType=csv CSV	XML	JSON
+
+MISO market reports examples:
+https://docs.misoenergy.org/marketreports/DA_Load_EPNodes_20241021.zip
+https://docs.misoenergy.org/marketreports/20241026_da_exante_lmp.csv
+https://docs.misoenergy.org/marketreports/20241026_da_expost_lmp.csv
+https://docs.misoenergy.org/marketreports/2024-Jul-Sep_DA_LMPs.zip
+https://docs.misoenergy.org/marketreports/2024_Jul-Sep_RT_LMPs.zip
+https://docs.misoenergy.org/marketreports/20241025_5min_exante_lmp.xlsx
+https://docs.misoenergy.org/marketreports/RT_Load_EPNodes_20241018.zip
+https://docs.misoenergy.org/marketreports/20241021_rt_lmp_final.csv
+https://docs.misoenergy.org/marketreports/20241024_rt_lmp_prelim.csv
+https://docs.misoenergy.org/marketreports/20241021_5MIN_LMP.zip
