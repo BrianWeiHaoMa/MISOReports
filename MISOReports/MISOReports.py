@@ -15,8 +15,8 @@ class URLBuilder(ABC):
         file_extension: str,
     ) -> str:
         pass
-    
-    
+
+
 class MISORTWDDataBrokerURLBuilder(URLBuilder):
     def __init__(
         self,
@@ -26,7 +26,7 @@ class MISORTWDDataBrokerURLBuilder(URLBuilder):
         self.target = target
         self.supported_extensions = supported_extensions
 
-        self._format_url = f"https://api.misoenergy.org/MISORTWDDataBroker/DataBrokerServices.asmx?messageType={target}&returnType={URLBuilder.extension_placeholder}"
+        self._format_url = f"https://api.misoenergy.org/MISORTWDDataBroker/DataBrokerServices.asmx?messageType={target}&returnType={self.extension_placeholder}"
 
     def build_url(
         self,
@@ -34,8 +34,8 @@ class MISORTWDDataBrokerURLBuilder(URLBuilder):
     ) -> str:
         if file_extension not in self.supported_extensions:
             raise ValueError(f"Unsupported file extension: {file_extension}")
-        
-        res = self._format_url.replace(URLBuilder.extension_placeholder, file_extension)
+
+        res = self._format_url.replace(self.extension_placeholder, file_extension)
         return res
 
 
@@ -48,7 +48,7 @@ class MISORTWDBIReporterURLBuilder(URLBuilder):
         self.target = target
         self.supported_extensions = supported_extensions
 
-        self._format_url = f"https://api.misoenergy.org/MISORTWDBIReporter/Reporter.asmx?messageType={target}&returnType={URLBuilder.extension_placeholder}"
+        self._format_url = f"https://api.misoenergy.org/MISORTWDBIReporter/Reporter.asmx?messageType={target}&returnType={self.extension_placeholder}"
 
     def build_url(
         self,
@@ -56,10 +56,10 @@ class MISORTWDBIReporterURLBuilder(URLBuilder):
     ) -> str:
         if file_extension not in self.supported_extensions:
             raise ValueError(f"Unsupported file extension: {file_extension}")
-        
-        res = self._format_url.replace(URLBuilder.extension_placeholder, file_extension)
+
+        res = self._format_url.replace(self.extension_placeholder, file_extension)
         return res
-    
+
 
 class MISOMarketReportsURLBuilder(URLBuilder):
     def __init__(
@@ -80,47 +80,52 @@ class MISOMarketReportsURLBuilder(URLBuilder):
     ) -> str:
         if file_extension not in self.supported_extensions:
             raise ValueError(f"Unsupported file extension: {file_extension}")
-        
+
         res = self.url_generator(ddatetime, self.target)
-        res = res.replace(URLBuilder.extension_placeholder, file_extension)
+        res = res.replace(self.extension_placeholder, file_extension)
         return res
-    
+
     def url_generator_datetime_first(
+        self,
         ddatetime: datetime.datetime,
         target: str,
         datetime_format: str,
     ) -> str:
-        format_string = f"https://docs.misoenergy.org/marketreports/{datetime_format}_{target}.{URLBuilder.extension_placeholder}"
+        format_string = f"https://docs.misoenergy.org/marketreports/{datetime_format}_{target}.{self.extension_placeholder}"
         res = ddatetime.strftime(format_string)
         return res
-    
+
     def url_generator_YYYYmmdd_first(
+        self,
         ddatetime: datetime.datetime,
         target: str,
     ) -> str:
-        return MISOMarketReportsURLBuilder.url_generator_datetime_first(ddatetime, target, "%Y%m%d")
-    
+        return self.url_generator_datetime_first(ddatetime, target, "%Y%m%d")
+
     def url_generator_YYYYmm_first(
+        self,
         ddatetime: datetime.datetime,
         target: str,
     ) -> str:
-        return MISOMarketReportsURLBuilder.url_generator_datetime_first(ddatetime, target, "%Y%m")
-    
+        return self.url_generator_datetime_first(ddatetime, target, "%Y%m")
+
     def url_generator_YYYY_current_month_name_to_two_months_later_name_first(
+        self,
         ddatetime: datetime.datetime,
         target: str,
     ) -> str:
-        new_month = (ddatetime.month + 2) % 12 
+        new_month = (ddatetime.month + 2) % 12
         two_months_later_datetime = ddatetime.replace(month=new_month)
-        datetime_part = f"{ddatetime.strftime('%Y')}-{ddatetime.strftime('%b')}-{two_months_later_datetime.strftime('%b')}" 
-        res = f"https://docs.misoenergy.org/marketreports/{datetime_part}_{target}.{URLBuilder.extension_placeholder}"
+        datetime_part = f"{ddatetime.strftime('%Y')}-{ddatetime.strftime('%b')}-{two_months_later_datetime.strftime('%b')}"
+        res = f"https://docs.misoenergy.org/marketreports/{datetime_part}_{target}.{self.extension_placeholder}"
         return res
-    
+
     def url_generator_YYYYmmdd_last(
+        self,
         ddatetime: datetime.datetime,
         target: str,
     ) -> str:
-        res = f"https://docs.misoenergy.org/marketreports/{target}_{ddatetime.strftime('%Y%m%d')}.{URLBuilder.extension_placeholder}"
+        res = f"https://docs.misoenergy.org/marketreports/{target}_{ddatetime.strftime('%Y%m%d')}.{self.extension_placeholder}"
         return res
 
 
