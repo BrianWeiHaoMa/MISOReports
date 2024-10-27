@@ -72,6 +72,25 @@ def test_MISORTWDBIReporterURLBuilder_build_url_extension_supported(
 
 
 @pytest.mark.parametrize(
+    "target, supported_extensions, file_extension", [
+        ("currentinterval", ["csv"], "json"),
+    ]
+)
+def test_MISORTWDBIReporterURLBuilder_build_url_extension_not_supported(
+    target, 
+    supported_extensions, 
+    file_extension, 
+):
+    url_builder = MISORTWDBIReporterURLBuilder(
+        target=target, 
+        supported_extensions=supported_extensions,
+    )
+
+    with pytest.raises(ValueError) as e:
+        url_builder.build_url(file_extension=file_extension)
+
+
+@pytest.mark.parametrize(
     "target, supported_extensions, url_generator, ddatetime, file_extension, expected", [
         ("DA_Load_EPNodes", ["zip"], MISOMarketReportsURLBuilder.url_generator_YYYYmmdd_last, datetime.datetime(year=2024, month=10, day=21), "zip", "https://docs.misoenergy.org/marketreports/DA_Load_EPNodes_20241021.zip"),
         ("da_exante_lmp", ["csv"], MISOMarketReportsURLBuilder.url_generator_YYYYmmdd_first, datetime.datetime(year=2024, month=10, day=26), "csv", "https://docs.misoenergy.org/marketreports/20241026_da_exante_lmp.csv"),

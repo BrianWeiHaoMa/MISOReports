@@ -11,8 +11,8 @@ class URLBuilder(ABC):
     @abstractmethod
     def build_url(
         self,
-        ddatetime: datetime.datetime,
         file_extension: str,
+        ddatetime: datetime.datetime | None,
     ) -> str:
         pass
     
@@ -31,6 +31,7 @@ class MISORTWDDataBrokerURLBuilder(URLBuilder):
     def build_url(
         self,
         file_extension: str,
+        ddatetime: datetime.datetime | None = None,
     ) -> str:
         if file_extension not in self.supported_extensions:
             raise ValueError(f"Unsupported file extension: {file_extension}")
@@ -53,6 +54,7 @@ class MISORTWDBIReporterURLBuilder(URLBuilder):
     def build_url(
         self,
         file_extension: str,
+        ddatetime: datetime.datetime | None = None,
     ) -> str:
         if file_extension not in self.supported_extensions:
             raise ValueError(f"Unsupported file extension: {file_extension}")
@@ -75,11 +77,14 @@ class MISOMarketReportsURLBuilder(URLBuilder):
 
     def build_url(
         self,
-        ddatetime: datetime.datetime,
         file_extension: str,
+        ddatetime: datetime.datetime | None,
     ) -> str:
         if file_extension not in self.supported_extensions:
             raise ValueError(f"Unsupported file extension: {file_extension}")
+        
+        if ddatetime is None:
+            raise ValueError(f"ddatetime is required")
         
         res = self.url_generator(ddatetime, self.target)
         res = res.replace(URLBuilder.extension_placeholder, file_extension)
@@ -120,7 +125,7 @@ class MISOMarketReportsURLBuilder(URLBuilder):
         ddatetime: datetime.datetime,
         target: str,
     ) -> str:
-        res = f"https://docs.misoenergy.org/marketreports/{target}_{ddatetime.strftime("%Y%m%d")}.{URLBuilder.extension_placeholder}"
+        res = f"https://docs.misoenergy.org/marketreports/{target}_{ddatetime.strftime('%Y%m%d')}.{URLBuilder.extension_placeholder}"
         return res
 
 
