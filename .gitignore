@@ -2,3 +2,5 @@
 tmp.py
 __pycache__
 .pytest_cache
+.coverage
+.mypy_cache

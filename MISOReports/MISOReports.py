@@ -89,7 +89,8 @@ class MISOMarketReportsURLBuilder(URLBuilder):
         res = self.url_generator(ddatetime, self.target)
         res = res.replace(URLBuilder.extension_placeholder, file_extension)
         return res
-    
+
+    @staticmethod    
     def url_generator_datetime_first(
         ddatetime: datetime.datetime,
         target: str,
@@ -99,18 +100,21 @@ class MISOMarketReportsURLBuilder(URLBuilder):
         res = ddatetime.strftime(format_string)
         return res
     
+    @staticmethod
     def url_generator_YYYYmmdd_first(
         ddatetime: datetime.datetime,
         target: str,
     ) -> str:
         return MISOMarketReportsURLBuilder.url_generator_datetime_first(ddatetime, target, "%Y%m%d")
     
+    @staticmethod
     def url_generator_YYYYmm_first(
         ddatetime: datetime.datetime,
         target: str,
     ) -> str:
         return MISOMarketReportsURLBuilder.url_generator_datetime_first(ddatetime, target, "%Y%m")
     
+    @staticmethod
     def url_generator_YYYY_current_month_name_to_two_months_later_name_first(
         ddatetime: datetime.datetime,
         target: str,
@@ -121,6 +125,7 @@ class MISOMarketReportsURLBuilder(URLBuilder):
         res = f"https://docs.misoenergy.org/marketreports/{datetime_part}_{target}.{URLBuilder.extension_placeholder}"
         return res
     
+    @staticmethod
     def url_generator_YYYYmmdd_last(
         ddatetime: datetime.datetime,
         target: str,
