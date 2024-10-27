@@ -63,7 +63,8 @@ https://api.misoenergy.org/MISORTWDDataBroker/DataBrokerServices.asmx?messageTyp
 https://api.misoenergy.org/MISORTWDDataBroker/DataBrokerServices.asmx?messageType=getregionaldirectionaltransfer&returnType=csv CSV	XML	JSON
 https://api.misoenergy.org/MISORTWDDataBroker/DataBrokerServices.asmx?messageType=getgenerationoutagesplusminusfivedays&returnType=csv CSV	XML	JSON
 
-MISO market reports examples:
+
+MISO market reports examples from https://www.misoenergy.org/markets-and-operations/real-time--market-data/market-reports/#t=10&p=0&s=MarketReportPublished&sd=desc:
 https://docs.misoenergy.org/marketreports/DA_Load_EPNodes_20241021.zip
 https://docs.misoenergy.org/marketreports/20241026_da_exante_lmp.csv
 https://docs.misoenergy.org/marketreports/20241026_da_expost_lmp.csv
@@ -74,3 +75,10 @@ https://docs.misoenergy.org/marketreports/RT_Load_EPNodes_20241018.zip
 https://docs.misoenergy.org/marketreports/20241021_rt_lmp_final.csv
 https://docs.misoenergy.org/marketreports/20241024_rt_lmp_prelim.csv
 https://docs.misoenergy.org/marketreports/20241021_5MIN_LMP.zip
+
+
+continued, but taking it from this page: https://www.misoenergy.org/markets-and-operations/real-time--market-data/market-reports/#nt=%2FMarketReportType%3AHistorical%20MCP%2FMarketReportName%3AASM%20Day-Ahead%20Market%20ExAnte%20MCPs%20(csv)&t=10&p=0&s=MarketReportPublished&sd=desc
+https://docs.misoenergy.org/marketreports/20241025_asm_rtmcp_prelim.csv
+https://docs.misoenergy.org/marketreports/20241022_asm_rtmcp_final.csv
+https://docs.misoenergy.org/marketreports/202410_rt_expost_str_5min_mcp.xlsx
+https://docs.misoenergy.org/marketreports/20241027_asm_exante_damcp.csv
