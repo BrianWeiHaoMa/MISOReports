@@ -120,7 +120,7 @@ class MISOMarketReportsURLBuilder(URLBuilder):
         ddatetime: datetime.datetime,
         target: str,
     ) -> str:
-        res = f"https://docs.misoenergy.org/marketreports/{target}_{ddatetime.strftime("%Y%m%d")}.{URLBuilder.extension_placeholder}"
+        res = f"https://docs.misoenergy.org/marketreports/{target}_{ddatetime.strftime('%Y%m%d')}.{URLBuilder.extension_placeholder}"
         return res
 
 
