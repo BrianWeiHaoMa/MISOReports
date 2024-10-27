@@ -85,7 +85,7 @@ class MISOMarketReportsURLBuilder(URLBuilder):
         res = res.replace(URLBuilder.extension_placeholder, file_extension)
         return res
     
-    def datetime_first_url_generator(
+    def url_generator_datetime_first(
         ddatetime: datetime.datetime,
         target: str,
         datetime_format: str,
@@ -98,21 +98,29 @@ class MISOMarketReportsURLBuilder(URLBuilder):
         ddatetime: datetime.datetime,
         target: str,
     ) -> str:
-        return MISOMarketReportsURLBuilder.datetime_first_url_generator(ddatetime, target, "%Y%m%d")
+        return MISOMarketReportsURLBuilder.url_generator_datetime_first(ddatetime, target, "%Y%m%d")
     
     def url_generator_YYYYmm_first(
         ddatetime: datetime.datetime,
         target: str,
     ) -> str:
-        return MISOMarketReportsURLBuilder.datetime_first_url_generator(ddatetime, target, "%Y%m")
+        return MISOMarketReportsURLBuilder.url_generator_datetime_first(ddatetime, target, "%Y%m")
     
     def url_generator_YYYY_current_month_name_to_two_months_later_name_first(
         ddatetime: datetime.datetime,
         target: str,
     ) -> str:
-        new_month = ((ddatetime.month + 2) % 13) + 1
+        new_month = (ddatetime.month + 2) % 12 
         two_months_later_datetime = ddatetime.replace(month=new_month)
         datetime_part = f"{ddatetime.strftime('%Y')}-{ddatetime.strftime('%b')}-{two_months_later_datetime.strftime('%b')}" 
         res = f"https://docs.misoenergy.org/marketreports/{datetime_part}_{target}.{URLBuilder.extension_placeholder}"
         return res
+    
+    def url_generator_YYYYmmdd_last(
+        ddatetime: datetime.datetime,
+        target: str,
+    ) -> str:
+        res = f"https://docs.misoenergy.org/marketreports/{target}_{ddatetime.strftime("%Y%m%d")}.{URLBuilder.extension_placeholder}"
+        return res
+
 
