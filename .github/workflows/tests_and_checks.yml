@@ -1,4 +1,4 @@
-name: Run pytest unit tests 
+name: Run tests
   
 on: [push]  
   
@@ -21,11 +21,11 @@ jobs:
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi  
       - name: Test with pytest  
         run: |  
-          coverage run -m pytest  -v -s  
+          coverage run -m pytest -v -s  
       - name: Generate coverage report  
         run: |  
           coverage report -m
       - name: Check annotations with mypy  
         run: |  
-          mypy --strict .\MISOReports\test_MISOReports.py
+          mypy --strict ./MISOReports/MISOReports.py
 
