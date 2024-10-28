@@ -1,5 +1,14 @@
 # Development guidelines
 
+## Github workflow
+Before commiting or pushing to github, remember run these in the terminal and make sure everything passes:
+```
+python -m pytest .\MISOReports\test_MISOReports.py
+```
+```
+mypy --strict .\MISOReports\MISOReports.py 
+```
+
 ## Coding style
 * We are using the vscode extension, autoDocstring's, one-line-sphinx documentation template.
 * Try to keep the style the same as the code that was previously there in all respects (naming schemes, character length per line, etc.) 

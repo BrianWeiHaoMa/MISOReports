@@ -21,7 +21,7 @@ jobs:
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi  
       - name: Test with pytest  
         run: |  
-          coverage run -m pytest -v -s  
+          coverage run -m pytest ./MISOReports/test_MISOReports.py  
       - name: Generate coverage report  
         run: |  
           coverage report -m

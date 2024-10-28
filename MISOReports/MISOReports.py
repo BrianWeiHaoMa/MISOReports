@@ -159,7 +159,7 @@ class MISOReports:
             self,
             url_builder: URLBuilder,
             type_to_parse: str,
-            parser: Callable[[requests.Response], pd.DataFrame] | None,
+            parser: Callable[[requests.Response], pd.DataFrame],
         ):
             self.url_builder = url_builder
             self.type_to_parse = type_to_parse
