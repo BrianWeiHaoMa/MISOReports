@@ -33,7 +33,6 @@ Tie Flow / NAI	CSV	XML	JSON
 Regional Directional Transfer	CSV	XML	JSON
 Generation Outages Plus or Minus Five Days	CSV	XML	JSON
 
-
 https://api.misoenergy.org/MISORTWDDataBroker/DataBrokerServices.asmx?messageType=getapiversion&returnType=json JSON
 https://api.misoenergy.org/MISORTWDDataBroker/DataBrokerServices.asmx?messageType=getfuelmix&returnType=csv CSV	XML	JSON
 https://api.misoenergy.org/MISORTWDDataBroker/DataBrokerServices.asmx?messageType=getace&returnType=csv CSV	XML	JSON
