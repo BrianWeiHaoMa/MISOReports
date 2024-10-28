@@ -498,5 +498,3 @@ class MISOReports:
         df = report.report_parser(response)
         
         return df
-    
-print(2)
