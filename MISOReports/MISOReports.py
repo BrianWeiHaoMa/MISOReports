@@ -277,7 +277,7 @@ class MISOReports:
             return df
         
         @staticmethod
-        def parse_wind(
+        def parse_Wind(
             res: requests.Response,
         ) -> pd.DataFrame:
             text = res.text
@@ -293,6 +293,9 @@ class MISOReports:
                     "ForecastDateTimeEST": "%Y-%m-%d %I:%M:%S %p",
                     "ActualDateTimeEST": "%Y-%m-%d %I:%M:%S %p",
                 },
+                dtype={
+                    "ActualHourEndingEST": pd.Int64Dtype(),
+                }
             )
 
             return df
@@ -416,7 +419,7 @@ class MISOReports:
                 supported_extensions=["csv", "xml", "json"],
             ),
             type_to_parse="csv",
-            parser=ReportParsers.parse_combinedwindsolar,
+            parser=ReportParsers.parse_Wind,
         ),
 
         "SolarForecast": Report(
@@ -495,11 +498,3 @@ class MISOReports:
         df = report.report_parser(response)
         
         return df
-
-
-if __name__ == "__main__":
-    a = "exantelmp"
-    print(MISOReports.get_df(a).head(2))
-    print(MISOReports.get_df(a).dtypes)
-
-    # print(MISOReports.get_response("AncillaryServicesMCP", "csv").text)
