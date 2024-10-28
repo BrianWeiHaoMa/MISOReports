@@ -340,6 +340,19 @@ class MISOReports:
             )
 
             return df
+        
+        @staticmethod
+        def parse_exantelmp(
+            res: requests.Response,
+        ) -> pd.DataFrame:
+            text = res.text
+            csv_data = "\n".join(text.splitlines()[2:])
+
+            df = pd.read_csv(
+                filepath_or_buffer=StringIO(csv_data),
+            )
+
+            return df
             
 
     report_mappings: dict[str, Report] = {
@@ -423,6 +436,15 @@ class MISOReports:
             type_to_parse="csv",
             parser=ReportParsers.parse_Solar,
         ),
+
+        "exantelmp": Report(
+            url_builder=MISORTWDDataBrokerURLBuilder(
+                target="getexantelmp",
+                supported_extensions=["csv", "xml", "json"],
+            ),
+            type_to_parse="csv",
+            parser=ReportParsers.parse_exantelmp,
+        ),
     }
 
     @staticmethod
@@ -476,7 +498,7 @@ class MISOReports:
 
 
 if __name__ == "__main__":
-    a = "SolarForecast"
+    a = "exantelmp"
     print(MISOReports.get_df(a).head(2))
     print(MISOReports.get_df(a).dtypes)
 
