@@ -392,9 +392,6 @@ class MISOReports:
 
             df = pd.read_csv(
                 filepath_or_buffer=StringIO(csv_data),
-                dtype={
-                    f"HE {idx}": pd.Float64Dtype() for idx in range(1, 25)
-                }
             )
 
             return df
@@ -408,9 +405,6 @@ class MISOReports:
 
             df = pd.read_csv(
                 filepath_or_buffer=StringIO(csv_data),
-                dtype={
-                    f"HE {idx}": pd.Float64Dtype() for idx in range(1, 25)
-                }
             )
 
             return df
@@ -526,6 +520,26 @@ class MISOReports:
             type_to_parse="csv",
             parser=ReportParsers.parse_da_expost_lmp
         ),
+
+        "rt_lmp_final": Report(
+            url_builder=MISOMarketReportsURLBuilder(
+                target="rt_lmp_final",
+                supported_extensions=["csv"],
+                url_generator=MISOMarketReportsURLBuilder.url_generator_YYYYmmdd_first,
+            ),
+            type_to_parse="csv",
+            parser=ReportParsers.parse_rt_lmp_final
+        ),
+
+        "rt_lmp_prelim": Report(
+            url_builder=MISOMarketReportsURLBuilder(
+                target="rt_lmp_prelim",
+                supported_extensions=["csv"],
+                url_generator=MISOMarketReportsURLBuilder.url_generator_YYYYmmdd_first,
+            ),
+            type_to_parse="csv",
+            parser=ReportParsers.parse_rt_lmp_prelim
+        ),
     }
 
     @staticmethod
@@ -564,7 +578,6 @@ class MISOReports:
         report_name: str,
         ddatetime: datetime.datetime | None = None,
     ) -> pd.DataFrame:
-
         report = MISOReports.report_mappings[report_name]
 
         response = MISOReports.get_response(

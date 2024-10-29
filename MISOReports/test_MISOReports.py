@@ -139,7 +139,6 @@ def test_MISORTWDData_get_df_completes_and_has_something_or_is_not_implemented()
                         {"Congestion", "Loss", "LMP", "Name"}
                 ]
                 
-                # check if DataFrame's columns match one of the expected sets
                 df_columns = set(df.columns)
                 assert any(df_columns == expected for expected in expected_columns), \
                     f"Columns {df_columns} do not match any expected format."
