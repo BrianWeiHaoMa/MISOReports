@@ -3,13 +3,16 @@ from abc import ABC, abstractmethod
 from typing import Callable
 import datetime
 import json
+import zipfile
+import io
 
 import requests
 import pandas as pd
-from io import StringIO
 
 
 class URLBuilder(ABC):
+    """A class to build URLs for MISO reports.
+    """
     target_placeholder = str(uuid.uuid4())
     extension_placeholder = str(uuid.uuid4())
     
@@ -18,6 +21,11 @@ class URLBuilder(ABC):
         target: str,
         supported_extensions: list[str],
     ):
+        """Constructor for URLBuilder class.
+
+        :param str target: A string to be used in the URL to identify the report.
+        :param list[str] supported_extensions: The different file types available for download.
+        """
         self.target = target
         self.supported_extensions = supported_extensions
 
@@ -27,6 +35,12 @@ class URLBuilder(ABC):
         file_extension: str,
         ddatetime: datetime.datetime | None,
     ) -> str:
+        """Builds the URL to download from.
+
+        :param str file_extension: The file type to download.
+        :param datetime.datetime | None ddatetime: The date/datetime to download the report for.
+        :return str: A URL to download the report from.
+        """
         pass
     
     
@@ -154,7 +168,11 @@ class MISOMarketReportsURLBuilder(URLBuilder):
 
 
 class MISOReports:
+    """A class for downloading MISO reports.
+    """
     class Report:
+        """A representation of a report for download.
+        """
         def __init__(
             self,
             url_builder: URLBuilder,
@@ -167,6 +185,11 @@ class MISOReports:
 
     
     class ReportParsers:
+        """A class to hold the parsers for the different reports.
+
+        :raises NotImplementedError: The parsing for the report has not 
+            been implemented due to design decisions.
+        """
         @staticmethod
         def parse_fuelmix(
             res: requests.Response,
@@ -175,7 +198,7 @@ class MISOReports:
             csv_data = "\n".join(text.splitlines()[2:])
 
             df = pd.read_csv(
-                filepath_or_buffer=StringIO(csv_data),
+                filepath_or_buffer=io.StringIO(csv_data),
                 parse_dates=[
                     "INTERVALEST",
                 ],
@@ -194,7 +217,7 @@ class MISOReports:
             csv_data = "\n".join(text.splitlines()[2:])
 
             df = pd.read_csv(
-                filepath_or_buffer=StringIO(csv_data),
+                filepath_or_buffer=io.StringIO(csv_data),
                 parse_dates=[
                     "instantEST",
                 ],
@@ -219,7 +242,7 @@ class MISOReports:
             csv_data = "\n".join(text.splitlines()[2:])
 
             df = pd.read_csv(
-                filepath_or_buffer=StringIO(csv_data),
+                filepath_or_buffer=io.StringIO(csv_data),
                 parse_dates=[
                     "CASEAPPROVALDATE", 
                     "SOLUTIONTIME",
@@ -240,7 +263,7 @@ class MISOReports:
             csv_data = "\n".join(text.splitlines()[2:])
 
             df = pd.read_csv(
-                filepath_or_buffer=StringIO(csv_data),
+                filepath_or_buffer=io.StringIO(csv_data),
                 parse_dates=[
                     "ForecastDateTimeEST", 
                     "ActualDateTimeEST",
@@ -284,7 +307,7 @@ class MISOReports:
             csv_data = "\n".join(text.splitlines()[2:])
 
             df = pd.read_csv(
-                filepath_or_buffer=StringIO(csv_data),
+                filepath_or_buffer=io.StringIO(csv_data),
                 parse_dates=[
                     "ForecastDateTimeEST", 
                     "ActualDateTimeEST",
@@ -328,7 +351,7 @@ class MISOReports:
             csv_data = "\n".join(text.splitlines()[2:])
 
             df = pd.read_csv(
-                filepath_or_buffer=StringIO(csv_data),
+                filepath_or_buffer=io.StringIO(csv_data),
                 parse_dates=[
                     "ForecastDateTimeEST", 
                     "ActualDateTimeEST",
@@ -352,7 +375,7 @@ class MISOReports:
             csv_data = "\n".join(text.splitlines()[2:])
 
             df = pd.read_csv(
-                filepath_or_buffer=StringIO(csv_data),
+                filepath_or_buffer=io.StringIO(csv_data),
             )
 
             return df
@@ -365,7 +388,7 @@ class MISOReports:
             csv_data = "\n".join(text.splitlines()[4:])
 
             df = pd.read_csv(
-                filepath_or_buffer=StringIO(csv_data),
+                filepath_or_buffer=io.StringIO(csv_data),
             )
 
             return df
@@ -378,7 +401,7 @@ class MISOReports:
             csv_data = "\n".join(text.splitlines()[4:])
 
             df = pd.read_csv(
-                filepath_or_buffer=StringIO(csv_data),
+                filepath_or_buffer=io.StringIO(csv_data),
             )
 
             return df
@@ -391,7 +414,7 @@ class MISOReports:
             csv_data = "\n".join(text.splitlines()[4:])
 
             df = pd.read_csv(
-                filepath_or_buffer=StringIO(csv_data),
+                filepath_or_buffer=io.StringIO(csv_data),
             )
 
             return df
@@ -404,7 +427,54 @@ class MISOReports:
             csv_data = "\n".join(text.splitlines()[4:])
 
             df = pd.read_csv(
-                filepath_or_buffer=StringIO(csv_data),
+                filepath_or_buffer=io.StringIO(csv_data),
+            )
+
+            return df
+        
+        @staticmethod
+        def parse_DA_Load_EPNodes(
+            res: requests.Response,
+        ) -> pd.DataFrame:
+            with zipfile.ZipFile(file=io.BytesIO(res.content)) as z:
+                text = z.read(z.namelist()[0]).decode("utf-8")
+
+            csv_data = "\n".join(text.splitlines()[4:])
+
+            df = pd.read_csv(
+                filepath_or_buffer=io.StringIO(csv_data),
+            )
+
+            return df
+        
+        @staticmethod
+        def parse_DA_LMPs(
+            res: requests.Response,
+        ) -> pd.DataFrame:
+            with zipfile.ZipFile(file=io.BytesIO(res.content)) as z:
+                text = z.read(z.namelist()[0]).decode("utf-8")
+
+            csv_data = "\n".join(text.splitlines()[1:])
+
+            df = pd.read_csv(
+                filepath_or_buffer=io.StringIO(csv_data),
+                parse_dates=[
+                    "MARKET_DAY", 
+                ],
+                date_format={
+                    "MARKET_DAY": "%m/%d/%Y",
+                },
+            )
+
+            return df
+        
+        @staticmethod
+        def parse_5min_exante_lmp(
+            res: requests.Response,
+        ) -> pd.DataFrame:
+            df = pd.read_excel(
+                io=io.BytesIO(res.content),
+                skiprows=3,
             )
 
             return df
@@ -518,7 +588,7 @@ class MISOReports:
                 url_generator=MISOMarketReportsURLBuilder.url_generator_YYYYmmdd_first,
             ),
             type_to_parse="csv",
-            parser=ReportParsers.parse_da_expost_lmp
+            parser=ReportParsers.parse_da_expost_lmp,
         ),
 
         "rt_lmp_final": Report(
@@ -528,7 +598,7 @@ class MISOReports:
                 url_generator=MISOMarketReportsURLBuilder.url_generator_YYYYmmdd_first,
             ),
             type_to_parse="csv",
-            parser=ReportParsers.parse_rt_lmp_final
+            parser=ReportParsers.parse_rt_lmp_final,
         ),
 
         "rt_lmp_prelim": Report(
@@ -538,7 +608,37 @@ class MISOReports:
                 url_generator=MISOMarketReportsURLBuilder.url_generator_YYYYmmdd_first,
             ),
             type_to_parse="csv",
-            parser=ReportParsers.parse_rt_lmp_prelim
+            parser=ReportParsers.parse_rt_lmp_prelim,
+        ),
+
+        "DA_Load_EPNodes": Report(
+            url_builder=MISOMarketReportsURLBuilder(
+                target="DA_Load_EPNodes",
+                supported_extensions=["zip"],
+                url_generator=MISOMarketReportsURLBuilder.url_generator_YYYYmmdd_last,
+            ),
+            type_to_parse="zip",
+            parser=ReportParsers.parse_DA_Load_EPNodes,
+        ),
+
+        "DA_LMPs": Report(
+            url_builder=MISOMarketReportsURLBuilder(
+                target="DA_LMPs",
+                supported_extensions=["zip"],
+                url_generator=MISOMarketReportsURLBuilder.url_generator_YYYY_current_month_name_to_two_months_later_name_first,
+            ),
+            type_to_parse="zip",
+            parser=ReportParsers.parse_DA_LMPs,
+        ),
+
+        "5min_exante_lmp": Report(
+            url_builder=MISOMarketReportsURLBuilder(
+                target="5min_exante_lmp",
+                supported_extensions=["xlsx"],
+                url_generator=MISOMarketReportsURLBuilder.url_generator_YYYYmmdd_first,
+            ),
+            type_to_parse="xlsx",
+            parser=ReportParsers.parse_5min_exante_lmp,
         ),
     }
 
@@ -548,6 +648,13 @@ class MISOReports:
         file_extension: str,
         ddatetime: datetime.datetime | None = None,
     ) -> str:
+        """Get the URL for the report.
+
+        :param str report_name: The name of the report.
+        :param str file_extension: The type of file to download.
+        :param datetime.datetime | None ddatetime: The date of the report, defaults to None
+        :return str: The URL to download the report from.
+        """
         if report_name not in MISOReports.report_mappings:
             raise ValueError(f"Unsupported report: {report_name}")
         
@@ -565,6 +672,12 @@ class MISOReports:
         file_extension: str, 
         ddatetime: datetime.datetime | None = None,
     ) -> requests.Response:
+        """Get the response for the report download.
+
+        :param str report_name: The name of the report.
+        :param str file_extension: The type of file to download.
+        :param datetime.datetime | None ddatetime: The date of the report, defaults to None
+        """
         url = MISOReports.get_url(report_name, file_extension, ddatetime)
         
         res = requests.get(url)
@@ -578,6 +691,12 @@ class MISOReports:
         report_name: str,
         ddatetime: datetime.datetime | None = None,
     ) -> pd.DataFrame:
+        """Get a parsed DataFrame for the report.
+
+        :param str report_name: The name of the report.
+        :param datetime.datetime | None ddatetime: The date of the report, defaults to None
+        :return pd.DataFrame: A DataFrame containing the data of the report.
+        """
         report = MISOReports.report_mappings[report_name]
 
         response = MISOReports.get_response(
