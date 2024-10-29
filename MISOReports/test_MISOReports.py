@@ -117,3 +117,14 @@ def test_MISOMarketReportsURLBuilder_build_url(
 
     assert url_builder.build_url(ddatetime=ddatetime, file_extension=file_extension) == expected
 
+
+def test_MISORTWDData_get_df_completes_and_has_something_or_is_not_implemented():
+    mappings = MISOReports.report_mappings
+    for k, v in mappings.items():
+        if type(v.url_builder) == MISORTWDDataBrokerURLBuilder:
+            try: 
+                df = MISOReports.get_df(k)
+                assert not df.empty
+            except NotImplementedError:
+                pass
+            

@@ -334,7 +334,7 @@ class MISOReports:
                     "ActualDateTimeEST",
                 ],
                 date_format={
-                    "INTERVALEST": "%Y-%m-%d %I:%M:%S %p",
+                    "ForecastDateTimeEST": "%Y-%m-%d %I:%M:%S %p",
                     "ActualDateTimeEST": "%Y-%m-%d %I:%M:%S %p",
                 },
                 dtype={
@@ -350,6 +350,32 @@ class MISOReports:
         ) -> pd.DataFrame:
             text = res.text
             csv_data = "\n".join(text.splitlines()[2:])
+
+            df = pd.read_csv(
+                filepath_or_buffer=StringIO(csv_data),
+            )
+
+            return df
+        
+        @staticmethod
+        def parse_da_exante_lmp(
+            res: requests.Response,
+        ) -> pd.DataFrame:
+            text = res.text
+            csv_data = "\n".join(text.splitlines()[4:])
+
+            df = pd.read_csv(
+                filepath_or_buffer=StringIO(csv_data),
+            )
+
+            return df
+        
+        @staticmethod
+        def parse_da_expost_lmp(
+            res: requests.Response,
+        ) -> pd.DataFrame:
+            text = res.text
+            csv_data = "\n".join(text.splitlines()[4:])
 
             df = pd.read_csv(
                 filepath_or_buffer=StringIO(csv_data),
@@ -447,6 +473,26 @@ class MISOReports:
             ),
             type_to_parse="csv",
             parser=ReportParsers.parse_exantelmp,
+        ),
+
+        "da_exante_lmp": Report(
+            url_builder=MISOMarketReportsURLBuilder(
+                target="da_exante_lmp",
+                supported_extensions=["csv"],
+                url_generator=MISOMarketReportsURLBuilder.url_generator_YYYYmmdd_first,
+            ),
+            type_to_parse="csv",
+            parser=ReportParsers.parse_da_exante_lmp,
+        ),
+
+        "da_expost_lmp": Report(
+            url_builder=MISOMarketReportsURLBuilder(
+                target="da_expost_lmp",
+                supported_extensions=["csv"],
+                url_generator=MISOMarketReportsURLBuilder.url_generator_YYYYmmdd_first,
+            ),
+            type_to_parse="csv",
+            parser=ReportParsers.parse_da_expost_lmp
         ),
     }
 
