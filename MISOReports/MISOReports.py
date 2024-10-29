@@ -408,7 +408,106 @@ class MISOReports:
             )
 
             return df
+        
+        @staticmethod
+        def parse_nsi1(
+            res: requests.Response,
+        ) -> pd.DataFrame:
+            text = res.text
+            csv_data = "\n".join(text.splitlines()[2:])
+
+            df = pd.read_csv(
+                filepath_or_buffer=StringIO(csv_data),
+                parse_dates=[
+                    "timestamp", 
+                ],
+                date_format="%Y-%m-%d %H:%M:%S",
+            )
+
+            return df
+        
+        @staticmethod
+        def parse_nsi5(
+            res: requests.Response,
+        ) -> pd.DataFrame:
+            text = res.text
+            csv_data = "\n".join(text.splitlines()[2:])
+
+            df = pd.read_csv(
+                filepath_or_buffer=StringIO(csv_data),
+                parse_dates=[
+                    "timestamp", 
+                ],
+                date_format="%Y-%m-%d %H:%M:%S",
+            )
+
+            return df
             
+        @staticmethod
+        def parse_nsi1miso(
+            res: requests.Response,
+        ) -> pd.DataFrame:
+            text = res.text
+            csv_data = "\n".join(text.splitlines()[2:])
+
+            df = pd.read_csv(
+                filepath_or_buffer=StringIO(csv_data),
+                parse_dates=[
+                    "timestamp", 
+                ],
+                date_format="%Y-%m-%d %H:%M:%S",
+            )
+
+            return df
+        
+        @staticmethod
+        def parse_nsi5miso(
+            res: requests.Response,
+        ) -> pd.DataFrame:
+            text = res.text
+            csv_data = "\n".join(text.splitlines()[2:])
+
+            df = pd.read_csv(
+                filepath_or_buffer=StringIO(csv_data),
+                parse_dates=[
+                    "timestamp", 
+                ],
+                date_format="%Y-%m-%d %H:%M:%S",
+            )
+
+            return df
+        
+        @staticmethod
+        def parse_importtotal5(
+            res: requests.Response,
+        ) -> pd.DataFrame:
+            text = res.text
+            dictionary = json.loads(text)
+
+            df = pd.DataFrame(
+                data=dictionary
+            )
+
+            df['Time'] = pd.to_datetime(df['Time'], format="%Y-%m-%d %I:%M:%S %p")
+
+            return df
+        
+        @staticmethod
+        def parse_reservebindingconstraints(
+            res: requests.Response,
+        ) -> pd.DataFrame:
+            text = res.text
+            csv_data = "\n".join(text.splitlines()[2:])
+
+            df = pd.read_csv(
+                filepath_or_buffer=StringIO(csv_data),
+                parse_dates=[
+                    "Period", 
+                ],
+                date_format="%Y-%m-%dT%H:%M:%S",
+            )
+
+            return df
 
     report_mappings: dict[str, Report] = {
         "fuelmix": Report(
@@ -539,6 +638,60 @@ class MISOReports:
             ),
             type_to_parse="csv",
             parser=ReportParsers.parse_rt_lmp_prelim
+        ),
+
+        "nsi1": Report(
+            url_builder=MISORTWDDataBrokerURLBuilder(
+                target="getnsi1",
+                supported_extensions=["csv", "xml", "json"],
+            ),
+            type_to_parse="csv",
+            parser=ReportParsers.parse_nsi1,
+        ),
+
+        "nsi5": Report(
+            url_builder=MISORTWDDataBrokerURLBuilder(
+                target="getnsi5",
+                supported_extensions=["csv", "xml", "json"],
+            ),
+            type_to_parse="csv",
+            parser=ReportParsers.parse_nsi5,
+        ),
+
+        "nsi1miso": Report(
+            url_builder=MISORTWDDataBrokerURLBuilder(
+                target="getnsi1miso",
+                supported_extensions=["csv", "xml", "json"],
+            ),
+            type_to_parse="csv",
+            parser=ReportParsers.parse_nsi1miso,
+        ),
+
+        "nsi5miso": Report(
+            url_builder=MISORTWDDataBrokerURLBuilder(
+                target="getnsi5miso",
+                supported_extensions=["csv", "xml", "json"],
+            ),
+            type_to_parse="csv",
+            parser=ReportParsers.parse_nsi5miso,
+        ),
+
+        "importtotal5": Report(
+            url_builder=MISORTWDDataBrokerURLBuilder(
+                target="getimporttotal5",
+                supported_extensions=["csv", "xml", "json"],
+            ),
+            type_to_parse="json",
+            parser=ReportParsers.parse_importtotal5,
+        ),
+
+        "reservebindingconstraints": Report(
+            url_builder=MISORTWDDataBrokerURLBuilder(
+                target="getreservebindingconstraints",
+                supported_extensions=["csv", "xml", "json"],
+            ),
+            type_to_parse="csv",
+            parser=ReportParsers.parse_reservebindingconstraints
         ),
     }
 
