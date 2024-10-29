@@ -393,7 +393,7 @@ class MISOReports:
             df = pd.read_csv(
                 filepath_or_buffer=StringIO(csv_data),
                 dtype={
-                    f"HE {idx}": pd.Float64 for idx in range(1, 25)
+                    f"HE {idx}": pd.Float64Dtype() for idx in range(1, 25)
                 }
             )
 
@@ -409,7 +409,7 @@ class MISOReports:
             df = pd.read_csv(
                 filepath_or_buffer=StringIO(csv_data),
                 dtype={
-                    f"HE {idx}": pd.Float64 for idx in range(1, 25)
+                    f"HE {idx}": pd.Float64Dtype() for idx in range(1, 25)
                 }
             )
 
