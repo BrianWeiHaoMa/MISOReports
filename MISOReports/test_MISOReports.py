@@ -1,5 +1,6 @@
 import pytest
 import datetime
+import pandas as pd
 
 from MISOReports.MISOReports import (
     MISORTWDDataBrokerURLBuilder,
@@ -124,7 +125,25 @@ def test_MISORTWDData_get_df_completes_and_has_something_or_is_not_implemented()
         if type(v.url_builder) == MISORTWDDataBrokerURLBuilder:
             try: 
                 df = MISOReports.get_df(k)
+
+                assert isinstance(df, pd.DataFrame)
                 assert not df.empty
+
+                expected_columns = [
+                        {'INTERVALEST', 'CATEGORY', 'ACT', 'TOTALMW'},
+                        {'instantEST', 'value'},
+                        {'SOLUTIONTIME', 'CASEAPPROVALDATE', 'PJMFORECASTEDLMP'},
+                        {"ForecastDateTimeEST", "ForecastWindValue", "ActualWindValue", "ForecastHourEndingEST", "ForecastSolarValue", "ActualHourEndingEST", "ActualDateTimeEST", "ActualSolarValue"},
+                        {"HourEndingEST", "Value", "DateTimeEST"},
+                        {"ForecastDateTimeEST", "ActualValue", "ForecastHourEndingEST", "ActualHourEndingEST", "ActualDateTimeEST", "ForecastValue"},
+                        {"Congestion", "Loss", "LMP", "Name"}
+                ]
+                
+                # check if DataFrame's columns match one of the expected sets
+                df_columns = set(df.columns)
+                assert any(df_columns == expected for expected in expected_columns), \
+                    f"Columns {df_columns} do not match any expected format."
+
             except NotImplementedError:
                 pass
-            
+        
