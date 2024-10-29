@@ -382,6 +382,38 @@ class MISOReports:
             )
 
             return df
+        
+        @staticmethod
+        def parse_rt_lmp_final(
+            res: requests.Response,
+        ) -> pd.DataFrame:
+            text = res.text
+            csv_data = "\n".join(text.splitlines()[4:])
+
+            df = pd.read_csv(
+                filepath_or_buffer=StringIO(csv_data),
+                dtype={
+                    f"HE {idx}": pd.Float64Dtype() for idx in range(1, 25)
+                }
+            )
+
+            return df
+        
+        @staticmethod
+        def parse_rt_lmp_prelim(
+            res: requests.Response,
+        ) -> pd.DataFrame:
+            text = res.text
+            csv_data = "\n".join(text.splitlines()[4:])
+
+            df = pd.read_csv(
+                filepath_or_buffer=StringIO(csv_data),
+                dtype={
+                    f"HE {idx}": pd.Float64Dtype() for idx in range(1, 25)
+                }
+            )
+
+            return df
             
 
     report_mappings: dict[str, Report] = {
