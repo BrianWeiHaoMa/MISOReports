@@ -134,6 +134,11 @@ def test_MISORTWDData_get_df_completes_and_has_something_or_is_not_implemented()
             {'timestamp', 'NSI'},
             {'Time', 'Value'},
             {'Name', 'Description', 'Price', 'Period'},
+            {'COMMIT_REASON', 'MKT_INT_END_EST', 'NUM_RESOURCES', 'TOTAL_ECON_MAX'},
+            {'Name', 'Value'},
+            {' UDSFLOW_MW', 'INTERVALEST', 'NORTH_SOUTH_LIMIT', 'RAW_MW', 'SOUTH_NORTH_LIMIT'},
+            {'Derated', 'Forced', 'OutageDate', 'OutageMonthDay', 'Planned', 'Unplanned'},
+            
     ]
     
     for k, v in mappings.items():
