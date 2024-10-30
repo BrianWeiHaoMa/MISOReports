@@ -57,12 +57,14 @@ https://docs.misoenergy.org/marketreports/RT_Load_EPNodes_20241018.zip
 https://docs.misoenergy.org/marketreports/20241021_5MIN_LMP.zip
 ```
 
-Bids
+Bids 
+Greenz
 ```
 https://docs.misoenergy.org/marketreports/20240801_bids_cb.zip
 ```
 
-Day-Ahead
+Day-Ahead 
+Brian
 ```
 https://docs.misoenergy.org/marketreports/20241029_da_bcsf.xls
 https://docs.misoenergy.org/marketreports/20241029_da_bc.xls
@@ -74,13 +76,15 @@ https://docs.misoenergy.org/marketreports/20241030_da_ex_rg.xlsx
 https://docs.misoenergy.org/marketreports/2024_da_bc_HIST.csv
 ```
 
-EIA
+EIA 
+William
 ```
 https://docs.misoenergy.org/marketreports/MISOdaily3042024.xml
 https://docs.misoenergy.org/marketreports/MISOsamedaydemand.xml
 ```
 
 FTR
+William
 ```
 https://docs.misoenergy.org/marketreports/20240401_ftr_allocation_restoration.zip
 https://docs.misoenergy.org/marketreports/20240401_ftr_allocation_stage_1A.zip
@@ -95,6 +99,7 @@ https://docs.misoenergy.org/marketreports/20240801_ftr_mpma_bids_offers.zip
 ```
 
 Historical MCP
+Greenz
 ```
 https://docs.misoenergy.org/marketreports/20241030_asm_exante_damcp.csv
 https://docs.misoenergy.org/marketreports/20241030_asm_expost_damcp.csv
@@ -113,6 +118,7 @@ https://docs.misoenergy.org/marketreports/202410_rt_expost_str_mcp.xlsx
 ```
 
 Market Settlements
+Brian
 ```
 https://docs.misoenergy.org/marketreports/20241020_Daily_Uplift_by_Local_Resource_Zone.xlsx
 https://docs.misoenergy.org/marketreports/2022_ms_vlr_HIST.csv
@@ -128,6 +134,7 @@ https://docs.misoenergy.org/marketreports/20241001_Total_Uplift_by_Resource.xlsx
 ```
 
 Market to Market
+Greenz
 ```
 https://docs.misoenergy.org/marketreports/Allocation_on_MISO_Flowgates_2024_10_29.csv
 https://docs.misoenergy.org/marketreports/M2M_FFE_2024_10_29.CSV
@@ -137,6 +144,7 @@ https://docs.misoenergy.org/marketreports/M2M_Settlement_srw_2024.csv
 ```
 
 Offers
+William
 ```
 https://docs.misoenergy.org/marketreports/20240801_asm_da_co.zip
 https://docs.misoenergy.org/marketreports/20240801_asm_rt_co.zip
@@ -146,6 +154,7 @@ https://docs.misoenergy.org/marketreports/20240801_rt_co.zip
 ```
 
 Real-Time
+Brian
 ```
 https://docs.misoenergy.org/marketreports/2023_rt_fuel_on_margin.zip
 https://docs.misoenergy.org/marketreports/20241030_rt_or.xls
@@ -163,11 +172,13 @@ https://docs.misoenergy.org/marketreports/2024_rt_bc_HIST.csv
 ```
 
 Resource Adequacy
+Greenz
 ```
 https://docs.misoenergy.org/marketreports/20241030_MM_Annual_Report.zip
 ```
 
 Summary
+William
 ```
 https://docs.misoenergy.org/marketreports/20241002_cpnode_reszone.xlsx
 https://docs.misoenergy.org/marketreports/20241020_sr_ctsl.pdf
