@@ -202,9 +202,7 @@ class MISOReports:
                 parse_dates=[
                     "INTERVALEST",
                 ],
-                date_format={
-                    "INTERVALEST": "%Y-%m-%d %I:%M:%S %p",
-                },
+                date_format="%Y-%m-%d %I:%M:%S %p",
             )
 
             return df
@@ -221,9 +219,7 @@ class MISOReports:
                 parse_dates=[
                     "instantEST",
                 ],
-                date_format={
-                    "instantEST": "%Y-%m-%d %I:%M:%S %p",
-                },
+                date_format="%Y-%m-%d %I:%M:%S %p",
             )
 
             return df
@@ -247,10 +243,7 @@ class MISOReports:
                     "CASEAPPROVALDATE", 
                     "SOLUTIONTIME",
                 ],
-                date_format={
-                    "CASEAPPROVALDATE": "%Y-%m-%d %I:%M:%S %p",
-                    "SOLUTIONTIME": "%Y-%m-%d %I:%M:%S %p",
-                },
+                date_format="%Y-%m-%d %I:%M:%S %p",
             )
 
             return df
@@ -268,13 +261,10 @@ class MISOReports:
                     "ForecastDateTimeEST", 
                     "ActualDateTimeEST",
                 ],
-                date_format={
-                    "ForecastDateTimeEST": "%Y-%m-%d %I:%M:%S %p",
-                    "ActualDateTimeEST": "%Y-%m-%d %I:%M:%S %p",
-                },
+                date_format="%Y-%m-%d %I:%M:%S %p",
                 dtype={
                     "ActualHourEndingEST": pd.Int64Dtype(),
-                }
+                },
             )
 
             return df
@@ -292,7 +282,7 @@ class MISOReports:
                 dtype={
                     "HourEndingEST": pd.Int64Dtype(),
                     "Value": pd.Float64Dtype(),
-                }
+                },
             )
 
             df["DateTimeEST"] = pd.to_datetime(df["DateTimeEST"], format="%Y-%m-%d %I:%M:%S %p")
@@ -312,13 +302,10 @@ class MISOReports:
                     "ForecastDateTimeEST", 
                     "ActualDateTimeEST",
                 ],
-                date_format={
-                    "ForecastDateTimeEST": "%Y-%m-%d %I:%M:%S %p",
-                    "ActualDateTimeEST": "%Y-%m-%d %I:%M:%S %p",
-                },
+                date_format="%Y-%m-%d %I:%M:%S %p",
                 dtype={
                     "ActualHourEndingEST": pd.Int64Dtype(),
-                }
+                },
             )
 
             return df
@@ -336,7 +323,7 @@ class MISOReports:
                 dtype={
                     "HourEndingEST": pd.Int64Dtype(),
                     "Value": pd.Float64Dtype(),
-                }
+                },
             )
 
             df["DateTimeEST"] = pd.to_datetime(df["DateTimeEST"], format="%Y-%m-%d %I:%M:%S %p")
@@ -356,13 +343,10 @@ class MISOReports:
                     "ForecastDateTimeEST", 
                     "ActualDateTimeEST",
                 ],
-                date_format={
-                    "ForecastDateTimeEST": "%Y-%m-%d %I:%M:%S %p",
-                    "ActualDateTimeEST": "%Y-%m-%d %I:%M:%S %p",
-                },
+                date_format="%Y-%m-%d %I:%M:%S %p",
                 dtype={
                     "ActualHourEndingEST": pd.Int64Dtype(),
-                }
+                },
             )
 
             return df
@@ -461,9 +445,7 @@ class MISOReports:
                 parse_dates=[
                     "MARKET_DAY", 
                 ],
-                date_format={
-                    "MARKET_DAY": "%m/%d/%Y",
-                },
+                date_format="%m/%d/%Y",
             )
 
             return df
@@ -791,7 +773,7 @@ class MISOReports:
                 supported_extensions=["csv", "xml", "json"],
             ),
             type_to_parse="csv",
-            parser=ReportParsers.parse_reservebindingconstraints
+            parser=ReportParsers.parse_reservebindingconstraints,
         ),
     }
 
