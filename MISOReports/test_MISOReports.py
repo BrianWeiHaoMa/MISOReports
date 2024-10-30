@@ -122,24 +122,25 @@ def test_MISOMarketReportsURLBuilder_build_url(
 def test_MISORTWDData_get_df_completes_and_has_something_or_is_not_implemented():
     mappings = MISOReports.report_mappings
 
-    expected_columns = [
-            {'INTERVALEST', 'CATEGORY', 'ACT', 'TOTALMW'},
-            {'instantEST', 'value'},
-            {'SOLUTIONTIME', 'CASEAPPROVALDATE', 'PJMFORECASTEDLMP'},
-            {"ForecastDateTimeEST", "ForecastWindValue", "ActualWindValue", "ForecastHourEndingEST", "ForecastSolarValue", "ActualHourEndingEST", "ActualDateTimeEST", "ActualSolarValue"},
-            {"HourEndingEST", "Value", "DateTimeEST"},
-            {"ForecastDateTimeEST", "ActualValue", "ForecastHourEndingEST", "ActualHourEndingEST", "ActualDateTimeEST", "ForecastValue"},
-            {"Congestion", "Loss", "LMP", "Name"},
-            {'CSWS', 'MHEB', 'PJM', 'OKGE', 'timestamp', 'SPA', 'SWPP', 'WAUE', 'MISO', 'SOCO', 'TVA', 'GLHB', 'LGEE', 'ONT', 'AEC', 'AECI'},
-            {'timestamp', 'NSI'},
-            {'Time', 'Value'},
-            {'Name', 'Description', 'Price', 'Period'},
-            {'COMMIT_REASON', 'MKT_INT_END_EST', 'NUM_RESOURCES', 'TOTAL_ECON_MAX'},
-            {'Name', 'Value'},
-            {' UDSFLOW_MW', 'INTERVALEST', 'NORTH_SOUTH_LIMIT', 'RAW_MW', 'SOUTH_NORTH_LIMIT'},
-            {'Derated', 'Forced', 'OutageDate', 'OutageMonthDay', 'Planned', 'Unplanned'},
-            
-    ]
+    expected_columns = frozenset({
+            ('INTERVALEST', 'CATEGORY', 'ACT', 'TOTALMW'),
+            ('instantEST', 'value'),
+            ('CASEAPPROVALDATE', 'SOLUTIONTIME', 'PJMFORECASTEDLMP'),
+            ('ForecastDateTimeEST', 'ForecastHourEndingEST', 'ForecastWindValue', 'ForecastSolarValue', 'ActualDateTimeEST', 'ActualHourEndingEST', 'ActualWindValue', 'ActualSolarValue'),
+            ('DateTimeEST', 'HourEndingEST', 'Value'),
+            ('ForecastDateTimeEST', 'ForecastHourEndingEST', 'ForecastValue', 'ActualDateTimeEST', 'ActualHourEndingEST', 'ActualValue'),
+            ('Name', 'LMP', 'Loss', 'Congestion'),
+            ('timestamp', 'AEC', 'AECI', 'CSWS', 'GLHB', 'LGEE', 'MHEB', 'MISO', 'OKGE', 'ONT', 'PJM', 'SOCO', 'SPA', 'SWPP', 'TVA', 'WAUE'),
+            ('timestamp', 'NSI'),
+            ('Time', 'Value'),
+            ('Name', 'Price', 'Period', 'Description'),
+            ('MKT_INT_END_EST', 'COMMIT_REASON', 'TOTAL_ECON_MAX', 'NUM_RESOURCES'),
+            ('Name', 'Value'),
+            ('INTERVALEST', 'NORTH_SOUTH_LIMIT', 'SOUTH_NORTH_LIMIT', 'RAW_MW', 'UDSFLOW_MW'),
+            ('INTERVALEST', 'NORTH_SOUTH_LIMIT', 'SOUTH_NORTH_LIMIT', 'RAW_MW', ' UDSFLOW_MW'),
+            ('OutageDate', 'OutageMonthDay', 'Unplanned', 'Planned', 'Forced', 'Derated'),
+            ('Semantic',),
+    })
     
     for k, v in mappings.items():
         if type(v.url_builder) == MISORTWDDataBrokerURLBuilder:
@@ -149,7 +150,7 @@ def test_MISORTWDData_get_df_completes_and_has_something_or_is_not_implemented()
                 assert isinstance(df, pd.DataFrame)
                 assert not df.empty
                 
-                df_columns = set(df.columns)
+                df_columns = tuple(df.columns)
                 assert df_columns in expected_columns, \
                     f"Columns {df_columns} do not match any expected format."
 

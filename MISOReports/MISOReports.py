@@ -8,6 +8,7 @@ import io
 
 import requests
 import pandas as pd
+import packaging.version
 
 
 class URLBuilder(ABC):
@@ -670,6 +671,22 @@ class MISOReports:
             )
 
             return df  
+        
+        @staticmethod
+        def parse_apiversion(
+            res: requests.Response,
+        ) -> pd.DataFrame:
+            text = res.text
+            dictionary = json.loads(text)
+
+
+            df = pd.DataFrame(
+                data=[dictionary]
+            )
+
+            df['Semantic'] = df['Semantic'].apply(packaging.version.Version)
+
+            return df
 
 
     report_mappings: dict[str, Report] = {
@@ -948,6 +965,15 @@ class MISOReports:
             ),
             type_to_parse="csv",
             parser=ReportParsers.parse_generationoutagesplusminusfivedays
+        ),
+
+        "apiversion": Report(
+            url_builder=MISORTWDDataBrokerURLBuilder(
+                target="getapiversion",
+                supported_extensions=["json"],
+            ),
+            type_to_parse="json",
+            parser=ReportParsers.parse_apiversion,
         ),
     }
 
