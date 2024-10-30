@@ -55,3 +55,8 @@ https://docs.misoenergy.org/marketreports/RT_Load_EPNodes_20241018.zip
     https://docs.misoenergy.org/marketreports/20241024_rt_lmp_prelim.csv
 https://docs.misoenergy.org/marketreports/20241021_5MIN_LMP.zip
 ```
+
+Recently added
+```
+https://docs.misoenergy.org/marketreports/20240731_bids_cb.zip
+```

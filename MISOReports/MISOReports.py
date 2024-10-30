@@ -560,6 +560,7 @@ class MISOReports:
             )
 
             return df
+        
 
     report_mappings: dict[str, Report] = {
         "fuelmix": Report(
