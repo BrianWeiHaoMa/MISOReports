@@ -731,6 +731,40 @@ class MISOReports:
             )
 
             return df
+        
+        @staticmethod
+        def parse_RT_Load_EPNodes(
+            res: requests.Response,
+        ) -> pd.DataFrame:
+            with zipfile.ZipFile(file=io.BytesIO(res.content)) as z:
+                text = z.read(z.namelist()[0]).decode("utf-8")
+
+            csv_data = "\n".join(text.splitlines()[4:])
+
+            df = pd.read_csv(
+                filepath_or_buffer=io.StringIO(csv_data),
+            )
+
+            return df
+        
+        @staticmethod
+        def parse_5MIN_LMP(
+            res: requests.Response,
+        ) -> pd.DataFrame:
+            with zipfile.ZipFile(file=io.BytesIO(res.content)) as z:
+                text = z.read(z.namelist()[0]).decode("utf-8")
+
+            csv_data = "\n".join(text.splitlines()[4:-2])
+
+            df = pd.read_csv(
+                filepath_or_buffer=io.StringIO(csv_data),
+                parse_dates=[
+                    "MKTHOUR_EST", 
+                ], 
+                date_format="%m/%d/%Y %H:%M",
+            )
+
+            return df
 
 
     report_mappings: dict[str, Report] = {
@@ -1045,6 +1079,26 @@ class MISOReports:
             ),
             type_to_parse="csv",
             parser=ReportParsers.parse_realtimebindingsrpbconstraints
+        ),
+
+        "RT_Load_EPNodes": Report(
+            url_builder=MISOMarketReportsURLBuilder(
+                target="RT_Load_EPNodes",
+                supported_extensions=["zip"],
+                url_generator=MISOMarketReportsURLBuilder.url_generator_YYYYmmdd_last,
+            ),
+            type_to_parse="zip",
+            parser=ReportParsers.parse_RT_Load_EPNodes,
+        ),
+
+        "5MIN_LMP": Report(
+            url_builder=MISOMarketReportsURLBuilder(
+                target="5MIN_LMP",
+                supported_extensions=["zip"],
+                url_generator=MISOMarketReportsURLBuilder.url_generator_YYYYmmdd_first,
+            ),
+            type_to_parse="zip",
+            parser=ReportParsers.parse_5MIN_LMP,
         ),
     }
 
