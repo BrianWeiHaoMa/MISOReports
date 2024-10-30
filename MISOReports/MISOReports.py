@@ -765,6 +765,30 @@ class MISOReports:
             )
 
             return df
+        
+        @staticmethod
+        def parse_bids_cb(
+            res: requests.Response,
+        ) -> pd.DataFrame:
+            with zipfile.ZipFile(file=io.BytesIO(res.content)) as z:
+                csv_data = z.read(z.namelist()[0]).decode("utf-8")
+
+            df = pd.read_csv(
+                filepath_or_buffer=io.StringIO(csv_data),
+                parse_dates=[
+                    "Date/Time Beginning (EST)", 
+                    "Date/Time End (EST)",
+                ], 
+                date_format="%m/%d/%Y %H:%M:%S",
+            )
+
+            return df
+        
+        @staticmethod
+        def parse_asm_exante_damcp(
+            res: requests.Response,
+        ) -> pd.DataFrame:
+            raise NotImplementedError("Result contains 2 csv tables.")
 
 
     report_mappings: dict[str, Report] = {
@@ -1099,6 +1123,26 @@ class MISOReports:
             ),
             type_to_parse="zip",
             parser=ReportParsers.parse_5MIN_LMP,
+        ),
+
+        "bids_cb": Report(
+            url_builder=MISOMarketReportsURLBuilder(
+                target="bids_cb",
+                supported_extensions=["zip"],
+                url_generator=MISOMarketReportsURLBuilder.url_generator_YYYYmmdd_first,
+            ),
+            type_to_parse="zip",
+            parser=ReportParsers.parse_bids_cb,
+        ),
+        
+        "asm_exante_damcp": Report(
+             url_builder=MISOMarketReportsURLBuilder(
+                target="asm_exante_damcp",
+                supported_extensions=["csv"],
+                url_generator=MISOMarketReportsURLBuilder.url_generator_YYYYmmdd_first,
+            ),
+            type_to_parse="csv",
+            parser=ReportParsers.parse_asm_exante_damcp,
         ),
     }
 

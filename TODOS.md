@@ -58,9 +58,8 @@ https://docs.misoenergy.org/marketreports/2024_Jul-Sep_RT_LMPs.zip
 ```
 
 Bids 
-Greenz
 ```
-https://docs.misoenergy.org/marketreports/20240801_bids_cb.zip
+    https://docs.misoenergy.org/marketreports/20240801_bids_cb.zip
 ```
 
 Day-Ahead 
@@ -101,7 +100,7 @@ https://docs.misoenergy.org/marketreports/20240801_ftr_mpma_bids_offers.zip
 Historical MCP
 Greenz
 ```
-https://docs.misoenergy.org/marketreports/20241030_asm_exante_damcp.csv
+    https://docs.misoenergy.org/marketreports/20241030_asm_exante_damcp.csv
 https://docs.misoenergy.org/marketreports/20241030_asm_expost_damcp.csv
 https://docs.misoenergy.org/marketreports/20241030_5min_exante_mcp.xlsx
 https://docs.misoenergy.org/marketreports/20241026_asm_rtmcp_final.csv
