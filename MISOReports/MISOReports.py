@@ -487,7 +487,7 @@ class MISOReports:
             csv_data = "\n".join(text.splitlines()[2:])
 
             df = pd.read_csv(
-                filepath_or_buffer=StringIO(csv_data),
+                filepath_or_buffer=io.StringIO(csv_data),
                 parse_dates=[
                     "timestamp", 
                 ],
@@ -504,7 +504,7 @@ class MISOReports:
             csv_data = "\n".join(text.splitlines()[2:])
 
             df = pd.read_csv(
-                filepath_or_buffer=StringIO(csv_data),
+                filepath_or_buffer=io.StringIO(csv_data),
                 parse_dates=[
                     "timestamp", 
                 ],
@@ -521,7 +521,7 @@ class MISOReports:
             csv_data = "\n".join(text.splitlines()[2:])
 
             df = pd.read_csv(
-                filepath_or_buffer=StringIO(csv_data),
+                filepath_or_buffer=io.StringIO(csv_data),
                 parse_dates=[
                     "timestamp", 
                 ],
@@ -538,7 +538,7 @@ class MISOReports:
             csv_data = "\n".join(text.splitlines()[2:])
 
             df = pd.read_csv(
-                filepath_or_buffer=StringIO(csv_data),
+                filepath_or_buffer=io.StringIO(csv_data),
                 parse_dates=[
                     "timestamp", 
                 ],
@@ -570,7 +570,7 @@ class MISOReports:
             csv_data = "\n".join(text.splitlines()[2:])
 
             df = pd.read_csv(
-                filepath_or_buffer=StringIO(csv_data),
+                filepath_or_buffer=io.StringIO(csv_data),
                 parse_dates=[
                     "Period", 
                 ],

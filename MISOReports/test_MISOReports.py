@@ -133,7 +133,7 @@ def test_MISORTWDData_get_df_completes_and_has_something_or_is_not_implemented()
             {'CSWS', 'MHEB', 'PJM', 'OKGE', 'timestamp', 'SPA', 'SWPP', 'WAUE', 'MISO', 'SOCO', 'TVA', 'GLHB', 'LGEE', 'ONT', 'AEC', 'AECI'},
             {'timestamp', 'NSI'},
             {'Time', 'Value'},
-            {'Name', 'Description', 'Price', 'Period'}
+            {'Name', 'Description', 'Price', 'Period'},
     ]
     
     for k, v in mappings.items():
