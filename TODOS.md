@@ -51,10 +51,10 @@ Historical LMP
     https://docs.misoenergy.org/marketreports/2024-Jul-Sep_DA_LMPs.zip
 https://docs.misoenergy.org/marketreports/2024_Jul-Sep_RT_LMPs.zip
     https://docs.misoenergy.org/marketreports/20241025_5min_exante_lmp.xlsx
-https://docs.misoenergy.org/marketreports/RT_Load_EPNodes_20241018.zip
+    https://docs.misoenergy.org/marketreports/RT_Load_EPNodes_20241018.zip
     https://docs.misoenergy.org/marketreports/20241021_rt_lmp_final.csv
     https://docs.misoenergy.org/marketreports/20241024_rt_lmp_prelim.csv
-https://docs.misoenergy.org/marketreports/20241021_5MIN_LMP.zip
+    https://docs.misoenergy.org/marketreports/20241021_5MIN_LMP.zip
 ```
 
 Bids
