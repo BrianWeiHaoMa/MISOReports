@@ -228,7 +228,7 @@ class MISOReports:
         def parse_AncillaryServicesMCP(
             res: requests.Response,
         ) -> pd.DataFrame:
-            raise NotImplementedError("Result contains 2 csv tables")
+            raise NotImplementedError("Result contains 2 csv tables.")
         
         @staticmethod
         def parse_cts(
@@ -560,6 +560,117 @@ class MISOReports:
             )
 
             return df
+        
+        @staticmethod
+        def parse_totalload(
+            res: requests.Response,
+        ) -> pd.DataFrame:
+            raise NotImplementedError("Result contains 3 csv tables.")
+        
+        @staticmethod
+        def parse_RSG(
+            res: requests.Response,
+        ) -> pd.DataFrame:
+            text = res.text
+            csv_data = "\n".join(text.splitlines()[2:])
+
+            df = pd.read_csv(
+                filepath_or_buffer=io.StringIO(csv_data),
+                parse_dates=[
+                    "MKT_INT_END_EST", 
+                ],
+                date_format="%Y-%m-%d %H:%M:%S %p",
+            )
+
+            return df
+        
+        @staticmethod
+        def parse_WindActual(
+            res: requests.Response,
+        ) -> pd.DataFrame:
+            text = res.text
+            dictionary = json.loads(text)
+
+            df = pd.DataFrame(
+                data=dictionary["instance"],
+            ).astype(
+                dtype={
+                    "HourEndingEST": pd.Int64Dtype(),
+                    "Value": pd.Float64Dtype(),
+                }
+            )
+
+            df["DateTimeEST"] = pd.to_datetime(df["DateTimeEST"], format="%Y-%m-%d %I:%M:%S %p")
+
+            return df  
+
+        @staticmethod
+        def parse_SolarActual(
+            res: requests.Response,
+        ) -> pd.DataFrame:
+            text = res.text
+            dictionary = json.loads(text)
+
+            df = pd.DataFrame(
+                data=dictionary["instance"],
+            ).astype(
+                dtype={
+                    "HourEndingEST": pd.Int64Dtype(),
+                    "Value": pd.Float64Dtype(),
+                }
+            )
+
+            df["DateTimeEST"] = pd.to_datetime(df["DateTimeEST"], format="%Y-%m-%d %I:%M:%S %p")
+
+            return df 
+
+        @staticmethod
+        def parse_NAI(
+            res: requests.Response,
+        ) -> pd.DataFrame:
+            text = res.text
+            csv_data = "\n".join(text.splitlines()[2:])
+
+            df = pd.read_csv(
+                filepath_or_buffer=io.StringIO(csv_data),
+            )
+
+            return df  
+        
+        @staticmethod
+        def parse_regionaldirectionaltransfer(
+            res: requests.Response,
+        ) -> pd.DataFrame:
+            text = res.text
+            csv_data = "\n".join(text.splitlines()[2:])
+
+            df = pd.read_csv(
+                filepath_or_buffer=io.StringIO(csv_data),
+                parse_dates=[
+                    "INTERVALEST", 
+                ],
+                date_format="%Y-%m-%d %H:%M:%S %p",
+            )
+
+            return df  
+        
+        @staticmethod
+        def parse_generationoutagesplusminusfivedays(
+            res: requests.Response,
+        ) -> pd.DataFrame:
+            text = res.text
+            csv_data = "\n".join(text.splitlines()[2:])
+
+            df = pd.read_csv(
+                filepath_or_buffer=io.StringIO(csv_data),
+                parse_dates=[
+                    "OutageDate", 
+                ],
+                date_format="%Y-%m-%d %H:%M:%S %p",
+            )
+
+            return df  
+
 
     report_mappings: dict[str, Report] = {
         "fuelmix": Report(
@@ -774,6 +885,69 @@ class MISOReports:
             ),
             type_to_parse="csv",
             parser=ReportParsers.parse_reservebindingconstraints,
+        ),
+
+        "RSG": Report(
+            url_builder=MISORTWDDataBrokerURLBuilder(
+                target="getRSG",
+                supported_extensions=["csv", "xml", "json"],
+            ),
+            type_to_parse="csv",
+            parser=ReportParsers.parse_RSG
+        ),
+
+        "totalload": Report(
+            url_builder=MISORTWDDataBrokerURLBuilder(
+                target="gettotalload",
+                supported_extensions=["csv", "xml", "json"],
+            ),
+            type_to_parse="csv",
+            parser=ReportParsers.parse_totalload
+        ),
+
+        "WindActual": Report(
+            url_builder=MISORTWDDataBrokerURLBuilder(
+                target="getWindActual",
+                supported_extensions=["xml", "json"],
+            ),
+            type_to_parse="json",
+            parser=ReportParsers.parse_WindActual
+        ),
+
+        "SolarActual": Report(
+            url_builder=MISORTWDDataBrokerURLBuilder(
+                target="getSolarActual",
+                supported_extensions=["xml", "json"],
+            ),
+            type_to_parse="json",
+            parser=ReportParsers.parse_SolarActual
+        ),
+
+        "NAI": Report(
+            url_builder=MISORTWDDataBrokerURLBuilder(
+                target="getNAI",
+                supported_extensions=["csv", "xml", "json"],
+            ),
+            type_to_parse="csv",
+            parser=ReportParsers.parse_NAI
+        ),
+
+        "regionaldirectionaltransfer": Report(
+            url_builder=MISORTWDDataBrokerURLBuilder(
+                target="getregionaldirectionaltransfer",
+                supported_extensions=["csv", "xml", "json"],
+            ),
+            type_to_parse="csv",
+            parser=ReportParsers.parse_regionaldirectionaltransfer
+        ),
+
+        "generationoutagesplusminusfivedays": Report(
+            url_builder=MISORTWDDataBrokerURLBuilder(
+                target="getgenerationoutagesplusminusfivedays",
+                supported_extensions=["csv", "xml", "json"],
+            ),
+            type_to_parse="csv",
+            parser=ReportParsers.parse_generationoutagesplusminusfivedays
         ),
     }
 
