@@ -140,6 +140,7 @@ def test_MISORTWDData_get_df_completes_and_has_something_or_is_not_implemented()
             ('INTERVALEST', 'NORTH_SOUTH_LIMIT', 'SOUTH_NORTH_LIMIT', 'RAW_MW', ' UDSFLOW_MW'),
             ('OutageDate', 'OutageMonthDay', 'Unplanned', 'Planned', 'Forced', 'Derated'),
             ('Semantic',),
+            ('Name', 'LMP', 'MLC', 'MCC', 'REGMCP', 'REGMILEAGEMCP', 'SPINMCP', 'SUPPMCP', 'STRMCP', 'RCUPMCP', 'RCDOWNMCP', 'LMP.1', 'MLC.1', 'MCC.1', 'LMP.2', 'MLC.2', 'MCC.2', 'LMP.3', 'MLC.3', 'MCC.3'),
     })
     
     for k, v in mappings.items():

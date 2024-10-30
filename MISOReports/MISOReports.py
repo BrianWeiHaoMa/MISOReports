@@ -684,9 +684,20 @@ class MISOReports:
                 data=[dictionary]
             )
 
-            df['Semantic'] = df['Semantic'].apply(packaging.version.Version)
-
             return df
+        
+        @staticmethod
+        def parse_lmpconsolidatedtable(
+            res: requests.Response,
+        ) -> pd.DataFrame:
+            text = res.text
+            csv_data = "\n".join(text.splitlines()[3:])
+
+            df = pd.read_csv(
+                filepath_or_buffer=io.StringIO(csv_data),
+            )
+
+            return df  
 
 
     report_mappings: dict[str, Report] = {
@@ -974,6 +985,15 @@ class MISOReports:
             ),
             type_to_parse="json",
             parser=ReportParsers.parse_apiversion,
+        ),
+
+        "lmpconsolidatedtable": Report(
+            url_builder=MISORTWDDataBrokerURLBuilder(
+                target="getlmpconsolidatedtable",
+                supported_extensions=["csv", "xml", "json"],
+            ),
+            type_to_parse="csv",
+            parser=ReportParsers.parse_lmpconsolidatedtable
         ),
     }
 
