@@ -8,7 +8,6 @@ import io
 
 import requests
 import pandas as pd
-import packaging.version
 
 
 class URLBuilder(ABC):
@@ -698,6 +697,40 @@ class MISOReports:
             )
 
             return df  
+        
+        @staticmethod
+        def parse_realtimebindingconstraints(
+            res: requests.Response,
+        ) -> pd.DataFrame:
+            text = res.text
+            csv_data = "\n".join(text.splitlines()[2:])
+
+            df = pd.read_csv(
+                filepath_or_buffer=io.StringIO(csv_data),
+                parse_dates=[
+                    "Period", 
+                ],
+                date_format="%Y-%m-%dT%H:%M:%S",
+            )
+
+            return df
+        
+        @staticmethod
+        def parse_realtimebindingsrpbconstraints(
+            res: requests.Response,
+        ) -> pd.DataFrame:
+            text = res.text
+            csv_data = "\n".join(text.splitlines()[2:])
+
+            df = pd.read_csv(
+                filepath_or_buffer=io.StringIO(csv_data),
+                parse_dates=[
+                    "Period", 
+                ],
+                date_format="%Y-%m-%dT%H:%M:%S",
+            )
+
+            return df
 
 
     report_mappings: dict[str, Report] = {
@@ -994,6 +1027,24 @@ class MISOReports:
             ),
             type_to_parse="csv",
             parser=ReportParsers.parse_lmpconsolidatedtable
+        ),
+
+        "realtimebindingconstraints": Report(
+            url_builder=MISORTWDDataBrokerURLBuilder(
+                target="getrealtimebindingconstraints",
+                supported_extensions=["csv", "xml", "json"],
+            ),
+            type_to_parse="csv",
+            parser=ReportParsers.parse_realtimebindingconstraints
+        ),
+
+        "realtimebindingsrpbconstraints": Report(
+            url_builder=MISORTWDDataBrokerURLBuilder(
+                target="getrealtimebindingsrpbconstraints",
+                supported_extensions=["csv", "xml", "json"],
+            ),
+            type_to_parse="csv",
+            parser=ReportParsers.parse_realtimebindingsrpbconstraints
         ),
     }
 
