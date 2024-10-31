@@ -198,6 +198,29 @@ class MISOReports:
             been implemented due to design decisions.
         """
         @staticmethod
+        def parse_ms_vlr_HIST(
+            res: requests.Response,
+        ) -> pd.DataFrame:
+            text = res.text
+            csv_data = "\n".join(text.splitlines()[3:-3])
+
+            df = pd.read_csv(
+                filepath_or_buffer=io.StringIO(csv_data),
+                parse_dates=[
+                    "OPERATING DATE",
+                ],
+                date_format="%m/%d/%Y",
+            )
+
+            return df
+
+        @staticmethod
+        def parse_Daily_Uplift_by_Local_Resource_Zone(
+            res: requests.Response,
+        ) -> pd.DataFrame:
+            raise NotImplementedError("Result contains 10 csv tables.")
+
+        @staticmethod
         def parse_fuelmix(
             res: requests.Response,
         ) -> pd.DataFrame:
@@ -889,6 +912,26 @@ class MISOReports:
 
 
     report_mappings: dict[str, Report] = {
+        "ms_vlr_HIST": Report(
+            url_builder=MISOMarketReportsURLBuilder(
+                target="ms_vlr_HIST",
+                supported_extensions=["csv"],
+                url_generator=MISOMarketReportsURLBuilder.url_generator_YYYY_first
+            ),
+            type_to_parse="csv",
+            parser=ReportParsers.parse_ms_vlr_HIST,
+        ),
+
+        "Daily_Uplift_by_Local_Resource_Zone": Report(
+            url_builder=MISOMarketReportsURLBuilder(
+                target="Daily_Uplift_by_Local_Resource_Zone",
+                supported_extensions=["xlsx"],
+                url_generator=MISOMarketReportsURLBuilder.url_generator_YYYYmmdd_first
+            ),
+            type_to_parse="xlsx",
+            parser=ReportParsers.parse_Daily_Uplift_by_Local_Resource_Zone,
+        ),
+
         "fuelmix": Report(
             url_builder=MISORTWDDataBrokerURLBuilder(
                 target="getfuelmix",
