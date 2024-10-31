@@ -148,6 +148,13 @@ class MISOMarketReportsURLBuilder(URLBuilder):
         return MISOMarketReportsURLBuilder._url_generator_datetime_first(ddatetime, target, "%Y%m")
     
     @staticmethod
+    def url_generator_YYYY_first(
+        ddatetime: datetime.datetime,
+        target: str,
+    ) -> str:
+        return MISOMarketReportsURLBuilder._url_generator_datetime_first(ddatetime, target, "%Y")
+    
+    @staticmethod
     def url_generator_YYYY_current_month_name_to_two_months_later_name_first(
         ddatetime: datetime.datetime,
         target: str,
@@ -789,6 +796,96 @@ class MISOReports:
             res: requests.Response,
         ) -> pd.DataFrame:
             raise NotImplementedError("Result contains 2 csv tables.")
+        
+        @staticmethod
+        def parse_ftr_allocation_restoration(
+            res: requests.Response,
+        ) -> pd.DataFrame:
+            raise NotImplementedError("Result contains 4 csv tables.")
+
+        @staticmethod
+        def parse_ftr_allocation_stage_1A(
+            res: requests.Response,
+        ) -> pd.DataFrame:
+            raise NotImplementedError("Result contains 4 csv tables.")
+        
+        @staticmethod
+        def parse_ftr_allocation_stage_1B(
+            res: requests.Response,
+        ) -> pd.DataFrame:
+            raise NotImplementedError("Result contains 4 csv tables.")
+
+        @staticmethod
+        def parse_ftr_allocation_summary(
+            res: requests.Response,
+        ) -> pd.DataFrame:
+            raise NotImplementedError("Result contains 2 csv tables.")
+        
+        @staticmethod
+        def parse_ftr_annual_results_round_1(
+            res: requests.Response,
+        ) -> pd.DataFrame:
+            raise NotImplementedError("Result contains 12 csv tables.")
+
+        @staticmethod
+        def parse_ftr_annual_results_round_2(
+            res: requests.Response,
+        ) -> pd.DataFrame:
+            raise NotImplementedError("Result contains 12 csv tables.")
+
+        @staticmethod
+        def parse_ftr_annual_results_round_3(
+            res: requests.Response,
+        ) -> pd.DataFrame:
+            raise NotImplementedError("Result contains 12 csv tables.")
+
+        @staticmethod
+        def parse_ftr_annual_bids_offers(
+            res: requests.Response,
+        ) -> pd.DataFrame:
+            with zipfile.ZipFile(file=io.BytesIO(res.content)) as z:
+                csv_data = z.read(z.namelist()[0]).decode("utf-8")
+
+            df = pd.read_csv(
+                filepath_or_buffer=io.StringIO(csv_data),
+                parse_dates=[
+                    "Start Date", 
+                    "End Date",
+                ], 
+                date_format="%m/%d/%Y",
+                dtype={
+                    "Asset Owner ID": pd.StringDtype(),
+                },
+            )
+
+            return df
+        
+        @staticmethod
+        def parse_ftr_mpma_results(
+            res: requests.Response,
+        ) -> pd.DataFrame:
+            raise NotImplementedError("Result contains 12 csv tables.")
+
+        @staticmethod
+        def parse_ftr_mpma_bids_offers(
+            res: requests.Response,
+        ) -> pd.DataFrame:
+            with zipfile.ZipFile(file=io.BytesIO(res.content)) as z:
+                csv_data = z.read(z.namelist()[0]).decode("utf-8")
+
+            df = pd.read_csv(
+                filepath_or_buffer=io.StringIO(csv_data),
+                parse_dates=[
+                    "Start Date", 
+                    "End Date",
+                ], 
+                date_format="%m/%d/%Y",
+                dtype={
+                    "Asset Owner ID": pd.StringDtype(),
+                },
+            )
+
+            return df
 
 
     report_mappings: dict[str, Report] = {
@@ -1143,6 +1240,106 @@ class MISOReports:
             ),
             type_to_parse="csv",
             parser=ReportParsers.parse_asm_exante_damcp,
+        ),
+
+        "ftr_allocation_restoration": Report(
+            url_builder=MISOMarketReportsURLBuilder(
+                target="ftr_allocation_restoration",
+                supported_extensions=["zip"],
+                url_generator=MISOMarketReportsURLBuilder.url_generator_YYYYmmdd_first,
+            ),
+            type_to_parse="zip",
+            parser=ReportParsers.parse_ftr_allocation_restoration,
+        ),
+
+        "ftr_allocation_stage_1A": Report(
+            url_builder=MISOMarketReportsURLBuilder(
+                target="ftr_allocation_stage_1A",
+                supported_extensions=["zip"],
+                url_generator=MISOMarketReportsURLBuilder.url_generator_YYYYmmdd_first,
+            ),
+            type_to_parse="zip",
+            parser=ReportParsers.parse_ftr_allocation_stage_1A,
+        ),
+
+        "ftr_allocation_stage_1B": Report(
+            url_builder=MISOMarketReportsURLBuilder(
+                target="ftr_allocation_stage_1B",
+                supported_extensions=["zip"],
+                url_generator=MISOMarketReportsURLBuilder.url_generator_YYYYmmdd_first,
+            ),
+            type_to_parse="zip",
+            parser=ReportParsers.parse_ftr_allocation_stage_1B,
+        ),
+
+        "ftr_allocation_summary": Report(
+            url_builder=MISOMarketReportsURLBuilder(
+                target="ftr_allocation_summary",
+                supported_extensions=["zip"],
+                url_generator=MISOMarketReportsURLBuilder.url_generator_YYYYmmdd_first,
+            ),
+            type_to_parse="zip",
+            parser=ReportParsers.parse_ftr_allocation_summary,
+        ),
+
+        "ftr_annual_results_round_1": Report(
+            url_builder=MISOMarketReportsURLBuilder(
+                target="ftr_annual_results_round_1",
+                supported_extensions=["zip"],
+                url_generator=MISOMarketReportsURLBuilder.url_generator_YYYYmmdd_first,
+            ),
+            type_to_parse="zip",
+            parser=ReportParsers.parse_ftr_annual_results_round_1,
+        ),
+
+        "ftr_annual_results_round_2": Report(
+            url_builder=MISOMarketReportsURLBuilder(
+                target="ftr_annual_results_round_2",
+                supported_extensions=["zip"],
+                url_generator=MISOMarketReportsURLBuilder.url_generator_YYYYmmdd_first,
+            ),
+            type_to_parse="zip",
+            parser=ReportParsers.parse_ftr_annual_results_round_2,
+        ),
+
+        "ftr_annual_results_round_3": Report(
+            url_builder=MISOMarketReportsURLBuilder(
+                target="ftr_annual_results_round_3",
+                supported_extensions=["zip"],
+                url_generator=MISOMarketReportsURLBuilder.url_generator_YYYYmmdd_first,
+            ),
+            type_to_parse="zip",
+            parser=ReportParsers.parse_ftr_annual_results_round_3,
+        ),
+
+        "ftr_annual_bids_offers": Report(
+            url_builder=MISOMarketReportsURLBuilder(
+                target="ftr_annual_bids_offers",
+                supported_extensions=["zip"],
+                url_generator=MISOMarketReportsURLBuilder.url_generator_YYYY_first,
+            ),
+            type_to_parse="zip",
+            parser=ReportParsers.parse_ftr_annual_bids_offers,
+        ),
+
+        "ftr_mpma_results": Report(
+            url_builder=MISOMarketReportsURLBuilder(
+                target="ftr_mpma_results",
+                supported_extensions=["zip"],
+                url_generator=MISOMarketReportsURLBuilder.url_generator_YYYYmmdd_first,
+            ),
+            type_to_parse="zip",
+            parser=ReportParsers.parse_ftr_mpma_results,
+        ),
+
+        "ftr_mpma_bids_offers": Report(
+            url_builder=MISOMarketReportsURLBuilder(
+                target="ftr_mpma_bids_offers",
+                supported_extensions=["zip"],
+                url_generator=MISOMarketReportsURLBuilder.url_generator_YYYYmmdd_first,
+            ),
+            type_to_parse="zip",
+            parser=ReportParsers.parse_ftr_mpma_bids_offers,
         ),
     }
 
