@@ -172,6 +172,16 @@ class MISOMarketReportsURLBuilder(URLBuilder):
     ) -> str:
         res = f"https://docs.misoenergy.org/marketreports/{target}_{ddatetime.strftime('%Y%m%d')}.{URLBuilder.extension_placeholder}"
         return res
+    
+    @staticmethod
+    def url_generator_no_date(
+        ddatetime: datetime.datetime,
+        target: str,
+    ) -> str:
+        res = f"https://docs.misoenergy.org/marketreports/{target}.{URLBuilder.extension_placeholder}"
+        return res
+    
+        
 
 
 class MISOReports:
@@ -197,6 +207,142 @@ class MISOReports:
         :raises NotImplementedError: The parsing for the report has not 
             been implemented due to design decisions.
         """
+        @staticmethod
+        def parse_Total_Uplift_by_Resource(
+            res: requests.Response,
+        ) -> pd.DataFrame:
+            df = pd.read_excel(
+                io=io.BytesIO(res.content),
+                skiprows=6,
+            ).iloc[:-2]
+
+            return df
+
+        @staticmethod
+        def parse_ms_vlr_srw(
+            res: requests.Response,
+        ) -> pd.DataFrame:
+            raise NotImplementedError("Result contains 2 csv tables.")
+
+        @staticmethod
+        def parse_ms_rsg_srw(
+            res: requests.Response,
+        ) -> pd.DataFrame:
+            df = pd.read_excel(
+                io=io.BytesIO(res.content),
+                skiprows=7,
+            ).iloc[:-2]
+
+            df["previous 36 months"] = df["previous 36 months"].astype(pd.StringDtype())
+
+            df = df.drop(columns=["Unnamed: 6"])
+
+            return df
+
+        @staticmethod
+        def parse_ms_rnu_srw(
+            res: requests.Response,
+        ) -> pd.DataFrame:
+            df = pd.read_excel(
+                io=io.BytesIO(res.content),
+                skiprows=8,
+            ).iloc[:-2]
+
+            df["previous 36 months"] = df["previous 36 months"].astype(pd.StringDtype())
+
+            return df
+
+        @staticmethod
+        def parse_ms_ri_srw(
+            res: requests.Response,
+        ) -> pd.DataFrame:
+            df = pd.read_excel(
+                io=io.BytesIO(res.content),
+                skiprows=7,
+                dtype={
+                    "Previous Months": pd.StringDtype(),
+                }
+            ).iloc[:-2]
+
+            df = df.drop(columns=["Unnamed: 5"])
+
+            return df
+
+        @staticmethod
+        def parse_MARKET_SETTLEMENT_DATA_SRW(
+            res: requests.Response,
+        ) -> pd.DataFrame:
+            with zipfile.ZipFile(file=io.BytesIO(res.content)) as z:
+                csv_file_name = ""
+                for name in z.namelist():
+                    if name.endswith(".csv"):
+                        csv_file_name = name
+                        break
+                
+                if csv_file_name == "":
+                    raise ValueError("Unexpected: no csv file found in zip file.")
+
+                text = z.read(csv_file_name).decode("utf-8")
+
+            csv_data = "\n".join(text.splitlines()[:-1])
+
+            df = pd.read_csv(
+                filepath_or_buffer=io.StringIO(csv_data),
+                parse_dates=[
+                    "DATE",
+                ],
+                date_format="%m/%d/%Y",
+            )
+
+            return df
+
+        @staticmethod
+        def parse_ms_vlr_HIST_SRW(
+            res: requests.Response,
+        ) -> pd.DataFrame:
+            df = pd.read_excel(
+                io=io.BytesIO(res.content),
+                skiprows=3,
+            ).iloc[:-2]
+
+            df["OPERATING DATE"] = pd.to_datetime(df["OPERATING DATE"], format="%m/%d/%Y")
+
+            return df
+
+        @staticmethod
+        def parse_ms_ecf_srw(
+            res: requests.Response,
+        ) -> pd.DataFrame:
+            df = pd.read_excel(
+                io=io.BytesIO(res.content),
+                skiprows=6,
+                dtype={
+                    "Unnamed: 0": pd.StringDtype(),
+                }
+            ).iloc[:-3]
+
+            return df
+
+        @staticmethod
+        def parse_ccf_co(
+            res: requests.Response,
+        ) -> pd.DataFrame:
+            text = res.text
+            csv_data = "\n".join(text.splitlines()[4:-1])
+
+            df = pd.read_csv(
+                filepath_or_buffer=io.StringIO(csv_data),
+                parse_dates=[
+                    "OPERATING DATE",
+                ],
+                date_format="%m/%d/%Y",
+            )
+
+            hours = ["HOUR" + str(i) for i in range(1, 25)]
+            df[hours] = df[hours].astype(float)
+
+            return df
+
         @staticmethod
         def parse_ms_vlr_HIST(
             res: requests.Response,
@@ -912,6 +1058,97 @@ class MISOReports:
 
 
     report_mappings: dict[str, Report] = {
+        "Total_Uplift_by_Resource": Report(
+            url_builder=MISOMarketReportsURLBuilder(
+                target="Total_Uplift_by_Resource",
+                supported_extensions=["xlsx"],
+                url_generator=MISOMarketReportsURLBuilder.url_generator_YYYYmmdd_first
+            ),
+            type_to_parse="xlsx",
+            parser=ReportParsers.parse_Total_Uplift_by_Resource,
+        ),
+
+        "ms_vlr_srw": Report(
+            url_builder=MISOMarketReportsURLBuilder(
+                target="ms_vlr_srw",
+                supported_extensions=["xlsx"],
+                url_generator=MISOMarketReportsURLBuilder.url_generator_YYYYmmdd_first
+            ),
+            type_to_parse="xlsx",
+            parser=ReportParsers.parse_ms_vlr_srw,
+        ),
+
+        "ms_rsg_srw": Report(
+            url_builder=MISOMarketReportsURLBuilder(
+                target="ms_rsg_srw",
+                supported_extensions=["xlsx"],
+                url_generator=MISOMarketReportsURLBuilder.url_generator_YYYYmmdd_first
+            ),
+            type_to_parse="xlsx",
+            parser=ReportParsers.parse_ms_rsg_srw,
+        ),
+
+        "ms_rnu_srw": Report(
+            url_builder=MISOMarketReportsURLBuilder(
+                target="ms_rnu_srw",
+                supported_extensions=["xlsx"],
+                url_generator=MISOMarketReportsURLBuilder.url_generator_YYYYmmdd_first
+            ),
+            type_to_parse="xlsx",
+            parser=ReportParsers.parse_ms_rnu_srw,
+        ),
+
+        "ms_ri_srw": Report(
+            url_builder=MISOMarketReportsURLBuilder(
+                target="ms_ri_srw",
+                supported_extensions=["xlsx"],
+                url_generator=MISOMarketReportsURLBuilder.url_generator_YYYYmmdd_first
+            ),
+            type_to_parse="xlsx",
+            parser=ReportParsers.parse_ms_ri_srw,
+        ),
+
+        "MARKET_SETTLEMENT_DATA_SRW": Report(
+            url_builder=MISOMarketReportsURLBuilder(
+                target="MARKET_SETTLEMENT_DATA_SRW",
+                supported_extensions=["zip"],
+                url_generator=MISOMarketReportsURLBuilder.url_generator_no_date
+            ),
+            type_to_parse="zip",
+            parser=ReportParsers.parse_MARKET_SETTLEMENT_DATA_SRW,
+        ),
+
+        "ms_vlr_HIST_SRW": Report(
+            url_builder=MISOMarketReportsURLBuilder(
+                target="ms_vlr_HIST_SRW",
+                supported_extensions=["xlsx"],
+                url_generator=MISOMarketReportsURLBuilder.url_generator_YYYY_first
+            ),
+            type_to_parse="xlsx",
+            parser=ReportParsers.parse_ms_vlr_HIST_SRW,
+        ),
+
+        "ms_ecf_srw": Report(
+            url_builder=MISOMarketReportsURLBuilder(
+                target="ms_ecf_srw",
+                supported_extensions=["xlsx"],
+                url_generator=MISOMarketReportsURLBuilder.url_generator_YYYYmmdd_first
+            ),
+            type_to_parse="xlsx",
+            parser=ReportParsers.parse_ms_ecf_srw,
+        ),
+
+
+        "ccf_co": Report(
+            url_builder=MISOMarketReportsURLBuilder(
+                target="ccf_co",
+                supported_extensions=["csv"],
+                url_generator=MISOMarketReportsURLBuilder.url_generator_YYYYmmdd_first
+            ),
+            type_to_parse="csv",
+            parser=ReportParsers.parse_ccf_co,
+        ),
+
         "ms_vlr_HIST": Report(
             url_builder=MISOMarketReportsURLBuilder(
                 target="ms_vlr_HIST",
@@ -1422,9 +1659,19 @@ class MISOReports:
         :param str file_extension: The type of file to download.
         :param datetime.datetime | None ddatetime: The date of the report, defaults to None
         """
-        url = MISOReports.get_url(report_name, file_extension, ddatetime)
+        url = MISOReports.get_url(
+            report_name=report_name, 
+            file_extension=file_extension, 
+            ddatetime=ddatetime,
+        )
         
-        res = requests.get(url)
+        res = requests.get(
+            url=url,
+            timeout=30,
+        )
+
+        res.raise_for_status()
+
         if res.status_code != 200:
             raise requests.exceptions.RequestException(f"Request status code: {res.status_code}")
 

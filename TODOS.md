@@ -121,15 +121,15 @@ Brian
 ```
     https://docs.misoenergy.org/marketreports/20241020_Daily_Uplift_by_Local_Resource_Zone.xlsx
     https://docs.misoenergy.org/marketreports/2022_ms_vlr_HIST.csv
-https://docs.misoenergy.org/marketreports/20241022_ccf_co.csv
-https://docs.misoenergy.org/marketreports/20241029_ms_ecf_srw.xlsx
-https://docs.misoenergy.org/marketreports/2024_ms_vlr_HIST_SRW.xlsx
-https://docs.misoenergy.org/marketreports/MARKET_SETTLEMENT_DATA_SRW.zip
-https://docs.misoenergy.org/marketreports/20241029_ms_ri_srw.xlsx
-https://docs.misoenergy.org/marketreports/20241029_ms_rnu_srw.xlsx
-https://docs.misoenergy.org/marketreports/20241029_ms_rsg_srw.xlsx
-https://docs.misoenergy.org/marketreports/20240901_ms_vlr_srw.xlsx
-https://docs.misoenergy.org/marketreports/20241001_Total_Uplift_by_Resource.xlsx
+    https://docs.misoenergy.org/marketreports/20241020_ccf_co.csv
+    https://docs.misoenergy.org/marketreports/20241029_ms_ecf_srw.xlsx
+    https://docs.misoenergy.org/marketreports/2024_ms_vlr_HIST_SRW.xlsx
+    https://docs.misoenergy.org/marketreports/MARKET_SETTLEMENT_DATA_SRW.zip
+    https://docs.misoenergy.org/marketreports/20241029_ms_ri_srw.xlsx
+    https://docs.misoenergy.org/marketreports/20241029_ms_rnu_srw.xlsx
+    https://docs.misoenergy.org/marketreports/20241029_ms_rsg_srw.xlsx
+    https://docs.misoenergy.org/marketreports/20240901_ms_vlr_srw.xlsx
+    https://docs.misoenergy.org/marketreports/20241001_Total_Uplift_by_Resource.xlsx
 ```
 
 Market to Market
