@@ -208,6 +208,96 @@ class MISOReports:
             been implemented due to design decisions.
         """
         @staticmethod
+        def parse_rt_pr(
+            res: requests.Response,
+        ) -> pd.DataFrame:
+            raise NotImplementedError("Result has an atypical format.")
+
+        @staticmethod
+        def parse_rt_irsf(
+            res: requests.Response,
+        ) -> pd.DataFrame:
+            text = res.text
+            csv_data = "\n".join(text.splitlines()[4:-2])
+
+            df = pd.read_csv(
+                filepath_or_buffer=io.StringIO(csv_data),
+                parse_dates=[
+                    "MKTHOUR_EST",
+                ],
+                date_format="%m/%d/%Y %H:%M:%S",
+                dtype={
+                    " REASON": pd.StringDtype(),
+                }
+            )
+
+            return df
+
+        @staticmethod
+        def parse_rt_mf(
+            res: requests.Response,
+        ) -> pd.DataFrame:
+            df = pd.read_excel(
+                io=io.BytesIO(res.content),
+                skiprows=3,
+                dtype={
+                    "Unit Count": pd.Int64Dtype(),
+                }
+            ).iloc[:-1]
+
+            return df
+
+        @staticmethod
+        def parse_rt_ex(
+            res: requests.Response,
+        ) -> pd.DataFrame:
+            df = pd.read_excel(
+                io=io.BytesIO(res.content),
+                skiprows=5,
+            )
+
+            return df
+
+        @staticmethod
+        def parse_rt_pbc(
+            res: requests.Response,
+        ) -> pd.DataFrame:
+            text = res.text
+            csv_data = "\n".join(text.splitlines()[4:-2])
+
+            df = pd.read_csv(
+                filepath_or_buffer=io.StringIO(csv_data),
+                parse_dates=[
+                    "MARKET_HOUR_EST",
+                ],
+                date_format="%m/%d/%Y %H:%M:%S",
+                dtype={
+                    " REASON": pd.StringDtype(),
+                }
+            )
+
+            int_columns = [" BP1", " PC1", " BP2", " PC2", " BP3", " PC3", " BP4", " PC4", " OVERRIDE"]
+            df[int_columns] = df[int_columns].astype(pd.Int64Dtype())
+
+            return df
+
+        @staticmethod
+        def parse_rt_bc(
+            res: requests.Response,
+        ) -> pd.DataFrame:
+            df = pd.read_excel(
+                io=io.BytesIO(res.content),
+                skiprows=3,
+                dtype={
+                    "Flowgate NERC ID": pd.StringDtype(),
+                },
+            )
+
+            df["Hour of  Occurrence"] = pd.to_datetime(df["Hour of  Occurrence"], format="%H:%M").dt.time
+
+            return df
+
+        @staticmethod
         def parse_rt_or(
             res: requests.Response,
         ) -> pd.DataFrame:
@@ -1185,6 +1275,66 @@ class MISOReports:
 
 
     report_mappings: dict[str, Report] = {
+        "rt_pr": Report(
+            url_builder=MISOMarketReportsURLBuilder(
+                target="rt_pr",
+                supported_extensions=["xls"],
+                url_generator=MISOMarketReportsURLBuilder.url_generator_YYYYmmdd_first
+            ),
+            type_to_parse="xls",
+            parser=ReportParsers.parse_rt_pr,
+        ),
+
+        "rt_irsf": Report(
+            url_builder=MISOMarketReportsURLBuilder(
+                target="rt_irsf",
+                supported_extensions=["csv"],
+                url_generator=MISOMarketReportsURLBuilder.url_generator_YYYYmmdd_first
+            ),
+            type_to_parse="csv",
+            parser=ReportParsers.parse_rt_irsf,
+        ),
+
+        "rt_mf": Report(
+            url_builder=MISOMarketReportsURLBuilder(
+                target="rt_mf",
+                supported_extensions=["xlsx"],
+                url_generator=MISOMarketReportsURLBuilder.url_generator_YYYYmmdd_first
+            ),
+            type_to_parse="xlsx",
+            parser=ReportParsers.parse_rt_mf,
+        ),
+
+        "rt_ex": Report(
+            url_builder=MISOMarketReportsURLBuilder(
+                target="rt_ex",
+                supported_extensions=["xls"],
+                url_generator=MISOMarketReportsURLBuilder.url_generator_YYYYmmdd_first
+            ),
+            type_to_parse="xls",
+            parser=ReportParsers.parse_rt_ex,
+        ),
+
+        "rt_pbc": Report(
+            url_builder=MISOMarketReportsURLBuilder(
+                target="rt_pbc",
+                supported_extensions=["csv"],
+                url_generator=MISOMarketReportsURLBuilder.url_generator_YYYYmmdd_first
+            ),
+            type_to_parse="csv",
+            parser=ReportParsers.parse_rt_pbc,
+        ),
+
+        "rt_bc": Report(
+            url_builder=MISOMarketReportsURLBuilder(
+                target="rt_bc",
+                supported_extensions=["xls"],
+                url_generator=MISOMarketReportsURLBuilder.url_generator_YYYYmmdd_first
+            ),
+            type_to_parse="xls",
+            parser=ReportParsers.parse_rt_bc,
+        ),
+
         "rt_or": Report(
             url_builder=MISOMarketReportsURLBuilder(
                 target="rt_or",

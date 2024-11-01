@@ -43,6 +43,8 @@ https://api.misoenergy.org/MISORTWDBIReporter/Reporter.asmx?messageType=currenti
 ```
 
 ### Support for market reports
+Link to the human readable website equivalent: https://www.misoenergy.org/markets-and-operations/real-time--market-data/market-reports/#t=10&p=0&s=MarketReportPublished&sd=desc
+
 Historical LMP
 ```
     https://docs.misoenergy.org/marketreports/DA_Load_EPNodes_20241021.zip
@@ -156,12 +158,12 @@ Brian
 ```
     https://docs.misoenergy.org/marketreports/2023_rt_fuel_on_margin.zip
     https://docs.misoenergy.org/marketreports/20240910_rt_or.xls
-https://docs.misoenergy.org/marketreports/20241030_rt_bc.xls
-https://docs.misoenergy.org/marketreports/20241030_rt_pbc.csv
-https://docs.misoenergy.org/marketreports/20241030_rt_ex.xls
-https://docs.misoenergy.org/marketreports/20241030_rt_mf.xlsx
-https://docs.misoenergy.org/marketreports/20241030_rt_irsf.csv
-https://docs.misoenergy.org/marketreports/20241026_rt_pr.xls
+    https://docs.misoenergy.org/marketreports/20241030_rt_bc.xls
+    https://docs.misoenergy.org/marketreports/20241001_rt_pbc.csv
+    https://docs.misoenergy.org/marketreports/20241030_rt_ex.xls
+    https://docs.misoenergy.org/marketreports/20241030_rt_mf.xlsx
+    https://docs.misoenergy.org/marketreports/20241030_rt_irsf.csv
+    https://docs.misoenergy.org/marketreports/20241026_rt_pr.xls
 https://docs.misoenergy.org/marketreports/2024_Historical_RT_RSG_Commitment.csv
 https://docs.misoenergy.org/marketreports/20241030_rt_rpe.xls
 https://docs.misoenergy.org/marketreports/20241009_Resource_Uplift_by_Commitment_Reason.xlsx
