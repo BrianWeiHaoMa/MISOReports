@@ -173,6 +173,7 @@ class MISOMarketReportsURLBuilder(URLBuilder):
         res = f"https://docs.misoenergy.org/marketreports/{target}_{ddatetime.strftime('%Y%m%d')}.{URLBuilder.extension_placeholder}"
         return res
     
+    @staticmethod
     def url_generator_YYYY_mm_dd_last(
         ddatetime: datetime.datetime,
         target: str,
@@ -180,6 +181,7 @@ class MISOMarketReportsURLBuilder(URLBuilder):
         res = f"https://docs.misoenergy.org/marketreports/{target}_{ddatetime.strftime('%Y_%m_%d')}.{URLBuilder.extension_placeholder}"
         return res
     
+    @staticmethod
     def url_generator_YYYY_last(
         ddatetime: datetime.datetime,
         target: str,
