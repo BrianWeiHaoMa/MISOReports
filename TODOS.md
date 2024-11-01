@@ -169,9 +169,8 @@ https://docs.misoenergy.org/marketreports/2024_rt_bc_HIST.csv
 ```
 
 Resource Adequacy
-Greenz
 ```
-https://docs.misoenergy.org/marketreports/20241030_MM_Annual_Report.zip
+    https://docs.misoenergy.org/marketreports/20241030_MM_Annual_Report.zip
 ```
 
 Summary

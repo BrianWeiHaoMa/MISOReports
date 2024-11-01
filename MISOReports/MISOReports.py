@@ -1261,6 +1261,13 @@ class MISOReports:
             )
 
             return df
+        
+        @staticmethod
+        def parse_MM_Annual_Report(
+            res: requests.Response,
+        ) -> pd.DataFrame:
+            raise NotImplementedError("Result contains 5 .xlsx files.")
+
 
     report_mappings: dict[str, Report] = {
         "rt_or": Report(
@@ -2025,6 +2032,16 @@ class MISOReports:
             ),
             type_to_parse="csv",
             parser=ReportParsers.parse_M2M_Settlement_srw,
+        ),
+
+        "MM_Annual_Report": Report(
+             url_builder=MISOMarketReportsURLBuilder(
+                target="MM_Annual_Report",
+                supported_extensions=["zip"],
+                url_generator=MISOMarketReportsURLBuilder.url_generator_YYYYmmdd_first,
+            ),
+            type_to_parse="zip",
+            parser=ReportParsers.parse_MM_Annual_Report,
         ),
     }
 
