@@ -98,3 +98,38 @@ def parse_5min_exante_lmp(
 
     return df
 ```
+
+## Templates
+run.py
+```python
+import datetime
+from MISOReports.MISOReports import MISOReports
+import pandas as pd
+
+report_name = "ms_vlr_HIST"
+
+df = MISOReports.get_df(
+    report_name=report_name, 
+    ddatetime=datetime.datetime(year=2022, month=10, day=21),
+)
+
+print("Top of df")
+print(df.head(2))
+print()
+print("Bottom of df")
+print(df.tail(2))
+
+columns = list(df.columns)
+
+types = [str(type(df.iloc[0, i])) for i in range(df.shape[1])]
+
+types_df = pd.DataFrame(
+    {
+        "columns": columns,
+        "types": types,
+    }
+)
+
+with pd.option_context('display.max_rows', None, 'display.max_columns', None):
+    print(types_df)
+```

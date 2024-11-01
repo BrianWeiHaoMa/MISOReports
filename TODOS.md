@@ -119,8 +119,8 @@ https://docs.misoenergy.org/marketreports/202410_rt_expost_str_mcp.xlsx
 Market Settlements
 Brian
 ```
-https://docs.misoenergy.org/marketreports/20241020_Daily_Uplift_by_Local_Resource_Zone.xlsx
-https://docs.misoenergy.org/marketreports/2022_ms_vlr_HIST.csv
+    https://docs.misoenergy.org/marketreports/20241020_Daily_Uplift_by_Local_Resource_Zone.xlsx
+    https://docs.misoenergy.org/marketreports/2022_ms_vlr_HIST.csv
 https://docs.misoenergy.org/marketreports/20241022_ccf_co.csv
 https://docs.misoenergy.org/marketreports/20241029_ms_ecf_srw.xlsx
 https://docs.misoenergy.org/marketreports/2024_ms_vlr_HIST_SRW.xlsx
@@ -196,3 +196,12 @@ https://docs.misoenergy.org/marketreports/20241020_sr_nd_is.xls
 https://docs.misoenergy.org/marketreports/PeakHourOverview_03052022.csv
 https://docs.misoenergy.org/marketreports/2024_sr_tcdc_group2.csv
 ```
+
+## Final check of all the reports
+IMPORTANT: Remember to check the very bottom of each report in case
+they have some sort of message that is not supposed to be a part of the
+data. For example 
+```
+"MISO MAKES NO REPRESENTATIONS OR WARRANTIES OF ANY KIND, EXPRESS OR IMPLIED, WITH RESPECT TO THE ACCURACY OR ADEQUACY OF THE INFORMATION CONTAINED HEREIN. MISO SHALL HAVE NO LIABILITY TO RECIPIENTS OF THIS INFORMATION OR THIRD PARTIES FOR THE CONSEQUENCES ARISING FROM ERRORS OR DISCREPANCIES IN THIS INFORMATION, FOR RECIPIENTS' OR THIRD PARTIES' RELIANCE UPON SUCH INFORMATION, OR FOR ANY CLAIM, LOSS OR DAMAGE OF ANY KIND OR NATURE WHATSOEVER ARISING OUT OF OR IN CONNECTION WITH (i) THE DEFICIENCY OR INADEQUACY OF THIS INFORMATION FOR ANY PURPOSE, WHETHER OR NOT KNOWN OR DISCLOSED TO MISO, (ii) ANY ERROR OR DISCREPANCY IN THIS INFORMATION, (iii) THE USE OF THIS INFORMATION, OR (iv) ANY LOSS OF BUSINESS OR OTHER CONSEQUENTIAL LOSS OR DAMAGE WHETHER OR NOT RESULTING FROM ANY OF THE FOREGOING.
+```
+was found on the very end of a ms_vlr_HIST report.
