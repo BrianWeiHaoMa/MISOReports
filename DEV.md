@@ -106,18 +106,29 @@ import datetime
 from MISOReports.MISOReports import MISOReports
 import pandas as pd
 
-report_name = "ms_vlr_HIST"
+report_name = "rt_or"
+file_extension = "xls"
+
+ddatetime = datetime.datetime(year=2024, month=9, day=10)
+
+url = MISOReports.get_url(
+    report_name=report_name,
+    file_extension=file_extension,
+    ddatetime=ddatetime,
+)
 
 df = MISOReports.get_df(
     report_name=report_name, 
-    ddatetime=datetime.datetime(year=2022, month=10, day=21),
+    ddatetime=ddatetime,
 )
 
+print(f"URL example: {url}")
+
 print("Top of df")
-print(df.head(2))
+print(df.head(10))
 print()
 print("Bottom of df")
-print(df.tail(2))
+print(df.tail(10))
 
 columns = list(df.columns)
 
@@ -130,6 +141,5 @@ types_df = pd.DataFrame(
     }
 )
 
-with pd.option_context('display.max_rows', None, 'display.max_columns', None):
-    print(types_df)
+print(types_df.to_string())
 ```
