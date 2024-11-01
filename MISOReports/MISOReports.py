@@ -173,6 +173,20 @@ class MISOMarketReportsURLBuilder(URLBuilder):
         res = f"https://docs.misoenergy.org/marketreports/{target}_{ddatetime.strftime('%Y%m%d')}.{URLBuilder.extension_placeholder}"
         return res
     
+    def url_generator_YYYY_mm_dd_last(
+        ddatetime: datetime.datetime,
+        target: str,
+    ) -> str:
+        res = f"https://docs.misoenergy.org/marketreports/{target}_{ddatetime.strftime('%Y_%m_%d')}.{URLBuilder.extension_placeholder}"
+        return res
+    
+    def url_generator_YYYY_last(
+        ddatetime: datetime.datetime,
+        target: str,
+    ) -> str:
+        res = f"https://docs.misoenergy.org/marketreports/{target}_{ddatetime.strftime('%Y')}.{URLBuilder.extension_placeholder}"
+        return res
+    
     @staticmethod
     def url_generator_no_date(
         ddatetime: datetime.datetime,
@@ -1182,7 +1196,71 @@ class MISOReports:
             res: requests.Response,
         ) -> pd.DataFrame:
             raise NotImplementedError("Result contains atypical column arrangement.")
+        
+        @staticmethod
+        def parse_Allocation_on_MISO_Flowgates(
+            res: requests.Response,
+        ) -> pd.DataFrame:
+            text = res.text
+            csv_data = "\n".join(text.splitlines()[:-2])
 
+            df = pd.read_csv(
+                filepath_or_buffer=io.StringIO(csv_data),
+                thousands=',',
+            )
+
+            return df
+        
+        @staticmethod
+        def parse_M2M_FFE(
+            res: requests.Response,
+        ) -> pd.DataFrame:
+            text = res.text
+            csv_data = "\n".join(text.splitlines()[:-2])
+
+            df = pd.read_csv(
+                filepath_or_buffer=io.StringIO(csv_data),
+                parse_dates=[
+                    "Hour Ending", 
+                ],
+                date_format="%m/%d/%Y  %I:%M:%S %p",
+            )
+
+            return df
+        
+        @staticmethod
+        def parse_M2M_Flowgates_as_of(
+            res: requests.Response,
+        ) -> pd.DataFrame:
+            csv_data = res.text
+
+            df = pd.read_csv(
+                filepath_or_buffer=io.StringIO(csv_data),
+            )
+
+            return df
+        
+        @staticmethod
+        def parse_da_M2M_Settlement_srw(
+            res: requests.Response,
+        ) -> pd.DataFrame:
+            raise NotImplementedError("Data not typically provided.")
+        
+        @staticmethod
+        def parse_M2M_Settlement_srw(
+            res: requests.Response,
+        ) -> pd.DataFrame:
+            csv_data = res.text
+
+            df = pd.read_csv(
+                filepath_or_buffer=io.StringIO(csv_data),
+                parse_dates=[
+                    "HOUR_ENDING", 
+                ],
+                date_format="%Y-%m-%d %H:%M:%S",
+            )
+
+            return df
 
     report_mappings: dict[str, Report] = {
         "rt_or": Report(
@@ -1897,6 +1975,56 @@ class MISOReports:
             ),
             type_to_parse="xlsx",
             parser=ReportParsers.parse_rt_expost_str_mcp,
+        ),
+
+        "Allocation_on_MISO_Flowgates": Report(
+             url_builder=MISOMarketReportsURLBuilder(
+                target="Allocation_on_MISO_Flowgates",
+                supported_extensions=["csv"],
+                url_generator=MISOMarketReportsURLBuilder.url_generator_YYYY_mm_dd_last,
+            ),
+            type_to_parse="csv",
+            parser=ReportParsers.parse_Allocation_on_MISO_Flowgates,
+        ),
+
+        "M2M_FFE": Report(
+             url_builder=MISOMarketReportsURLBuilder(
+                target="M2M_FFE",
+                supported_extensions=["CSV"],
+                url_generator=MISOMarketReportsURLBuilder.url_generator_YYYY_mm_dd_last,
+            ),
+            type_to_parse="CSV",
+            parser=ReportParsers.parse_M2M_FFE,
+        ),
+
+        "M2M_Flowgates_as_of": Report(
+             url_builder=MISOMarketReportsURLBuilder(
+                target="M2M_Flowgates_as_of",
+                supported_extensions=["CSV"],
+                url_generator=MISOMarketReportsURLBuilder.url_generator_YYYYmmdd_last,
+            ),
+            type_to_parse="CSV",
+            parser=ReportParsers.parse_M2M_Flowgates_as_of,
+        ),
+
+        "da_M2M_Settlement_srw": Report(
+             url_builder=MISOMarketReportsURLBuilder(
+                target="da_M2M_Settlement_srw",
+                supported_extensions=["csv"],
+                url_generator=MISOMarketReportsURLBuilder.url_generator_YYYY_last,
+            ),
+            type_to_parse="csv",
+            parser=ReportParsers.parse_da_M2M_Settlement_srw,
+        ),
+
+        "M2M_Settlement_srw": Report(
+             url_builder=MISOMarketReportsURLBuilder(
+                target="M2M_Settlement_srw",
+                supported_extensions=["csv"],
+                url_generator=MISOMarketReportsURLBuilder.url_generator_YYYY_last,
+            ),
+            type_to_parse="csv",
+            parser=ReportParsers.parse_M2M_Settlement_srw,
         ),
     }
 
