@@ -1134,6 +1134,54 @@ class MISOReports:
             df["Time (EST)"] = pd.to_datetime(df["Time (EST)"], format="%Y-%m-%d %I:%M:%S %p")
 
             return df
+        
+        @staticmethod
+        def parse_da_exante_ramp_mcp(
+            res: requests.Response,
+        ) -> pd.DataFrame:
+            raise NotImplementedError("Result contains atypical column arrangement.")
+        
+        @staticmethod
+        def parse_da_exante_str_mcp(
+            res: requests.Response,
+        ) -> pd.DataFrame:
+            raise NotImplementedError("Result contains atypical column arrangement.")
+        
+        @staticmethod
+        def parse_da_expost_ramp_mcp(
+            res: requests.Response,
+        ) -> pd.DataFrame:
+            raise NotImplementedError("Result contains atypical column arrangement.")
+        
+        @staticmethod
+        def parse_da_expost_str_mcp(
+            res: requests.Response,
+        ) -> pd.DataFrame:
+            raise NotImplementedError("Result contains atypical column arrangement.")
+        
+        @staticmethod
+        def parse_rt_expost_ramp_5min_mcp(
+            res: requests.Response,
+        ) -> pd.DataFrame:
+            raise NotImplementedError("Result contains atypical column arrangement.")
+        
+        @staticmethod
+        def parse_rt_expost_ramp_mcp(
+            res: requests.Response,
+        ) -> pd.DataFrame:
+            raise NotImplementedError("Result contains atypical column arrangement.")
+        
+        @staticmethod
+        def parse_rt_expost_str_5min_mcp(
+            res: requests.Response,
+        ) -> pd.DataFrame:
+            raise NotImplementedError("Result contains atypical column arrangement.")
+        
+        @staticmethod
+        def parse_rt_expost_str_mcp(
+            res: requests.Response,
+        ) -> pd.DataFrame:
+            raise NotImplementedError("Result contains atypical column arrangement.")
 
 
     report_mappings: dict[str, Report] = {
@@ -1769,6 +1817,86 @@ class MISOReports:
             ),
             type_to_parse="xlsx",
             parser=ReportParsers.parse_5min_expost_mcp,
+        ),
+
+        "da_exante_ramp_mcp": Report(
+            url_builder=MISOMarketReportsURLBuilder(
+                target="da_exante_ramp_mcp",
+                supported_extensions=["xlsx"],
+                url_generator=MISOMarketReportsURLBuilder.url_generator_YYYYmmdd_first
+            ),
+            type_to_parse="xlsx",
+            parser=ReportParsers.parse_da_exante_ramp_mcp,
+        ),
+
+        "da_exante_str_mcp": Report(
+            url_builder=MISOMarketReportsURLBuilder(
+                target="da_exante_str_mcp",
+                supported_extensions=["xlsx"],
+                url_generator=MISOMarketReportsURLBuilder.url_generator_YYYYmmdd_first
+            ),
+            type_to_parse="xlsx",
+            parser=ReportParsers.parse_da_exante_str_mcp,
+        ),
+
+        "da_expost_ramp_mcp": Report(
+            url_builder=MISOMarketReportsURLBuilder(
+                target="da_expost_ramp_mcp",
+                supported_extensions=["xlsx"],
+                url_generator=MISOMarketReportsURLBuilder.url_generator_YYYYmmdd_first
+            ),
+            type_to_parse="xlsx",
+            parser=ReportParsers.parse_da_expost_ramp_mcp,
+        ),
+
+        "da_expost_str_mcp": Report(
+            url_builder=MISOMarketReportsURLBuilder(
+                target="da_expost_str_mcp",
+                supported_extensions=["xlsx"],
+                url_generator=MISOMarketReportsURLBuilder.url_generator_YYYYmmdd_first
+            ),
+            type_to_parse="xlsx",
+            parser=ReportParsers.parse_da_expost_str_mcp,
+        ),
+
+        "rt_expost_ramp_5min_mcp": Report(
+            url_builder=MISOMarketReportsURLBuilder(
+                target="rt_expost_ramp_5min_mcp",
+                supported_extensions=["xlsx"],
+                url_generator=MISOMarketReportsURLBuilder.url_generator_YYYYmm_first
+            ),
+            type_to_parse="xlsx",
+            parser=ReportParsers.parse_rt_expost_ramp_5min_mcp,
+        ),
+
+        "rt_expost_ramp_mcp": Report(
+            url_builder=MISOMarketReportsURLBuilder(
+                target="rt_expost_ramp_mcp",
+                supported_extensions=["xlsx"],
+                url_generator=MISOMarketReportsURLBuilder.url_generator_YYYYmm_first
+            ),
+            type_to_parse="xlsx",
+            parser=ReportParsers.parse_rt_expost_ramp_mcp,
+        ),
+
+        "rt_expost_str_5min_mcp": Report(
+            url_builder=MISOMarketReportsURLBuilder(
+                target="rt_expost_str_5min_mcp",
+                supported_extensions=["xlsx"],
+                url_generator=MISOMarketReportsURLBuilder.url_generator_YYYYmm_first
+            ),
+            type_to_parse="xlsx",
+            parser=ReportParsers.parse_rt_expost_str_5min_mcp,
+        ),
+
+        "rt_expost_str_mcp": Report(
+            url_builder=MISOMarketReportsURLBuilder(
+                target="rt_expost_str_mcp",
+                supported_extensions=["xlsx"],
+                url_generator=MISOMarketReportsURLBuilder.url_generator_YYYYmm_first
+            ),
+            type_to_parse="xlsx",
+            parser=ReportParsers.parse_rt_expost_str_mcp,
         ),
     }
 
