@@ -208,6 +208,41 @@ class MISOReports:
             been implemented due to design decisions.
         """
         @staticmethod
+        def parse_rt_or(
+            res: requests.Response,
+        ) -> pd.DataFrame:
+            df = pd.read_excel(
+                io=io.BytesIO(res.content),
+                skiprows=3,
+                dtype={
+                    "Flowgate NERC ID": pd.StringDtype(),
+                },
+            )
+
+            df["Hour of  Occurrence"] = pd.to_datetime(df["Hour of  Occurrence"], format="%H:%M").dt.time
+
+            return df
+
+        @staticmethod
+        def parse_rt_fuel_on_margin(
+            res: requests.Response,
+        ) -> pd.DataFrame:
+            with zipfile.ZipFile(file=io.BytesIO(res.content)) as z:
+                content = z.read(z.namelist()[0])
+
+            df = pd.read_excel(
+                io=io.BytesIO(content),
+                skiprows=3,
+                dtype={
+                    "Unit Count": pd.Int64Dtype(),
+                }
+            ).iloc[:-1]
+
+            df["Time Interval EST"] = pd.to_datetime(df["Time Interval EST"], format="%m/%d/%Y %I:%M:%S %p")
+
+            return df
+
+        @staticmethod
         def parse_Total_Uplift_by_Resource(
             res: requests.Response,
         ) -> pd.DataFrame:
@@ -1058,6 +1093,26 @@ class MISOReports:
 
 
     report_mappings: dict[str, Report] = {
+        "rt_or": Report(
+            url_builder=MISOMarketReportsURLBuilder(
+                target="rt_or",
+                supported_extensions=["xls"],
+                url_generator=MISOMarketReportsURLBuilder.url_generator_YYYYmmdd_first
+            ),
+            type_to_parse="xls",
+            parser=ReportParsers.parse_rt_or,
+        ),
+
+        "rt_fuel_on_margin": Report(
+            url_builder=MISOMarketReportsURLBuilder(
+                target="rt_fuel_on_margin",
+                supported_extensions=["zip"],
+                url_generator=MISOMarketReportsURLBuilder.url_generator_YYYY_first
+            ),
+            type_to_parse="zip",
+            parser=ReportParsers.parse_rt_fuel_on_margin,
+        ),
+
         "Total_Uplift_by_Resource": Report(
             url_builder=MISOMarketReportsURLBuilder(
                 target="Total_Uplift_by_Resource",
