@@ -1090,6 +1090,50 @@ class MISOReports:
             )
 
             return df
+        
+        @staticmethod
+        def parse_asm_expost_damcp(
+            res: requests.Response,
+        ) -> pd.DataFrame:
+            raise NotImplementedError("Result contains 2 csv tables.")
+        
+        @staticmethod
+        def parse_asm_rtmcp_final(
+            res: requests.Response,
+        ) -> pd.DataFrame:
+            raise NotImplementedError("Result contains 2 csv tables.")
+        
+        @staticmethod
+        def parse_asm_rtmcp_prelim(
+            res: requests.Response,
+        ) -> pd.DataFrame:
+            raise NotImplementedError("Result contains 2 csv tables.")
+        
+        @staticmethod
+        def parse_5min_exante_mcp(
+            res: requests.Response,
+        ) -> pd.DataFrame:
+            df = pd.read_excel(
+                io=io.BytesIO(res.content),
+                skiprows=3,
+            ).iloc[:-3]
+
+            df["Time (EST)"] = pd.to_datetime(df["Time (EST)"], format="%Y-%m-%d %I:%M:%S %p")
+
+            return df
+        
+        @staticmethod
+        def parse_5min_expost_mcp(
+            res: requests.Response,
+        ) -> pd.DataFrame:
+            df = pd.read_excel(
+                io=io.BytesIO(res.content),
+                skiprows=3,
+            ).iloc[:-3]
+
+            df["Time (EST)"] = pd.to_datetime(df["Time (EST)"], format="%Y-%m-%d %I:%M:%S %p")
+
+            return df
 
 
     report_mappings: dict[str, Report] = {
@@ -1675,6 +1719,56 @@ class MISOReports:
             ),
             type_to_parse="zip",
             parser=ReportParsers.parse_ftr_mpma_bids_offers,
+        ),
+
+        "asm_expost_damcp": Report(
+             url_builder=MISOMarketReportsURLBuilder(
+                target="asm_expost_damcp",
+                supported_extensions=["csv"],
+                url_generator=MISOMarketReportsURLBuilder.url_generator_YYYYmmdd_first,
+            ),
+            type_to_parse="csv",
+            parser=ReportParsers.parse_asm_expost_damcp,
+        ),
+
+        "asm_rtmcp_final": Report(
+             url_builder=MISOMarketReportsURLBuilder(
+                target="asm_rtmcp_final",
+                supported_extensions=["csv"],
+                url_generator=MISOMarketReportsURLBuilder.url_generator_YYYYmmdd_first,
+            ),
+            type_to_parse="csv",
+            parser=ReportParsers.parse_asm_rtmcp_final,
+        ),
+
+        "asm_rtmcp_prelim": Report(
+             url_builder=MISOMarketReportsURLBuilder(
+                target="asm_rtmcp_prelim",
+                supported_extensions=["csv"],
+                url_generator=MISOMarketReportsURLBuilder.url_generator_YYYYmmdd_first,
+            ),
+            type_to_parse="csv",
+            parser=ReportParsers.parse_asm_rtmcp_prelim,
+        ),
+
+        "5min_exante_mcp": Report(
+            url_builder=MISOMarketReportsURLBuilder(
+                target="5min_exante_mcp",
+                supported_extensions=["xlsx"],
+                url_generator=MISOMarketReportsURLBuilder.url_generator_YYYYmmdd_first
+            ),
+            type_to_parse="xlsx",
+            parser=ReportParsers.parse_5min_exante_mcp,
+        ),
+
+        "5min_expost_mcp": Report(
+            url_builder=MISOMarketReportsURLBuilder(
+                target="5min_expost_mcp",
+                supported_extensions=["xlsx"],
+                url_generator=MISOMarketReportsURLBuilder.url_generator_YYYYmmdd_first
+            ),
+            type_to_parse="xlsx",
+            parser=ReportParsers.parse_5min_expost_mcp,
         ),
     }
 
