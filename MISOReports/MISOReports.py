@@ -1405,7 +1405,7 @@ class MISOReports:
                 usecols='B:C',
             ).iloc[:-3]
 
-            df.columns = ["Mkt Hour", "PNODE Name"]
+            df.rename({"Unnamed: 1": "Mkt Hour","Unnamed: 2": "PNODE Name"})
             df = df.dropna()
             df = df[df["Mkt Hour"] != "\n\nMkt Hour"]
             df = df.reset_index(drop=True)
