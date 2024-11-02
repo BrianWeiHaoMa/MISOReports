@@ -213,6 +213,13 @@ class MISOReports:
             parser: Callable[[requests.Response], pd.DataFrame],
             example_url: str,
         ):
+            """Constructor for Report class.
+
+            :param URLBuilder url_builder: The URL builder to be used for the report.
+            :param str type_to_parse: The type of the file to pass as input into the parser.
+            :param Callable[[requests.Response], pd.DataFrame] parser: The parser for the report.
+            :param str example_url: A working URL example for the report.
+            """
             self.url_builder = url_builder
             self.type_to_parse = type_to_parse
             self.report_parser = parser
