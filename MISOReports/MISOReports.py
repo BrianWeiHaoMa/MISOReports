@@ -1359,6 +1359,25 @@ class MISOReports:
             res: requests.Response,
         ) -> pd.DataFrame:
             raise NotImplementedError("Result contains 5 .xlsx files.")
+        
+        @staticmethod
+        def parse_da_bc_HIST(
+            res: requests.Response,
+        ) -> pd.DataFrame:
+            text = res.text
+            csv_data = "\n".join(text.splitlines()[2:-3])
+
+            df = pd.read_csv(
+                filepath_or_buffer=io.StringIO(csv_data),
+                parse_dates=[
+                    "Market Date", 
+                ],
+                date_format="%d/%m/%Y",
+            )
+
+            df["Shadow Price"] = df["Shadow Price"].replace('[\$,()]', '', regex=True).astype(float)
+
+            return df
 
 
     report_mappings: dict[str, Report] = {
@@ -2194,6 +2213,16 @@ class MISOReports:
             ),
             type_to_parse="zip",
             parser=ReportParsers.parse_MM_Annual_Report,
+        ),
+
+        "da_bc_HIST": Report(
+             url_builder=MISOMarketReportsURLBuilder(
+                target="da_bc_HIST",
+                supported_extensions=["csv"],
+                url_generator=MISOMarketReportsURLBuilder.url_generator_YYYY_first,
+            ),
+            type_to_parse="csv",
+            parser=ReportParsers.parse_da_bc_HIST,
         ),
     }
 
