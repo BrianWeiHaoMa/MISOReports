@@ -1375,7 +1375,7 @@ class MISOReports:
                 date_format="%m/%d/%Y",
             )
 
-            df["Shadow Price"] = df["Shadow Price"].replace('[\$,()]', '', regex=True).astype(float)
+            df["Shadow Price"] = df["Shadow Price"].replace(r'[\$,()]', '', regex=True).astype(float)
 
             return df
         
