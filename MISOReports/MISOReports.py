@@ -1372,10 +1372,21 @@ class MISOReports:
                 parse_dates=[
                     "Market Date", 
                 ],
-                date_format="%d/%m/%Y",
+                date_format="%m/%d/%Y",
             )
 
             df["Shadow Price"] = df["Shadow Price"].replace('[\$,()]', '', regex=True).astype(float)
+
+            return df
+        
+        @staticmethod
+        def parse_da_ex_rg(
+            res: requests.Response,
+        ) -> pd.DataFrame:
+            df = pd.read_excel(
+                io=io.BytesIO(res.content),
+                skiprows=6,
+            ).iloc[:-3]
 
             return df
 
@@ -2223,6 +2234,16 @@ class MISOReports:
             ),
             type_to_parse="csv",
             parser=ReportParsers.parse_da_bc_HIST,
+        ),
+
+        "da_ex_rg": Report(
+            url_builder=MISOMarketReportsURLBuilder(
+                target="da_ex_rg",
+                supported_extensions=["xlsx"],
+                url_generator=MISOMarketReportsURLBuilder.url_generator_YYYYmmdd_first
+            ),
+            type_to_parse="xlsx",
+            parser=ReportParsers.parse_da_ex_rg,
         ),
     }
 
