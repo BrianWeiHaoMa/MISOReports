@@ -145,11 +145,11 @@ Market to Market
 Offers
 William
 ```
-https://docs.misoenergy.org/marketreports/20240801_asm_da_co.zip
-https://docs.misoenergy.org/marketreports/20240801_asm_rt_co.zip
-https://docs.misoenergy.org/marketreports/20240801_da_co.zip
-https://docs.misoenergy.org/marketreports/Dead_Node_Report_20241030.xls
-https://docs.misoenergy.org/marketreports/20240801_rt_co.zip
+    https://docs.misoenergy.org/marketreports/20240801_asm_da_co.zip
+    https://docs.misoenergy.org/marketreports/20240801_asm_rt_co.zip
+    https://docs.misoenergy.org/marketreports/20240801_da_co.zip
+    https://docs.misoenergy.org/marketreports/Dead_Node_Report_20241030.xls
+    https://docs.misoenergy.org/marketreports/20240801_rt_co.zip
 ```
 
 Real-Time
@@ -178,10 +178,10 @@ Resource Adequacy
 Summary
 William
 ```
-https://docs.misoenergy.org/marketreports/20241002_cpnode_reszone.xlsx
-https://docs.misoenergy.org/marketreports/20241020_sr_ctsl.pdf
-https://docs.misoenergy.org/marketreports/20241030_df_al.xls
-https://docs.misoenergy.org/marketreports/20241030_rf_al.xls
+    https://docs.misoenergy.org/marketreports/20241002_cpnode_reszone.xlsx
+    https://docs.misoenergy.org/marketreports/20241020_sr_ctsl.pdf
+    *https://docs.misoenergy.org/marketreports/20241030_df_al.xls
+    *https://docs.misoenergy.org/marketreports/20241030_rf_al.xls
 https://docs.misoenergy.org/marketreports/20241030_sr_gfm.xlsx
 https://docs.misoenergy.org/marketreports/20241030_dfal_HIST.xls
 https://docs.misoenergy.org/marketreports/historical_gen_fuel_mix_2023.xlsx

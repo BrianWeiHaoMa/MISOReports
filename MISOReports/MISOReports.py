@@ -1361,6 +1361,127 @@ class MISOReports:
             raise NotImplementedError("Result contains 5 .xlsx files.")
         
         @staticmethod
+        def parse_asm_da_co(
+            res: requests.Response,
+        ) -> pd.DataFrame:
+            with zipfile.ZipFile(file=io.BytesIO(res.content)) as z:
+                csv_data = z.read(z.namelist()[0]).decode("utf-8")
+
+            df = pd.read_csv(
+                filepath_or_buffer=io.StringIO(csv_data),
+                parse_dates=[
+                    "Date/Time Beginning (EST)", 
+                    "Date/Time End (EST)",
+                ], 
+                date_format="%m/%d/%Y %H:%M:%S",
+            )
+
+            return df
+        
+        @staticmethod
+        def parse_asm_rt_co(
+            res: requests.Response,
+        ) -> pd.DataFrame:
+            with zipfile.ZipFile(file=io.BytesIO(res.content)) as z:
+                csv_data = z.read(z.namelist()[0]).decode("utf-8")
+
+            df = pd.read_csv(
+                filepath_or_buffer=io.StringIO(csv_data),
+                parse_dates=[
+                    "Mkthour Begin (EST)", 
+                ], 
+                date_format="%m/%d/%Y %H:%M:%S",
+            )
+
+            return df
+        
+        @staticmethod
+        def parse_Dead_Node_Report(
+            res: requests.Response,
+        ) -> pd.DataFrame:
+            df = pd.read_excel(
+                io=io.BytesIO(res.content),
+                skiprows=9,
+                usecols='B:C',
+            ).iloc[:-3]
+
+            df.rename({"Unnamed: 1": "Mkt Hour","Unnamed: 2": "PNODE Name"})
+            df = df.dropna()
+            df = df[df["Mkt Hour"] != "\n\nMkt Hour"]
+            df = df.reset_index(drop=True)
+
+            return df
+        
+        @staticmethod
+        def parse_rt_co(
+            res: requests.Response,
+        ) -> pd.DataFrame:
+            with zipfile.ZipFile(file=io.BytesIO(res.content)) as z:
+                csv_data = z.read(z.namelist()[0]).decode("utf-8")
+
+            df = pd.read_csv(
+                filepath_or_buffer=io.StringIO(csv_data),
+                parse_dates=[
+                    "Mkthour Begin (EST)", 
+                ], 
+                date_format="%m/%d/%Y %H:%M:%S",
+            )
+
+            return df
+        
+        @staticmethod
+        def parse_cpnode_reszone(
+            res: requests.Response,
+        ) -> pd.DataFrame:
+            df = pd.read_excel(
+                io=io.BytesIO(res.content),
+                skiprows=3,
+            ).iloc[:-1]
+
+            return df
+        
+        @staticmethod
+        def parse_sr_ctsl(
+            res: requests.Response,
+        ) -> pd.DataFrame:
+            raise NotImplementedError("Data in pdf format.")
+
+        @staticmethod
+        def parse_df_al(
+            res: requests.Response,
+        ) -> pd.DataFrame:
+            df = pd.read_excel(
+                io=io.BytesIO(res.content),
+                skiprows=4,
+            ).iloc[:-1]
+
+            df = df[df["Market Day"] != "Market Day"]
+            df = df[df["HourEnding"].notna()]
+            df = df.reset_index(drop=True)
+            df.iloc[:,2:] = df.iloc[:,2:].astype(pd.Float64Dtype())
+            df["Market Day"] = pd.to_datetime(df["Market Day"], format="%m/%d/%Y")
+
+            return df
+        
+        @staticmethod
+        def parse_rf_al(
+            res: requests.Response,
+        ) -> pd.DataFrame:
+            df = pd.read_excel(
+                io=io.BytesIO(res.content),
+                skiprows=5,
+                usecols='B:K',
+            ).iloc[:-3]
+
+            df = df.dropna(how="all")
+            df = df[df["Market Day"] != "Market Day"]
+            df = df.reset_index(drop=True)
+            df.iloc[:,2:] = df.iloc[:,2:].astype(pd.Float64Dtype())
+            df["Market Day"] = pd.to_datetime(df["Market Day"], format="%m/%d/%Y")
+
+            return df
+        
+        @staticmethod
         def parse_da_bc_HIST(
             res: requests.Response,
         ) -> pd.DataFrame:
@@ -2249,6 +2370,86 @@ class MISOReports:
             ),
             type_to_parse="zip",
             parser=ReportParsers.parse_MM_Annual_Report,
+        ),
+
+        "asm_da_co": Report(
+             url_builder=MISOMarketReportsURLBuilder(
+                target="asm_da_co",
+                supported_extensions=["zip"],
+                url_generator=MISOMarketReportsURLBuilder.url_generator_YYYYmmdd_first,
+            ),
+            type_to_parse="zip",
+            parser=ReportParsers.parse_asm_da_co,
+        ),
+
+        "asm_rt_co": Report(
+             url_builder=MISOMarketReportsURLBuilder(
+                target="asm_rt_co",
+                supported_extensions=["zip"],
+                url_generator=MISOMarketReportsURLBuilder.url_generator_YYYYmmdd_first,
+            ),
+            type_to_parse="zip",
+            parser=ReportParsers.parse_asm_rt_co,
+        ),
+
+        "Dead_Node_Report": Report(
+             url_builder=MISOMarketReportsURLBuilder(
+                target="Dead_Node_Report",
+                supported_extensions=["xls"],
+                url_generator=MISOMarketReportsURLBuilder.url_generator_YYYYmmdd_last,
+            ),
+            type_to_parse="xls",
+            parser=ReportParsers.parse_Dead_Node_Report,
+        ),
+
+        "rt_co": Report(
+             url_builder=MISOMarketReportsURLBuilder(
+                target="rt_co",
+                supported_extensions=["zip"],
+                url_generator=MISOMarketReportsURLBuilder.url_generator_YYYYmmdd_first,
+            ),
+            type_to_parse="zip",
+            parser=ReportParsers.parse_rt_co,
+        ),
+
+        "cpnode_reszone": Report(
+             url_builder=MISOMarketReportsURLBuilder(
+                target="cpnode_reszone",
+                supported_extensions=["xlsx"],
+                url_generator=MISOMarketReportsURLBuilder.url_generator_YYYYmmdd_first,
+            ),
+            type_to_parse="xlsx",
+            parser=ReportParsers.parse_cpnode_reszone,
+        ),
+        
+        "sr_ctsl": Report(
+             url_builder=MISOMarketReportsURLBuilder(
+                target="sr_ctsl",
+                supported_extensions=["pdf"],
+                url_generator=MISOMarketReportsURLBuilder.url_generator_YYYYmmdd_first,
+            ),
+            type_to_parse="pdf",
+            parser=ReportParsers.parse_sr_ctsl,
+        ),
+
+        "df_al": Report(
+             url_builder=MISOMarketReportsURLBuilder(
+                target="df_al",
+                supported_extensions=["xls"],
+                url_generator=MISOMarketReportsURLBuilder.url_generator_YYYYmmdd_first,
+            ),
+            type_to_parse="xls",
+            parser=ReportParsers.parse_df_al,
+        ),
+
+        "rf_al": Report(
+             url_builder=MISOMarketReportsURLBuilder(
+                target="rf_al",
+                supported_extensions=["xls"],
+                url_generator=MISOMarketReportsURLBuilder.url_generator_YYYYmmdd_first,
+            ),
+            type_to_parse="xls",
+            parser=ReportParsers.parse_rf_al,
         ),
 
         "da_bc_HIST": Report(
