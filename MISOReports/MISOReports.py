@@ -1389,6 +1389,31 @@ class MISOReports:
             ).iloc[:-3]
 
             return df
+        
+        @staticmethod
+        def parse_da_ex(
+            res: requests.Response,
+        ) -> pd.DataFrame:
+            df = pd.read_excel(
+                io=io.BytesIO(res.content),
+                skiprows=5,
+            )
+
+            df.rename( columns={"Unnamed: 0": "Hour"}, inplace=True )
+            df["Hour"] = df["Hour"].replace('[^\\d]+', '', regex=True).astype(int)
+
+            return df
+        
+        @staticmethod
+        def parse_da_rpe(
+            res: requests.Response,
+        ) -> pd.DataFrame:
+            df = pd.read_excel(
+                io=io.BytesIO(res.content),
+                skiprows=3,
+            )[:-1]
+
+            return df
 
 
     report_mappings: dict[str, Report] = {
@@ -2244,6 +2269,26 @@ class MISOReports:
             ),
             type_to_parse="xlsx",
             parser=ReportParsers.parse_da_ex_rg,
+        ),
+
+        "da_ex": Report(
+            url_builder=MISOMarketReportsURLBuilder(
+                target="da_ex",
+                supported_extensions=["xls"],
+                url_generator=MISOMarketReportsURLBuilder.url_generator_YYYYmmdd_first
+            ),
+            type_to_parse="xls",
+            parser=ReportParsers.parse_da_ex,
+        ),
+
+        "da_rpe": Report(
+            url_builder=MISOMarketReportsURLBuilder(
+                target="da_rpe",
+                supported_extensions=["xls"],
+                url_generator=MISOMarketReportsURLBuilder.url_generator_YYYYmmdd_first
+            ),
+            type_to_parse="xls",
+            parser=ReportParsers.parse_da_rpe,
         ),
     }
 
