@@ -211,10 +211,12 @@ class MISOReports:
             url_builder: URLBuilder,
             type_to_parse: str,
             parser: Callable[[requests.Response], pd.DataFrame],
+            example_url: str,
         ):
             self.url_builder = url_builder
             self.type_to_parse = type_to_parse
             self.report_parser = parser
+            self.example_url = example_url
 
     
     class ReportParsers:
@@ -1430,6 +1432,24 @@ class MISOReports:
             return df
         
         @staticmethod
+        def parse_da_co(
+            res: requests.Response,
+        ) -> pd.DataFrame:
+            with zipfile.ZipFile(file=io.BytesIO(res.content)) as z:
+                csv_data = z.read(z.namelist()[0]).decode("utf-8")
+
+            df = pd.read_csv(
+                filepath_or_buffer=io.StringIO(csv_data),
+                parse_dates=[
+                    "Date/Time Beginning (EST)", 
+                    "Date/Time End (EST)",
+                ], 
+                date_format="%m/%d/%Y %H:%M:%S",
+            )
+
+            return df
+        
+        @staticmethod
         def parse_cpnode_reszone(
             res: requests.Response,
         ) -> pd.DataFrame:
@@ -1546,6 +1566,7 @@ class MISOReports:
             ),
             type_to_parse="xls",
             parser=ReportParsers.parse_rt_pr,
+            example_url="https://docs.misoenergy.org/marketreports/20241026_rt_pr.xls",
         ),
 
         "rt_irsf": Report(
@@ -1556,6 +1577,7 @@ class MISOReports:
             ),
             type_to_parse="csv",
             parser=ReportParsers.parse_rt_irsf,
+            example_url="https://docs.misoenergy.org/marketreports/20241030_rt_irsf.csv",
         ),
 
         "rt_mf": Report(
@@ -1566,6 +1588,7 @@ class MISOReports:
             ),
             type_to_parse="xlsx",
             parser=ReportParsers.parse_rt_mf,
+            example_url="https://docs.misoenergy.org/marketreports/20241030_rt_mf.xlsx",
         ),
 
         "rt_ex": Report(
@@ -1576,6 +1599,7 @@ class MISOReports:
             ),
             type_to_parse="xls",
             parser=ReportParsers.parse_rt_ex,
+            example_url="https://docs.misoenergy.org/marketreports/20241030_rt_ex.xls",
         ),
 
         "rt_pbc": Report(
@@ -1586,6 +1610,7 @@ class MISOReports:
             ),
             type_to_parse="csv",
             parser=ReportParsers.parse_rt_pbc,
+            example_url="https://docs.misoenergy.org/marketreports/20241001_rt_pbc.csv",
         ),
 
         "rt_bc": Report(
@@ -1596,6 +1621,7 @@ class MISOReports:
             ),
             type_to_parse="xls",
             parser=ReportParsers.parse_rt_bc,
+            example_url="https://docs.misoenergy.org/marketreports/20241030_rt_bc.xls",
         ),
 
         "rt_or": Report(
@@ -1606,6 +1632,7 @@ class MISOReports:
             ),
             type_to_parse="xls",
             parser=ReportParsers.parse_rt_or,
+            example_url="https://docs.misoenergy.org/marketreports/20240910_rt_or.xls",
         ),
 
         "rt_fuel_on_margin": Report(
@@ -1616,6 +1643,7 @@ class MISOReports:
             ),
             type_to_parse="zip",
             parser=ReportParsers.parse_rt_fuel_on_margin,
+            example_url="https://docs.misoenergy.org/marketreports/2023_rt_fuel_on_margin.zip",
         ),
 
         "Total_Uplift_by_Resource": Report(
@@ -1626,6 +1654,7 @@ class MISOReports:
             ),
             type_to_parse="xlsx",
             parser=ReportParsers.parse_Total_Uplift_by_Resource,
+            example_url="https://docs.misoenergy.org/marketreports/20241001_Total_Uplift_by_Resource.xlsx",
         ),
 
         "ms_vlr_srw": Report(
@@ -1636,6 +1665,7 @@ class MISOReports:
             ),
             type_to_parse="xlsx",
             parser=ReportParsers.parse_ms_vlr_srw,
+            example_url="https://docs.misoenergy.org/marketreports/20240901_ms_vlr_srw.xlsx",
         ),
 
         "ms_rsg_srw": Report(
@@ -1646,6 +1676,7 @@ class MISOReports:
             ),
             type_to_parse="xlsx",
             parser=ReportParsers.parse_ms_rsg_srw,
+            example_url="https://docs.misoenergy.org/marketreports/20241029_ms_rsg_srw.xlsx",
         ),
 
         "ms_rnu_srw": Report(
@@ -1656,6 +1687,7 @@ class MISOReports:
             ),
             type_to_parse="xlsx",
             parser=ReportParsers.parse_ms_rnu_srw,
+            example_url="https://docs.misoenergy.org/marketreports/20241029_ms_rnu_srw.xlsx",
         ),
 
         "ms_ri_srw": Report(
@@ -1666,6 +1698,7 @@ class MISOReports:
             ),
             type_to_parse="xlsx",
             parser=ReportParsers.parse_ms_ri_srw,
+            example_url="https://docs.misoenergy.org/marketreports/20241029_ms_ri_srw.xlsx",
         ),
 
         "MARKET_SETTLEMENT_DATA_SRW": Report(
@@ -1676,6 +1709,7 @@ class MISOReports:
             ),
             type_to_parse="zip",
             parser=ReportParsers.parse_MARKET_SETTLEMENT_DATA_SRW,
+            example_url="https://docs.misoenergy.org/marketreports/MARKET_SETTLEMENT_DATA_SRW.zip",
         ),
 
         "ms_vlr_HIST_SRW": Report(
@@ -1686,6 +1720,7 @@ class MISOReports:
             ),
             type_to_parse="xlsx",
             parser=ReportParsers.parse_ms_vlr_HIST_SRW,
+            example_url="https://docs.misoenergy.org/marketreports/2024_ms_vlr_HIST_SRW.xlsx",
         ),
 
         "ms_ecf_srw": Report(
@@ -1696,6 +1731,7 @@ class MISOReports:
             ),
             type_to_parse="xlsx",
             parser=ReportParsers.parse_ms_ecf_srw,
+            example_url="https://docs.misoenergy.org/marketreports/20241029_ms_ecf_srw.xlsx",
         ),
 
 
@@ -1707,6 +1743,7 @@ class MISOReports:
             ),
             type_to_parse="csv",
             parser=ReportParsers.parse_ccf_co,
+            example_url="https://docs.misoenergy.org/marketreports/20241020_ccf_co.csv",
         ),
 
         "ms_vlr_HIST": Report(
@@ -1717,6 +1754,7 @@ class MISOReports:
             ),
             type_to_parse="csv",
             parser=ReportParsers.parse_ms_vlr_HIST,
+            example_url="https://docs.misoenergy.org/marketreports/2022_ms_vlr_HIST.csv",
         ),
 
         "Daily_Uplift_by_Local_Resource_Zone": Report(
@@ -1727,6 +1765,7 @@ class MISOReports:
             ),
             type_to_parse="xlsx",
             parser=ReportParsers.parse_Daily_Uplift_by_Local_Resource_Zone,
+            example_url="https://docs.misoenergy.org/marketreports/20241020_Daily_Uplift_by_Local_Resource_Zone.xlsx",
         ),
 
         "fuelmix": Report(
@@ -1736,6 +1775,7 @@ class MISOReports:
             ),
             type_to_parse="csv",
             parser=ReportParsers.parse_fuelmix,
+            example_url="https://api.misoenergy.org/MISORTWDDataBroker/DataBrokerServices.asmx?messageType=getfuelmix&returnType=csv",
         ),
 
         "ace": Report(
@@ -1745,6 +1785,7 @@ class MISOReports:
             ),
             type_to_parse="csv",
             parser=ReportParsers.parse_ace,
+            example_url="https://api.misoenergy.org/MISORTWDDataBroker/DataBrokerServices.asmx?messageType=getace&returnType=csv",
         ),
 
         "AncillaryServicesMCP": Report(
@@ -1754,6 +1795,7 @@ class MISOReports:
             ),
             type_to_parse="csv",
             parser=ReportParsers.parse_AncillaryServicesMCP,
+            example_url="https://api.misoenergy.org/MISORTWDDataBroker/DataBrokerServices.asmx?messageType=getAncillaryServicesMCP&returnType=csv",
         ),
 
         "cts": Report(
@@ -1763,6 +1805,7 @@ class MISOReports:
             ),
             type_to_parse="csv",
             parser=ReportParsers.parse_cts,
+            example_url="https://api.misoenergy.org/MISORTWDDataBroker/DataBrokerServices.asmx?messageType=getcts&returnType=csv",
         ),
 
         "combinedwindsolar": Report(
@@ -1772,6 +1815,7 @@ class MISOReports:
             ),
             type_to_parse="csv",
             parser=ReportParsers.parse_combinedwindsolar,
+            example_url="https://api.misoenergy.org/MISORTWDDataBroker/DataBrokerServices.asmx?messageType=getcombinedwindsolar&returnType=csv",
         ),
 
         "WindForecast": Report(
@@ -1781,6 +1825,7 @@ class MISOReports:
             ),
             type_to_parse="json",
             parser=ReportParsers.parse_WindForecast,
+            example_url="https://api.misoenergy.org/MISORTWDDataBroker/DataBrokerServices.asmx?messageType=getWindForecast&returnType=json",
         ),
 
         "Wind": Report(
@@ -1790,6 +1835,7 @@ class MISOReports:
             ),
             type_to_parse="csv",
             parser=ReportParsers.parse_Wind,
+            example_url="https://api.misoenergy.org/MISORTWDDataBroker/DataBrokerServices.asmx?messageType=getWind&returnType=csv",
         ),
 
         "SolarForecast": Report(
@@ -1799,6 +1845,7 @@ class MISOReports:
             ),
             type_to_parse="json",
             parser=ReportParsers.parse_SolarForecast,
+            example_url="https://api.misoenergy.org/MISORTWDDataBroker/DataBrokerServices.asmx?messageType=getSolarForecast&returnType=json",
         ),
 
         "Solar": Report(
@@ -1808,6 +1855,7 @@ class MISOReports:
             ),
             type_to_parse="csv",
             parser=ReportParsers.parse_Solar,
+            example_url="https://api.misoenergy.org/MISORTWDDataBroker/DataBrokerServices.asmx?messageType=getSolar&returnType=csv",
         ),
 
         "exantelmp": Report(
@@ -1817,6 +1865,7 @@ class MISOReports:
             ),
             type_to_parse="csv",
             parser=ReportParsers.parse_exantelmp,
+            example_url="https://api.misoenergy.org/MISORTWDDataBroker/DataBrokerServices.asmx?messageType=getexantelmp&returnType=csv",
         ),
 
         "da_exante_lmp": Report(
@@ -1827,6 +1876,7 @@ class MISOReports:
             ),
             type_to_parse="csv",
             parser=ReportParsers.parse_da_exante_lmp,
+            example_url="https://docs.misoenergy.org/marketreports/20241026_da_exante_lmp.csv",
         ),
 
         "da_expost_lmp": Report(
@@ -1837,6 +1887,7 @@ class MISOReports:
             ),
             type_to_parse="csv",
             parser=ReportParsers.parse_da_expost_lmp,
+            example_url="https://docs.misoenergy.org/marketreports/20241026_da_expost_lmp.csv",
         ),
 
         "rt_lmp_final": Report(
@@ -1847,6 +1898,7 @@ class MISOReports:
             ),
             type_to_parse="csv",
             parser=ReportParsers.parse_rt_lmp_final,
+            example_url="https://docs.misoenergy.org/marketreports/20241021_rt_lmp_final.csv",
         ),
 
         "rt_lmp_prelim": Report(
@@ -1857,6 +1909,7 @@ class MISOReports:
             ),
             type_to_parse="csv",
             parser=ReportParsers.parse_rt_lmp_prelim,
+            example_url="https://docs.misoenergy.org/marketreports/20241024_rt_lmp_prelim.csv",
         ),
 
         "DA_Load_EPNodes": Report(
@@ -1867,6 +1920,7 @@ class MISOReports:
             ),
             type_to_parse="zip",
             parser=ReportParsers.parse_DA_Load_EPNodes,
+            example_url="https://docs.misoenergy.org/marketreports/DA_Load_EPNodes_20241021.zip",
         ),
 
         "DA_LMPs": Report(
@@ -1877,6 +1931,7 @@ class MISOReports:
             ),
             type_to_parse="zip",
             parser=ReportParsers.parse_DA_LMPs,
+            example_url="https://docs.misoenergy.org/marketreports/2024-Jul-Sep_DA_LMPs.zip",
         ),
 
         "5min_exante_lmp": Report(
@@ -1887,6 +1942,7 @@ class MISOReports:
             ),
             type_to_parse="xlsx",
             parser=ReportParsers.parse_5min_exante_lmp,
+            example_url="https://docs.misoenergy.org/marketreports/20241025_5min_exante_lmp.xlsx",
         ),
 
         "nsi1": Report(
@@ -1896,6 +1952,7 @@ class MISOReports:
             ),
             type_to_parse="csv",
             parser=ReportParsers.parse_nsi1,
+            example_url="https://api.misoenergy.org/MISORTWDDataBroker/DataBrokerServices.asmx?messageType=getnsi1&returnType=csv",
         ),
 
         "nsi5": Report(
@@ -1905,6 +1962,7 @@ class MISOReports:
             ),
             type_to_parse="csv",
             parser=ReportParsers.parse_nsi5,
+            example_url="https://api.misoenergy.org/MISORTWDDataBroker/DataBrokerServices.asmx?messageType=getnsi5&returnType=csv",
         ),
 
         "nsi1miso": Report(
@@ -1914,6 +1972,7 @@ class MISOReports:
             ),
             type_to_parse="csv",
             parser=ReportParsers.parse_nsi1miso,
+            example_url="https://api.misoenergy.org/MISORTWDDataBroker/DataBrokerServices.asmx?messageType=getnsi1miso&returnType=csv",
         ),
 
         "nsi5miso": Report(
@@ -1923,6 +1982,7 @@ class MISOReports:
             ),
             type_to_parse="csv",
             parser=ReportParsers.parse_nsi5miso,
+            example_url="https://api.misoenergy.org/MISORTWDDataBroker/DataBrokerServices.asmx?messageType=getnsi5miso&returnType=csv",
         ),
 
         "importtotal5": Report(
@@ -1932,6 +1992,7 @@ class MISOReports:
             ),
             type_to_parse="json",
             parser=ReportParsers.parse_importtotal5,
+            example_url="https://api.misoenergy.org/MISORTWDDataBroker/DataBrokerServices.asmx?messageType=getimporttotal5&returnType=json",
         ),
 
         "reservebindingconstraints": Report(
@@ -1941,6 +2002,7 @@ class MISOReports:
             ),
             type_to_parse="csv",
             parser=ReportParsers.parse_reservebindingconstraints,
+            example_url="https://api.misoenergy.org/MISORTWDDataBroker/DataBrokerServices.asmx?messageType=getreservebindingconstraints&returnType=csv",
         ),
 
         "RSG": Report(
@@ -1949,7 +2011,8 @@ class MISOReports:
                 supported_extensions=["csv", "xml", "json"],
             ),
             type_to_parse="csv",
-            parser=ReportParsers.parse_RSG
+            parser=ReportParsers.parse_RSG,
+            example_url="https://api.misoenergy.org/MISORTWDDataBroker/DataBrokerServices.asmx?messageType=getRSG&returnType=csv",
         ),
 
         "totalload": Report(
@@ -1958,7 +2021,8 @@ class MISOReports:
                 supported_extensions=["csv", "xml", "json"],
             ),
             type_to_parse="csv",
-            parser=ReportParsers.parse_totalload
+            parser=ReportParsers.parse_totalload,
+            example_url="https://api.misoenergy.org/MISORTWDDataBroker/DataBrokerServices.asmx?messageType=gettotalload&returnType=csv",
         ),
 
         "WindActual": Report(
@@ -1967,7 +2031,8 @@ class MISOReports:
                 supported_extensions=["xml", "json"],
             ),
             type_to_parse="json",
-            parser=ReportParsers.parse_WindActual
+            parser=ReportParsers.parse_WindActual,
+            example_url="https://api.misoenergy.org/MISORTWDDataBroker/DataBrokerServices.asmx?messageType=getWindActual&returnType=json",
         ),
 
         "SolarActual": Report(
@@ -1976,7 +2041,8 @@ class MISOReports:
                 supported_extensions=["xml", "json"],
             ),
             type_to_parse="json",
-            parser=ReportParsers.parse_SolarActual
+            parser=ReportParsers.parse_SolarActual,
+            example_url="https://api.misoenergy.org/MISORTWDDataBroker/DataBrokerServices.asmx?messageType=getSolarActual&returnType=json",
         ),
 
         "NAI": Report(
@@ -1985,7 +2051,8 @@ class MISOReports:
                 supported_extensions=["csv", "xml", "json"],
             ),
             type_to_parse="csv",
-            parser=ReportParsers.parse_NAI
+            parser=ReportParsers.parse_NAI,
+            example_url="https://api.misoenergy.org/MISORTWDDataBroker/DataBrokerServices.asmx?messageType=getNAI&returnType=csv",
         ),
 
         "regionaldirectionaltransfer": Report(
@@ -1994,7 +2061,8 @@ class MISOReports:
                 supported_extensions=["csv", "xml", "json"],
             ),
             type_to_parse="csv",
-            parser=ReportParsers.parse_regionaldirectionaltransfer
+            parser=ReportParsers.parse_regionaldirectionaltransfer,
+            example_url="https://api.misoenergy.org/MISORTWDDataBroker/DataBrokerServices.asmx?messageType=getregionaldirectionaltransfer&returnType=csv",
         ),
 
         "generationoutagesplusminusfivedays": Report(
@@ -2003,7 +2071,8 @@ class MISOReports:
                 supported_extensions=["csv", "xml", "json"],
             ),
             type_to_parse="csv",
-            parser=ReportParsers.parse_generationoutagesplusminusfivedays
+            parser=ReportParsers.parse_generationoutagesplusminusfivedays,
+            example_url="https://api.misoenergy.org/MISORTWDDataBroker/DataBrokerServices.asmx?messageType=getgenerationoutagesplusminusfivedays&returnType=csv",
         ),
 
         "apiversion": Report(
@@ -2013,6 +2082,7 @@ class MISOReports:
             ),
             type_to_parse="json",
             parser=ReportParsers.parse_apiversion,
+            example_url="https://api.misoenergy.org/MISORTWDDataBroker/DataBrokerServices.asmx?messageType=getapiversion&returnType=json",
         ),
 
         "lmpconsolidatedtable": Report(
@@ -2021,7 +2091,8 @@ class MISOReports:
                 supported_extensions=["csv", "xml", "json"],
             ),
             type_to_parse="csv",
-            parser=ReportParsers.parse_lmpconsolidatedtable
+            parser=ReportParsers.parse_lmpconsolidatedtable,
+            example_url="https://api.misoenergy.org/MISORTWDDataBroker/DataBrokerServices.asmx?messageType=getlmpconsolidatedtable&returnType=csv",
         ),
 
         "realtimebindingconstraints": Report(
@@ -2030,7 +2101,8 @@ class MISOReports:
                 supported_extensions=["csv", "xml", "json"],
             ),
             type_to_parse="csv",
-            parser=ReportParsers.parse_realtimebindingconstraints
+            parser=ReportParsers.parse_realtimebindingconstraints,
+            example_url="https://api.misoenergy.org/MISORTWDDataBroker/DataBrokerServices.asmx?messageType=getrealtimebindingconstraints&returnType=csv",
         ),
 
         "realtimebindingsrpbconstraints": Report(
@@ -2039,7 +2111,8 @@ class MISOReports:
                 supported_extensions=["csv", "xml", "json"],
             ),
             type_to_parse="csv",
-            parser=ReportParsers.parse_realtimebindingsrpbconstraints
+            parser=ReportParsers.parse_realtimebindingsrpbconstraints,
+            example_url="https://api.misoenergy.org/MISORTWDDataBroker/DataBrokerServices.asmx?messageType=getrealtimebindingsrpbconstraints&returnType=csv",
         ),
 
         "RT_Load_EPNodes": Report(
@@ -2050,6 +2123,7 @@ class MISOReports:
             ),
             type_to_parse="zip",
             parser=ReportParsers.parse_RT_Load_EPNodes,
+            example_url="https://docs.misoenergy.org/marketreports/RT_Load_EPNodes_20241018.zip",
         ),
 
         "5MIN_LMP": Report(
@@ -2060,6 +2134,7 @@ class MISOReports:
             ),
             type_to_parse="zip",
             parser=ReportParsers.parse_5MIN_LMP,
+            example_url="https://docs.misoenergy.org/marketreports/20241021_5MIN_LMP.zip",
         ),
 
         "bids_cb": Report(
@@ -2070,6 +2145,7 @@ class MISOReports:
             ),
             type_to_parse="zip",
             parser=ReportParsers.parse_bids_cb,
+            example_url="https://docs.misoenergy.org/marketreports/20240801_bids_cb.zip",
         ),
         
         "asm_exante_damcp": Report(
@@ -2080,6 +2156,7 @@ class MISOReports:
             ),
             type_to_parse="csv",
             parser=ReportParsers.parse_asm_exante_damcp,
+            example_url="https://docs.misoenergy.org/marketreports/20241030_asm_exante_damcp.csv",
         ),
 
         "ftr_allocation_restoration": Report(
@@ -2090,6 +2167,7 @@ class MISOReports:
             ),
             type_to_parse="zip",
             parser=ReportParsers.parse_ftr_allocation_restoration,
+            example_url="https://docs.misoenergy.org/marketreports/20240401_ftr_allocation_restoration.zip",
         ),
 
         "ftr_allocation_stage_1A": Report(
@@ -2100,6 +2178,7 @@ class MISOReports:
             ),
             type_to_parse="zip",
             parser=ReportParsers.parse_ftr_allocation_stage_1A,
+            example_url="https://docs.misoenergy.org/marketreports/20240401_ftr_allocation_stage_1A.zip",
         ),
 
         "ftr_allocation_stage_1B": Report(
@@ -2110,6 +2189,7 @@ class MISOReports:
             ),
             type_to_parse="zip",
             parser=ReportParsers.parse_ftr_allocation_stage_1B,
+            example_url="https://docs.misoenergy.org/marketreports/20240401_ftr_allocation_stage_1B.zip",
         ),
 
         "ftr_allocation_summary": Report(
@@ -2120,6 +2200,7 @@ class MISOReports:
             ),
             type_to_parse="zip",
             parser=ReportParsers.parse_ftr_allocation_summary,
+            example_url="https://docs.misoenergy.org/marketreports/20240401_ftr_allocation_summary.zip",
         ),
 
         "ftr_annual_results_round_1": Report(
@@ -2130,6 +2211,7 @@ class MISOReports:
             ),
             type_to_parse="zip",
             parser=ReportParsers.parse_ftr_annual_results_round_1,
+            example_url="https://docs.misoenergy.org/marketreports/20240401_ftr_annual_results_round_1.zip",
         ),
 
         "ftr_annual_results_round_2": Report(
@@ -2140,6 +2222,7 @@ class MISOReports:
             ),
             type_to_parse="zip",
             parser=ReportParsers.parse_ftr_annual_results_round_2,
+            example_url="https://docs.misoenergy.org/marketreports/20240501_ftr_annual_results_round_2.zip",
         ),
 
         "ftr_annual_results_round_3": Report(
@@ -2150,6 +2233,7 @@ class MISOReports:
             ),
             type_to_parse="zip",
             parser=ReportParsers.parse_ftr_annual_results_round_3,
+            example_url="https://docs.misoenergy.org/marketreports/20240101_ftr_annual_results_round_3.zip",
         ),
 
         "ftr_annual_bids_offers": Report(
@@ -2160,6 +2244,7 @@ class MISOReports:
             ),
             type_to_parse="zip",
             parser=ReportParsers.parse_ftr_annual_bids_offers,
+            example_url="https://docs.misoenergy.org/marketreports/2023_ftr_annual_bids_offers.zip",
         ),
 
         "ftr_mpma_results": Report(
@@ -2170,6 +2255,7 @@ class MISOReports:
             ),
             type_to_parse="zip",
             parser=ReportParsers.parse_ftr_mpma_results,
+            example_url="https://docs.misoenergy.org/marketreports/20241101_ftr_mpma_results.zip",
         ),
 
         "ftr_mpma_bids_offers": Report(
@@ -2180,6 +2266,7 @@ class MISOReports:
             ),
             type_to_parse="zip",
             parser=ReportParsers.parse_ftr_mpma_bids_offers,
+            example_url="https://docs.misoenergy.org/marketreports/20240801_ftr_mpma_bids_offers.zip",
         ),
 
         "asm_expost_damcp": Report(
@@ -2190,6 +2277,7 @@ class MISOReports:
             ),
             type_to_parse="csv",
             parser=ReportParsers.parse_asm_expost_damcp,
+            example_url="https://docs.misoenergy.org/marketreports/20241030_asm_expost_damcp.csv",
         ),
 
         "asm_rtmcp_final": Report(
@@ -2200,6 +2288,7 @@ class MISOReports:
             ),
             type_to_parse="csv",
             parser=ReportParsers.parse_asm_rtmcp_final,
+            example_url="https://docs.misoenergy.org/marketreports/20241026_asm_rtmcp_final.csv",
         ),
 
         "asm_rtmcp_prelim": Report(
@@ -2210,6 +2299,7 @@ class MISOReports:
             ),
             type_to_parse="csv",
             parser=ReportParsers.parse_asm_rtmcp_prelim,
+            example_url="https://docs.misoenergy.org/marketreports/20241029_asm_rtmcp_prelim.csv",
         ),
 
         "5min_exante_mcp": Report(
@@ -2220,6 +2310,7 @@ class MISOReports:
             ),
             type_to_parse="xlsx",
             parser=ReportParsers.parse_5min_exante_mcp,
+            example_url="https://docs.misoenergy.org/marketreports/20241030_5min_exante_mcp.xlsx",
         ),
 
         "5min_expost_mcp": Report(
@@ -2230,6 +2321,7 @@ class MISOReports:
             ),
             type_to_parse="xlsx",
             parser=ReportParsers.parse_5min_expost_mcp,
+            example_url="https://docs.misoenergy.org/marketreports/20241028_5min_expost_mcp.xlsx",
         ),
 
         "da_exante_ramp_mcp": Report(
@@ -2240,6 +2332,7 @@ class MISOReports:
             ),
             type_to_parse="xlsx",
             parser=ReportParsers.parse_da_exante_ramp_mcp,
+            example_url="https://docs.misoenergy.org/marketreports/20241030_da_exante_ramp_mcp.xlsx",
         ),
 
         "da_exante_str_mcp": Report(
@@ -2250,6 +2343,7 @@ class MISOReports:
             ),
             type_to_parse="xlsx",
             parser=ReportParsers.parse_da_exante_str_mcp,
+            example_url="https://docs.misoenergy.org/marketreports/20241029_da_exante_str_mcp.xlsx",
         ),
 
         "da_expost_ramp_mcp": Report(
@@ -2260,6 +2354,7 @@ class MISOReports:
             ),
             type_to_parse="xlsx",
             parser=ReportParsers.parse_da_expost_ramp_mcp,
+            example_url="https://docs.misoenergy.org/marketreports/20241030_da_expost_ramp_mcp.xlsx",
         ),
 
         "da_expost_str_mcp": Report(
@@ -2270,6 +2365,7 @@ class MISOReports:
             ),
             type_to_parse="xlsx",
             parser=ReportParsers.parse_da_expost_str_mcp,
+            example_url="https://docs.misoenergy.org/marketreports/20241030_da_expost_str_mcp.xlsx",
         ),
 
         "rt_expost_ramp_5min_mcp": Report(
@@ -2280,6 +2376,7 @@ class MISOReports:
             ),
             type_to_parse="xlsx",
             parser=ReportParsers.parse_rt_expost_ramp_5min_mcp,
+            example_url="https://docs.misoenergy.org/marketreports/202410_rt_expost_ramp_5min_mcp.xlsx",
         ),
 
         "rt_expost_ramp_mcp": Report(
@@ -2290,6 +2387,7 @@ class MISOReports:
             ),
             type_to_parse="xlsx",
             parser=ReportParsers.parse_rt_expost_ramp_mcp,
+            example_url="https://docs.misoenergy.org/marketreports/202410_rt_expost_ramp_mcp.xlsx",
         ),
 
         "rt_expost_str_5min_mcp": Report(
@@ -2300,6 +2398,7 @@ class MISOReports:
             ),
             type_to_parse="xlsx",
             parser=ReportParsers.parse_rt_expost_str_5min_mcp,
+            example_url="https://docs.misoenergy.org/marketreports/202409_rt_expost_str_5min_mcp.xlsx",
         ),
 
         "rt_expost_str_mcp": Report(
@@ -2310,6 +2409,7 @@ class MISOReports:
             ),
             type_to_parse="xlsx",
             parser=ReportParsers.parse_rt_expost_str_mcp,
+            example_url="https://docs.misoenergy.org/marketreports/202410_rt_expost_str_mcp.xlsx",
         ),
 
         "Allocation_on_MISO_Flowgates": Report(
@@ -2320,6 +2420,7 @@ class MISOReports:
             ),
             type_to_parse="csv",
             parser=ReportParsers.parse_Allocation_on_MISO_Flowgates,
+            example_url="https://docs.misoenergy.org/marketreports/Allocation_on_MISO_Flowgates_2024_10_29.csv",
         ),
 
         "M2M_FFE": Report(
@@ -2330,6 +2431,7 @@ class MISOReports:
             ),
             type_to_parse="CSV",
             parser=ReportParsers.parse_M2M_FFE,
+            example_url="https://docs.misoenergy.org/marketreports/M2M_FFE_2024_10_29.CSV",
         ),
 
         "M2M_Flowgates_as_of": Report(
@@ -2340,9 +2442,11 @@ class MISOReports:
             ),
             type_to_parse="CSV",
             parser=ReportParsers.parse_M2M_Flowgates_as_of,
+            example_url="https://docs.misoenergy.org/marketreports/M2M_Flowgates_as_of_20241030.CSV",
         ),
 
-        "da_M2M_Settlement_srw": Report(
+        # Every download URL as of 2024-11-02 offered for this report was empty.
+        "da_M2M_Settlement_srw": Report( 
              url_builder=MISOMarketReportsURLBuilder(
                 target="da_M2M_Settlement_srw",
                 supported_extensions=["csv"],
@@ -2350,6 +2454,7 @@ class MISOReports:
             ),
             type_to_parse="csv",
             parser=ReportParsers.parse_da_M2M_Settlement_srw,
+            example_url="https://docs.misoenergy.org/marketreports/da_M2M_Settlement_srw_2024.csv",
         ),
 
         "M2M_Settlement_srw": Report(
@@ -2360,6 +2465,7 @@ class MISOReports:
             ),
             type_to_parse="csv",
             parser=ReportParsers.parse_M2M_Settlement_srw,
+            example_url="https://docs.misoenergy.org/marketreports/M2M_Settlement_srw_2024.csv",
         ),
 
         "MM_Annual_Report": Report(
@@ -2370,6 +2476,7 @@ class MISOReports:
             ),
             type_to_parse="zip",
             parser=ReportParsers.parse_MM_Annual_Report,
+            example_url="https://docs.misoenergy.org/marketreports/20241030_MM_Annual_Report.zip",
         ),
 
         "asm_da_co": Report(
@@ -2380,6 +2487,7 @@ class MISOReports:
             ),
             type_to_parse="zip",
             parser=ReportParsers.parse_asm_da_co,
+            example_url="https://docs.misoenergy.org/marketreports/20240801_asm_da_co.zip",
         ),
 
         "asm_rt_co": Report(
@@ -2390,6 +2498,7 @@ class MISOReports:
             ),
             type_to_parse="zip",
             parser=ReportParsers.parse_asm_rt_co,
+            example_url="https://docs.misoenergy.org/marketreports/20240801_asm_rt_co.zip",
         ),
 
         "Dead_Node_Report": Report(
@@ -2400,6 +2509,7 @@ class MISOReports:
             ),
             type_to_parse="xls",
             parser=ReportParsers.parse_Dead_Node_Report,
+            example_url="https://docs.misoenergy.org/marketreports/Dead_Node_Report_20241030.xls",
         ),
 
         "rt_co": Report(
@@ -2410,6 +2520,18 @@ class MISOReports:
             ),
             type_to_parse="zip",
             parser=ReportParsers.parse_rt_co,
+            example_url="https://docs.misoenergy.org/marketreports/20240801_rt_co.zip",
+        ),
+
+        "da_co": Report(
+             url_builder=MISOMarketReportsURLBuilder(
+                target="da_co",
+                supported_extensions=["zip"],
+                url_generator=MISOMarketReportsURLBuilder.url_generator_YYYYmmdd_first,
+            ),
+            type_to_parse="zip",
+            parser=ReportParsers.parse_da_co,
+            example_url="https://docs.misoenergy.org/marketreports/20240801_da_co.zip",
         ),
 
         "cpnode_reszone": Report(
@@ -2420,6 +2542,7 @@ class MISOReports:
             ),
             type_to_parse="xlsx",
             parser=ReportParsers.parse_cpnode_reszone,
+            example_url="https://docs.misoenergy.org/marketreports/20241002_cpnode_reszone.xlsx"
         ),
         
         "sr_ctsl": Report(
@@ -2430,6 +2553,7 @@ class MISOReports:
             ),
             type_to_parse="pdf",
             parser=ReportParsers.parse_sr_ctsl,
+            example_url="https://docs.misoenergy.org/marketreports/20241020_sr_ctsl.pdf",
         ),
 
         "df_al": Report(
@@ -2440,6 +2564,7 @@ class MISOReports:
             ),
             type_to_parse="xls",
             parser=ReportParsers.parse_df_al,
+            example_url="https://docs.misoenergy.org/marketreports/20241030_df_al.xls",
         ),
 
         "rf_al": Report(
@@ -2450,6 +2575,7 @@ class MISOReports:
             ),
             type_to_parse="xls",
             parser=ReportParsers.parse_rf_al,
+            example_url="https://docs.misoenergy.org/marketreports/20241030_rf_al.xls",
         ),
 
         "da_bc_HIST": Report(
@@ -2460,6 +2586,7 @@ class MISOReports:
             ),
             type_to_parse="csv",
             parser=ReportParsers.parse_da_bc_HIST,
+            example_url="https://docs.misoenergy.org/marketreports/2024_da_bc_HIST.csv",
         ),
 
         "da_ex_rg": Report(
@@ -2470,6 +2597,7 @@ class MISOReports:
             ),
             type_to_parse="xlsx",
             parser=ReportParsers.parse_da_ex_rg,
+            example_url="https://docs.misoenergy.org/marketreports/20241030_da_ex_rg.xlsx",
         ),
 
         "da_ex": Report(
@@ -2480,6 +2608,7 @@ class MISOReports:
             ),
             type_to_parse="xls",
             parser=ReportParsers.parse_da_ex,
+            example_url="https://docs.misoenergy.org/marketreports/20220321_da_ex.xls",
         ),
 
         "da_rpe": Report(
@@ -2490,6 +2619,7 @@ class MISOReports:
             ),
             type_to_parse="xls",
             parser=ReportParsers.parse_da_rpe,
+            example_url="https://docs.misoenergy.org/marketreports/20241029_da_rpe.xls",
         ),
     }
 
