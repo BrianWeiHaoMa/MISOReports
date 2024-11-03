@@ -160,3 +160,26 @@ def test_MISORTWDData_get_df_completes_and_has_something_or_is_not_implemented()
             except NotImplementedError:
                 pass
         
+
+def test_get_df_every_report_example_url_returns_non_empty_df():
+    mappings = MISOReports.report_mappings
+
+    # These reports have no non-empty tables as of 2024-11-02.
+    empty_reports = set(
+        [
+            "da_M2M_Settlement_srw",
+        ],
+    )
+
+    for report_name, report in mappings.items():
+        try:
+            df = MISOReports.get_df(
+                report_name=report_name,
+                url=report.example_url,
+            )
+
+            assert not df.columns.empty
+            if report_name not in empty_reports:
+                assert not df.empty
+        except NotImplementedError as e:
+            pass

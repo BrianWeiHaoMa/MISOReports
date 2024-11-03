@@ -143,3 +143,22 @@ types_df = pd.DataFrame(
 
 print(types_df.to_string())
 ```
+
+## Using checker.py
+To see the options available:
+```
+python -m MISOReports.checker -h
+```
+
+### Example: 
+```
+python -m MISOReports.checker -r ccf_co ms_vlr_HIST rt_pr ms_vlr_srw ms_rsg_srw -p -o
+```
+This prints the get_df() results for the reports with names ccf_co, ms_vlr_HIST, rt_pr, ms_vlr_srw, and ms_rsg_srw,
+and saves an output file to the current working directory.
+
+```
+python -m MISOReports.checker -a -p -o ./my_files/
+```
+This prints the get_df() results for the ALL reports
+and saves an output file to the directory ./my_files/.

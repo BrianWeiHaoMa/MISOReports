@@ -1414,8 +1414,9 @@ class MISOReports:
                 usecols='B:C',
             ).iloc[:-3]
 
-            df.rename({"Unnamed: 1": "Mkt Hour","Unnamed: 2": "PNODE Name"})
+            df = df.rename(columns={"Unnamed: 1": "Mkt Hour", "Unnamed: 2": "PNODE Name"})
             df = df.dropna()
+            
             df = df[df["Mkt Hour"] != "\n\nMkt Hour"]
             df = df.reset_index(drop=True)
 
@@ -2671,7 +2672,13 @@ class MISOReports:
             file_extension=file_extension, 
             ddatetime=ddatetime,
         )
-        
+
+        return MISOReports._get_response_helper(url)
+    
+    @staticmethod
+    def _get_response_helper(
+        url: str,
+    ) -> requests.Response:
         res = requests.get(
             url=url,
             timeout=30,
@@ -2681,27 +2688,32 @@ class MISOReports:
 
         if res.status_code != 200:
             raise requests.exceptions.RequestException(f"Request status code: {res.status_code}")
-
+        
         return res
     
     @staticmethod
     def get_df(
         report_name: str,
+        url: str | None = None,
         ddatetime: datetime.datetime | None = None,
     ) -> pd.DataFrame:
         """Get a parsed DataFrame for the report.
 
         :param str report_name: The name of the report.
+        :param str | None url: A url to download directly from, defaults to None
         :param datetime.datetime | None ddatetime: The date of the report, defaults to None
         :return pd.DataFrame: A DataFrame containing the data of the report.
         """
         report = MISOReports.report_mappings[report_name]
 
-        response = MISOReports.get_response(
-            report_name=report_name, 
-            file_extension=report.type_to_parse, 
-            ddatetime=ddatetime,
-        )
+        if url is not None:
+            response = MISOReports._get_response_helper(url)
+        else:
+            response = MISOReports.get_response(
+                report_name=report_name, 
+                file_extension=report.type_to_parse, 
+                ddatetime=ddatetime,
+            )
 
         df = report.report_parser(response)
         
