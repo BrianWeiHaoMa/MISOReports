@@ -24,14 +24,14 @@ Map every single data type to one of the below:
 * **pandas.core.arrays.string_.StringDtype()** ex. "Toronto".
 * **numpy.dtypes.DateTime64DType()** ex. "2024-02-02 08:24:36 PM" or "2024-02-02 16:24:36" or "2024-01-03" or "13:05:00" etc..
 * **numpy.dtypes.Float64DType()** ex. 34.13.
-* **pandas.core.arrays.integer.Int64Dtype** ex. 34.
+* **pandas.core.arrays.integer.Int64Dtype()** ex. 34.
 
 When looking at the report, use this checklist:
 * Ignore null/empty values when deciding with the below guidelines.
 * If there is any string (ex. names, codes, etc.) in the column, the column type should be **pandas.core.arrays.string_.StringDtype()**.
 * Otherwise if the column is clearly meant to portray datetime/date/time, the column type should be **numpy.dtypes.DateTime64DType()**.
 * Otherwise if any number in the column has a decimal, the column type should be **numpy.dtypes.Float64DType()**.
-* Otherwise if the numbers in the column are all integers, the column type should be **pandas.core.arrays.integer.Int64Dtype**.
+* Otherwise if the numbers in the column are all integers, the column type should be **pandas.core.arrays.integer.Int64Dtype()**.
 * Otherwise make note of the new case here.
 
 ## Report parser reference
