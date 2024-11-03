@@ -196,6 +196,9 @@ https://docs.misoenergy.org/marketreports/PeakHourOverview_03052022.csv
 https://docs.misoenergy.org/marketreports/2024_sr_tcdc_group2.csv
 ```
 
+## Add all entries to test_get_df_correct_column_types()
+Make every entry use only the data types listed in DEV.md and add their respective automated tests.
+
 ## Final check of all the reports
 IMPORTANT: Remember to check the very bottom of each report in case
 they have some sort of message that is not supposed to be a part of the

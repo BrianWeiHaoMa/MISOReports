@@ -4,6 +4,7 @@ import sys
 from argparse import ArgumentParser
 
 import pandas as pd
+import numpy as np
 
 from MISOReports.MISOReports import MISOReports
 
@@ -13,7 +14,11 @@ def string_format_df_types(
     auto_size: bool = False,
 ) -> pd.DataFrame:
     columns = list(df.columns)
-    types = [str(type(df.iloc[0, i])) for i in range(df.shape[1])]
+    
+    dtypes = df.dtypes
+    types = []
+    for k in dtypes.index:
+        types.append(str(type(dtypes[k])))
 
     types_df = pd.DataFrame(
         columns=columns,
@@ -41,7 +46,7 @@ def string_format_split_df(
         top_str = df.head(top).to_string()
         bottom_str = df.tail(bottom).to_string()
 
-    columns_str = ", ".join([f"'{col}'" for col in df.columns])
+    columns_str = ", ".join([f'"{col}"' for col in df.columns])
 
     res = f"""
 columns: {columns_str}

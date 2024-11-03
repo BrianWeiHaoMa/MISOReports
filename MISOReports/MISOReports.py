@@ -7,7 +7,8 @@ import zipfile
 import io
 
 import requests
-import pandas as pd
+import pandas as pd, pandas
+import numpy as np, numpy
 
 
 class URLBuilder(ABC):
@@ -99,7 +100,7 @@ class MISOMarketReportsURLBuilder(URLBuilder):
         self,
         target: str,
         supported_extensions: list[str],
-        url_generator: Callable[[datetime.datetime, str], str],
+        url_generator: Callable[[datetime.datetime | None, str], str],
     ):
         super().__init__(
             target=target, 
@@ -116,8 +117,8 @@ class MISOMarketReportsURLBuilder(URLBuilder):
         if file_extension not in self.supported_extensions:
             raise ValueError(f"Unsupported file extension: {file_extension}")
         
-        if ddatetime is None:
-            raise ValueError(f"ddatetime is required")
+        if ddatetime is None and self.url_generator != MISOMarketReportsURLBuilder.url_generator_no_date:
+            raise ValueError("ddatetime required for this URL builder.")
         
         res = self.url_generator(ddatetime, self.target)
         res = res.replace(URLBuilder.extension_placeholder, file_extension)
@@ -125,40 +126,46 @@ class MISOMarketReportsURLBuilder(URLBuilder):
 
     @staticmethod    
     def _url_generator_datetime_first(
-        ddatetime: datetime.datetime,
+        ddatetime: datetime.datetime | None,
         target: str,
         datetime_format: str,
     ) -> str:
+        if ddatetime is None:
+            raise ValueError("ddatetime required for this URL builder.")
+
         format_string = f"https://docs.misoenergy.org/marketreports/{datetime_format}_{target}.{URLBuilder.extension_placeholder}"
         res = ddatetime.strftime(format_string)
         return res
     
     @staticmethod
     def url_generator_YYYYmmdd_first(
-        ddatetime: datetime.datetime,
+        ddatetime: datetime.datetime | None,
         target: str,
     ) -> str:
         return MISOMarketReportsURLBuilder._url_generator_datetime_first(ddatetime, target, "%Y%m%d")
     
     @staticmethod
     def url_generator_YYYYmm_first(
-        ddatetime: datetime.datetime,
+        ddatetime: datetime.datetime | None,
         target: str,
     ) -> str:
         return MISOMarketReportsURLBuilder._url_generator_datetime_first(ddatetime, target, "%Y%m")
     
     @staticmethod
     def url_generator_YYYY_first(
-        ddatetime: datetime.datetime,
+        ddatetime: datetime.datetime | None,
         target: str,
     ) -> str:
         return MISOMarketReportsURLBuilder._url_generator_datetime_first(ddatetime, target, "%Y")
     
     @staticmethod
     def url_generator_YYYY_current_month_name_to_two_months_later_name_first(
-        ddatetime: datetime.datetime,
+        ddatetime: datetime.datetime | None,
         target: str,
     ) -> str:
+        if ddatetime is None:
+            raise ValueError("ddatetime required for this URL builder.")
+
         new_month = ddatetime.month + 2 if ddatetime.month + 2 < 13 else ((ddatetime.month + 2) % 13) + 1
         two_months_later_datetime = ddatetime.replace(month=new_month)
         datetime_part = f"{ddatetime.strftime('%Y')}-{ddatetime.strftime('%b')}-{two_months_later_datetime.strftime('%b')}" 
@@ -167,31 +174,40 @@ class MISOMarketReportsURLBuilder(URLBuilder):
     
     @staticmethod
     def url_generator_YYYYmmdd_last(
-        ddatetime: datetime.datetime,
+        ddatetime: datetime.datetime | None,
         target: str,
     ) -> str:
+        if ddatetime is None:
+            raise ValueError("ddatetime required for this URL builder.")
+
         res = f"https://docs.misoenergy.org/marketreports/{target}_{ddatetime.strftime('%Y%m%d')}.{URLBuilder.extension_placeholder}"
         return res
     
     @staticmethod
     def url_generator_YYYY_mm_dd_last(
-        ddatetime: datetime.datetime,
+        ddatetime: datetime.datetime | None,
         target: str,
     ) -> str:
+        if ddatetime is None:
+            raise ValueError("ddatetime required for this URL builder.")
+
         res = f"https://docs.misoenergy.org/marketreports/{target}_{ddatetime.strftime('%Y_%m_%d')}.{URLBuilder.extension_placeholder}"
         return res
     
     @staticmethod
     def url_generator_YYYY_last(
-        ddatetime: datetime.datetime,
+        ddatetime: datetime.datetime | None,
         target: str,
     ) -> str:
+        if ddatetime is None:
+            raise ValueError("ddatetime required for this URL builder.")
+
         res = f"https://docs.misoenergy.org/marketreports/{target}_{ddatetime.strftime('%Y')}.{URLBuilder.extension_placeholder}"
         return res
     
     @staticmethod
     def url_generator_no_date(
-        ddatetime: datetime.datetime,
+        ddatetime: datetime.datetime | None,
         target: str,
     ) -> str:
         res = f"https://docs.misoenergy.org/marketreports/{target}.{URLBuilder.extension_placeholder}"
@@ -438,11 +454,12 @@ class MISOReports:
 
             df = pd.read_csv(
                 filepath_or_buffer=io.StringIO(csv_data),
-                parse_dates=[
-                    "DATE",
-                ],
-                date_format="%m/%d/%Y",
             )
+
+            df["DATE"] = pd.to_datetime(df["DATE"], format="%m/%d/%Y")
+            df["BILL_DET"] = df["BILL_DET"].astype(pandas.core.arrays.string_.StringDtype())
+            df[["HR01", "HR02", "HR03", "HR04", "HR05", "HR06", "HR07", "HR08", "HR09", "HR10", "HR11", "HR12", "HR13", "HR14", "HR15", "HR16", "HR17", "HR18", "HR19", "HR20", "HR21", "HR22", "HR23", "HR24"]] = \
+            df[["HR01", "HR02", "HR03", "HR04", "HR05", "HR06", "HR07", "HR08", "HR09", "HR10", "HR11", "HR12", "HR13", "HR14", "HR15", "HR16", "HR17", "HR18", "HR19", "HR20", "HR21", "HR22", "HR23", "HR24"]].astype(numpy.dtypes.Float64DType())
 
             return df
 
@@ -583,15 +600,11 @@ class MISOReports:
 
             df = pd.read_csv(
                 filepath_or_buffer=io.StringIO(csv_data),
-                parse_dates=[
-                    "ForecastDateTimeEST", 
-                    "ActualDateTimeEST",
-                ],
-                date_format="%Y-%m-%d %I:%M:%S %p",
-                dtype={
-                    "ActualHourEndingEST": pd.Int64Dtype(),
-                },
             )
+
+            df[["ForecastDateTimeEST", "ActualDateTimeEST"]] = df[["ForecastDateTimeEST", "ActualDateTimeEST"]].apply(pd.to_datetime, format="%Y-%m-%d %I:%M:%S %p")
+            df[["ForecastHourEndingEST", "ActualHourEndingEST"]] = df[["ForecastHourEndingEST", "ActualHourEndingEST"]].astype(pandas.core.arrays.integer.Int64Dtype())
+            df[["ForecastWindValue", "ForecastSolarValue", "ActualWindValue", "ActualSolarValue"]] = df[["ForecastWindValue", "ForecastSolarValue", "ActualWindValue", "ActualSolarValue"]].astype(numpy.dtypes.Float64DType())
 
             return df
         
