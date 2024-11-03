@@ -117,9 +117,6 @@ class MISOMarketReportsURLBuilder(URLBuilder):
         if file_extension not in self.supported_extensions:
             raise ValueError(f"Unsupported file extension: {file_extension}")
         
-        if ddatetime is None and self.url_generator != MISOMarketReportsURLBuilder.url_generator_no_date:
-            raise ValueError("ddatetime required for this URL builder.")
-        
         res = self.url_generator(ddatetime, self.target)
         res = res.replace(URLBuilder.extension_placeholder, file_extension)
         return res
