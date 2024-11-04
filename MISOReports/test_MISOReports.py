@@ -203,7 +203,22 @@ report_columns_type_mappings: dict[str, dict[tuple[str], type]] = {
         ("ForecastDateTimeEST", "ActualDateTimeEST",): numpy.dtypes.DateTime64DType,
         ("ForecastHourEndingEST", "ActualHourEndingEST",): pandas.core.arrays.integer.Int64Dtype,
         ("ForecastWindValue", "ForecastSolarValue", "ActualWindValue", "ActualSolarValue",): numpy.dtypes.Float64DType,
-    }
+    },
+    "ms_vlr_HIST_SRW": {
+        ("OPERATING DATE",): numpy.dtypes.DateTime64DType,
+        ("SETTLEMENT RUN", "DA_VLR_MWP", "RT_VLR_MWP", "DA+RT Total",): numpy.dtypes.Float64DType,
+        ("REGION", "CONSTRAINT",): pandas.core.arrays.string_.StringDtype,
+    },
+    "SolarForecast": {
+        ("DateTimeEST",): numpy.dtypes.DateTime64DType,
+        ("HourEndingEST",): pandas.core.arrays.integer.Int64Dtype,
+        ("Value",): numpy.dtypes.Float64DType,
+    },
+    "DA_LMPs": {
+        ("MARKET_DAY",): numpy.dtypes.DateTime64DType,
+        ("HE1", "HE2", "HE3", "HE4", "HE5", "HE6", "HE7", "HE8", "HE9", "HE10", "HE11", "HE12", "HE13", "HE14", "HE15", "HE16", "HE17", "HE18", "HE19", "HE20", "HE21", "HE22", "HE23", "HE24",): numpy.dtypes.Float64DType,
+        ("NODE", "TYPE", "VALUE",): pandas.core.arrays.string_.StringDtype,
+    },
 }
 
 

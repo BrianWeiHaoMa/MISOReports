@@ -455,8 +455,7 @@ class MISOReports:
 
             df["DATE"] = pd.to_datetime(df["DATE"], format="%m/%d/%Y")
             df["BILL_DET"] = df["BILL_DET"].astype(pandas.core.arrays.string_.StringDtype())
-            df[["HR01", "HR02", "HR03", "HR04", "HR05", "HR06", "HR07", "HR08", "HR09", "HR10", "HR11", "HR12", "HR13", "HR14", "HR15", "HR16", "HR17", "HR18", "HR19", "HR20", "HR21", "HR22", "HR23", "HR24"]] = \
-            df[["HR01", "HR02", "HR03", "HR04", "HR05", "HR06", "HR07", "HR08", "HR09", "HR10", "HR11", "HR12", "HR13", "HR14", "HR15", "HR16", "HR17", "HR18", "HR19", "HR20", "HR21", "HR22", "HR23", "HR24"]].astype(numpy.dtypes.Float64DType())
+            df[["HR01", "HR02", "HR03", "HR04", "HR05", "HR06", "HR07", "HR08", "HR09", "HR10", "HR11", "HR12", "HR13", "HR14", "HR15", "HR16", "HR17", "HR18", "HR19", "HR20", "HR21", "HR22", "HR23", "HR24"]] = df[["HR01", "HR02", "HR03", "HR04", "HR05", "HR06", "HR07", "HR08", "HR09", "HR10", "HR11", "HR12", "HR13", "HR14", "HR15", "HR16", "HR17", "HR18", "HR19", "HR20", "HR21", "HR22", "HR23", "HR24"]].astype(numpy.dtypes.Float64DType())
 
             return df
 
@@ -469,7 +468,9 @@ class MISOReports:
                 skiprows=3,
             ).iloc[:-2]
 
-            df["OPERATING DATE"] = pd.to_datetime(df["OPERATING DATE"], format="%m/%d/%Y")
+            df[["OPERATING DATE"]] = df[["OPERATING DATE"]].apply(pd.to_datetime, format="%m/%d/%Y")
+            df[["SETTLEMENT RUN", "DA_VLR_MWP", "RT_VLR_MWP", "DA+RT Total"]] = df[["SETTLEMENT RUN", "DA_VLR_MWP", "RT_VLR_MWP", "DA+RT Total"]].astype(numpy.dtypes.Float64DType())
+            df[["REGION", "CONSTRAINT"]] = df[["REGION", "CONSTRAINT"]].astype(pandas.core.arrays.string_.StringDtype())
 
             return df
 
@@ -604,7 +605,7 @@ class MISOReports:
             df[["ForecastWindValue", "ForecastSolarValue", "ActualWindValue", "ActualSolarValue"]] = df[["ForecastWindValue", "ForecastSolarValue", "ActualWindValue", "ActualSolarValue"]].astype(numpy.dtypes.Float64DType())
 
             return df
-        
+
         @staticmethod
         def parse_WindForecast(
             res: requests.Response,
@@ -655,14 +656,11 @@ class MISOReports:
 
             df = pd.DataFrame(
                 data=dictionary["Forecast"],
-            ).astype(
-                dtype={
-                    "HourEndingEST": pd.Int64Dtype(),
-                    "Value": pd.Float64Dtype(),
-                },
             )
 
-            df["DateTimeEST"] = pd.to_datetime(df["DateTimeEST"], format="%Y-%m-%d %I:%M:%S %p")
+            df[["DateTimeEST"]] = df[["DateTimeEST"]].apply(pd.to_datetime, format="%Y-%m-%d %I:%M:%S %p")
+            df[["HourEndingEST"]] = df[["HourEndingEST"]].astype(pandas.core.arrays.integer.Int64Dtype())
+            df[["Value"]] = df[["Value"]].astype(numpy.dtypes.Float64DType())
 
             return df
         
@@ -778,11 +776,11 @@ class MISOReports:
 
             df = pd.read_csv(
                 filepath_or_buffer=io.StringIO(csv_data),
-                parse_dates=[
-                    "MARKET_DAY", 
-                ],
-                date_format="%m/%d/%Y",
             )
+
+            df[["MARKET_DAY"]] = df[["MARKET_DAY"]].apply(pd.to_datetime, format="%m/%d/%Y")
+            df[["HE1", "HE2", "HE3", "HE4", "HE5", "HE6", "HE7", "HE8", "HE9", "HE10", "HE11", "HE12", "HE13", "HE14", "HE15", "HE16", "HE17", "HE18", "HE19", "HE20", "HE21", "HE22", "HE23", "HE24"]] = df[["HE1", "HE2", "HE3", "HE4", "HE5", "HE6", "HE7", "HE8", "HE9", "HE10", "HE11", "HE12", "HE13", "HE14", "HE15", "HE16", "HE17", "HE18", "HE19", "HE20", "HE21", "HE22", "HE23", "HE24"]].astype(numpy.dtypes.Float64DType())
+            df[["NODE", "TYPE", "VALUE"]] = df[["NODE", "TYPE", "VALUE"]].astype(pandas.core.arrays.string_.StringDtype())
 
             return df
         

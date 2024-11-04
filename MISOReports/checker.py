@@ -9,28 +9,65 @@ import numpy as np
 from MISOReports.MISOReports import MISOReports
 
 
+def string_format_suggestions(
+    df: pd.DataFrame,
+) -> str:
+    categories = {
+        "float": [], 
+        "date": [], 
+        "int": [], 
+        "string": [], 
+        "other": [],
+    }
+    
+    dtypes = df.dtypes
+    for k in dtypes.index:
+        new = str(type(dtypes[k]))
+
+        if "Float" in new:
+            categories["float"].append(k)
+        elif "Date" in new:
+            categories["date"].append(k)
+        elif "String" in new:
+            categories["string"].append(k)
+        elif "Int" in new:
+            categories["int"].append(k)
+        else:
+            categories["other"].append(k)
+
+    data_types = {
+        "float": "numpy.dtypes.Float64DType()", 
+        "int": "pandas.core.arrays.integer.Int64Dtype()", 
+        "string": "pandas.core.arrays.string_.StringDtype()",
+    }
+
+    res = "Suggested Configs:\n"
+
+    for cat in ("float", "int", "string", "date", "other"):
+        column_names = categories[cat]
+        list_string = "[" + ", ".join([f'"{col}"' for col in column_names]) + "]"
+
+        if len(column_names):
+            if cat not in ("date", "other"):
+                res += f"\tdf[{list_string}] = df[{list_string}].astype({data_types[cat]})\n"
+            elif cat == "date":
+                res += f"\tdf[{list_string}] = df[{list_string}].apply(pd.to_datetime, format=\"TODO PUT FORMAT HERE\")\n"
+            elif cat == "other":
+                res += f"TODO figure out these cols: {list_string}\n"
+
+    return res
+
+
 def string_format_df_types(
     df: pd.DataFrame,
     auto_size: bool = False,
 ) -> pd.DataFrame:
-    commands = {'float': [], 'date': [], 'int': [], 'string': [], 'other': []}
     columns = list(df.columns)
     
     dtypes = df.dtypes
     types = []
     for k in dtypes.index:
         new = str(type(dtypes[k]))
-
-        if 'Float' in new:
-            commands["float"].append(k)
-        elif 'Date' in new:
-            commands["date"].append(k)
-        elif 'String' in new:
-            commands["string"].append(k)
-        elif 'Int' in new:
-            commands["int"].append(k)
-        else:
-            commands["other"].append(k)
 
         types.append(new)
 
@@ -44,20 +81,7 @@ def string_format_df_types(
     else:
         res = types_df.to_string()
 
-    command_types = {'float': 'numpy.dtypes.Float64DType()', 'int': 'pandas.core.arrays.integer.Int64Dtype()', 'string': 'pandas.core.arrays.string_.StringDtype()'}
-
-    command_output = "\n\nSuggested Configs:\n"
-
-    for i in ('float', 'int', 'string', 'date', 'other'):
-        if i not in ('date', 'other') and len(commands[i]):
-            command_output += f'\tdf[{commands[i]}] = df[{commands[i]}].astype({command_types[i]})\n'
-        elif i == 'date' and len(commands[i]):
-            command_output += f'\tdf[{commands[i]}] = df[{commands[i]}].apply(pd.to_datetime, format="TODO PUT FORMAT HERE")\n'
-        elif i == 'other' and len(commands[i]):
-            command_output += f'TODO figure out these cols: {commands[i]}\n'
-
-
-    return res + command_output
+    return res
 
 
 def string_format_split_df(
@@ -146,6 +170,8 @@ if __name__ == "__main__":
     Report: {report_name}
 URL: {url}
 {string_format_split_df(df=df, top=i_top, bottom=i_bottom, auto_size=i_auto_size)}
+{string_format_suggestions(df=df)}
+
 
 """
         res_string += new_string

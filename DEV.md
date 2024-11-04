@@ -1,10 +1,19 @@
 # Development guidelines
 
 ## Github workflow
-Before commiting or pushing to github, remember run these in the terminal and make sure everything passes:
+Before commiting or pushing to github, remember to run these in the terminal and make sure everything passes:
+
+For running all tests:
 ```
-python -m pytest .\MISOReports\test_MISOReports.py
+pytest 
 ```
+
+If you want to skip the completion and long tests:
+```
+pytest -m "not completion and not long"
+```
+
+For checking type annotations:
 ```
 mypy --strict .\MISOReports\MISOReports.py 
 ```
@@ -16,11 +25,13 @@ mypy --strict .\MISOReports\MISOReports.py
 * When adding support for a new report, if it is on the TODO list, mark it off as done. If not, make a new entry for it.
 
 ## Reports to pandas dataframe mapping logic
-Remember to make a parsing function in ReportParsers and make a new Report entry in report_mappings. Use the same naming scheme as the previous code.
+Remember to make a parsing function in ReportParsers and make a new Report entry in report_mappings.
+As well, make sure to add the report's test in report_columns_type_mappings in test_MISOReports.py.
+Continue to use the same naming scheme as the previous code.
 
 When in doubt, check the entries for previously completed reports (you can find them on the TODOS.md file).
 
-Map every single data type to one of the below:
+Map every single column type to one of the below data types:
 * **pandas.core.arrays.string_.StringDtype()** ex. "Toronto".
 * **numpy.dtypes.DateTime64DType()** ex. "2024-02-02 08:24:36 PM" or "2024-02-02 16:24:36" or "2024-01-03" or "13:05:00" etc..
 * **numpy.dtypes.Float64DType()** ex. 34.13.
@@ -61,39 +72,34 @@ def parse_SolarForecast(
 
     df = pd.DataFrame(
         data=dictionary["Forecast"],
-    ).astype(
-        dtype={
-            "HourEndingEST": pd.Int64Dtype(),
-            "Value": pd.Float64Dtype(),
-        }
     )
 
-    df["DateTimeEST"] = pd.to_datetime(df["DateTimeEST"], format="%Y-%m-%d %I:%M:%S %p")
+    df[["DateTimeEST"]] = df[["DateTimeEST"]].apply(pd.to_datetime, format="%Y-%m-%d %I:%M:%S %p")
+    df[["HourEndingEST"]] = df[["HourEndingEST"]].astype(pandas.core.arrays.integer.Int64Dtype())
+    df[["Value"]] = df[["Value"]].astype(numpy.dtypes.Float64DType())
 
     return df
 ```
 zip with a csv file in the extracted folder
 ```python
-@staticmethod
-def parse_DA_LMPs(
-    res: requests.Response,
-) -> pd.DataFrame:
-    with zipfile.ZipFile(file=io.BytesIO(res.content)) as z:
-        text = z.read(z.namelist()[0]).decode("utf-8")
+        @staticmethod
+        def parse_DA_LMPs(
+            res: requests.Response,
+        ) -> pd.DataFrame:
+            with zipfile.ZipFile(file=io.BytesIO(res.content)) as z:
+                text = z.read(z.namelist()[0]).decode("utf-8")
 
-    csv_data = "\n".join(text.splitlines()[1:])
+            csv_data = "\n".join(text.splitlines()[1:])
 
-    df = pd.read_csv(
-        filepath_or_buffer=io.StringIO(csv_data),
-        parse_dates=[
-            "MARKET_DAY", 
-        ],
-        date_format={
-            "MARKET_DAY": "%m/%d/%Y",
-        },
-    )
+            df = pd.read_csv(
+                filepath_or_buffer=io.StringIO(csv_data),
+            )
 
-    return df
+            df[["MARKET_DAY"]] = df[["MARKET_DAY"]].apply(pd.to_datetime, format="%m/%d/%Y")
+            df[["HE1", "HE2", "HE3", "HE4", "HE5", "HE6", "HE7", "HE8", "HE9", "HE10", "HE11", "HE12", "HE13", "HE14", "HE15", "HE16", "HE17", "HE18", "HE19", "HE20", "HE21", "HE22", "HE23", "HE24"]] = df[["HE1", "HE2", "HE3", "HE4", "HE5", "HE6", "HE7", "HE8", "HE9", "HE10", "HE11", "HE12", "HE13", "HE14", "HE15", "HE16", "HE17", "HE18", "HE19", "HE20", "HE21", "HE22", "HE23", "HE24"]].astype(numpy.dtypes.Float64DType())
+            df[["NODE", "TYPE", "VALUE"]] = df[["NODE", "TYPE", "VALUE"]].astype(pandas.core.arrays.string_.StringDtype())
+
+            return df
 ```
 excel
 ```python
