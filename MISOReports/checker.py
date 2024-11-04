@@ -13,12 +13,26 @@ def string_format_df_types(
     df: pd.DataFrame,
     auto_size: bool = False,
 ) -> pd.DataFrame:
+    commands = {'float': [], 'date': [], 'int': [], 'string': [], 'other': []}
     columns = list(df.columns)
     
     dtypes = df.dtypes
     types = []
     for k in dtypes.index:
-        types.append(str(type(dtypes[k])))
+        new = str(type(dtypes[k]))
+
+        if 'Float' in new:
+            commands["float"].append(k)
+        elif 'Date' in new:
+            commands["date"].append(k)
+        elif 'String' in new:
+            commands["string"].append(k)
+        elif 'Int' in new:
+            commands["int"].append(k)
+        else:
+            commands["other"].append(k)
+
+        types.append(new)
 
     types_df = pd.DataFrame(
         columns=columns,
@@ -30,7 +44,20 @@ def string_format_df_types(
     else:
         res = types_df.to_string()
 
-    return res
+    command_types = {'float': 'numpy.dtypes.Float64DType()', 'int': 'pandas.core.arrays.integer.Int64Dtype()', 'string': 'pandas.core.arrays.string_.StringDtype()'}
+
+    command_output = "\n\nSuggested Configs:\n"
+
+    for i in ('float', 'int', 'string', 'date', 'other'):
+        if i not in ('date', 'other') and len(commands[i]):
+            command_output += f'\tdf[{commands[i]}] = df[{commands[i]}].astype({command_types[i]})\n'
+        elif i == 'date' and len(commands[i]):
+            command_output += f'\tdf[{commands[i]}] = df[{commands[i]}].apply(pd.to_datetime, format="TODO PUT FORMAT HERE")\n'
+        elif i == 'other' and len(commands[i]):
+            command_output += f'TODO figure out these cols: {commands[i]}\n'
+
+
+    return res + command_output
 
 
 def string_format_split_df(
