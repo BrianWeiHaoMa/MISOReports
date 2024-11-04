@@ -219,6 +219,20 @@ report_columns_type_mappings: dict[str, dict[tuple[str], type]] = {
         ("HE1", "HE2", "HE3", "HE4", "HE5", "HE6", "HE7", "HE8", "HE9", "HE10", "HE11", "HE12", "HE13", "HE14", "HE15", "HE16", "HE17", "HE18", "HE19", "HE20", "HE21", "HE22", "HE23", "HE24",): numpy.dtypes.Float64DType,
         ("NODE", "TYPE", "VALUE",): pandas.core.arrays.string_.StringDtype,
     },
+    "rt_irsf": {
+        ("MKTHOUR_EST",): numpy.dtypes.DateTime64DType,
+        ("INTRAREGIONAL_SCHEDULED_FLOW",): numpy.dtypes.Float64DType,
+        ("CONSTRAINT_NAME",): pandas.core.arrays.string_.StringDtype,
+    },
+    "rt_mf": {
+        ("Unit Count", "Hour Ending",): pandas.core.arrays.integer.Int64Dtype,
+        ("Time Interval EST",): numpy.dtypes.DateTime64DType,
+        ("Peak Flag", "Region Name", "Fuel Type",): pandas.core.arrays.string_.StringDtype,
+    },
+    "rt_ex": {
+        ("Committed (GW at Economic Maximum) - Forward", "Committed (GW at Economic Maximum) - Real-Time", "Committed (GW at Economic Maximum) - Delta", "Load (GW) - Forward", "Load (GW) - Real-Time", "Load (GW) - Delta", "Net Scheduled Imports (GW) - Forward", "Net Scheduled Imports (GW) - Real-Time", "Net Scheduled Imports (GW) - Delta", "Outages (GW at Economic Maximum) - Forward", "Outages (GW at Economic Maximum) - Real-Time", "Outages (GW at Economic Maximum) - Delta", "Offer Changes (GW at Economic Maximum) - Forward", "Offer Changes (GW at Economic Maximum) - Real-Time", "Offer Changes (GW at Economic Maximum) - Delta",): numpy.dtypes.Float64DType,
+        ("Hour", "Real-Time Binding Constraints - (#)",): pandas.core.arrays.integer.Int64Dtype,
+    },
 }
 
 

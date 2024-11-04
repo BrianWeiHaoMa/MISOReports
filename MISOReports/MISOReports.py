@@ -260,14 +260,19 @@ class MISOReports:
 
             df = pd.read_csv(
                 filepath_or_buffer=io.StringIO(csv_data),
-                parse_dates=[
-                    "MKTHOUR_EST",
-                ],
-                date_format="%m/%d/%Y %H:%M:%S",
-                dtype={
-                    " REASON": pd.StringDtype(),
-                }
             )
+
+            df.rename(
+                columns={
+                    " INTRAREGIONAL_SCHEDULED_FLOW": "INTRAREGIONAL_SCHEDULED_FLOW",
+                    " CONSTRAINT_NAME": "CONSTRAINT_NAME",
+                }, 
+                inplace=True,
+            )
+
+            df[["INTRAREGIONAL_SCHEDULED_FLOW"]] = df[["INTRAREGIONAL_SCHEDULED_FLOW"]].astype(numpy.dtypes.Float64DType())
+            df[["MKTHOUR_EST"]] = df[["MKTHOUR_EST"]].apply(pd.to_datetime, format="%m/%d/%Y %H:%M:%S")
+            df[["CONSTRAINT_NAME"]] = df[["CONSTRAINT_NAME"]].astype(pandas.core.arrays.string_.StringDtype())
 
             return df
 
@@ -278,10 +283,11 @@ class MISOReports:
             df = pd.read_excel(
                 io=io.BytesIO(res.content),
                 skiprows=3,
-                dtype={
-                    "Unit Count": pd.Int64Dtype(),
-                }
             ).iloc[:-1]
+
+            df[["Unit Count", "Hour Ending"]] = df[["Unit Count", "Hour Ending"]].astype(pandas.core.arrays.integer.Int64Dtype())
+            df[["Time Interval EST"]] = df[["Time Interval EST"]].apply(pd.to_datetime, format="%m/%d/%Y %I:%M:%S %p")
+            df[["Peak Flag", "Region Name", "Fuel Type"]] = df[["Peak Flag", "Region Name", "Fuel Type"]].astype(pandas.core.arrays.string_.StringDtype())
 
             return df
 
@@ -293,6 +299,17 @@ class MISOReports:
                 io=io.BytesIO(res.content),
                 skiprows=5,
             )
+
+            df.rename(
+                columns={
+                    "Unnamed: 0": "Hour",
+                }, 
+                inplace=True,
+            )
+            
+            df["Hour"] = df["Hour"].replace('[^\\d]+', '', regex=True).astype(pandas.core.arrays.integer.Int64Dtype())
+            df[["Committed (GW at Economic Maximum) - Forward", "Committed (GW at Economic Maximum) - Real-Time", "Committed (GW at Economic Maximum) - Delta", "Load (GW) - Forward", "Load (GW) - Real-Time", "Load (GW) - Delta", "Net Scheduled Imports (GW) - Forward", "Net Scheduled Imports (GW) - Real-Time", "Net Scheduled Imports (GW) - Delta", "Outages (GW at Economic Maximum) - Forward", "Outages (GW at Economic Maximum) - Real-Time", "Outages (GW at Economic Maximum) - Delta", "Offer Changes (GW at Economic Maximum) - Forward", "Offer Changes (GW at Economic Maximum) - Real-Time", "Offer Changes (GW at Economic Maximum) - Delta"]] = df[["Committed (GW at Economic Maximum) - Forward", "Committed (GW at Economic Maximum) - Real-Time", "Committed (GW at Economic Maximum) - Delta", "Load (GW) - Forward", "Load (GW) - Real-Time", "Load (GW) - Delta", "Net Scheduled Imports (GW) - Forward", "Net Scheduled Imports (GW) - Real-Time", "Net Scheduled Imports (GW) - Delta", "Outages (GW at Economic Maximum) - Forward", "Outages (GW at Economic Maximum) - Real-Time", "Outages (GW at Economic Maximum) - Delta", "Offer Changes (GW at Economic Maximum) - Forward", "Offer Changes (GW at Economic Maximum) - Real-Time", "Offer Changes (GW at Economic Maximum) - Delta"]].astype(numpy.dtypes.Float64DType())
+            df[["Real-Time Binding Constraints - (#)"]] = df[["Real-Time Binding Constraints - (#)"]].astype(pandas.core.arrays.integer.Int64Dtype())
 
             return df
 
