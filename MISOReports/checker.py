@@ -11,6 +11,7 @@ from MISOReports.MISOReports import MISOReports
 
 def string_format_suggestions(
     df: pd.DataFrame,
+    report_name: str,
 ) -> str:
     categories = {
         "float": [], 
@@ -36,26 +37,47 @@ def string_format_suggestions(
             categories["other"].append(k)
 
     data_types = {
-        "float": "numpy.dtypes.Float64DType()", 
-        "int": "pandas.core.arrays.integer.Int64Dtype()", 
-        "string": "pandas.core.arrays.string_.StringDtype()",
+        "float": "numpy.dtypes.Float64DType",
+        "int": "pandas.core.arrays.integer.Int64Dtype",
+        "string": "pandas.core.arrays.string_.StringDtype",
     }
+
+    test_config = {}
+    unknown_col_str = ""
 
     res = "Suggested Configs:\n"
 
-    for cat in ("float", "int", "string", "date", "other"):
-        column_names = categories[cat]
+    for cat in ("float", "int", "string", "date", "other",):
+        column_names = tuple(categories[cat])
         list_string = "[" + ", ".join([f'"{col}"' for col in column_names]) + "]"
 
-        if len(column_names):
-            if cat not in ("date", "other"):
-                res += f"\tdf[{list_string}] = df[{list_string}].astype({data_types[cat]})\n"
+        if len(column_names):            
+            if cat in ("float", "int", "string",):
+                res += f"\tdf[{list_string}] = df[{list_string}].astype({data_types[cat]}())\n"
+                
+                test_config[column_names] = data_types[cat]
             elif cat == "date":
                 res += f"\tdf[{list_string}] = df[{list_string}].apply(pd.to_datetime, format=\"TODO PUT FORMAT HERE\")\n"
-            elif cat == "other":
-                res += f"TODO figure out these cols: {list_string}\n"
+                
+                test_config[column_names] = "numpy.dtypes.DateTime64DType"
+            else:
+                unknown_col_str = f"TODO figure out these cols: {list_string}\n"
+                
+                res += unknown_col_str
 
-    return res
+    config_dict_str = "Test Config:\n"
+    config_dict_str += f"\"{report_name}\": " + "{\n"
+    
+    for cols, dtype in test_config.items():
+        cols = "(" + ", ".join([f'"{col}"' for col in cols]) + ",)"
+        config_dict_str += f"\t{cols}: {dtype},\n"
+    
+    config_dict_str += "},\n"
+    
+    if unknown_col_str:
+        config_dict_str += "\n" + unknown_col_str
+
+    return res + "\n" + config_dict_str
 
 
 def string_format_df_types(
@@ -170,7 +192,7 @@ if __name__ == "__main__":
     Report: {report_name}
 URL: {url}
 {string_format_split_df(df=df, top=i_top, bottom=i_bottom, auto_size=i_auto_size)}
-{string_format_suggestions(df=df)}
+{string_format_suggestions(df=df, report_name=report_name)}
 
 
 """
