@@ -233,6 +233,16 @@ report_columns_type_mappings: dict[str, dict[tuple[str], type]] = {
         ("Committed (GW at Economic Maximum) - Forward", "Committed (GW at Economic Maximum) - Real-Time", "Committed (GW at Economic Maximum) - Delta", "Load (GW) - Forward", "Load (GW) - Real-Time", "Load (GW) - Delta", "Net Scheduled Imports (GW) - Forward", "Net Scheduled Imports (GW) - Real-Time", "Net Scheduled Imports (GW) - Delta", "Outages (GW at Economic Maximum) - Forward", "Outages (GW at Economic Maximum) - Real-Time", "Outages (GW at Economic Maximum) - Delta", "Offer Changes (GW at Economic Maximum) - Forward", "Offer Changes (GW at Economic Maximum) - Real-Time", "Offer Changes (GW at Economic Maximum) - Delta",): numpy.dtypes.Float64DType,
         ("Hour", "Real-Time Binding Constraints - (#)",): pandas.core.arrays.integer.Int64Dtype,
     },
+    "df_al": {
+        ("LRZ1 MTLF (MWh)", "LRZ1 ActualLoad (MWh)", "LRZ2_7 MTLF (MWh)", "LRZ2_7 ActualLoad (MWh)", "LRZ3_5 MTLF (MWh)", "LRZ3_5 ActualLoad (MWh)", "LRZ4 MTLF (MWh)", "LRZ4 ActualLoad (MWh)", "LRZ6 MTLF (MWh)", "LRZ6 ActualLoad (MWh)", "LRZ8_9_10 MTLF (MWh)", "LRZ8_9_10 ActualLoad (MWh)", "MISO MTLF (MWh)", "MISO ActualLoad (MWh)",): numpy.dtypes.Float64DType,
+        ("HourEnding",): pandas.core.arrays.integer.Int64Dtype,
+        ("Market Day",): numpy.dtypes.DateTime64DType,
+    },
+    "rf_al": {
+        ("North MTLF (MWh)", "North ActualLoad (MWh)", "Central MTLF (MWh)", "Central ActualLoad (MWh)", "South MTLF (MWh)", "South ActualLoad (MWh)", "MISO MTLF (MWh)", "MISO ActualLoad (MWh)",): numpy.dtypes.Float64DType,
+        ("HourEnding",): pandas.core.arrays.integer.Int64Dtype,
+        ("Market Day",): numpy.dtypes.DateTime64DType,
+    },
 }
 
 
