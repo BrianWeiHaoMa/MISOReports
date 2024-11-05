@@ -1403,15 +1403,11 @@ class MISOReports:
 
             df = pd.read_csv(
                 filepath_or_buffer=io.StringIO(csv_data),
-                parse_dates=[
-                    "Start Date", 
-                    "End Date",
-                ], 
-                date_format="%m/%d/%Y",
-                dtype={
-                    "Asset Owner ID": pd.StringDtype(),
-                },
-            )
+            )[:-3]
+
+            df[["MW1", "PRICE1", "MW2", "PRICE2", "MW3", "PRICE3", "MW4", "PRICE4", "MW5", "PRICE5", "MW6", "PRICE6", "MW7", "PRICE7", "MW8", "PRICE8", "MW9", "PRICE9", "MW10", "PRICE10"]] = df[["MW1", "PRICE1", "MW2", "PRICE2", "MW3", "PRICE3", "MW4", "PRICE4", "MW5", "PRICE5", "MW6", "PRICE6", "MW7", "PRICE7", "MW8", "PRICE8", "MW9", "PRICE9", "MW10", "PRICE10"]].astype(numpy.dtypes.Float64DType())
+            df[["Asset Owner ID", "Market Name", "Source", "Sink", "Hedge Type", "Class", "Type", "Round"]] = df[["Asset Owner ID", "Market Name", "Source", "Sink", "Hedge Type", "Class", "Type", "Round"]].astype(pandas.core.arrays.string_.StringDtype())
+            df[["Start Date", "End Date"]] = df[["Start Date", "End Date"]].apply(pd.to_datetime, format="%m/%d/%Y")
 
             return df
         
@@ -1442,7 +1438,9 @@ class MISOReports:
                 skiprows=3,
             ).iloc[:-3]
 
-            df["Time (EST)"] = pd.to_datetime(df["Time (EST)"], format="%Y-%m-%d %I:%M:%S %p")
+            df[["RT Ex-Ante MCP Regulation", "RT Ex-Ante MCP Spin", "RT Ex-Ante MCP Supp"]] = df[["RT Ex-Ante MCP Regulation", "RT Ex-Ante MCP Spin", "RT Ex-Ante MCP Supp"]].astype(numpy.dtypes.Float64DType())
+            df[["Zone"]] = df[["Zone"]].astype(pandas.core.arrays.string_.StringDtype())
+            df[["Time (EST)"]] = df[["Time (EST)"]].apply(pd.to_datetime, format="%Y-%m-%d %I:%M:%S %p")
 
             return df
         
@@ -1455,7 +1453,9 @@ class MISOReports:
                 skiprows=3,
             ).iloc[:-3]
 
-            df["Time (EST)"] = pd.to_datetime(df["Time (EST)"], format="%Y-%m-%d %I:%M:%S %p")
+            df[["RT MCP Regulation", "RT MCP Spin", "RT MCP Supp"]] = df[["RT MCP Regulation", "RT MCP Spin", "RT MCP Supp"]].astype(numpy.dtypes.Float64DType())
+            df[["Zone"]] = df[["Zone"]].astype(pandas.core.arrays.string_.StringDtype())
+            df[["Time (EST)"]] = df[["Time (EST)"]].apply(pd.to_datetime, format="%Y-%m-%d %I:%M:%S %p")
 
             return df
         
@@ -2021,7 +2021,7 @@ class MISOReports:
             ),
             type_to_parse="xlsx",
             parser=ReportParsers.parse_ms_rsg_srw,
-            example_url="https://docs.misoenergy.org/marketreports/20241029_ms_rsg_srw.xlsx",
+            example_url="https://docs.misoenergy.org/marketreports/20241104_ms_rsg_srw.xlsx",
         ),
 
         "ms_rnu_srw": Report(

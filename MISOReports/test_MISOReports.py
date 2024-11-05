@@ -378,6 +378,21 @@ report_columns_type_mappings: dict[str, dict[tuple[str], type]] = {
         ("Peak Flag", "Region Name", "Fuel Type",): pandas.core.arrays.string_.StringDtype,
         ("Time Interval EST",): numpy.dtypes.DateTime64DType,
     },
+    "5min_expost_mcp": {
+        ("RT MCP Regulation", "RT MCP Spin", "RT MCP Supp",): numpy.dtypes.Float64DType,
+        ("Zone",): pandas.core.arrays.string_.StringDtype,
+        ("Time (EST)",): numpy.dtypes.DateTime64DType,
+    },
+    "5min_exante_mcp": {
+        ("RT Ex-Ante MCP Regulation", "RT Ex-Ante MCP Spin", "RT Ex-Ante MCP Supp",): numpy.dtypes.Float64DType,
+        ("Zone",): pandas.core.arrays.string_.StringDtype,
+        ("Time (EST)",): numpy.dtypes.DateTime64DType,
+    },
+    "ftr_mpma_bids_offers": {
+        ("MW1", "PRICE1", "MW2", "PRICE2", "MW3", "PRICE3", "MW4", "PRICE4", "MW5", "PRICE5", "MW6", "PRICE6", "MW7", "PRICE7", "MW8", "PRICE8", "MW9", "PRICE9", "MW10", "PRICE10",): numpy.dtypes.Float64DType,
+        ("Market Name", "Source", "Sink", "Hedge Type", "Class", "Type", "Round", "Asset Owner ID",): pandas.core.arrays.string_.StringDtype,
+        ("Start Date", "End Date",): numpy.dtypes.DateTime64DType,
+    },
 }
 
 
