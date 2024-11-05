@@ -390,6 +390,50 @@ report_columns_type_mappings: dict[str, dict[tuple[str], type]] = {
         ("Market Name", "Source", "Sink", "Hedge Type", "Class", "Type", "Round", "Asset Owner ID",): pandas.core.arrays.string_.StringDtype,
         ("Start Date", "End Date",): numpy.dtypes.DateTime64DType,
     },
+    "ftr_annual_bids_offers": {
+        ("MW1", "PRICE1", "MW2", "PRICE2", "MW3", "PRICE3", "MW4", "PRICE4", "MW5", "PRICE5", "MW6", "PRICE6", "MW7", "PRICE7", "MW8", "PRICE8", "MW9", "PRICE9", "MW10", "PRICE10",): numpy.dtypes.Float64DType,
+        ("Market Name", "Source", "Sink", "Hedge Type", "Class", "Type", "Round", "Asset Owner ID",): pandas.core.arrays.string_.StringDtype,
+        ("Start Date", "End Date",): numpy.dtypes.DateTime64DType,
+    },
+    "bids_cb": {
+        ("MW", "LMP", "PRICE1", "MW1", "PRICE2", "MW2", "PRICE3", "MW3", "PRICE4", "MW4", "PRICE5", "MW5", "PRICE6", "MW6", "PRICE7", "MW7", "PRICE8", "MW8", "PRICE9", "MW9",): numpy.dtypes.Float64DType,
+        ("Market Participant Code",): pandas.core.arrays.integer.Int64Dtype,
+        ("Region", "Type of Bid", "Bid ID",): pandas.core.arrays.string_.StringDtype,
+        ("Date/Time Beginning (EST)", "Date/Time End (EST)",): numpy.dtypes.DateTime64DType,
+    },
+    "5MIN_LMP": {
+        ("LMP", "CON_LMP", "LOSS_LMP",): numpy.dtypes.Float64DType,
+        ("PNODENAME",): pandas.core.arrays.string_.StringDtype,
+        ("MKTHOUR_EST",): numpy.dtypes.DateTime64DType,
+    },
+    "RT_Load_EPNodes": {
+        ("HE1", "HE2", "HE3", "HE4", "HE5", "HE6", "HE7", "HE8", "HE9", "HE10", "HE11", "HE12", "HE13", "HE14", "HE15", "HE16", "HE17", "HE18", "HE19", "HE20", "HE21", "HE22", "HE23", "HE24",): numpy.dtypes.Float64DType,
+        ("EPNode", "Value",): pandas.core.arrays.string_.StringDtype,
+    },
+    "realtimebindingsrpbconstraints": {
+        ("Price",): numpy.dtypes.Float64DType,
+        ("BP1", "PC1", "BP2", "PC2", "BP3", "PC3", "BP4", "PC4",): pandas.core.arrays.integer.Int64Dtype,
+        ("Name", "OVERRIDE", "REASON", "CURVETYPE",): pandas.core.arrays.string_.StringDtype,
+        ("Period",): numpy.dtypes.DateTime64DType,
+    },
+    "realtimebindingconstraints": {
+        ("Price",): numpy.dtypes.Float64DType,
+        ("BP1", "PC1", "BP2", "PC2",): pandas.core.arrays.integer.Int64Dtype,
+        ("Name", "OVERRIDE", "CURVETYPE",): pandas.core.arrays.string_.StringDtype,
+        ("Period",): numpy.dtypes.DateTime64DType,
+    },
+    "lmpconsolidatedtable": {
+        ("LMP", "MLC", "MCC", "REGMCP", "REGMILEAGEMCP", "SPINMCP", "SUPPMCP", "STRMCP", "RCUPMCP", "RCDOWNMCP", "LMP.1", "MLC.1", "MCC.1", "LMP.2", "MLC.2", "MCC.2", "LMP.3", "MLC.3", "MCC.3",): numpy.dtypes.Float64DType,
+        ("Name",): pandas.core.arrays.string_.StringDtype,
+    },
+    "apiversion": {
+        ("Semantic",): pandas.core.arrays.string_.StringDtype,
+    },
+    "generationoutagesplusminusfivedays": {
+        ("Unplanned", "Planned", "Forced", "Derated",): pandas.core.arrays.integer.Int64Dtype,
+        ("OutageMonthDay",): pandas.core.arrays.string_.StringDtype,
+        ("OutageDate",): numpy.dtypes.DateTime64DType,
+    },
 }
 
 

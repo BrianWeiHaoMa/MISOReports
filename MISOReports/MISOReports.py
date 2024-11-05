@@ -1198,11 +1198,11 @@ class MISOReports:
 
             df = pd.read_csv(
                 filepath_or_buffer=io.StringIO(csv_data),
-                parse_dates=[
-                    "OutageDate", 
-                ],
-                date_format="%Y-%m-%d %H:%M:%S %p",
             )
+
+            df[["Unplanned", "Planned", "Forced", "Derated"]] = df[["Unplanned", "Planned", "Forced", "Derated"]].astype(pandas.core.arrays.integer.Int64Dtype())  
+            df[["OutageDate"]] = df[["OutageDate"]].apply(pd.to_datetime, format="%Y-%m-%d %H:%M:%S %p")
+            df[["OutageMonthDay"]] = df[["OutageMonthDay"]].astype(pandas.core.arrays.string_.StringDtype())
 
             return df  
         
@@ -1218,6 +1218,8 @@ class MISOReports:
                 data=[dictionary]
             )
 
+            df[["Semantic"]] = df[["Semantic"]].astype(pandas.core.arrays.string_.StringDtype())
+
             return df
         
         @staticmethod
@@ -1231,6 +1233,9 @@ class MISOReports:
                 filepath_or_buffer=io.StringIO(csv_data),
             )
 
+            df[["LMP", "MLC", "MCC", "REGMCP", "REGMILEAGEMCP", "SPINMCP", "SUPPMCP", "STRMCP", "RCUPMCP", "RCDOWNMCP", "LMP.1", "MLC.1", "MCC.1", "LMP.2", "MLC.2", "MCC.2", "LMP.3", "MLC.3", "MCC.3"]] = df[["LMP", "MLC", "MCC", "REGMCP", "REGMILEAGEMCP", "SPINMCP", "SUPPMCP", "STRMCP", "RCUPMCP", "RCDOWNMCP", "LMP.1", "MLC.1", "MCC.1", "LMP.2", "MLC.2", "MCC.2", "LMP.3", "MLC.3", "MCC.3"]].astype(numpy.dtypes.Float64DType())
+            df[["Name"]] = df[["Name"]].astype(pandas.core.arrays.string_.StringDtype())
+
             return df  
         
         @staticmethod
@@ -1242,12 +1247,13 @@ class MISOReports:
 
             df = pd.read_csv(
                 filepath_or_buffer=io.StringIO(csv_data),
-                parse_dates=[
-                    "Period", 
-                ],
-                date_format="%Y-%m-%dT%H:%M:%S",
             )
 
+            df[["Price"]] = df[["Price"]].astype(numpy.dtypes.Float64DType())
+            df[["BP1", "PC1", "BP2", "PC2"]] = df[["BP1", "PC1", "BP2", "PC2"]].astype(pandas.core.arrays.integer.Int64Dtype())
+            df[["Period"]] = df[["Period"]].apply(pd.to_datetime, format="%Y-%m-%dT%H:%M:%S")
+            df[["Name", "OVERRIDE", "CURVETYPE"]] = df[["Name", "OVERRIDE", "CURVETYPE"]].astype(pandas.core.arrays.string_.StringDtype())
+            
             return df
         
         @staticmethod
@@ -1259,11 +1265,12 @@ class MISOReports:
 
             df = pd.read_csv(
                 filepath_or_buffer=io.StringIO(csv_data),
-                parse_dates=[
-                    "Period", 
-                ],
-                date_format="%Y-%m-%dT%H:%M:%S",
             )
+
+            df[["Price"]] = df[["Price"]].astype(numpy.dtypes.Float64DType())
+            df[["BP1", "PC1", "BP2", "PC2", "BP3", "PC3", "BP4", "PC4"]] = df[["BP1", "PC1", "BP2", "PC2", "BP3", "PC3", "BP4", "PC4"]].astype(pandas.core.arrays.integer.Int64Dtype())
+            df[["Period"]] = df[["Period"]].apply(pd.to_datetime, format="%Y-%m-%dT%H:%M:%S")
+            df[["Name", "OVERRIDE", "REASON", "CURVETYPE"]] = df[["Name", "OVERRIDE", "REASON", "CURVETYPE"]].astype(pandas.core.arrays.string_.StringDtype())
 
             return df
         
@@ -1278,7 +1285,10 @@ class MISOReports:
 
             df = pd.read_csv(
                 filepath_or_buffer=io.StringIO(csv_data),
-            )
+            )[:-3]
+
+            df[["HE1", "HE2", "HE3", "HE4", "HE5", "HE6", "HE7", "HE8", "HE9", "HE10", "HE11", "HE12", "HE13", "HE14", "HE15", "HE16", "HE17", "HE18", "HE19", "HE20", "HE21", "HE22", "HE23", "HE24"]] = df[["HE1", "HE2", "HE3", "HE4", "HE5", "HE6", "HE7", "HE8", "HE9", "HE10", "HE11", "HE12", "HE13", "HE14", "HE15", "HE16", "HE17", "HE18", "HE19", "HE20", "HE21", "HE22", "HE23", "HE24"]].astype(numpy.dtypes.Float64DType())
+            df[["EPNode", "Value"]] = df[["EPNode", "Value"]].astype(pandas.core.arrays.string_.StringDtype())
 
             return df
         
@@ -1293,11 +1303,11 @@ class MISOReports:
 
             df = pd.read_csv(
                 filepath_or_buffer=io.StringIO(csv_data),
-                parse_dates=[
-                    "MKTHOUR_EST", 
-                ], 
-                date_format="%m/%d/%Y %H:%M",
             )
+
+            df[["LMP", "CON_LMP", "LOSS_LMP"]] = df[["LMP", "CON_LMP", "LOSS_LMP"]].astype(numpy.dtypes.Float64DType())
+            df[["MKTHOUR_EST"]] = df[["MKTHOUR_EST"]].apply(pd.to_datetime, format="%m/%d/%Y %H:%M")
+            df[["PNODENAME"]] = df[["PNODENAME"]].astype(pandas.core.arrays.string_.StringDtype())
 
             return df
         
@@ -1310,12 +1320,12 @@ class MISOReports:
 
             df = pd.read_csv(
                 filepath_or_buffer=io.StringIO(csv_data),
-                parse_dates=[
-                    "Date/Time Beginning (EST)", 
-                    "Date/Time End (EST)",
-                ], 
-                date_format="%m/%d/%Y %H:%M:%S",
             )
+
+            df[["MW", "LMP", "PRICE1", "MW1", "PRICE2", "MW2", "PRICE3", "MW3", "PRICE4", "MW4", "PRICE5", "MW5", "PRICE6", "MW6", "PRICE7", "MW7", "PRICE8", "MW8", "PRICE9", "MW9"]] = df[["MW", "LMP", "PRICE1", "MW1", "PRICE2", "MW2", "PRICE3", "MW3", "PRICE4", "MW4", "PRICE5", "MW5", "PRICE6", "MW6", "PRICE7", "MW7", "PRICE8", "MW8", "PRICE9", "MW9"]].astype(numpy.dtypes.Float64DType())
+            df[["Market Participant Code"]] = df[["Market Participant Code"]].astype(pandas.core.arrays.integer.Int64Dtype())
+            df[["Date/Time Beginning (EST)", "Date/Time End (EST)"]] = df[["Date/Time Beginning (EST)", "Date/Time End (EST)"]].apply(pd.to_datetime, format="%m/%d/%Y %H:%M:%S")
+            df[["Region", "Type of Bid", "Bid ID"]] = df[["Region", "Type of Bid", "Bid ID"]].astype(pandas.core.arrays.string_.StringDtype())
 
             return df
         
@@ -1376,16 +1386,12 @@ class MISOReports:
 
             df = pd.read_csv(
                 filepath_or_buffer=io.StringIO(csv_data),
-                parse_dates=[
-                    "Start Date", 
-                    "End Date",
-                ], 
-                date_format="%m/%d/%Y",
-                dtype={
-                    "Asset Owner ID": pd.StringDtype(),
-                },
-            )
+            )[:-3]
 
+            df[["MW1", "PRICE1", "MW2", "PRICE2", "MW3", "PRICE3", "MW4", "PRICE4", "MW5", "PRICE5", "MW6", "PRICE6", "MW7", "PRICE7", "MW8", "PRICE8", "MW9", "PRICE9", "MW10", "PRICE10"]] = df[["MW1", "PRICE1", "MW2", "PRICE2", "MW3", "PRICE3", "MW4", "PRICE4", "MW5", "PRICE5", "MW6", "PRICE6", "MW7", "PRICE7", "MW8", "PRICE8", "MW9", "PRICE9", "MW10", "PRICE10"]].astype(numpy.dtypes.Float64DType())
+            df[["Asset Owner ID", "Market Name", "Source", "Sink", "Hedge Type", "Class", "Type", "Round"]] = df[["Asset Owner ID", "Market Name", "Source", "Sink", "Hedge Type", "Class", "Type", "Round"]].astype(pandas.core.arrays.string_.StringDtype())
+            df[["Start Date", "End Date"]] = df[["Start Date", "End Date"]].apply(pd.to_datetime, format="%m/%d/%Y")
+            
             return df
         
         @staticmethod
