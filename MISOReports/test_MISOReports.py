@@ -300,8 +300,8 @@ report_columns_type_mappings: dict[str, dict[tuple[str], type]] = {
     },
     "da_bc_HIST": {
         ("Shadow Price", "BP1", "PC1", "BP2", "PC2",): numpy.dtypes.Float64DType,
-        ("Constraint_ID", "Hour of Occurrence", "Override",): pandas.core.arrays.integer.Int64Dtype,
-        ("Constraint Name", "Branch Name ( Branch Type / From CA / To CA )", "Contingency Description", "Constraint Description", "Curve Type",): pandas.core.arrays.string_.StringDtype,
+        ("Hour of Occurrence", "Override",): pandas.core.arrays.integer.Int64Dtype,
+        ("Constraint Name", "Constraint_ID", "Branch Name ( Branch Type / From CA / To CA )", "Contingency Description", "Constraint Description", "Curve Type",): pandas.core.arrays.string_.StringDtype,
         ("Market Date",): numpy.dtypes.DateTime64DType,
     },
     "cpnode_reszone": {
@@ -336,24 +336,21 @@ report_columns_type_mappings: dict[str, dict[tuple[str], type]] = {
     },
     "M2M_Settlement_srw": {
         ("MISO_SHADOW_PRICE", "MISO_MKT_FLOW", "MISO_FFE", "CP_SHADOW_PRICE", "CP_MKT_FLOW", "CP_FFE", "MISO_CREDIT", "CP_CREDIT",): numpy.dtypes.Float64DType,
-        ("FLOWGATE_ID",): pandas.core.arrays.integer.Int64Dtype,
-        ("MONITORING_RTO", "CP_RTO", "FLOWGATE_NAME",): pandas.core.arrays.string_.StringDtype,
+        ("FLOWGATE_ID", "MONITORING_RTO", "CP_RTO", "FLOWGATE_NAME",): pandas.core.arrays.string_.StringDtype,
         ("HOUR_ENDING",): numpy.dtypes.DateTime64DType,
     },
     "M2M_Flowgates_as_of": {
-        ("Flowgate ID",): pandas.core.arrays.integer.Int64Dtype,
-        ("Monitoring RTO", "Non Monitoring RTO", "Flowgate Description",): pandas.core.arrays.string_.StringDtype,
+        ("Flowgate ID", "Monitoring RTO", "Non Monitoring RTO", "Flowgate Description",): pandas.core.arrays.string_.StringDtype,
     },
     "M2M_FFE": {
         ("Non Monitoring RTO FFE", "Adjusted FFE",): numpy.dtypes.Float64DType,
-        ("NERC Flowgate ID",): pandas.core.arrays.integer.Int64Dtype,
-        ("Monitoring RTO", "Non Monitoring RTO", "Flowgate Description",): pandas.core.arrays.string_.StringDtype,
+        ("NERC Flowgate ID", "Monitoring RTO", "Non Monitoring RTO", "Flowgate Description",): pandas.core.arrays.string_.StringDtype,
         ("Hour Ending",): numpy.dtypes.DateTime64DType,
     },
     "Allocation_on_MISO_Flowgates": {
         ("Allocation (MW)",): numpy.dtypes.Float64DType,
-        ("NERC ID", "Allocation to Rating Percentage",): pandas.core.arrays.integer.Int64Dtype,
-        ("Flowgate Owner", "Flowgate Description", "Entity", "Direction", "Reciprocal Status on Flowgate",): pandas.core.arrays.string_.StringDtype,
+        ("Allocation to Rating Percentage",): pandas.core.arrays.integer.Int64Dtype,
+        ("NERC ID", "Flowgate Owner", "Flowgate Description", "Entity", "Direction", "Reciprocal Status on Flowgate",): pandas.core.arrays.string_.StringDtype,
     },
     "rt_pbc": {
         ("PRELIMINARY_SHADOW_PRICE",): numpy.dtypes.Float64DType,

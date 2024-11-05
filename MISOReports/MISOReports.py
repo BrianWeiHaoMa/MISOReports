@@ -1520,8 +1520,8 @@ class MISOReports:
             )
 
             df[["Allocation (MW)"]] = df[["Allocation (MW)"]].astype(numpy.dtypes.Float64DType())
-            df[["NERC ID", "Allocation to Rating Percentage"]] = df[["NERC ID", "Allocation to Rating Percentage"]].astype(pandas.core.arrays.integer.Int64Dtype())
-            df[["Flowgate Owner", "Flowgate Description", "Entity", "Direction", "Reciprocal Status on Flowgate"]] = df[["Flowgate Owner", "Flowgate Description", "Entity", "Direction", "Reciprocal Status on Flowgate"]].astype(pandas.core.arrays.string_.StringDtype())
+            df[["Allocation to Rating Percentage"]] = df[["Allocation to Rating Percentage"]].astype(pandas.core.arrays.integer.Int64Dtype())
+            df[["NERC ID", "Flowgate Owner", "Flowgate Description", "Entity", "Direction", "Reciprocal Status on Flowgate"]] = df[["NERC ID", "Flowgate Owner", "Flowgate Description", "Entity", "Direction", "Reciprocal Status on Flowgate"]].astype(pandas.core.arrays.string_.StringDtype())
 
             return df
         
@@ -1538,8 +1538,7 @@ class MISOReports:
             )
 
             df[["Adjusted FFE", "Non Monitoring RTO FFE"]] = df[["Adjusted FFE", "Non Monitoring RTO FFE"]].astype(numpy.dtypes.Float64DType())
-            df[["NERC Flowgate ID"]] = df[["NERC Flowgate ID"]].astype(pandas.core.arrays.integer.Int64Dtype())
-            df[["Monitoring RTO", "Non Monitoring RTO", "Flowgate Description"]] = df[["Monitoring RTO", "Non Monitoring RTO", "Flowgate Description"]].astype(pandas.core.arrays.string_.StringDtype())
+            df[["NERC Flowgate ID", "Monitoring RTO", "Non Monitoring RTO", "Flowgate Description"]] = df[["NERC Flowgate ID", "Monitoring RTO", "Non Monitoring RTO", "Flowgate Description"]].astype(pandas.core.arrays.string_.StringDtype())
             df[["Hour Ending"]] = df[["Hour Ending"]].apply(pd.to_datetime, format="%m/%d/%Y  %I:%M:%S %p")
 
             return df
@@ -1554,8 +1553,7 @@ class MISOReports:
                 filepath_or_buffer=io.StringIO(csv_data),
             )
 
-            df[["Flowgate ID"]] = df[["Flowgate ID"]].astype(pandas.core.arrays.integer.Int64Dtype())
-            df[["Monitoring RTO", "Non Monitoring RTO", "Flowgate Description"]] = df[["Monitoring RTO", "Non Monitoring RTO", "Flowgate Description"]].astype(pandas.core.arrays.string_.StringDtype())
+            df[["Flowgate ID", "Monitoring RTO", "Non Monitoring RTO", "Flowgate Description"]] = df[["Flowgate ID", "Monitoring RTO", "Non Monitoring RTO", "Flowgate Description"]].astype(pandas.core.arrays.string_.StringDtype())
 
             return df
         
@@ -1578,8 +1576,7 @@ class MISOReports:
             df["HOUR_ENDING"] = [(datetime.datetime.strptime(dtime.replace(" 24:00:00", " 00:00:00"), "%Y-%m-%d %H:%M:%S") + datetime.timedelta(days=1)).strftime("%Y-%m-%d %H:%M:%S") if dtime.endswith("24:00:00") else dtime for dtime in df["HOUR_ENDING"]]
             
             df[["MISO_SHADOW_PRICE", "MISO_MKT_FLOW", "MISO_FFE", "CP_SHADOW_PRICE", "CP_MKT_FLOW", "CP_FFE", "MISO_CREDIT", "CP_CREDIT"]] = df[["MISO_SHADOW_PRICE", "MISO_MKT_FLOW", "MISO_FFE", "CP_SHADOW_PRICE", "CP_MKT_FLOW", "CP_FFE", "MISO_CREDIT", "CP_CREDIT"]].astype(numpy.dtypes.Float64DType())
-            df[["FLOWGATE_ID"]] = df[["FLOWGATE_ID"]].astype(pandas.core.arrays.integer.Int64Dtype())
-            df[["MONITORING_RTO", "CP_RTO", "FLOWGATE_NAME"]] = df[["MONITORING_RTO", "CP_RTO", "FLOWGATE_NAME"]].astype(pandas.core.arrays.string_.StringDtype())
+            df[["FLOWGATE_ID", "MONITORING_RTO", "CP_RTO", "FLOWGATE_NAME"]] = df[["FLOWGATE_ID", "MONITORING_RTO", "CP_RTO", "FLOWGATE_NAME"]].astype(pandas.core.arrays.string_.StringDtype())
             df[["HOUR_ENDING"]] = df[["HOUR_ENDING"]].apply(pd.to_datetime, format="%Y-%m-%d %H:%M:%S")
 
             return df
@@ -1752,9 +1749,9 @@ class MISOReports:
             df["Shadow Price"] = df["Shadow Price"].replace(r'[\$,()]', '', regex=True)
 
             df[["Shadow Price", "BP1", "PC1", "BP2", "PC2"]] = df[["Shadow Price", "BP1", "PC1", "BP2", "PC2"]].astype(numpy.dtypes.Float64DType())
-            df[["Constraint_ID", "Hour of Occurrence", "Override"]] = df[["Constraint_ID", "Hour of Occurrence", "Override"]].astype(pandas.core.arrays.integer.Int64Dtype())
+            df[["Hour of Occurrence", "Override"]] = df[["Hour of Occurrence", "Override"]].astype(pandas.core.arrays.integer.Int64Dtype())
             df[["Market Date"]] = df[["Market Date"]].apply(pd.to_datetime, format="%m/%d/%Y")
-            df[["Constraint Name", "Branch Name ( Branch Type / From CA / To CA )", "Contingency Description", "Constraint Description", "Curve Type"]] = df[["Constraint Name", "Branch Name ( Branch Type / From CA / To CA )", "Contingency Description", "Constraint Description", "Curve Type"]].astype(pandas.core.arrays.string_.StringDtype())
+            df[["Constraint Name", "Constraint_ID", "Branch Name ( Branch Type / From CA / To CA )", "Contingency Description", "Constraint Description", "Curve Type"]] = df[["Constraint Name", "Constraint_ID", "Branch Name ( Branch Type / From CA / To CA )", "Contingency Description", "Constraint Description", "Curve Type"]].astype(pandas.core.arrays.string_.StringDtype())
 
             return df
         
