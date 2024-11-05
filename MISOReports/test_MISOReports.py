@@ -313,6 +313,29 @@ report_columns_type_mappings: dict[str, dict[tuple[str], type]] = {
         ("NERC ID", "Allocation to Rating Percentage",): pandas.core.arrays.integer.Int64Dtype,
         ("Flowgate Owner", "Flowgate Description", "Entity", "Direction", "Reciprocal Status on Flowgate",): pandas.core.arrays.string_.StringDtype,
     },
+    "rt_pbc": {
+        ("PRELIMINARY_SHADOW_PRICE",): numpy.dtypes.Float64DType,
+        ("BP1", "PC1", "BP2", "PC2", "BP3", "PC3", "BP4", "PC4", "OVERRIDE",): pandas.core.arrays.integer.Int64Dtype,
+        ("CONSTRAINT_NAME", "CURVETYPE", "REASON",): pandas.core.arrays.string_.StringDtype,
+        ("MARKET_HOUR_EST",): numpy.dtypes.DateTime64DType,
+    },
+    "rt_bc": {
+        ("Preliminary Shadow Price", "BP1", "PC1", "BP2", "PC2",): numpy.dtypes.Float64DType,
+        ("Override",): pandas.core.arrays.integer.Int64Dtype,
+        ("Flowgate NERC ID", "Constraint ID", "Constraint Name", "Branch Name ( Branch Type / From CA / To CA )", "Contingency Description", "Constraint Description", "Curve Type",): pandas.core.arrays.string_.StringDtype,
+        ("Hour of Occurrence",): numpy.dtypes.DateTime64DType,
+    },
+    "rt_or": {
+        ("Preliminary Shadow Price", "BP1", "PC1", "BP2", "PC2",): numpy.dtypes.Float64DType,
+        ("Override",): pandas.core.arrays.integer.Int64Dtype,
+        ("Flowgate NERC ID", "Constraint Name", "Branch Name ( Branch Type / From CA / To CA )", "Contingency Description", "Constraint Description", "Curve Type", "Reason",): pandas.core.arrays.string_.StringDtype,
+        ("Hour of Occurrence",): numpy.dtypes.DateTime64DType,
+    },
+    "rt_fuel_on_margin": {
+        ("Hour Ending", "Unit Count",): pandas.core.arrays.integer.Int64Dtype,
+        ("Peak Flag", "Region Name", "Fuel Type",): pandas.core.arrays.string_.StringDtype,
+        ("Time Interval EST",): numpy.dtypes.DateTime64DType,
+    },
 }
 
 
