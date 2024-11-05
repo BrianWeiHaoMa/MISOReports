@@ -271,8 +271,8 @@ class MISOReports:
             )
 
             df[["INTRAREGIONAL_SCHEDULED_FLOW"]] = df[["INTRAREGIONAL_SCHEDULED_FLOW"]].astype(numpy.dtypes.Float64DType())
-            df[["MKTHOUR_EST"]] = df[["MKTHOUR_EST"]].apply(pd.to_datetime, format="%m/%d/%Y %H:%M:%S")
             df[["CONSTRAINT_NAME"]] = df[["CONSTRAINT_NAME"]].astype(pandas.core.arrays.string_.StringDtype())
+            df[["MKTHOUR_EST"]] = df[["MKTHOUR_EST"]].apply(pd.to_datetime, format="%m/%d/%Y %H:%M:%S")
 
             return df
 
@@ -286,8 +286,8 @@ class MISOReports:
             ).iloc[:-1]
 
             df[["Unit Count", "Hour Ending"]] = df[["Unit Count", "Hour Ending"]].astype(pandas.core.arrays.integer.Int64Dtype())
-            df[["Time Interval EST"]] = df[["Time Interval EST"]].apply(pd.to_datetime, format="%m/%d/%Y %I:%M:%S %p")
             df[["Peak Flag", "Region Name", "Fuel Type"]] = df[["Peak Flag", "Region Name", "Fuel Type"]].astype(pandas.core.arrays.string_.StringDtype())
+            df[["Time Interval EST"]] = df[["Time Interval EST"]].apply(pd.to_datetime, format="%m/%d/%Y %I:%M:%S %p")
 
             return df
 
@@ -306,9 +306,9 @@ class MISOReports:
                 }, 
                 inplace=True,
             )
-            
+
+            df[["Committed (GW at Economic Maximum) - Forward", "Committed (GW at Economic Maximum) - Real-Time", "Committed (GW at Economic Maximum) - Delta", "Load (GW) - Forward", "Load (GW) - Real-Time", "Load (GW) - Delta", "Net Scheduled Imports (GW) - Forward", "Net Scheduled Imports (GW) - Real-Time", "Net Scheduled Imports (GW) - Delta", "Outages (GW at Economic Maximum) - Forward", "Outages (GW at Economic Maximum) - Real-Time", "Outages (GW at Economic Maximum) - Delta", "Offer Changes (GW at Economic Maximum) - Forward", "Offer Changes (GW at Economic Maximum) - Real-Time", "Offer Changes (GW at Economic Maximum) - Delta"]] = df[["Committed (GW at Economic Maximum) - Forward", "Committed (GW at Economic Maximum) - Real-Time", "Committed (GW at Economic Maximum) - Delta", "Load (GW) - Forward", "Load (GW) - Real-Time", "Load (GW) - Delta", "Net Scheduled Imports (GW) - Forward", "Net Scheduled Imports (GW) - Real-Time", "Net Scheduled Imports (GW) - Delta", "Outages (GW at Economic Maximum) - Forward", "Outages (GW at Economic Maximum) - Real-Time", "Outages (GW at Economic Maximum) - Delta", "Offer Changes (GW at Economic Maximum) - Forward", "Offer Changes (GW at Economic Maximum) - Real-Time", "Offer Changes (GW at Economic Maximum) - Delta"]].astype(numpy.dtypes.Float64DType())           
             df["Hour"] = df["Hour"].replace('[^\\d]+', '', regex=True).astype(pandas.core.arrays.integer.Int64Dtype())
-            df[["Committed (GW at Economic Maximum) - Forward", "Committed (GW at Economic Maximum) - Real-Time", "Committed (GW at Economic Maximum) - Delta", "Load (GW) - Forward", "Load (GW) - Real-Time", "Load (GW) - Delta", "Net Scheduled Imports (GW) - Forward", "Net Scheduled Imports (GW) - Real-Time", "Net Scheduled Imports (GW) - Delta", "Outages (GW at Economic Maximum) - Forward", "Outages (GW at Economic Maximum) - Real-Time", "Outages (GW at Economic Maximum) - Delta", "Offer Changes (GW at Economic Maximum) - Forward", "Offer Changes (GW at Economic Maximum) - Real-Time", "Offer Changes (GW at Economic Maximum) - Delta"]] = df[["Committed (GW at Economic Maximum) - Forward", "Committed (GW at Economic Maximum) - Real-Time", "Committed (GW at Economic Maximum) - Delta", "Load (GW) - Forward", "Load (GW) - Real-Time", "Load (GW) - Delta", "Net Scheduled Imports (GW) - Forward", "Net Scheduled Imports (GW) - Real-Time", "Net Scheduled Imports (GW) - Delta", "Outages (GW at Economic Maximum) - Forward", "Outages (GW at Economic Maximum) - Real-Time", "Outages (GW at Economic Maximum) - Delta", "Offer Changes (GW at Economic Maximum) - Forward", "Offer Changes (GW at Economic Maximum) - Real-Time", "Offer Changes (GW at Economic Maximum) - Delta"]].astype(numpy.dtypes.Float64DType())
             df[["Real-Time Binding Constraints - (#)"]] = df[["Real-Time Binding Constraints - (#)"]].astype(pandas.core.arrays.integer.Int64Dtype())
 
             return df
@@ -322,17 +322,32 @@ class MISOReports:
 
             df = pd.read_csv(
                 filepath_or_buffer=io.StringIO(csv_data),
-                parse_dates=[
-                    "MARKET_HOUR_EST",
-                ],
-                date_format="%m/%d/%Y %H:%M:%S",
-                dtype={
-                    " REASON": pd.StringDtype(),
-                }
+                usecols=range(14),
             )
 
-            int_columns = [" BP1", " PC1", " BP2", " PC2", " BP3", " PC3", " BP4", " PC4", " OVERRIDE"]
-            df[int_columns] = df[int_columns].astype(pd.Int64Dtype())
+            df.rename(
+                columns={
+                    " CONSTRAINT_NAME": "CONSTRAINT_NAME",
+                    " CURVETYPE": "CURVETYPE",
+                    " PRELIMINARY_SHADOW_PRICE": "PRELIMINARY_SHADOW_PRICE",
+                    " BP1": "BP1",
+                    " PC1": "PC1",
+                    " BP2": "BP2",
+                    " PC2": "PC2",
+                    " BP3": "BP3",
+                    " PC3": "PC3",
+                    " BP4": "BP4",
+                    " PC4": "PC4",
+                    " OVERRIDE": "OVERRIDE",
+                    " REASON": "REASON",
+                }, 
+                inplace=True,
+            )
+
+            df[["PRELIMINARY_SHADOW_PRICE"]] = df[["PRELIMINARY_SHADOW_PRICE"]].astype(numpy.dtypes.Float64DType())
+            df[["BP1", "PC1", "BP2", "PC2", "BP3", "PC3", "BP4", "PC4", "OVERRIDE"]] = df[["BP1", "PC1", "BP2", "PC2", "BP3", "PC3", "BP4", "PC4", "OVERRIDE"]].astype(pandas.core.arrays.integer.Int64Dtype())
+            df[["REASON", "CONSTRAINT_NAME", "CURVETYPE"]] = df[["REASON", "CONSTRAINT_NAME", "CURVETYPE"]].astype(pandas.core.arrays.string_.StringDtype())
+            df[["MARKET_HOUR_EST"]] = df[["MARKET_HOUR_EST"]].apply(pd.to_datetime, format="%m/%d/%Y %H:%M:%S")
 
             return df
 
@@ -343,12 +358,19 @@ class MISOReports:
             df = pd.read_excel(
                 io=io.BytesIO(res.content),
                 skiprows=3,
-                dtype={
-                    "Flowgate NERC ID": pd.StringDtype(),
-                },
+            )
+            
+            df.rename(
+                columns={
+                    "Hour of  Occurrence": "Hour of Occurrence",
+                }, 
+                inplace=True,
             )
 
-            df["Hour of  Occurrence"] = pd.to_datetime(df["Hour of  Occurrence"], format="%H:%M").dt.time
+            df[["Preliminary Shadow Price", "BP1", "PC1", "BP2", "PC2"]] = df[["Preliminary Shadow Price", "BP1", "PC1", "BP2", "PC2"]].astype(numpy.dtypes.Float64DType())
+            df[["Override"]] = df[["Override"]].astype(pandas.core.arrays.integer.Int64Dtype())
+            df[["Flowgate NERC ID", "Constraint ID", "Constraint Name", "Branch Name ( Branch Type / From CA / To CA )", "Contingency Description", "Constraint Description", "Curve Type"]] = df[["Flowgate NERC ID", "Constraint ID", "Constraint Name", "Branch Name ( Branch Type / From CA / To CA )", "Contingency Description", "Constraint Description", "Curve Type"]].astype(pandas.core.arrays.string_.StringDtype())
+            df[["Hour of Occurrence"]] = df[["Hour of Occurrence"]].apply(pd.to_datetime, format="%H:%M")
 
             return df
 
@@ -359,12 +381,19 @@ class MISOReports:
             df = pd.read_excel(
                 io=io.BytesIO(res.content),
                 skiprows=3,
-                dtype={
-                    "Flowgate NERC ID": pd.StringDtype(),
-                },
             )
 
-            df["Hour of  Occurrence"] = pd.to_datetime(df["Hour of  Occurrence"], format="%H:%M").dt.time
+            df.rename(
+                columns={
+                    "Hour of  Occurrence": "Hour of Occurrence",
+                }, 
+                inplace=True,
+            )
+            
+            df[["Preliminary Shadow Price", "BP1", "PC1", "BP2", "PC2"]] = df[["Preliminary Shadow Price", "BP1", "PC1", "BP2", "PC2"]].astype(numpy.dtypes.Float64DType())
+            df[["Override"]] = df[["Override"]].astype(pandas.core.arrays.integer.Int64Dtype())
+            df[["Flowgate NERC ID", "Constraint Name", "Branch Name ( Branch Type / From CA / To CA )", "Contingency Description", "Constraint Description", "Curve Type", "Reason"]] = df[["Flowgate NERC ID", "Constraint Name", "Branch Name ( Branch Type / From CA / To CA )", "Contingency Description", "Constraint Description", "Curve Type", "Reason"]].astype(pandas.core.arrays.string_.StringDtype())
+            df[["Hour of Occurrence"]] = df[["Hour of Occurrence"]].apply(pd.to_datetime, format="%H:%M")
 
             return df
 
@@ -378,12 +407,11 @@ class MISOReports:
             df = pd.read_excel(
                 io=io.BytesIO(content),
                 skiprows=3,
-                dtype={
-                    "Unit Count": pd.Int64Dtype(),
-                }
             ).iloc[:-1]
 
-            df["Time Interval EST"] = pd.to_datetime(df["Time Interval EST"], format="%m/%d/%Y %I:%M:%S %p")
+            df[["Unit Count", "Hour Ending"]] = df[["Unit Count", "Hour Ending"]].astype(pandas.core.arrays.integer.Int64Dtype())
+            df[["Peak Flag", "Region Name", "Fuel Type"]] = df[["Peak Flag", "Region Name", "Fuel Type"]].astype(pandas.core.arrays.string_.StringDtype())
+            df[["Time Interval EST"]] = df[["Time Interval EST"]].apply(pd.to_datetime, format="%m/%d/%Y %I:%M:%S %p")
 
             return df
 
