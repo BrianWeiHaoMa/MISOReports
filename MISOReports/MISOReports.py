@@ -1335,6 +1335,10 @@ class MISOReports:
                 thousands=',',
             )
 
+            df[["Allocation (MW)"]] = df[["Allocation (MW)"]].astype(numpy.dtypes.Float64DType())
+            df[["NERC ID", "Allocation to Rating Percentage"]] = df[["NERC ID", "Allocation to Rating Percentage"]].astype(pandas.core.arrays.integer.Int64Dtype())
+            df[["Flowgate Owner", "Flowgate Description", "Entity", "Direction", "Reciprocal Status on Flowgate"]] = df[["Flowgate Owner", "Flowgate Description", "Entity", "Direction", "Reciprocal Status on Flowgate"]].astype(pandas.core.arrays.string_.StringDtype())
+
             return df
         
         @staticmethod
@@ -1346,11 +1350,13 @@ class MISOReports:
 
             df = pd.read_csv(
                 filepath_or_buffer=io.StringIO(csv_data),
-                parse_dates=[
-                    "Hour Ending", 
-                ],
-                date_format="%m/%d/%Y  %I:%M:%S %p",
+                thousands=',',
             )
+
+            df[["Adjusted FFE", "Non Monitoring RTO FFE"]] = df[["Adjusted FFE", "Non Monitoring RTO FFE"]].astype(numpy.dtypes.Float64DType())
+            df[["NERC Flowgate ID"]] = df[["NERC Flowgate ID"]].astype(pandas.core.arrays.integer.Int64Dtype())
+            df[["Monitoring RTO", "Non Monitoring RTO", "Flowgate Description"]] = df[["Monitoring RTO", "Non Monitoring RTO", "Flowgate Description"]].astype(pandas.core.arrays.string_.StringDtype())
+            df[["Hour Ending"]] = df[["Hour Ending"]].apply(pd.to_datetime, format="%m/%d/%Y  %I:%M:%S %p")
 
             return df
         
@@ -1363,6 +1369,9 @@ class MISOReports:
             df = pd.read_csv(
                 filepath_or_buffer=io.StringIO(csv_data),
             )
+
+            df[["Flowgate ID"]] = df[["Flowgate ID"]].astype(pandas.core.arrays.integer.Int64Dtype())
+            df[["Monitoring RTO", "Non Monitoring RTO", "Flowgate Description"]] = df[["Monitoring RTO", "Non Monitoring RTO", "Flowgate Description"]].astype(pandas.core.arrays.string_.StringDtype())
 
             return df
         

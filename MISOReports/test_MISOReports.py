@@ -298,6 +298,21 @@ report_columns_type_mappings: dict[str, dict[tuple[str], type]] = {
         ("MONITORING_RTO", "CP_RTO", "FLOWGATE_NAME",): pandas.core.arrays.string_.StringDtype,
         ("HOUR_ENDING",): numpy.dtypes.DateTime64DType,
     },
+    "M2M_Flowgates_as_of": {
+        ("Flowgate ID",): pandas.core.arrays.integer.Int64Dtype,
+        ("Monitoring RTO", "Non Monitoring RTO", "Flowgate Description",): pandas.core.arrays.string_.StringDtype,
+    },
+    "M2M_FFE": {
+        ("Non Monitoring RTO FFE", "Adjusted FFE",): numpy.dtypes.Float64DType,
+        ("NERC Flowgate ID",): pandas.core.arrays.integer.Int64Dtype,
+        ("Monitoring RTO", "Non Monitoring RTO", "Flowgate Description",): pandas.core.arrays.string_.StringDtype,
+        ("Hour Ending",): numpy.dtypes.DateTime64DType,
+    },
+    "Allocation_on_MISO_Flowgates": {
+        ("Allocation (MW)",): numpy.dtypes.Float64DType,
+        ("NERC ID", "Allocation to Rating Percentage",): pandas.core.arrays.integer.Int64Dtype,
+        ("Flowgate Owner", "Flowgate Description", "Entity", "Direction", "Reciprocal Status on Flowgate",): pandas.core.arrays.string_.StringDtype,
+    },
 }
 
 
