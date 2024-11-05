@@ -259,7 +259,8 @@ class MISOReports:
                     "Flowgate NERCID": pandas.core.arrays.string_.StringDtype(),
                     "Constraint_ID": pandas.core.arrays.string_.StringDtype(),
                     "Preliminary Shadow Price": pandas.core.arrays.string_.StringDtype(),
-                }
+                }, 
+                low_memory=False,
             )
 
             df[["Preliminary Shadow Price"]] = df[["Preliminary Shadow Price"]].replace(r'[\$,()]', '', regex=True)
