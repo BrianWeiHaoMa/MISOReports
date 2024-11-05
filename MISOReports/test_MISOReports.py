@@ -242,6 +242,7 @@ report_columns_type_mappings: dict[str, dict[tuple[str], type]] = {
         ("North MTLF (MWh)", "North ActualLoad (MWh)", "Central MTLF (MWh)", "Central ActualLoad (MWh)", "South MTLF (MWh)", "South ActualLoad (MWh)", "MISO MTLF (MWh)", "MISO ActualLoad (MWh)",): numpy.dtypes.Float64DType,
         ("HourEnding",): pandas.core.arrays.integer.Int64Dtype,
         ("Market Day",): numpy.dtypes.DateTime64DType,
+    },
     "da_rpe": {
         ("Shadow Price",): numpy.dtypes.Float64DType,
         ("Hour of Occurence",): pandas.core.arrays.integer.Int64Dtype,
