@@ -65,14 +65,15 @@ def string_format_suggestions(
                 
                 res += unknown_col_str
 
-    config_dict_str = f"Test Config:\n\"{report_name}\": " + "{\n"
-
+    config_dict_str = "Test Config:\n"
+    config_dict_str += f"\"{report_name}\": " + "{\n"
+    
     for cols, dtype in test_config.items():
-        cols_formatted = ", ".join(f'"{col}"' for col in cols)
-        config_dict_str += f"\t({cols_formatted},): {dtype},\n"
-
+        cols = "(" + ", ".join([f'"{col}"' for col in cols]) + ",)"
+        config_dict_str += f"\t{cols}: {dtype},\n"
+    
     config_dict_str += "},\n"
-
+    
     if unknown_col_str:
         config_dict_str += "\n" + unknown_col_str
 
