@@ -67,10 +67,10 @@ Bids
 Day-Ahead 
 Brian
 ```
-https://docs.misoenergy.org/marketreports/20241029_da_bcsf.xls
-https://docs.misoenergy.org/marketreports/20241029_da_bc.xls
-https://docs.misoenergy.org/marketreports/20241029_da_pbc.csv
-https://docs.misoenergy.org/marketreports/20241030_da_pr.xls
+    https://docs.misoenergy.org/marketreports/20241029_da_bcsf.xls
+    https://docs.misoenergy.org/marketreports/20241029_da_bc.xls
+    https://docs.misoenergy.org/marketreports/20220107_da_pbc.csv
+    https://docs.misoenergy.org/marketreports/20241030_da_pr.xls
     https://docs.misoenergy.org/marketreports/20241029_da_rpe.xls
     https://docs.misoenergy.org/marketreports/20220321_da_ex.xls
     https://docs.misoenergy.org/marketreports/20241030_da_ex_rg.xlsx
@@ -163,11 +163,11 @@ Brian
     https://docs.misoenergy.org/marketreports/20241030_rt_mf.xlsx
     https://docs.misoenergy.org/marketreports/20241030_rt_irsf.csv
     https://docs.misoenergy.org/marketreports/20241026_rt_pr.xls
-https://docs.misoenergy.org/marketreports/2024_Historical_RT_RSG_Commitment.csv
-https://docs.misoenergy.org/marketreports/20241030_rt_rpe.xls
-https://docs.misoenergy.org/marketreports/20241009_Resource_Uplift_by_Commitment_Reason.xlsx
-https://docs.misoenergy.org/marketreports/20241023_RT_UDS_Approved_Case_Percentage.csv
-https://docs.misoenergy.org/marketreports/2024_rt_bc_HIST.csv
+    https://docs.misoenergy.org/marketreports/2024_Historical_RT_RSG_Commitment.csv
+    https://docs.misoenergy.org/marketreports/20241101_rt_rpe.xls
+    https://docs.misoenergy.org/marketreports/20241009_Resource_Uplift_by_Commitment_Reason.xlsx
+    https://docs.misoenergy.org/marketreports/20241023_RT_UDS_Approved_Case_Percentage.csv
+    https://docs.misoenergy.org/marketreports/2024_rt_bc_HIST.csv
 ```
 
 Resource Adequacy

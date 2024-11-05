@@ -246,6 +246,162 @@ class MISOReports:
             been implemented due to design decisions.
         """
         @staticmethod
+        def parse_rt_bc_HIST(
+            res: requests.Response,
+        ) -> pd.DataFrame:
+            text = res.text
+
+            csv_data = "\n".join(text.splitlines()[2:-2])
+
+            df = pd.read_csv(
+                filepath_or_buffer=io.StringIO(csv_data),   
+                dtype={
+                    "Flowgate NERCID": pandas.core.arrays.string_.StringDtype(),
+                    "Constraint_ID": pandas.core.arrays.string_.StringDtype(),
+                    "Preliminary Shadow Price": pandas.core.arrays.string_.StringDtype(),
+                }
+            )
+
+            df[["Preliminary Shadow Price"]] = df[["Preliminary Shadow Price"]].replace(r'[\$,()]', '', regex=True)
+            df[["BP1", "PC1", "BP2", "PC2", "Preliminary Shadow Price"]] = df[["BP1", "PC1", "BP2", "PC2", "Preliminary Shadow Price"]].astype(numpy.dtypes.Float64DType())
+            df[["Override"]] = df[["Override"]].astype(pandas.core.arrays.integer.Int64Dtype())
+            df[["Market Date"]] = df[["Market Date"]].apply(pd.to_datetime, format="%m/%d/%Y")
+            df[["Hour of Occurrence"]] = df[["Hour of Occurrence"]].apply(pd.to_datetime, format="%H:%M")
+            df[["Constraint Name", "Branch Name ( Branch Type / From CA / To CA )", "Contingency Description", "Constraint Description", "Curve Type"]] = df[["Constraint Name", "Branch Name ( Branch Type / From CA / To CA )", "Contingency Description", "Constraint Description", "Curve Type"]].astype(pandas.core.arrays.string_.StringDtype())
+
+            return df
+
+        @staticmethod
+        def parse_RT_UDS_Approved_Case_Percentage(
+            res: requests.Response,
+        ) -> pd.DataFrame:
+            text = res.text
+
+            csv_data = "\n".join(text.splitlines()[3:-2])
+
+            df = pd.read_csv(
+                filepath_or_buffer=io.StringIO(csv_data),   
+                dtype={
+                    "UDS Case ID": pandas.core.arrays.string_.StringDtype(),
+                }
+            )
+
+            df[["Percentage"]] = df[["Percentage"]].astype(numpy.dtypes.Float64DType())
+            df[["Dispatch Interval"]] = df[["Dispatch Interval"]].apply(pd.to_datetime, format="%m/%d/%Y %H:%M")
+
+            return df
+
+        @staticmethod
+        def parse_Resource_Uplift_by_Commitment_Reason(
+            res: requests.Response,
+        ) -> pd.DataFrame:
+            df = pd.read_excel(
+                io=io.BytesIO(res.content),
+                skiprows=10,
+                dtype={
+                    "REASON ID": pandas.core.arrays.string_.StringDtype(),
+                    "REASON": pandas.core.arrays.string_.StringDtype(),
+                }
+            ).iloc[:-2]
+
+            df[["ECONOMIC MAX"]] = df[["ECONOMIC MAX"]].astype(numpy.dtypes.Float64DType())
+            df[["LOCAL RESOURCE ZONE"]] = df[["LOCAL RESOURCE ZONE"]].astype(pandas.core.arrays.integer.Int64Dtype())
+            df[["STARTTIME"]] = df[["STARTTIME"]].apply(pd.to_datetime, format="%Y/%m/%d %I:%M:%S %p")
+
+            return df
+
+        @staticmethod
+        def parse_rt_rpe(
+            res: requests.Response,
+        ) -> pd.DataFrame:
+            df = pd.read_excel(
+                io=io.BytesIO(res.content),
+                skiprows=3,
+            ).iloc[:-1]
+
+            df[["Shadow Price"]] = df[["Shadow Price"]].astype(numpy.dtypes.Float64DType())
+            df[["Time of Occurence"]] = df[["Time of Occurence"]].apply(pd.to_datetime, format="%m-%d-%Y %H:%M:%S")
+            df[["Constraint Name", "Constraint Description"]] = df[["Constraint Name", "Constraint Description"]].astype(pandas.core.arrays.string_.StringDtype())
+
+            return df
+
+        @staticmethod
+        def parse_Historical_RT_RSG_Commitment(
+            res: requests.Response,
+        ) -> pd.DataFrame:
+            text = res.text
+
+            csv_data = "\n".join(text.splitlines()[:-2])
+
+            df = pd.read_csv(
+                filepath_or_buffer=io.StringIO(csv_data),   
+            )
+
+            df[["TOTAL_ECON_MAX"]] = df[["TOTAL_ECON_MAX"]].astype(numpy.dtypes.Float64DType())
+            df[["MKT_INT_END_EST"]] = df[["MKT_INT_END_EST"]].apply(pd.to_datetime, format="%Y-%m-%dT%H:%M:%S")
+            df[["COMMIT_REASON", "NUM_RESOURCES"]] = df[["COMMIT_REASON", "NUM_RESOURCES"]].astype(pandas.core.arrays.string_.StringDtype())
+
+            return df
+
+        @staticmethod
+        def parse_da_pr(
+            res: requests.Response,
+        ) -> pd.DataFrame:
+            raise NotImplementedError("Result has an atypical format.")
+
+        @staticmethod
+        def parse_da_pbc(
+            res: requests.Response,
+        ) -> pd.DataFrame:
+            text = res.text
+
+            lines = text.splitlines()[4:-2]
+            lines[0] = lines[0].replace(" ", "")
+
+            csv_data = "\n".join(lines)
+
+            df = pd.read_csv(
+                filepath_or_buffer=io.StringIO(csv_data),   
+                usecols=range(14)
+            )
+
+            df[["MARKET_HOUR_EST"]] = df[["MARKET_HOUR_EST"]].apply(pd.to_datetime, format="%m/%d/%Y %H:%M:%S")
+            df[["PRELIMINARY_SHADOW_PRICE"]] = df[["PRELIMINARY_SHADOW_PRICE"]].astype(numpy.dtypes.Float64DType())
+            df[["BP1", "PC1", "BP2", "PC2", "BP3", "PC3", "BP4", "PC4", "OVERRIDE"]] = df[["BP1", "PC1", "BP2", "PC2", "BP3", "PC3", "BP4", "PC4", "OVERRIDE"]].astype(pandas.core.arrays.integer.Int64Dtype())
+            df[["CONSTRAINT_NAME", "CURVETYPE", "REASON"]] = df[["CONSTRAINT_NAME", "CURVETYPE", "REASON"]].astype(pandas.core.arrays.string_.StringDtype())
+
+            return df
+
+        @staticmethod
+        def parse_da_bc(
+            res: requests.Response,
+        ) -> pd.DataFrame:
+            df = pd.read_excel(
+                io=io.BytesIO(res.content),
+                skiprows=3,
+            )
+
+            df[["Shadow Price", "BP1", "PC1", "BP2", "PC2"]] = df[["Shadow Price", "BP1", "PC1", "BP2", "PC2"]].astype(numpy.dtypes.Float64DType())
+            df[["Hour of Occurrence", "Override"]] = df[["Hour of Occurrence", "Override"]].astype(pandas.core.arrays.integer.Int64Dtype())
+            df[["Flowgate NERC ID", "Constraint_ID", "Constraint Name", "Branch Name ( Branch Type / From CA / To CA )", "Contingency Description", "Constraint Description", "Curve Type", "Reason"]] = df[["Flowgate NERC ID", "Constraint_ID", "Constraint Name", "Branch Name ( Branch Type / From CA / To CA )", "Contingency Description", "Constraint Description", "Curve Type", "Reason"]].astype(pandas.core.arrays.string_.StringDtype())
+
+            return df
+
+        @staticmethod
+        def parse_da_bcsf(
+            res: requests.Response,
+        ) -> pd.DataFrame:
+            df = pd.read_excel(
+                io=io.BytesIO(res.content),
+                skiprows=3,
+            )
+
+            df[["From KV", "To KV"]] = df[["From KV", "To KV"]].round().astype(pandas.core.arrays.integer.Int64Dtype())
+            df[["Constraint ID", "Direction", "Constraint Name", "Contingency Name", "Constraint Type", "Flowgate Name", "Device Type", "Key1", "Key2", "Key3", "From Area", "To Area", "From Station", "To Station"]] = df[["Constraint ID", "Direction", "Constraint Name", "Contingency Name", "Constraint Type", "Flowgate Name", "Device Type", "Key1", "Key2", "Key3", "From Area", "To Area", "From Station", "To Station"]].astype(pandas.core.arrays.string_.StringDtype())
+
+            return df
+
+        @staticmethod
         def parse_rt_pr(
             res: requests.Response,
         ) -> pd.DataFrame:
@@ -1648,6 +1804,105 @@ class MISOReports:
 
 
     report_mappings: dict[str, Report] = {
+        "rt_bc_HIST": Report(
+            url_builder=MISOMarketReportsURLBuilder(
+                target="rt_bc_HIST",
+                supported_extensions=["csv"],
+                url_generator=MISOMarketReportsURLBuilder.url_generator_YYYY_first
+            ),
+            type_to_parse="csv",
+            parser=ReportParsers.parse_rt_bc_HIST,
+            example_url="https://docs.misoenergy.org/marketreports/2024_rt_bc_HIST.csv",
+        ),
+
+        "RT_UDS_Approved_Case_Percentage": Report(
+            url_builder=MISOMarketReportsURLBuilder(
+                target="RT_UDS_Approved_Case_Percentage",
+                supported_extensions=["csv"],
+                url_generator=MISOMarketReportsURLBuilder.url_generator_YYYYmmdd_first
+            ),
+            type_to_parse="csv",
+            parser=ReportParsers.parse_RT_UDS_Approved_Case_Percentage,
+            example_url="https://docs.misoenergy.org/marketreports/20241023_RT_UDS_Approved_Case_Percentage.csv",
+        ),
+
+        "Resource_Uplift_by_Commitment_Reason": Report(
+            url_builder=MISOMarketReportsURLBuilder(
+                target="Resource_Uplift_by_Commitment_Reason",
+                supported_extensions=["xls"],
+                url_generator=MISOMarketReportsURLBuilder.url_generator_YYYYmmdd_first
+            ),
+            type_to_parse="xls",
+            parser=ReportParsers.parse_Resource_Uplift_by_Commitment_Reason,
+            example_url="https://docs.misoenergy.org/marketreports/20241009_Resource_Uplift_by_Commitment_Reason.xlsx",
+        ),
+
+        "rt_rpe": Report(
+            url_builder=MISOMarketReportsURLBuilder(
+                target="rt_rpe",
+                supported_extensions=["xls"],
+                url_generator=MISOMarketReportsURLBuilder.url_generator_YYYYmmdd_first
+            ),
+            type_to_parse="xls",
+            parser=ReportParsers.parse_rt_rpe,
+            example_url="https://docs.misoenergy.org/marketreports/20241101_rt_rpe.xls",
+        ),
+
+        "Historical_RT_RSG_Commitment": Report(
+            url_builder=MISOMarketReportsURLBuilder(
+                target="Historical_RT_RSG_Commitment",
+                supported_extensions=["csv"],
+                url_generator=MISOMarketReportsURLBuilder.url_generator_YYYY_first
+            ),
+            type_to_parse="csv",
+            parser=ReportParsers.parse_Historical_RT_RSG_Commitment,
+            example_url="https://docs.misoenergy.org/marketreports/2024_Historical_RT_RSG_Commitment.csv",
+        ),
+
+        "da_pr": Report(
+            url_builder=MISOMarketReportsURLBuilder(
+                target="da_pr",
+                supported_extensions=["xls"],
+                url_generator=MISOMarketReportsURLBuilder.url_generator_YYYYmmdd_first
+            ),
+            type_to_parse="xls",
+            parser=ReportParsers.parse_da_pr,
+            example_url="https://docs.misoenergy.org/marketreports/20241030_da_pr.xls",
+        ),
+
+        "da_pbc": Report(
+            url_builder=MISOMarketReportsURLBuilder(
+                target="da_pbc",
+                supported_extensions=["csv"],
+                url_generator=MISOMarketReportsURLBuilder.url_generator_YYYYmmdd_first
+            ),
+            type_to_parse="csv",
+            parser=ReportParsers.parse_da_pbc,
+            example_url="https://docs.misoenergy.org/marketreports/20220107_da_pbc.csv",
+        ),
+
+        "da_bc": Report(
+            url_builder=MISOMarketReportsURLBuilder(
+                target="da_bc",
+                supported_extensions=["xls"],
+                url_generator=MISOMarketReportsURLBuilder.url_generator_YYYYmmdd_first
+            ),
+            type_to_parse="xls",
+            parser=ReportParsers.parse_da_bc,
+            example_url="https://docs.misoenergy.org/marketreports/20241029_da_bc.xls",
+        ),
+
+        "da_bcsf": Report(
+            url_builder=MISOMarketReportsURLBuilder(
+                target="da_bcsf",
+                supported_extensions=["xls"],
+                url_generator=MISOMarketReportsURLBuilder.url_generator_YYYYmmdd_first
+            ),
+            type_to_parse="xls",
+            parser=ReportParsers.parse_da_bcsf,
+            example_url="https://docs.misoenergy.org/marketreports/20241029_da_bcsf.xls",
+        ),
+
         "rt_pr": Report(
             url_builder=MISOMarketReportsURLBuilder(
                 target="rt_pr",

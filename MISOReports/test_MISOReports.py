@@ -194,6 +194,48 @@ def test_get_df_every_report_example_url_returns_non_empty_df():
 
 
 report_columns_type_mappings: dict[str, dict[tuple[str], type]] = {
+    "rt_bc_HIST": {
+        ("Preliminary Shadow Price", "BP1", "PC1", "BP2", "PC2",): numpy.dtypes.Float64DType,
+        ("Override",): pandas.core.arrays.integer.Int64Dtype,
+        ("Flowgate NERCID", "Constraint_ID", "Constraint Name", "Branch Name ( Branch Type / From CA / To CA )", "Contingency Description", "Constraint Description", "Curve Type",): pandas.core.arrays.string_.StringDtype,
+        ("Market Date", "Hour of Occurrence",): numpy.dtypes.DateTime64DType,
+    },
+    "RT_UDS_Approved_Case_Percentage": {
+        ("Percentage",): numpy.dtypes.Float64DType,
+        ("UDS Case ID",): pandas.core.arrays.string_.StringDtype,
+        ("Dispatch Interval",): numpy.dtypes.DateTime64DType,
+    },
+    "Resource_Uplift_by_Commitment_Reason": {
+        ("ECONOMIC MAX",): numpy.dtypes.Float64DType,
+        ("LOCAL RESOURCE ZONE",): pandas.core.arrays.integer.Int64Dtype,
+        ("REASON", "REASON ID",): pandas.core.arrays.string_.StringDtype,
+        ("STARTTIME",): numpy.dtypes.DateTime64DType,
+    },
+    "rt_rpe": {
+        ("Shadow Price",): numpy.dtypes.Float64DType,
+        ("Constraint Name", "Constraint Description",): pandas.core.arrays.string_.StringDtype,
+        ("Time of Occurence",): numpy.dtypes.DateTime64DType,
+    },
+    "Historical_RT_RSG_Commitment": {
+        ("TOTAL_ECON_MAX",): numpy.dtypes.Float64DType,
+        ("COMMIT_REASON", "NUM_RESOURCES",): pandas.core.arrays.string_.StringDtype,
+        ("MKT_INT_END_EST",): numpy.dtypes.DateTime64DType,
+    },
+    "da_pbc": {
+        ("PRELIMINARY_SHADOW_PRICE",): numpy.dtypes.Float64DType,
+        ("BP1", "PC1", "BP2", "PC2", "BP3", "PC3", "BP4", "PC4", "OVERRIDE",): pandas.core.arrays.integer.Int64Dtype,
+        ("CONSTRAINT_NAME", "CURVETYPE", "REASON",): pandas.core.arrays.string_.StringDtype,
+        ("MARKET_HOUR_EST",): numpy.dtypes.DateTime64DType,
+    },
+    "da_bc": {
+        ("Shadow Price", "BP1", "PC1", "BP2", "PC2",): numpy.dtypes.Float64DType,
+        ("Hour of Occurrence", "Override",): pandas.core.arrays.integer.Int64Dtype,
+        ("Flowgate NERC ID", "Constraint_ID", "Constraint Name", "Branch Name ( Branch Type / From CA / To CA )", "Contingency Description", "Constraint Description", "Curve Type", "Reason",): pandas.core.arrays.string_.StringDtype,
+    },
+    "da_bcsf": {
+        ("From KV", "To KV",): pandas.core.arrays.integer.Int64Dtype,
+        ("Constraint ID", "Direction", "Constraint Name", "Contingency Name", "Constraint Type", "Flowgate Name", "Device Type", "Key1", "Key2", "Key3", "From Area", "To Area", "From Station", "To Station",): pandas.core.arrays.string_.StringDtype,
+    },
     "MARKET_SETTLEMENT_DATA_SRW": {
         ("DATE",): numpy.dtypes.DateTime64DType,
         ("BILL_DET",): pandas.core.arrays.string_.StringDtype,

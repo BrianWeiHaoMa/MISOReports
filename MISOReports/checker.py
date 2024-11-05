@@ -76,7 +76,17 @@ def string_format_suggestions(
     if unknown_col_str:
         config_dict_str += "\n" + unknown_col_str
 
-    return res + "\n" + config_dict_str
+    res += "\n" + config_dict_str
+
+    res += """
+Usable types:
+pandas.core.arrays.string_.StringDtype
+numpy.dtypes.DateTime64DType
+numpy.dtypes.Float64DType
+pandas.core.arrays.integer.Int64Dtype
+"""
+
+    return res
 
 
 def string_format_df_types(
@@ -143,7 +153,7 @@ if __name__ == "__main__":
     parser.add_argument("-a", "--all", action="store_true", default=False, help="Run the check for all reports.")
     parser.add_argument("-r", "--report_names", nargs='*', default=None, help="A list of reports to run the check for.")
     parser.add_argument("-o", "--output", type=str, nargs="?", const="", default=None, help="The output directory for the result file.")
-    parser.add_argument("-p", "--print", action="store_true", default=True,  help="Print the output in the terminal.")
+    parser.add_argument("-p", "--print", action="store_true", default=False,  help="Print the output in the terminal.")
     parser.add_argument("-t", "--top", type=int, default=3, help="The number of rows to show from the top of the df.")
     parser.add_argument("-b", "--bottom", type=int, default=3, help="The number of rows to show from bottom of the df.")          
     parser.add_argument("-s", "--auto_size", action="store_true", default=False, help="Automatically size the output on the df.")
