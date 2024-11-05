@@ -242,6 +242,60 @@ report_columns_type_mappings: dict[str, dict[tuple[str], type]] = {
         ("North MTLF (MWh)", "North ActualLoad (MWh)", "Central MTLF (MWh)", "Central ActualLoad (MWh)", "South MTLF (MWh)", "South ActualLoad (MWh)", "MISO MTLF (MWh)", "MISO ActualLoad (MWh)",): numpy.dtypes.Float64DType,
         ("HourEnding",): pandas.core.arrays.integer.Int64Dtype,
         ("Market Day",): numpy.dtypes.DateTime64DType,
+    "da_rpe": {
+        ("Shadow Price",): numpy.dtypes.Float64DType,
+        ("Hour of Occurence",): pandas.core.arrays.integer.Int64Dtype,
+        ("Constraint Name", "Constraint Description",): pandas.core.arrays.string_.StringDtype,
+    },
+    "da_ex": {
+        ("Demand Cleared (GWh) - Physical - Fixed", "Demand Cleared (GWh) - Physical - Price Sen.", "Demand Cleared (GWh) - Virtual", "Demand Cleared (GWh) - Total", "Supply Cleared (GWh) - Physical", "Supply Cleared (GWh) - Virtual", "Supply Cleared (GWh) - Total", "Net Scheduled Imports (GWh)", "Generation Resources Offered (GW at Econ. Max) - Must Run", "Generation Resources Offered (GW at Econ. Max) - Economic", "Generation Resources Offered (GW at Econ. Max) - Emergency", "Generation Resources Offered (GW at Econ. Max) - Total", "Generation Resources Offered (GW at Econ. Min) - Must Run", "Generation Resources Offered (GW at Econ. Min) - Economic", "Generation Resources Offered (GW at Econ. Min) - Emergency", "Generation Resources Offered (GW at Econ. Min) - Total",): numpy.dtypes.Float64DType,
+        ("Hour",): pandas.core.arrays.integer.Int64Dtype,
+    },
+    "da_ex_rg": {
+        ("Demand Cleared (GWh) - Physical - Fixed", "Demand Cleared (GWh) - Physical - Price Sen.", "Demand Cleared (GWh) - Virtual", "Demand Cleared (GWh) - Total", "Supply Cleared (GWh) - Physical", "Supply Cleared (GWh) - Virtual", "Supply Cleared (GWh) - Total", "Net Scheduled Imports (GWh)", "Generation Resources Offered (GW at Econ. Max) - Must Run", "Generation Resources Offered (GW at Econ. Max) - Economic", "Generation Resources Offered (GW at Econ. Max) - Emergency", "Generation Resources Offered (GW at Econ. Max) - Total", "Generation Resources Offered (GW at Econ. Min) - Must Run", "Generation Resources Offered (GW at Econ. Min) - Economic", "Generation Resources Offered (GW at Econ. Min) - Emergency", "Generation Resources Offered (GW at Econ. Min) - Total",): numpy.dtypes.Float64DType,
+        ("Hour Ending",): pandas.core.arrays.integer.Int64Dtype,
+    },
+    "da_bc_HIST": {
+        ("Shadow Price", "BP1", "PC1", "BP2", "PC2",): numpy.dtypes.Float64DType,
+        ("Constraint_ID", "Hour of Occurrence", "Override",): pandas.core.arrays.integer.Int64Dtype,
+        ("Constraint Name", "Branch Name ( Branch Type / From CA / To CA )", "Contingency Description", "Constraint Description", "Curve Type",): pandas.core.arrays.string_.StringDtype,
+        ("Market Date",): numpy.dtypes.DateTime64DType,
+    },
+    "cpnode_reszone": {
+        ("Reserve Zone",): pandas.core.arrays.integer.Int64Dtype,
+        ("CP Node Name",): pandas.core.arrays.string_.StringDtype,
+    },
+    "da_co": {
+        ("Economic Max", "Economic Min", "Emergency Max", "Emergency Min", "Self Scheduled MW", "Target MW Reduction", "MW", "Curtailment Offer Price", "Price1", "MW1", "Price2", "MW2", "Price3", "MW3", "Price4", "MW4", "Price5", "MW5", "Price6", "MW6", "Price7", "MW7", "Price8", "MW8", "Price9", "MW9", "Price10", "MW10", "MinEnergyStorageLevel", "MaxEnergyStorageLevel", "EmerMinEnergyStorageLevel", "EmerMaxEnergyStorageLevel",): numpy.dtypes.Float64DType,
+        ("Economic Flag", "Emergency Flag", "Must Run Flag", "Unit Available Flag", "Slope",): pandas.core.arrays.integer.Int64Dtype,
+        ("Region", "Unit Code",): pandas.core.arrays.string_.StringDtype,
+        ("Date/Time Beginning (EST)", "Date/Time End (EST)",): numpy.dtypes.DateTime64DType,
+    },
+    "rt_co": {
+        ("Cleared MW1", "Cleared MW2", "Cleared MW3", "Cleared MW4", "Cleared MW5", "Cleared MW6", "Cleared MW7", "Cleared MW8", "Cleared MW9", "Cleared MW10", "Cleared MW11", "Cleared MW12", "Economic Max", "Economic Min", "Emergency Max", "Emergency Min", "Self Scheduled MW", "Target MW Reduction", "Curtailment Offer Price", "Price1", "MW1", "Price2", "MW2", "Price3", "MW3", "Price4", "MW4", "Price5", "MW5", "Price6", "MW6", "Price7", "MW7", "Price8", "MW8", "Price9", "MW9", "Price10", "MW10", "MinEnergyStorageLevel", "MaxEnergyStorageLevel", "EmerMinEnergyStorageLevel", "EmerMaxEnergyStorageLevel",): numpy.dtypes.Float64DType,
+        ("Economic Flag", "Emergency Flag", "Must Run Flag", "Unit Available Flag", "Slope",): pandas.core.arrays.integer.Int64Dtype,
+        ("Region", "Unit Code",): pandas.core.arrays.string_.StringDtype,
+        ("Mkthour Begin (EST)",): numpy.dtypes.DateTime64DType,
+    },
+    "Dead_Node_Report": {
+        ("PNODE Name",): pandas.core.arrays.string_.StringDtype,
+        ("Mkt Hour",): numpy.dtypes.DateTime64DType,
+    },
+    "asm_rt_co": {
+        ("RegulationMax", "RegulationMin", "RegulationOffer Price", "RegulationSelfScheduleMW", "SpinningOffer Price", "SpinSelfScheduleMW", "OnlineSupplementalOffer", "OnlineSupplementalSelfScheduleMW", "OfflineSupplementalOffer", "OfflineSupplementalSelfScheduleMW", "RegMCP1", "RegMW1", "RegMCP2", "RegMW2", "RegMCP3", "RegMW3", "RegMCP4", "RegMW4", "RegMCP5", "RegMW5", "RegMCP6", "RegMW6", "RegMCP7", "RegMW7", "RegMCP8", "RegMW8", "RegMCP9", "RegMW9", "RegMCP10", "RegMW10", "RegMCP11", "RegMW11", "RegMCP12", "RegMW12", "SpinMCP1", "SpinMW1", "SpinMCP2", "SpinMW2", "SpinMCP3", "SpinMW3", "SpinMCP4", "SpinMW4", "SpinMCP5", "SpinMW5", "SpinMCP6", "SpinMW6", "SpinMCP7", "SpinMW7", "SpinMCP8", "SpinMW8", "SpinMCP9", "SpinMW9", "SpinMCP10", "SpinMW10", "SpinMCP11", "SpinMW11", "SpinMCP12", "SpinMW12", "SuppMCP1", "SuppMW1", "SuppMCP2", "SuppMW2", "SuppMCP3", "SuppMW3", "SuppMCP4", "SuppMW4", "SuppMCP5", "SuppMW5", "SuppMCP6", "SuppMW6", "SuppMCP7", "SuppMW7", "SuppMCP8", "SuppMW8", "SuppMCP9", "SuppMW9", "SuppMCP10", "SuppMW10", "SuppMCP11", "SuppMW11", "SuppMCP12", "SuppMW12", "StrOfflineOfferRate", "STRMCP1", "STRMW1", "STRMCP2", "STRMW2", "STRMCP3", "STRMW3", "STRMCP4", "STRMW4", "STRMCP5", "STRMW5", "STRMCP6", "STRMW6", "STRMCP7", "STRMW7", "STRMCP8", "STRMW8", "STRMCP9", "STRMW9", "STRMCP10", "STRMW10", "STRMCP11", "STRMW11", "STRMCP12", "STRMW12", "MinEnergyStorageLevel", "MaxEnergyStorageLevel", "EmerMinEnergyStorageLevel", "EmerMaxEnergyStorageLevel",): numpy.dtypes.Float64DType,
+        ("Region", "Unit Code",): pandas.core.arrays.string_.StringDtype,
+        ("Mkthour Begin (EST)",): numpy.dtypes.DateTime64DType,
+    },
+    "asm_da_co": {
+        ("RegulationMax", "RegulationMin", "RegulationOffer Price", "RegulationSelfScheduleMW", "SpinningOffer Price", "SpinSelfScheduleMW", "OnlineSupplementalOffer", "OnlineSupplementalSelfScheduleMW", "OfflineSupplementalOffer", "OfflineSupplementalSelfScheduleMW", "RegMCP", "RegMW", "SpinMCP", "SpinMW", "SuppMCP", "SuppMW", "OfflineSTR", "STRMCP", "STRMW", "MinEnergyStorageLevel", "MaxEnergyStorageLevel", "EmerMinEnergyStorageLevel", "EmerMaxEnergyStorageLevel",): numpy.dtypes.Float64DType,
+        ("Region", "Unit Code",): pandas.core.arrays.string_.StringDtype,
+        ("Date/Time Beginning (EST)", "Date/Time End (EST)",): numpy.dtypes.DateTime64DType,
+    },
+    "M2M_Settlement_srw": {
+        ("MISO_SHADOW_PRICE", "MISO_MKT_FLOW", "MISO_FFE", "CP_SHADOW_PRICE", "CP_MKT_FLOW", "CP_FFE", "MISO_CREDIT", "CP_CREDIT",): numpy.dtypes.Float64DType,
+        ("FLOWGATE_ID",): pandas.core.arrays.integer.Int64Dtype,
+        ("MONITORING_RTO", "CP_RTO", "FLOWGATE_NAME",): pandas.core.arrays.string_.StringDtype,
+        ("HOUR_ENDING",): numpy.dtypes.DateTime64DType,
     },
 }
 
