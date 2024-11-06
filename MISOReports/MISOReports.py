@@ -1470,49 +1470,162 @@ class MISOReports:
         def parse_da_exante_ramp_mcp(
             res: requests.Response,
         ) -> pd.DataFrame:
-            raise NotImplementedError("Result contains atypical column arrangement.")
+            df = pd.read_excel(
+                io=io.BytesIO(res.content),
+                skiprows=5,
+            ).iloc[:-1]
+             
+            df.columns = [
+                "Hour Ending",
+            ] + [
+                f"Reserve Zone {zone_num} - {direction}" 
+                for zone_num in range(1, 9) 
+                for direction in ["DA MCP Ramp Up Ex-Ante 1 Hour", "DA MCP Ramp Down Ex-Ante 1 Hour"]
+            ]
+            
+            df[["Reserve Zone 1 - DA MCP Ramp Up Ex-Ante 1 Hour", "Reserve Zone 1 - DA MCP Ramp Down Ex-Ante 1 Hour", "Reserve Zone 2 - DA MCP Ramp Up Ex-Ante 1 Hour", "Reserve Zone 2 - DA MCP Ramp Down Ex-Ante 1 Hour", "Reserve Zone 3 - DA MCP Ramp Up Ex-Ante 1 Hour", "Reserve Zone 3 - DA MCP Ramp Down Ex-Ante 1 Hour", "Reserve Zone 4 - DA MCP Ramp Up Ex-Ante 1 Hour", "Reserve Zone 4 - DA MCP Ramp Down Ex-Ante 1 Hour", "Reserve Zone 5 - DA MCP Ramp Up Ex-Ante 1 Hour", "Reserve Zone 5 - DA MCP Ramp Down Ex-Ante 1 Hour", "Reserve Zone 6 - DA MCP Ramp Up Ex-Ante 1 Hour", "Reserve Zone 6 - DA MCP Ramp Down Ex-Ante 1 Hour", "Reserve Zone 7 - DA MCP Ramp Up Ex-Ante 1 Hour", "Reserve Zone 7 - DA MCP Ramp Down Ex-Ante 1 Hour", "Reserve Zone 8 - DA MCP Ramp Up Ex-Ante 1 Hour", "Reserve Zone 8 - DA MCP Ramp Down Ex-Ante 1 Hour"]] = df[["Reserve Zone 1 - DA MCP Ramp Up Ex-Ante 1 Hour", "Reserve Zone 1 - DA MCP Ramp Down Ex-Ante 1 Hour", "Reserve Zone 2 - DA MCP Ramp Up Ex-Ante 1 Hour", "Reserve Zone 2 - DA MCP Ramp Down Ex-Ante 1 Hour", "Reserve Zone 3 - DA MCP Ramp Up Ex-Ante 1 Hour", "Reserve Zone 3 - DA MCP Ramp Down Ex-Ante 1 Hour", "Reserve Zone 4 - DA MCP Ramp Up Ex-Ante 1 Hour", "Reserve Zone 4 - DA MCP Ramp Down Ex-Ante 1 Hour", "Reserve Zone 5 - DA MCP Ramp Up Ex-Ante 1 Hour", "Reserve Zone 5 - DA MCP Ramp Down Ex-Ante 1 Hour", "Reserve Zone 6 - DA MCP Ramp Up Ex-Ante 1 Hour", "Reserve Zone 6 - DA MCP Ramp Down Ex-Ante 1 Hour", "Reserve Zone 7 - DA MCP Ramp Up Ex-Ante 1 Hour", "Reserve Zone 7 - DA MCP Ramp Down Ex-Ante 1 Hour", "Reserve Zone 8 - DA MCP Ramp Up Ex-Ante 1 Hour", "Reserve Zone 8 - DA MCP Ramp Down Ex-Ante 1 Hour"]].astype(numpy.dtypes.Float64DType())
+            df[["Hour Ending"]] = df[["Hour Ending"]].astype(pandas.core.arrays.integer.Int64Dtype())
+
+            return df
         
         @staticmethod
         def parse_da_exante_str_mcp(
             res: requests.Response,
         ) -> pd.DataFrame:
-            raise NotImplementedError("Result contains atypical column arrangement.")
+            df = pd.read_excel(
+                io=io.BytesIO(res.content),
+                skiprows=7,
+            ).iloc[:-1]
+             
+            df = df.rename(columns={idx: f"Reserve Zone {idx}" for idx in range(1, 9)})
+
+            df[["Reserve Zone 1", "Reserve Zone 2", "Reserve Zone 3", "Reserve Zone 4", "Reserve Zone 5", "Reserve Zone 6", "Reserve Zone 7", "Reserve Zone 8"]] = df[["Reserve Zone 1", "Reserve Zone 2", "Reserve Zone 3", "Reserve Zone 4", "Reserve Zone 5", "Reserve Zone 6", "Reserve Zone 7", "Reserve Zone 8"]].astype(numpy.dtypes.Float64DType())
+            df[["Hour Ending"]] = df[["Hour Ending"]].astype(pandas.core.arrays.integer.Int64Dtype())
+
+            return df
         
         @staticmethod
         def parse_da_expost_ramp_mcp(
             res: requests.Response,
         ) -> pd.DataFrame:
-            raise NotImplementedError("Result contains atypical column arrangement.")
+            df = pd.read_excel(
+                io=io.BytesIO(res.content),
+                skiprows=5,
+            ).iloc[:-1]
+             
+            df.columns = [
+                "Hour Ending",
+            ] + [
+                f"Reserve Zone {zone_num} - {direction}" 
+                for zone_num in range(1, 9) 
+                for direction in ["DA MCP Ramp Up Ex-Post 1 Hour", "DA MCP Ramp Down Ex-Post 1 Hour"]
+            ]
+
+            df[["Reserve Zone 1 - DA MCP Ramp Up Ex-Post 1 Hour", "Reserve Zone 1 - DA MCP Ramp Down Ex-Post 1 Hour", "Reserve Zone 2 - DA MCP Ramp Up Ex-Post 1 Hour", "Reserve Zone 2 - DA MCP Ramp Down Ex-Post 1 Hour", "Reserve Zone 3 - DA MCP Ramp Up Ex-Post 1 Hour", "Reserve Zone 3 - DA MCP Ramp Down Ex-Post 1 Hour", "Reserve Zone 4 - DA MCP Ramp Up Ex-Post 1 Hour", "Reserve Zone 4 - DA MCP Ramp Down Ex-Post 1 Hour", "Reserve Zone 5 - DA MCP Ramp Up Ex-Post 1 Hour", "Reserve Zone 5 - DA MCP Ramp Down Ex-Post 1 Hour", "Reserve Zone 6 - DA MCP Ramp Up Ex-Post 1 Hour", "Reserve Zone 6 - DA MCP Ramp Down Ex-Post 1 Hour", "Reserve Zone 7 - DA MCP Ramp Up Ex-Post 1 Hour", "Reserve Zone 7 - DA MCP Ramp Down Ex-Post 1 Hour", "Reserve Zone 8 - DA MCP Ramp Up Ex-Post 1 Hour", "Reserve Zone 8 - DA MCP Ramp Down Ex-Post 1 Hour"]] = df[["Reserve Zone 1 - DA MCP Ramp Up Ex-Post 1 Hour", "Reserve Zone 1 - DA MCP Ramp Down Ex-Post 1 Hour", "Reserve Zone 2 - DA MCP Ramp Up Ex-Post 1 Hour", "Reserve Zone 2 - DA MCP Ramp Down Ex-Post 1 Hour", "Reserve Zone 3 - DA MCP Ramp Up Ex-Post 1 Hour", "Reserve Zone 3 - DA MCP Ramp Down Ex-Post 1 Hour", "Reserve Zone 4 - DA MCP Ramp Up Ex-Post 1 Hour", "Reserve Zone 4 - DA MCP Ramp Down Ex-Post 1 Hour", "Reserve Zone 5 - DA MCP Ramp Up Ex-Post 1 Hour", "Reserve Zone 5 - DA MCP Ramp Down Ex-Post 1 Hour", "Reserve Zone 6 - DA MCP Ramp Up Ex-Post 1 Hour", "Reserve Zone 6 - DA MCP Ramp Down Ex-Post 1 Hour", "Reserve Zone 7 - DA MCP Ramp Up Ex-Post 1 Hour", "Reserve Zone 7 - DA MCP Ramp Down Ex-Post 1 Hour", "Reserve Zone 8 - DA MCP Ramp Up Ex-Post 1 Hour", "Reserve Zone 8 - DA MCP Ramp Down Ex-Post 1 Hour"]].astype(numpy.dtypes.Float64DType())
+            df[["Hour Ending"]] = df[["Hour Ending"]].astype(pandas.core.arrays.integer.Int64Dtype())
+
+            return df
         
         @staticmethod
         def parse_da_expost_str_mcp(
             res: requests.Response,
         ) -> pd.DataFrame:
-            raise NotImplementedError("Result contains atypical column arrangement.")
+            df = pd.read_excel(
+                io=io.BytesIO(res.content),
+                skiprows=5,
+            ).iloc[:-1]
+             
+            df = df.rename(columns={idx: f"Reserve Zone {idx}" for idx in range(1, 9)})
+
+            df[["Reserve Zone 1", "Reserve Zone 2", "Reserve Zone 3", "Reserve Zone 4", "Reserve Zone 5", "Reserve Zone 6", "Reserve Zone 7", "Reserve Zone 8"]] = df[["Reserve Zone 1", "Reserve Zone 2", "Reserve Zone 3", "Reserve Zone 4", "Reserve Zone 5", "Reserve Zone 6", "Reserve Zone 7", "Reserve Zone 8"]].astype(numpy.dtypes.Float64DType())
+            df[["Hour Ending"]] = df[["Hour Ending"]].astype(pandas.core.arrays.integer.Int64Dtype())
+
+            return df
         
         @staticmethod
         def parse_rt_expost_ramp_5min_mcp(
             res: requests.Response,
         ) -> pd.DataFrame:
-            raise NotImplementedError("Result contains atypical column arrangement.")
+            df = pd.read_excel(
+                io=io.BytesIO(res.content),
+                skiprows=6,
+            ).iloc[:-1]
+             
+            df.columns = [
+                "Time (EST)", 
+                "Preliminary / Final"
+            ] + [
+                f"Reserve Zone {zone_num} - {direction}" 
+                for zone_num in range(1, 9) 
+                for direction in ["RT MCP Ramp Up Ex-Post 5 Min", "RT MCP Ramp Down Ex-Post 5 Min"]
+            ]
+
+            df[["Reserve Zone 1 - RT MCP Ramp Up Ex-Post 5 Min", "Reserve Zone 1 - RT MCP Ramp Down Ex-Post 5 Min", "Reserve Zone 2 - RT MCP Ramp Up Ex-Post 5 Min", "Reserve Zone 2 - RT MCP Ramp Down Ex-Post 5 Min", "Reserve Zone 3 - RT MCP Ramp Up Ex-Post 5 Min", "Reserve Zone 3 - RT MCP Ramp Down Ex-Post 5 Min", "Reserve Zone 4 - RT MCP Ramp Up Ex-Post 5 Min", "Reserve Zone 4 - RT MCP Ramp Down Ex-Post 5 Min", "Reserve Zone 5 - RT MCP Ramp Up Ex-Post 5 Min", "Reserve Zone 5 - RT MCP Ramp Down Ex-Post 5 Min", "Reserve Zone 6 - RT MCP Ramp Up Ex-Post 5 Min", "Reserve Zone 6 - RT MCP Ramp Down Ex-Post 5 Min", "Reserve Zone 7 - RT MCP Ramp Up Ex-Post 5 Min", "Reserve Zone 7 - RT MCP Ramp Down Ex-Post 5 Min", "Reserve Zone 8 - RT MCP Ramp Up Ex-Post 5 Min", "Reserve Zone 8 - RT MCP Ramp Down Ex-Post 5 Min"]] = df[["Reserve Zone 1 - RT MCP Ramp Up Ex-Post 5 Min", "Reserve Zone 1 - RT MCP Ramp Down Ex-Post 5 Min", "Reserve Zone 2 - RT MCP Ramp Up Ex-Post 5 Min", "Reserve Zone 2 - RT MCP Ramp Down Ex-Post 5 Min", "Reserve Zone 3 - RT MCP Ramp Up Ex-Post 5 Min", "Reserve Zone 3 - RT MCP Ramp Down Ex-Post 5 Min", "Reserve Zone 4 - RT MCP Ramp Up Ex-Post 5 Min", "Reserve Zone 4 - RT MCP Ramp Down Ex-Post 5 Min", "Reserve Zone 5 - RT MCP Ramp Up Ex-Post 5 Min", "Reserve Zone 5 - RT MCP Ramp Down Ex-Post 5 Min", "Reserve Zone 6 - RT MCP Ramp Up Ex-Post 5 Min", "Reserve Zone 6 - RT MCP Ramp Down Ex-Post 5 Min", "Reserve Zone 7 - RT MCP Ramp Up Ex-Post 5 Min", "Reserve Zone 7 - RT MCP Ramp Down Ex-Post 5 Min", "Reserve Zone 8 - RT MCP Ramp Up Ex-Post 5 Min", "Reserve Zone 8 - RT MCP Ramp Down Ex-Post 5 Min"]].astype(numpy.dtypes.Float64DType())
+            df[["Time (EST)"]] = df[["Time (EST)"]].apply(pd.to_datetime, format="%m/%d/%Y  %I:%M:%S %p")
+            df[["Preliminary / Final"]] = df[["Preliminary / Final"]].astype(pandas.core.arrays.string_.StringDtype())
+
+            return df
         
         @staticmethod
         def parse_rt_expost_ramp_mcp(
             res: requests.Response,
         ) -> pd.DataFrame:
-            raise NotImplementedError("Result contains atypical column arrangement.")
+            df = pd.read_excel(
+                io=io.BytesIO(res.content),
+                skiprows=5,
+            ).iloc[:-1]
+             
+            df.columns = [
+                "Market Date", 
+                "Hour Ending", 
+                "Preliminary / Final"
+            ] + [
+                f"Reserve Zone {zone_num} - {direction}" 
+                for zone_num in range(1, 9) 
+                for direction in ["RT MCP Ramp Up Ex-Post Hourly", "RT MCP Ramp Down Ex-Post Hourly"]
+            ]
+
+            df[["Reserve Zone 1 - RT MCP Ramp Up Ex-Post Hourly", "Reserve Zone 1 - RT MCP Ramp Down Ex-Post Hourly", "Reserve Zone 2 - RT MCP Ramp Up Ex-Post Hourly", "Reserve Zone 2 - RT MCP Ramp Down Ex-Post Hourly", "Reserve Zone 3 - RT MCP Ramp Up Ex-Post Hourly", "Reserve Zone 3 - RT MCP Ramp Down Ex-Post Hourly", "Reserve Zone 4 - RT MCP Ramp Up Ex-Post Hourly", "Reserve Zone 4 - RT MCP Ramp Down Ex-Post Hourly", "Reserve Zone 5 - RT MCP Ramp Up Ex-Post Hourly", "Reserve Zone 5 - RT MCP Ramp Down Ex-Post Hourly", "Reserve Zone 6 - RT MCP Ramp Up Ex-Post Hourly", "Reserve Zone 6 - RT MCP Ramp Down Ex-Post Hourly", "Reserve Zone 7 - RT MCP Ramp Up Ex-Post Hourly", "Reserve Zone 7 - RT MCP Ramp Down Ex-Post Hourly", "Reserve Zone 8 - RT MCP Ramp Up Ex-Post Hourly", "Reserve Zone 8 - RT MCP Ramp Down Ex-Post Hourly"]] = df[["Reserve Zone 1 - RT MCP Ramp Up Ex-Post Hourly", "Reserve Zone 1 - RT MCP Ramp Down Ex-Post Hourly", "Reserve Zone 2 - RT MCP Ramp Up Ex-Post Hourly", "Reserve Zone 2 - RT MCP Ramp Down Ex-Post Hourly", "Reserve Zone 3 - RT MCP Ramp Up Ex-Post Hourly", "Reserve Zone 3 - RT MCP Ramp Down Ex-Post Hourly", "Reserve Zone 4 - RT MCP Ramp Up Ex-Post Hourly", "Reserve Zone 4 - RT MCP Ramp Down Ex-Post Hourly", "Reserve Zone 5 - RT MCP Ramp Up Ex-Post Hourly", "Reserve Zone 5 - RT MCP Ramp Down Ex-Post Hourly", "Reserve Zone 6 - RT MCP Ramp Up Ex-Post Hourly", "Reserve Zone 6 - RT MCP Ramp Down Ex-Post Hourly", "Reserve Zone 7 - RT MCP Ramp Up Ex-Post Hourly", "Reserve Zone 7 - RT MCP Ramp Down Ex-Post Hourly", "Reserve Zone 8 - RT MCP Ramp Up Ex-Post Hourly", "Reserve Zone 8 - RT MCP Ramp Down Ex-Post Hourly"]].astype(numpy.dtypes.Float64DType())
+            df[["Market Date"]] = df[["Market Date"]].apply(pd.to_datetime, format="%Y-%m-%d")
+            df[["Preliminary / Final"]] = df[["Preliminary / Final"]].astype(pandas.core.arrays.string_.StringDtype())
+            df[["Hour Ending"]] = df[["Hour Ending"]].astype(pandas.core.arrays.integer.Int64Dtype())
+
+            return df
         
         @staticmethod
         def parse_rt_expost_str_5min_mcp(
             res: requests.Response,
         ) -> pd.DataFrame:
-            raise NotImplementedError("Result contains atypical column arrangement.")
+            df = pd.read_excel(
+                io=io.BytesIO(res.content),
+                skiprows=4,
+            ).iloc[:-1]
+             
+            df = df.rename(columns={idx: f"RESERVE ZONE {idx}" for idx in range(1, 9)})
+            df = df.drop(columns=["Unnamed: 0"])
+
+            df[["RESERVE ZONE 1", "RESERVE ZONE 2", "RESERVE ZONE 3", "RESERVE ZONE 4", "RESERVE ZONE 5", "RESERVE ZONE 6", "RESERVE ZONE 7", "RESERVE ZONE 8"]] = df[["RESERVE ZONE 1", "RESERVE ZONE 2", "RESERVE ZONE 3", "RESERVE ZONE 4", "RESERVE ZONE 5", "RESERVE ZONE 6", "RESERVE ZONE 7", "RESERVE ZONE 8"]].astype(numpy.dtypes.Float64DType())
+            df[["Time(EST)"]] = df[["Time(EST)"]].apply(pd.to_datetime, format="%m/%d/%Y  %I:%M:%S %p")
+            df[["Preliminary/ Final"]] = df[["Preliminary/ Final"]].astype(pandas.core.arrays.string_.StringDtype())
+
+            return df
         
         @staticmethod
         def parse_rt_expost_str_mcp(
             res: requests.Response,
         ) -> pd.DataFrame:
-            raise NotImplementedError("Result contains atypical column arrangement.")
+            df = pd.read_excel(
+                io=io.BytesIO(res.content),
+                skiprows=5,
+            ).iloc[:-1]
+             
+            df = df.rename(columns={idx: f"RESERVE ZONE {idx}" for idx in range(1, 9)})
+
+            df[["Hour Ending", "RESERVE ZONE 1", "RESERVE ZONE 2", "RESERVE ZONE 3", "RESERVE ZONE 4", "RESERVE ZONE 5", "RESERVE ZONE 6", "RESERVE ZONE 7", "RESERVE ZONE 8"]] = df[["Hour Ending", "RESERVE ZONE 1", "RESERVE ZONE 2", "RESERVE ZONE 3", "RESERVE ZONE 4", "RESERVE ZONE 5", "RESERVE ZONE 6", "RESERVE ZONE 7", "RESERVE ZONE 8"]].astype(numpy.dtypes.Float64DType())
+            df[["MARKET DATE"]] = df[["MARKET DATE"]].apply(pd.to_datetime, format="%m/%d/%Y")
+            df[["Preliminary/ Final"]] = df[["Preliminary/ Final"]].astype(pandas.core.arrays.string_.StringDtype())
+
+            return df
         
         @staticmethod
         def parse_Allocation_on_MISO_Flowgates(
