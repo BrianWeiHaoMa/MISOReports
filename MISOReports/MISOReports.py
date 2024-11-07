@@ -1171,6 +1171,9 @@ class MISOReports:
                 filepath_or_buffer=io.StringIO(csv_data),
             )
 
+            df[["Name"]] = df[["Name"]].astype(pandas.core.arrays.string_.StringDtype())
+            df[["Value"]] = df[["Value"]].astype(numpy.dtypes.Float64DType())
+
             return df  
         
         @staticmethod
@@ -1182,13 +1185,12 @@ class MISOReports:
 
             df = pd.read_csv(
                 filepath_or_buffer=io.StringIO(csv_data),
-                parse_dates=[
-                    "INTERVALEST", 
-                ],
-                date_format="%Y-%m-%d %H:%M:%S %p",
             )
 
-            return df  
+            df[["NORTH_SOUTH_LIMIT", "SOUTH_NORTH_LIMIT", "RAW_MW", " UDSFLOW_MW"]] = df[["NORTH_SOUTH_LIMIT", "SOUTH_NORTH_LIMIT", "RAW_MW", " UDSFLOW_MW"]].astype(pandas.core.arrays.integer.Int64Dtype())
+            df[["INTERVALEST"]] = df[["INTERVALEST"]].apply(pd.to_datetime, format="%Y-%m-%d %H:%M:%S %p")
+
+            return df
         
         @staticmethod
         def parse_generationoutagesplusminusfivedays(
