@@ -2782,7 +2782,7 @@ class MISOReports:
             ),
             type_to_parse="csv",
             parser=ReportParsers.parse_asm_rtmcp_prelim,
-            example_url="https://docs.misoenergy.org/marketreports/20241029_asm_rtmcp_prelim.csv",
+            example_url="https://docs.misoenergy.org/marketreports/20241105_asm_rtmcp_prelim.csv",
         ),
 
         "5min_exante_mcp": Report(
