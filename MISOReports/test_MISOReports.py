@@ -233,8 +233,8 @@ report_columns_type_mappings: dict[str, dict[tuple[str], type]] = {
         ("Flowgate NERC ID", "Constraint_ID", "Constraint Name", "Branch Name ( Branch Type / From CA / To CA )", "Contingency Description", "Constraint Description", "Curve Type", "Reason",): pandas.core.arrays.string_.StringDtype,
     },
     "da_bcsf": {
-        ("From KV", "To KV",): pandas.core.arrays.integer.Int64Dtype,
-        ("Constraint ID", "Direction", "Constraint Name", "Contingency Name", "Constraint Type", "Flowgate Name", "Device Type", "Key1", "Key2", "Key3", "From Area", "To Area", "From Station", "To Station",): pandas.core.arrays.string_.StringDtype,
+        ("From KV", "To KV", "Direction",): pandas.core.arrays.integer.Int64Dtype,
+        ("Constraint ID", "Constraint Name", "Contingency Name", "Constraint Type", "Flowgate Name", "Device Type", "Key1", "Key2", "Key3", "From Area", "To Area", "From Station", "To Station",): pandas.core.arrays.string_.StringDtype,
     },
     "MARKET_SETTLEMENT_DATA_SRW": {
         ("DATE",): numpy.dtypes.DateTime64DType,
@@ -478,6 +478,98 @@ report_columns_type_mappings: dict[str, dict[tuple[str], type]] = {
     "NAI": {
         ("Value",): numpy.dtypes.Float64DType,
         ("Name",): pandas.core.arrays.string_.StringDtype,
+    },
+    "Total_Uplift_by_Resource": {
+        ("Total Uplift Amount",): numpy.dtypes.Float64DType,
+        ("Resource Name",): pandas.core.arrays.string_.StringDtype,
+    },
+    "ms_rsg_srw": {
+        ("MISO_RT_RSG_DIST2", "RT_RSG_DIST1", "RT_RSG_MWP", "DA_RSG_MWP", "DA_RSG_DIST",): numpy.dtypes.Float64DType,
+        ("previous 36 months",): pandas.core.arrays.string_.StringDtype,
+        ("START", "STOP",): numpy.dtypes.DateTime64DType,
+    },
+    "ms_rnu_srw": {
+        ("JOA_MISO_UPLIFT", "MISO_RT_GFACO_DIST", "MISO_RT_GFAOB_DIST", "MISO_RT_RSG_DIST2", "RT_CC", "DA_RI", "RT_RI", "ASM_RI", "STRDFC_UPLIFT", "CRDFC_UPLIFT", "MISO_PV_MWP_UPLIFT", "MISO_DRR_COMP_UPL", "MISO_TOT_MIL_UPL", "RC_DIST", "TOTAL RNU",): numpy.dtypes.Float64DType,
+        ("previous 36 months",): pandas.core.arrays.string_.StringDtype,
+        ("START", "STOP",): numpy.dtypes.DateTime64DType,
+    },
+    "ms_ri_srw": {
+        ("DA RI", "RT RI", "TOTAL RI",): numpy.dtypes.Float64DType,
+        ("Previous Months",): pandas.core.arrays.string_.StringDtype,
+        ("START", "STOP",): numpy.dtypes.DateTime64DType,
+    },
+    "ms_ecf_srw": {
+        ("Da Xs Cg Fnd", "Rt Cc", "Rt Xs Cg Fnd", "Ftr Auc Res", "Ao Ftr Mn Alc", "Ftr Yr Alc *", "Tbs Access", "Net Ecf", "Ftr Shrtfll", "Net Ftr Sf", "Ftr Trg Cr Alc", "Ftr Hr Alc", "Hr Mf", "Hourly Ftr Allocation", "Monthly Ftr Allocation",): numpy.dtypes.Float64DType,
+        ("Unnamed: 0",): pandas.core.arrays.string_.StringDtype,
+        ("Start", "Stop",): numpy.dtypes.DateTime64DType,
+    },
+    "ccf_co": {
+        ("HOUR1", "HOUR2", "HOUR3", "HOUR4", "HOUR5", "HOUR6", "HOUR7", "HOUR8", "HOUR9", "HOUR10", "HOUR11", "HOUR12", "HOUR13", "HOUR14", "HOUR15", "HOUR16", "HOUR17", "HOUR18", "HOUR19", "HOUR20", "HOUR21", "HOUR22", "HOUR23", "HOUR24",): numpy.dtypes.Float64DType,
+        ("CONSTRAINT NAME", "NODE NAME",): pandas.core.arrays.string_.StringDtype,
+        ("OPERATING DATE",): numpy.dtypes.DateTime64DType,
+    },
+    "ms_vlr_HIST": {
+        ("DA_VLR_MWP", "RT_VLR_MWP", "DA+RT Total",): numpy.dtypes.Float64DType,
+        ("SETTLEMENT RUN",): pandas.core.arrays.integer.Int64Dtype,
+        ("REGION", "CONSTRAINT",): pandas.core.arrays.string_.StringDtype,
+        ("OPERATING DATE",): numpy.dtypes.DateTime64DType,
+    },
+    "fuelmix": {
+        ("ACT", "TOTALMW",): pandas.core.arrays.integer.Int64Dtype,
+        ("CATEGORY",): pandas.core.arrays.string_.StringDtype,
+        ("INTERVALEST",): numpy.dtypes.DateTime64DType,
+    },
+    "ace": {
+        ("value",): numpy.dtypes.Float64DType,
+        ("instantEST",): numpy.dtypes.DateTime64DType,
+    },
+    "cts": {
+        ("PJMFORECASTEDLMP",): numpy.dtypes.Float64DType,
+        ("CASEAPPROVALDATE", "SOLUTIONTIME",): numpy.dtypes.DateTime64DType,
+    },
+    "WindForecast": {
+        ("Value",): numpy.dtypes.Float64DType,
+        ("HourEndingEST",): pandas.core.arrays.integer.Int64Dtype,
+        ("DateTimeEST",): numpy.dtypes.DateTime64DType,
+    },
+    "Wind": {
+        ("ForecastValue", "ActualValue",): numpy.dtypes.Float64DType,
+        ("ForecastHourEndingEST", "ActualHourEndingEST",): pandas.core.arrays.integer.Int64Dtype,
+        ("ForecastDateTimeEST", "ActualDateTimeEST",): numpy.dtypes.DateTime64DType,
+    },
+    "Solar": {
+        ("ForecastValue", "ActualValue",): numpy.dtypes.Float64DType,
+        ("ForecastHourEndingEST", "ActualHourEndingEST",): pandas.core.arrays.integer.Int64Dtype,
+        ("ForecastDateTimeEST", "ActualDateTimeEST",): numpy.dtypes.DateTime64DType,
+    },
+    "exantelmp": {
+        ("LMP", "Loss", "Congestion",): numpy.dtypes.Float64DType,
+        ("Name",): pandas.core.arrays.string_.StringDtype,
+    },
+    "da_exante_lmp": {
+        ("HE 1", "HE 2", "HE 3", "HE 4", "HE 5", "HE 6", "HE 7", "HE 8", "HE 9", "HE 10", "HE 11", "HE 12", "HE 13", "HE 14", "HE 15", "HE 16", "HE 17", "HE 18", "HE 19", "HE 20", "HE 21", "HE 22", "HE 23", "HE 24",): numpy.dtypes.Float64DType,
+        ("Node", "Type", "Value",): pandas.core.arrays.string_.StringDtype,
+    },
+    "da_expost_lmp": {
+        ("HE 1", "HE 2", "HE 3", "HE 4", "HE 5", "HE 6", "HE 7", "HE 8", "HE 9", "HE 10", "HE 11", "HE 12", "HE 13", "HE 14", "HE 15", "HE 16", "HE 17", "HE 18", "HE 19", "HE 20", "HE 21", "HE 22", "HE 23", "HE 24",): numpy.dtypes.Float64DType,
+        ("Node", "Type", "Value",): pandas.core.arrays.string_.StringDtype,
+    },
+    "rt_lmp_final": {
+        ("HE 1", "HE 2", "HE 3", "HE 4", "HE 5", "HE 6", "HE 7", "HE 8", "HE 9", "HE 10", "HE 11", "HE 12", "HE 13", "HE 14", "HE 15", "HE 16", "HE 17", "HE 18", "HE 19", "HE 20", "HE 21", "HE 22", "HE 23", "HE 24",): numpy.dtypes.Float64DType,
+        ("Node", "Type", "Value",): pandas.core.arrays.string_.StringDtype,
+    },
+    "rt_lmp_prelim": {
+        ("HE 1", "HE 2", "HE 3", "HE 4", "HE 5", "HE 6", "HE 7", "HE 8", "HE 9", "HE 10", "HE 11", "HE 12", "HE 13", "HE 14", "HE 15", "HE 16", "HE 17", "HE 18", "HE 19", "HE 20", "HE 21", "HE 22", "HE 23", "HE 24",): numpy.dtypes.Float64DType,
+        ("Node", "Type", "Value",): pandas.core.arrays.string_.StringDtype,
+    },
+    "DA_Load_EPNodes": {
+        ("HE1", "HE2", "HE3", "HE4", "HE5", "HE6", "HE7", "HE8", "HE9", "HE10", "HE11", "HE12", "HE13", "HE14", "HE15", "HE16", "HE17", "HE18", "HE19", "HE20", "HE21", "HE22", "HE23", "HE24",): numpy.dtypes.Float64DType,
+        ("EPNode", "Value",): pandas.core.arrays.string_.StringDtype,
+    },
+    "5min_exante_lmp": {
+        ("RT Ex-Ante LMP", "RT Ex-Ante MEC", "RT Ex-Ante MLC", "RT Ex-Ante MCC",): numpy.dtypes.Float64DType,
+        ("CP Node",): pandas.core.arrays.string_.StringDtype,
+        ("Time (EST)",): numpy.dtypes.DateTime64DType,
     },
 }
 

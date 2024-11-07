@@ -397,8 +397,8 @@ class MISOReports:
                 skiprows=3,
             )
 
-            df[["From KV", "To KV"]] = df[["From KV", "To KV"]].round().astype(pandas.core.arrays.integer.Int64Dtype())
-            df[["Constraint ID", "Direction", "Constraint Name", "Contingency Name", "Constraint Type", "Flowgate Name", "Device Type", "Key1", "Key2", "Key3", "From Area", "To Area", "From Station", "To Station"]] = df[["Constraint ID", "Direction", "Constraint Name", "Contingency Name", "Constraint Type", "Flowgate Name", "Device Type", "Key1", "Key2", "Key3", "From Area", "To Area", "From Station", "To Station"]].astype(pandas.core.arrays.string_.StringDtype())
+            df[["From KV", "To KV", "Direction"]] = df[["From KV", "To KV", "Direction"]].round().astype(pandas.core.arrays.integer.Int64Dtype())
+            df[["Constraint ID", "Constraint Name", "Contingency Name", "Constraint Type", "Flowgate Name", "Device Type", "Key1", "Key2", "Key3", "From Area", "To Area", "From Station", "To Station"]] = df[["Constraint ID", "Constraint Name", "Contingency Name", "Constraint Type", "Flowgate Name", "Device Type", "Key1", "Key2", "Key3", "From Area", "To Area", "From Station", "To Station"]].astype(pandas.core.arrays.string_.StringDtype())
 
             return df
 
@@ -526,7 +526,8 @@ class MISOReports:
 
             df[["Preliminary Shadow Price", "BP1", "PC1", "BP2", "PC2"]] = df[["Preliminary Shadow Price", "BP1", "PC1", "BP2", "PC2"]].astype(numpy.dtypes.Float64DType())
             df[["Override"]] = df[["Override"]].astype(pandas.core.arrays.integer.Int64Dtype())
-            df[["Flowgate NERC ID", "Constraint ID", "Constraint Name", "Branch Name ( Branch Type / From CA / To CA )", "Contingency Description", "Constraint Description", "Curve Type"]] = df[["Flowgate NERC ID", "Constraint ID", "Constraint Name", "Branch Name ( Branch Type / From CA / To CA )", "Contingency Description", "Constraint Description", "Curve Type"]].astype(pandas.core.arrays.string_.StringDtype())
+            df[["Constraint Name", "Branch Name ( Branch Type / From CA / To CA )", "Contingency Description", "Constraint Description", "Curve Type"]] = df[["Constraint Name", "Branch Name ( Branch Type / From CA / To CA )", "Contingency Description", "Constraint Description", "Curve Type"]].astype(pandas.core.arrays.string_.StringDtype())
+            df[["Constraint ID", "Flowgate NERC ID"]] = df[["Constraint ID", "Flowgate NERC ID"]].astype(pandas.core.arrays.integer.Int64Dtype()).astype(pandas.core.arrays.string_.StringDtype())            
             df[["Hour of Occurrence"]] = df[["Hour of Occurrence"]].apply(pd.to_datetime, format="%H:%M")
 
             return df
@@ -549,7 +550,8 @@ class MISOReports:
             
             df[["Preliminary Shadow Price", "BP1", "PC1", "BP2", "PC2"]] = df[["Preliminary Shadow Price", "BP1", "PC1", "BP2", "PC2"]].astype(numpy.dtypes.Float64DType())
             df[["Override"]] = df[["Override"]].astype(pandas.core.arrays.integer.Int64Dtype())
-            df[["Flowgate NERC ID", "Constraint Name", "Branch Name ( Branch Type / From CA / To CA )", "Contingency Description", "Constraint Description", "Curve Type", "Reason"]] = df[["Flowgate NERC ID", "Constraint Name", "Branch Name ( Branch Type / From CA / To CA )", "Contingency Description", "Constraint Description", "Curve Type", "Reason"]].astype(pandas.core.arrays.string_.StringDtype())
+            df[["Constraint Name", "Branch Name ( Branch Type / From CA / To CA )", "Contingency Description", "Constraint Description", "Curve Type", "Reason"]] = df[["Constraint Name", "Branch Name ( Branch Type / From CA / To CA )", "Contingency Description", "Constraint Description", "Curve Type", "Reason"]].astype(pandas.core.arrays.string_.StringDtype())
+            df[["Flowgate NERC ID"]] = df[["Flowgate NERC ID"]].astype(pandas.core.arrays.integer.Int64Dtype()).astype(pandas.core.arrays.string_.StringDtype())            
             df[["Hour of Occurrence"]] = df[["Hour of Occurrence"]].apply(pd.to_datetime, format="%H:%M")
 
             return df
@@ -581,6 +583,9 @@ class MISOReports:
                 skiprows=6,
             ).iloc[:-2]
 
+            df[["Total Uplift Amount"]] = df[["Total Uplift Amount"]].astype(numpy.dtypes.Float64DType())
+            df[["Resource Name"]] = df[["Resource Name"]].astype(pandas.core.arrays.string_.StringDtype())
+
             return df
 
         @staticmethod
@@ -598,8 +603,9 @@ class MISOReports:
                 skiprows=7,
             ).iloc[:-2]
 
-            df["previous 36 months"] = df["previous 36 months"].astype(pd.StringDtype())
-
+            df[["MISO_RT_RSG_DIST2", "RT_RSG_DIST1", "RT_RSG_MWP", "DA_RSG_MWP", "DA_RSG_DIST"]] = df[["MISO_RT_RSG_DIST2", "RT_RSG_DIST1", "RT_RSG_MWP", "DA_RSG_MWP", "DA_RSG_DIST"]].astype(numpy.dtypes.Float64DType())
+            df[["previous 36 months"]] = df[["previous 36 months"]].astype(pandas.core.arrays.string_.StringDtype())
+            df[["START", "STOP"]] = df[["START", "STOP"]].apply(pd.to_datetime, format="%m/%d/%Y")
             df = df.drop(columns=["Unnamed: 6"])
 
             return df
@@ -613,8 +619,10 @@ class MISOReports:
                 skiprows=8,
             ).iloc[:-2]
 
-            df["previous 36 months"] = df["previous 36 months"].astype(pd.StringDtype())
-
+            df[["JOA_MISO_UPLIFT", "MISO_RT_GFACO_DIST", "MISO_RT_GFAOB_DIST", "MISO_RT_RSG_DIST2", "RT_CC", "DA_RI", "RT_RI", "ASM_RI", "STRDFC_UPLIFT", "CRDFC_UPLIFT", "MISO_PV_MWP_UPLIFT", "MISO_DRR_COMP_UPL", "MISO_TOT_MIL_UPL", "RC_DIST", "TOTAL RNU"]] = df[["JOA_MISO_UPLIFT", "MISO_RT_GFACO_DIST", "MISO_RT_GFAOB_DIST", "MISO_RT_RSG_DIST2", "RT_CC", "DA_RI", "RT_RI", "ASM_RI", "STRDFC_UPLIFT", "CRDFC_UPLIFT", "MISO_PV_MWP_UPLIFT", "MISO_DRR_COMP_UPL", "MISO_TOT_MIL_UPL", "RC_DIST", "TOTAL RNU"]].astype(numpy.dtypes.Float64DType())
+            df[["previous 36 months"]] = df[["previous 36 months"]].astype(pandas.core.arrays.string_.StringDtype())
+            df[["START", "STOP"]] = df[["START", "STOP"]].apply(pd.to_datetime, format="$m/$d/Y")
+            
             return df
 
         @staticmethod
@@ -629,6 +637,9 @@ class MISOReports:
                 }
             ).iloc[:-2]
 
+            df[["DA RI", "RT RI", "TOTAL RI"]] = df[["DA RI", "RT RI", "TOTAL RI"]].astype(numpy.dtypes.Float64DType())
+            df[["Previous Months"]] = df[["Previous Months"]].astype(pandas.core.arrays.string_.StringDtype())
+            df[["START", "STOP"]] = df[["START", "STOP"]].apply(pd.to_datetime, format="%m/%d/%Y")
             df = df.drop(columns=["Unnamed: 5"])
 
             return df
@@ -683,10 +694,12 @@ class MISOReports:
             df = pd.read_excel(
                 io=io.BytesIO(res.content),
                 skiprows=6,
-                dtype={
-                    "Unnamed: 0": pd.StringDtype(),
-                }
             ).iloc[:-3]
+
+            df[["Da Xs Cg Fnd", "Rt Cc", "Rt Xs Cg Fnd", "Ftr Auc Res", "Ao Ftr Mn Alc", "Ftr Yr Alc *", "Tbs Access", "Net Ecf", "Ftr Shrtfll", "Net Ftr Sf", "Ftr Trg Cr Alc", "Ftr Hr Alc", "Hr Mf", "Hourly Ftr Allocation", "Monthly Ftr Allocation"]] = df[["Da Xs Cg Fnd", "Rt Cc", "Rt Xs Cg Fnd", "Ftr Auc Res", "Ao Ftr Mn Alc", "Ftr Yr Alc *", "Tbs Access", "Net Ecf", "Ftr Shrtfll", "Net Ftr Sf", "Ftr Trg Cr Alc", "Ftr Hr Alc", "Hr Mf", "Hourly Ftr Allocation", "Monthly Ftr Allocation"]].replace(',','', regex=True).astype(numpy.dtypes.Float64DType())
+            df[["Unnamed: 0"]] = df[["Unnamed: 0"]].astype(pandas.core.arrays.string_.StringDtype())
+            df[["Start", "Stop"]] = df[["Start", "Stop"]].apply(pd.to_datetime, format="%m/%d/%Y")
+            df = df.drop(columns=["Unnamed: 11"])
 
             return df
 
@@ -699,14 +712,11 @@ class MISOReports:
 
             df = pd.read_csv(
                 filepath_or_buffer=io.StringIO(csv_data),
-                parse_dates=[
-                    "OPERATING DATE",
-                ],
-                date_format="%m/%d/%Y",
             )
 
-            hours = ["HOUR" + str(i) for i in range(1, 25)]
-            df[hours] = df[hours].astype(float)
+            df[["HOUR1", "HOUR2", "HOUR3", "HOUR4", "HOUR5", "HOUR6", "HOUR7", "HOUR8", "HOUR9", "HOUR10", "HOUR11", "HOUR12", "HOUR13", "HOUR14", "HOUR15", "HOUR16", "HOUR17", "HOUR18", "HOUR19", "HOUR20", "HOUR21", "HOUR22", "HOUR23", "HOUR24"]] = df[["HOUR1", "HOUR2", "HOUR3", "HOUR4", "HOUR5", "HOUR6", "HOUR7", "HOUR8", "HOUR9", "HOUR10", "HOUR11", "HOUR12", "HOUR13", "HOUR14", "HOUR15", "HOUR16", "HOUR17", "HOUR18", "HOUR19", "HOUR20", "HOUR21", "HOUR22", "HOUR23", "HOUR24"]].astype(numpy.dtypes.Float64DType())
+            df[["CONSTRAINT NAME", "NODE NAME"]] = df[["CONSTRAINT NAME", "NODE NAME"]].astype(pandas.core.arrays.string_.StringDtype())
+            df[["OPERATING DATE"]] = df[["OPERATING DATE"]].apply(pd.to_datetime, format="%m/%d/%Y")
 
             return df
 
@@ -719,11 +729,12 @@ class MISOReports:
 
             df = pd.read_csv(
                 filepath_or_buffer=io.StringIO(csv_data),
-                parse_dates=[
-                    "OPERATING DATE",
-                ],
-                date_format="%m/%d/%Y",
             )
+
+            df[["DA_VLR_MWP", "RT_VLR_MWP", "DA+RT Total"]] = df[["DA_VLR_MWP", "RT_VLR_MWP", "DA+RT Total"]].astype(numpy.dtypes.Float64DType())
+            df[["SETTLEMENT RUN"]] = df[["SETTLEMENT RUN"]].astype(pandas.core.arrays.integer.Int64Dtype())
+            df[["REGION", "CONSTRAINT"]] = df[["REGION", "CONSTRAINT"]].astype(pandas.core.arrays.string_.StringDtype())
+            df[["OPERATING DATE"]] = df[["OPERATING DATE"]].apply(pd.to_datetime, format="%m/%d/%Y")
 
             return df
 
@@ -742,11 +753,11 @@ class MISOReports:
 
             df = pd.read_csv(
                 filepath_or_buffer=io.StringIO(csv_data),
-                parse_dates=[
-                    "INTERVALEST",
-                ],
-                date_format="%Y-%m-%d %I:%M:%S %p",
             )
+
+            df[["ACT", "TOTALMW"]] = df[["ACT", "TOTALMW"]].astype(pandas.core.arrays.integer.Int64Dtype())
+            df[["CATEGORY"]] = df[["CATEGORY"]].astype(pandas.core.arrays.string_.StringDtype())
+            df[["INTERVALEST"]] = df[["INTERVALEST"]].apply(pd.to_datetime, format="%Y-%m-%d %I:%M:%S %p")
 
             return df
         
@@ -759,11 +770,10 @@ class MISOReports:
 
             df = pd.read_csv(
                 filepath_or_buffer=io.StringIO(csv_data),
-                parse_dates=[
-                    "instantEST",
-                ],
-                date_format="%Y-%m-%d %I:%M:%S %p",
             )
+
+            df[["value"]] = df[["value"]].astype(numpy.dtypes.Float64DType())
+            df[["instantEST"]] = df[["instantEST"]].apply(pd.to_datetime, format="%Y-%m-%d %I:%M:%S %p")
 
             return df
         
@@ -782,12 +792,10 @@ class MISOReports:
 
             df = pd.read_csv(
                 filepath_or_buffer=io.StringIO(csv_data),
-                parse_dates=[
-                    "CASEAPPROVALDATE", 
-                    "SOLUTIONTIME",
-                ],
-                date_format="%Y-%m-%d %I:%M:%S %p",
             )
+
+            df[["PJMFORECASTEDLMP"]] = df[["PJMFORECASTEDLMP"]].astype(numpy.dtypes.Float64DType())
+            df[["CASEAPPROVALDATE", "SOLUTIONTIME"]] = df[["CASEAPPROVALDATE", "SOLUTIONTIME"]].apply(pd.to_datetime, format="%Y-%m-%d %I:%M:%S %p")
 
             return df
         
@@ -817,14 +825,11 @@ class MISOReports:
 
             df = pd.DataFrame(
                 data=dictionary["Forecast"],
-            ).astype(
-                dtype={
-                    "HourEndingEST": pd.Int64Dtype(),
-                    "Value": pd.Float64Dtype(),
-                },
             )
 
-            df["DateTimeEST"] = pd.to_datetime(df["DateTimeEST"], format="%Y-%m-%d %I:%M:%S %p")
+            df[["Value"]] = df[["Value"]].astype(numpy.dtypes.Float64DType())
+            df[["HourEndingEST"]] = df[["HourEndingEST"]].astype(pandas.core.arrays.integer.Int64Dtype())
+            df[["DateTimeEST"]] = df[["DateTimeEST"]].apply(pd.to_datetime, format="%Y-%m-%d %I:%M:%S %p")
 
             return df
         
@@ -837,15 +842,11 @@ class MISOReports:
 
             df = pd.read_csv(
                 filepath_or_buffer=io.StringIO(csv_data),
-                parse_dates=[
-                    "ForecastDateTimeEST", 
-                    "ActualDateTimeEST",
-                ],
-                date_format="%Y-%m-%d %I:%M:%S %p",
-                dtype={
-                    "ActualHourEndingEST": pd.Int64Dtype(),
-                },
             )
+
+            df[["ForecastValue", "ActualValue"]] = df[["ForecastValue", "ActualValue"]].astype(numpy.dtypes.Float64DType())
+            df[["ForecastHourEndingEST", "ActualHourEndingEST"]] = df[["ForecastHourEndingEST", "ActualHourEndingEST"]].astype(pandas.core.arrays.integer.Int64Dtype())
+            df[["ForecastDateTimeEST", "ActualDateTimeEST"]] = df[["ForecastDateTimeEST", "ActualDateTimeEST"]].apply(pd.to_datetime, format="%Y-%m-%d %I:%M:%S %p")
 
             return df
         
@@ -875,15 +876,11 @@ class MISOReports:
 
             df = pd.read_csv(
                 filepath_or_buffer=io.StringIO(csv_data),
-                parse_dates=[
-                    "ForecastDateTimeEST", 
-                    "ActualDateTimeEST",
-                ],
-                date_format="%Y-%m-%d %I:%M:%S %p",
-                dtype={
-                    "ActualHourEndingEST": pd.Int64Dtype(),
-                },
             )
+
+            df[["ForecastValue", "ActualValue"]] = df[["ForecastValue", "ActualValue"]].astype(numpy.dtypes.Float64DType())
+            df[["ForecastHourEndingEST", "ActualHourEndingEST"]] = df[["ForecastHourEndingEST", "ActualHourEndingEST"]].astype(pandas.core.arrays.integer.Int64Dtype())
+            df[["ForecastDateTimeEST", "ActualDateTimeEST"]] = df[["ForecastDateTimeEST", "ActualDateTimeEST"]].apply(pd.to_datetime, format="%Y-%m-%d %I:%M:%S %p")
 
             return df
         
@@ -898,6 +895,9 @@ class MISOReports:
                 filepath_or_buffer=io.StringIO(csv_data),
             )
 
+            df[["LMP", "Loss", "Congestion"]] = df[["LMP", "Loss", "Congestion"]].astype(numpy.dtypes.Float64DType())
+            df[["Name"]] = df[["Name"]].astype(pandas.core.arrays.string_.StringDtype())
+
             return df
         
         @staticmethod
@@ -910,6 +910,9 @@ class MISOReports:
             df = pd.read_csv(
                 filepath_or_buffer=io.StringIO(csv_data),
             )
+
+            df[["HE 1", "HE 2", "HE 3", "HE 4", "HE 5", "HE 6", "HE 7", "HE 8", "HE 9", "HE 10", "HE 11", "HE 12", "HE 13", "HE 14", "HE 15", "HE 16", "HE 17", "HE 18", "HE 19", "HE 20", "HE 21", "HE 22", "HE 23", "HE 24"]] = df[["HE 1", "HE 2", "HE 3", "HE 4", "HE 5", "HE 6", "HE 7", "HE 8", "HE 9", "HE 10", "HE 11", "HE 12", "HE 13", "HE 14", "HE 15", "HE 16", "HE 17", "HE 18", "HE 19", "HE 20", "HE 21", "HE 22", "HE 23", "HE 24"]].astype(numpy.dtypes.Float64DType())
+            df[["Node", "Type", "Value"]] = df[["Node", "Type", "Value"]].astype(pandas.core.arrays.string_.StringDtype())
 
             return df
         
@@ -924,6 +927,9 @@ class MISOReports:
                 filepath_or_buffer=io.StringIO(csv_data),
             )
 
+            df[["HE 1", "HE 2", "HE 3", "HE 4", "HE 5", "HE 6", "HE 7", "HE 8", "HE 9", "HE 10", "HE 11", "HE 12", "HE 13", "HE 14", "HE 15", "HE 16", "HE 17", "HE 18", "HE 19", "HE 20", "HE 21", "HE 22", "HE 23", "HE 24"]] = df[["HE 1", "HE 2", "HE 3", "HE 4", "HE 5", "HE 6", "HE 7", "HE 8", "HE 9", "HE 10", "HE 11", "HE 12", "HE 13", "HE 14", "HE 15", "HE 16", "HE 17", "HE 18", "HE 19", "HE 20", "HE 21", "HE 22", "HE 23", "HE 24"]].astype(numpy.dtypes.Float64DType())
+            df[["Node", "Type", "Value"]] = df[["Node", "Type", "Value"]].astype(pandas.core.arrays.string_.StringDtype())
+
             return df
         
         @staticmethod
@@ -937,6 +943,9 @@ class MISOReports:
                 filepath_or_buffer=io.StringIO(csv_data),
             )
 
+            df[["HE 1", "HE 2", "HE 3", "HE 4", "HE 5", "HE 6", "HE 7", "HE 8", "HE 9", "HE 10", "HE 11", "HE 12", "HE 13", "HE 14", "HE 15", "HE 16", "HE 17", "HE 18", "HE 19", "HE 20", "HE 21", "HE 22", "HE 23", "HE 24"]] = df[["HE 1", "HE 2", "HE 3", "HE 4", "HE 5", "HE 6", "HE 7", "HE 8", "HE 9", "HE 10", "HE 11", "HE 12", "HE 13", "HE 14", "HE 15", "HE 16", "HE 17", "HE 18", "HE 19", "HE 20", "HE 21", "HE 22", "HE 23", "HE 24"]].astype(numpy.dtypes.Float64DType())
+            df[["Node", "Type", "Value"]] = df[["Node", "Type", "Value"]].astype(pandas.core.arrays.string_.StringDtype())
+
             return df
         
         @staticmethod
@@ -949,6 +958,9 @@ class MISOReports:
             df = pd.read_csv(
                 filepath_or_buffer=io.StringIO(csv_data),
             )
+
+            df[["HE 1", "HE 2", "HE 3", "HE 4", "HE 5", "HE 6", "HE 7", "HE 8", "HE 9", "HE 10", "HE 11", "HE 12", "HE 13", "HE 14", "HE 15", "HE 16", "HE 17", "HE 18", "HE 19", "HE 20", "HE 21", "HE 22", "HE 23", "HE 24"]] = df[["HE 1", "HE 2", "HE 3", "HE 4", "HE 5", "HE 6", "HE 7", "HE 8", "HE 9", "HE 10", "HE 11", "HE 12", "HE 13", "HE 14", "HE 15", "HE 16", "HE 17", "HE 18", "HE 19", "HE 20", "HE 21", "HE 22", "HE 23", "HE 24"]].astype(numpy.dtypes.Float64DType())
+            df[["Node", "Type", "Value"]] = df[["Node", "Type", "Value"]].astype(pandas.core.arrays.string_.StringDtype())
 
             return df
         
@@ -964,6 +976,9 @@ class MISOReports:
             df = pd.read_csv(
                 filepath_or_buffer=io.StringIO(csv_data),
             )
+
+            df[["HE1", "HE2", "HE3", "HE4", "HE5", "HE6", "HE7", "HE8", "HE9", "HE10", "HE11", "HE12", "HE13", "HE14", "HE15", "HE16", "HE17", "HE18", "HE19", "HE20", "HE21", "HE22", "HE23", "HE24"]] = df[["HE1", "HE2", "HE3", "HE4", "HE5", "HE6", "HE7", "HE8", "HE9", "HE10", "HE11", "HE12", "HE13", "HE14", "HE15", "HE16", "HE17", "HE18", "HE19", "HE20", "HE21", "HE22", "HE23", "HE24"]].astype(numpy.dtypes.Float64DType())
+            df[["EPNode", "Value"]] = df[["EPNode", "Value"]].astype(pandas.core.arrays.string_.StringDtype())
 
             return df
         
@@ -993,7 +1008,11 @@ class MISOReports:
             df = pd.read_excel(
                 io=io.BytesIO(res.content),
                 skiprows=3,
-            )
+            ).iloc[:-1]
+
+            df[["RT Ex-Ante LMP", "RT Ex-Ante MEC", "RT Ex-Ante MLC", "RT Ex-Ante MCC"]] = df[["RT Ex-Ante LMP", "RT Ex-Ante MEC", "RT Ex-Ante MLC", "RT Ex-Ante MCC"]].astype(numpy.dtypes.Float64DType())
+            df[["CP Node"]] = df[["CP Node"]].astype(pandas.core.arrays.string_.StringDtype())
+            df[["Time (EST)"]] = df[["Time (EST)"]].apply(pd.to_datetime, format="%Y-%m-%d %I:%M:%S %p")
 
             return df
         
@@ -2195,7 +2214,7 @@ class MISOReports:
             ),
             type_to_parse="xlsx",
             parser=ReportParsers.parse_ms_ecf_srw,
-            example_url="https://docs.misoenergy.org/marketreports/20241029_ms_ecf_srw.xlsx",
+            example_url="https://docs.misoenergy.org/marketreports/20241102_ms_ecf_srw.xlsx",
         ),
 
 
@@ -2763,7 +2782,7 @@ class MISOReports:
             ),
             type_to_parse="csv",
             parser=ReportParsers.parse_asm_rtmcp_prelim,
-            example_url="https://docs.misoenergy.org/marketreports/20241029_asm_rtmcp_prelim.csv",
+            example_url="https://docs.misoenergy.org/marketreports/20241105_asm_rtmcp_prelim.csv",
         ),
 
         "5min_exante_mcp": Report(
