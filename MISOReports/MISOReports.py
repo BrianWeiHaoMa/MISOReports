@@ -1025,11 +1025,10 @@ class MISOReports:
 
             df = pd.read_csv(
                 filepath_or_buffer=io.StringIO(csv_data),
-                parse_dates=[
-                    "timestamp", 
-                ],
-                date_format="%Y-%m-%d %H:%M:%S",
             )
+
+            df[["timestamp"]] = df[["timestamp"]].apply(pd.to_datetime, format="%Y-%m-%d %H:%M:%S")
+            df[["AEC", "AECI", "CSWS", "GLHB", "LGEE", "MHEB", "MISO", "OKGE", "ONT", "PJM", "SOCO", "SPA", "SWPP", "TVA", "WAUE"]] = df[["AEC", "AECI", "CSWS", "GLHB", "LGEE", "MHEB", "MISO", "OKGE", "ONT", "PJM", "SOCO", "SPA", "SWPP", "TVA", "WAUE"]].astype(pandas.core.arrays.integer.Int64Dtype())
 
             return df
         
@@ -1042,11 +1041,10 @@ class MISOReports:
 
             df = pd.read_csv(
                 filepath_or_buffer=io.StringIO(csv_data),
-                parse_dates=[
-                    "timestamp", 
-                ],
-                date_format="%Y-%m-%d %H:%M:%S",
             )
+
+            df[["timestamp"]] = df[["timestamp"]].apply(pd.to_datetime, format="%Y-%m-%d %H:%M:%S")
+            df[["AEC", "AECI", "CSWS", "GLHB", "LGEE", "MHEB", "MISO", "OKGE", "ONT", "PJM", "SOCO", "SPA", "SWPP", "TVA", "WAUE"]] = df[["AEC", "AECI", "CSWS", "GLHB", "LGEE", "MHEB", "MISO", "OKGE", "ONT", "PJM", "SOCO", "SPA", "SWPP", "TVA", "WAUE"]].astype(pandas.core.arrays.integer.Int64Dtype())
 
             return df
             
@@ -1059,11 +1057,10 @@ class MISOReports:
 
             df = pd.read_csv(
                 filepath_or_buffer=io.StringIO(csv_data),
-                parse_dates=[
-                    "timestamp", 
-                ],
-                date_format="%Y-%m-%d %H:%M:%S",
             )
+
+            df[["timestamp"]] = df[["timestamp"]].apply(pd.to_datetime, format="%Y-%m-%d %H:%M:%S")
+            df[["NSI"]] = df[["NSI"]].astype(pandas.core.arrays.integer.Int64Dtype())
 
             return df
         
@@ -1076,11 +1073,10 @@ class MISOReports:
 
             df = pd.read_csv(
                 filepath_or_buffer=io.StringIO(csv_data),
-                parse_dates=[
-                    "timestamp", 
-                ],
-                date_format="%Y-%m-%d %H:%M:%S",
             )
+
+            df[["timestamp"]] = df[["timestamp"]].apply(pd.to_datetime, format="%Y-%m-%d %H:%M:%S")
+            df[["NSI"]] = df[["NSI"]].astype(pandas.core.arrays.integer.Int64Dtype())
 
             return df
         
@@ -1095,7 +1091,8 @@ class MISOReports:
                 data=dictionary
             )
 
-            df['Time'] = pd.to_datetime(df['Time'], format="%Y-%m-%d %I:%M:%S %p")
+            df[["Time"]] = df[["Time"]].apply(pd.to_datetime, format="%Y-%m-%d %I:%M:%S %p")
+            df[["Value"]] = df[["Value"]].astype(numpy.dtypes.Float64DType())
 
             return df
         
@@ -1108,11 +1105,11 @@ class MISOReports:
 
             df = pd.read_csv(
                 filepath_or_buffer=io.StringIO(csv_data),
-                parse_dates=[
-                    "Period", 
-                ],
-                date_format="%Y-%m-%dT%H:%M:%S",
             )
+
+            df[["Price"]] = df[["Price"]].astype(numpy.dtypes.Float64DType())
+            df[["Period"]] = df[["Period"]].apply(pd.to_datetime, format="%Y-%m-%dT%H:%M:%S")
+            df[["Name", "Description"]] = df[["Name", "Description"]].astype(pandas.core.arrays.string_.StringDtype())
 
             return df
         
@@ -1131,11 +1128,11 @@ class MISOReports:
 
             df = pd.read_csv(
                 filepath_or_buffer=io.StringIO(csv_data),
-                parse_dates=[
-                    "MKT_INT_END_EST", 
-                ],
-                date_format="%Y-%m-%d %H:%M:%S %p",
             )
+
+            df[["TOTAL_ECON_MAX"]] = df[["TOTAL_ECON_MAX"]].astype(numpy.dtypes.Float64DType())
+            df[["MKT_INT_END_EST"]] = df[["MKT_INT_END_EST"]].apply(pd.to_datetime, format="%Y-%m-%d %H:%M:%S %p")
+            df[["COMMIT_REASON", "NUM_RESOURCES"]] = df[["COMMIT_REASON", "NUM_RESOURCES"]].astype(pandas.core.arrays.string_.StringDtype())
 
             return df
         
@@ -1148,14 +1145,11 @@ class MISOReports:
 
             df = pd.DataFrame(
                 data=dictionary["instance"],
-            ).astype(
-                dtype={
-                    "HourEndingEST": pd.Int64Dtype(),
-                    "Value": pd.Float64Dtype(),
-                }
             )
 
-            df["DateTimeEST"] = pd.to_datetime(df["DateTimeEST"], format="%Y-%m-%d %I:%M:%S %p")
+            df[["Value"]] = df[["Value"]].astype(numpy.dtypes.Float64DType())
+            df[["HourEndingEST"]] = df[["HourEndingEST"]].astype(pandas.core.arrays.integer.Int64Dtype())
+            df[["DateTimeEST"]] = df[["DateTimeEST"]].apply(pd.to_datetime, format="%Y-%m-%d %I:%M:%S %p")
 
             return df  
 
@@ -1168,14 +1162,11 @@ class MISOReports:
 
             df = pd.DataFrame(
                 data=dictionary["instance"],
-            ).astype(
-                dtype={
-                    "HourEndingEST": pd.Int64Dtype(),
-                    "Value": pd.Float64Dtype(),
-                }
             )
 
-            df["DateTimeEST"] = pd.to_datetime(df["DateTimeEST"], format="%Y-%m-%d %I:%M:%S %p")
+            df[["Value"]] = df[["Value"]].astype(numpy.dtypes.Float64DType())
+            df[["HourEndingEST"]] = df[["HourEndingEST"]].astype(pandas.core.arrays.integer.Int64Dtype())
+            df[["DateTimeEST"]] = df[["DateTimeEST"]].apply(pd.to_datetime, format="%Y-%m-%d %I:%M:%S %p")
 
             return df 
 
