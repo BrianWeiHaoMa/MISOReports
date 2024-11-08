@@ -2205,7 +2205,7 @@ class MISOReports:
             ),
             type_to_parse="xlsx",
             parser=ReportParsers.parse_ms_ecf_srw,
-            example_url="https://docs.misoenergy.org/marketreports/20241102_ms_ecf_srw.xlsx",
+            example_url="https://docs.misoenergy.org/marketreports/20241107_ms_ecf_srw.xlsx",
         ),
 
 
