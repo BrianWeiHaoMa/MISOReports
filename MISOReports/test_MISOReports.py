@@ -571,6 +571,46 @@ report_columns_type_mappings: dict[str, dict[tuple[str], type]] = {
         ("CP Node",): pandas.core.arrays.string_.StringDtype,
         ("Time (EST)",): numpy.dtypes.DateTime64DType,
     },
+    "SolarActual": {
+        ("Value",): numpy.dtypes.Float64DType,
+        ("HourEndingEST",): pandas.core.arrays.integer.Int64Dtype,
+        ("DateTimeEST",): numpy.dtypes.DateTime64DType,
+    },
+    "WindActual": {
+        ("Value",): numpy.dtypes.Float64DType,
+        ("HourEndingEST",): pandas.core.arrays.integer.Int64Dtype,
+        ("DateTimeEST",): numpy.dtypes.DateTime64DType,
+    },
+    "RSG": {
+        ("TOTAL_ECON_MAX",): numpy.dtypes.Float64DType,
+        ("COMMIT_REASON", "NUM_RESOURCES",): pandas.core.arrays.string_.StringDtype,
+        ("MKT_INT_END_EST",): numpy.dtypes.DateTime64DType,
+    },
+    "reservebindingconstraints": {
+        ("Price",): numpy.dtypes.Float64DType,
+        ("Name", "Description",): pandas.core.arrays.string_.StringDtype,
+        ("Period",): numpy.dtypes.DateTime64DType,
+    },
+    "importtotal5": {
+        ("Value",): numpy.dtypes.Float64DType,
+        ("Time",): numpy.dtypes.DateTime64DType,
+    },
+    "nsi5miso": {
+        ("timestamp",): numpy.dtypes.DateTime64DType,
+        ("NSI",): pandas.core.arrays.integer.Int64Dtype,
+    },
+    "nsi1miso": {
+        ("NSI",): pandas.core.arrays.integer.Int64Dtype,
+        ("timestamp",): numpy.dtypes.DateTime64DType,
+    },
+    "nsi5": {
+        ("timestamp",): numpy.dtypes.DateTime64DType,
+        ("AEC", "AECI", "CSWS", "GLHB", "LGEE", "MHEB", "MISO", "OKGE", "ONT", "PJM", "SOCO", "SPA", "SWPP", "TVA", "WAUE",): pandas.core.arrays.integer.Int64Dtype,
+    },
+    "nsi1": {
+        ("timestamp",): numpy.dtypes.DateTime64DType,
+        ("AEC", "AECI", "CSWS", "GLHB", "LGEE", "MHEB", "MISO", "OKGE", "ONT", "PJM", "SOCO", "SPA", "SWPP", "TVA", "WAUE",): pandas.core.arrays.integer.Int64Dtype,
+    },
 }
 
 

@@ -1025,11 +1025,10 @@ class MISOReports:
 
             df = pd.read_csv(
                 filepath_or_buffer=io.StringIO(csv_data),
-                parse_dates=[
-                    "timestamp", 
-                ],
-                date_format="%Y-%m-%d %H:%M:%S",
             )
+
+            df[["timestamp"]] = df[["timestamp"]].apply(pd.to_datetime, format="%Y-%m-%d %H:%M:%S")
+            df[["AEC", "AECI", "CSWS", "GLHB", "LGEE", "MHEB", "MISO", "OKGE", "ONT", "PJM", "SOCO", "SPA", "SWPP", "TVA", "WAUE"]] = df[["AEC", "AECI", "CSWS", "GLHB", "LGEE", "MHEB", "MISO", "OKGE", "ONT", "PJM", "SOCO", "SPA", "SWPP", "TVA", "WAUE"]].astype(pandas.core.arrays.integer.Int64Dtype())
 
             return df
         
@@ -1042,11 +1041,10 @@ class MISOReports:
 
             df = pd.read_csv(
                 filepath_or_buffer=io.StringIO(csv_data),
-                parse_dates=[
-                    "timestamp", 
-                ],
-                date_format="%Y-%m-%d %H:%M:%S",
             )
+
+            df[["timestamp"]] = df[["timestamp"]].apply(pd.to_datetime, format="%Y-%m-%d %H:%M:%S")
+            df[["AEC", "AECI", "CSWS", "GLHB", "LGEE", "MHEB", "MISO", "OKGE", "ONT", "PJM", "SOCO", "SPA", "SWPP", "TVA", "WAUE"]] = df[["AEC", "AECI", "CSWS", "GLHB", "LGEE", "MHEB", "MISO", "OKGE", "ONT", "PJM", "SOCO", "SPA", "SWPP", "TVA", "WAUE"]].astype(pandas.core.arrays.integer.Int64Dtype())
 
             return df
             
@@ -1059,11 +1057,10 @@ class MISOReports:
 
             df = pd.read_csv(
                 filepath_or_buffer=io.StringIO(csv_data),
-                parse_dates=[
-                    "timestamp", 
-                ],
-                date_format="%Y-%m-%d %H:%M:%S",
             )
+
+            df[["timestamp"]] = df[["timestamp"]].apply(pd.to_datetime, format="%Y-%m-%d %H:%M:%S")
+            df[["NSI"]] = df[["NSI"]].astype(pandas.core.arrays.integer.Int64Dtype())
 
             return df
         
@@ -1076,11 +1073,10 @@ class MISOReports:
 
             df = pd.read_csv(
                 filepath_or_buffer=io.StringIO(csv_data),
-                parse_dates=[
-                    "timestamp", 
-                ],
-                date_format="%Y-%m-%d %H:%M:%S",
             )
+
+            df[["timestamp"]] = df[["timestamp"]].apply(pd.to_datetime, format="%Y-%m-%d %H:%M:%S")
+            df[["NSI"]] = df[["NSI"]].astype(pandas.core.arrays.integer.Int64Dtype())
 
             return df
         
@@ -1095,7 +1091,8 @@ class MISOReports:
                 data=dictionary
             )
 
-            df['Time'] = pd.to_datetime(df['Time'], format="%Y-%m-%d %I:%M:%S %p")
+            df[["Time"]] = df[["Time"]].apply(pd.to_datetime, format="%Y-%m-%d %I:%M:%S %p")
+            df[["Value"]] = df[["Value"]].astype(numpy.dtypes.Float64DType())
 
             return df
         
@@ -1108,11 +1105,11 @@ class MISOReports:
 
             df = pd.read_csv(
                 filepath_or_buffer=io.StringIO(csv_data),
-                parse_dates=[
-                    "Period", 
-                ],
-                date_format="%Y-%m-%dT%H:%M:%S",
             )
+
+            df[["Price"]] = df[["Price"]].astype(numpy.dtypes.Float64DType())
+            df[["Period"]] = df[["Period"]].apply(pd.to_datetime, format="%Y-%m-%dT%H:%M:%S")
+            df[["Name", "Description"]] = df[["Name", "Description"]].astype(pandas.core.arrays.string_.StringDtype())
 
             return df
         
@@ -1131,11 +1128,11 @@ class MISOReports:
 
             df = pd.read_csv(
                 filepath_or_buffer=io.StringIO(csv_data),
-                parse_dates=[
-                    "MKT_INT_END_EST", 
-                ],
-                date_format="%Y-%m-%d %H:%M:%S %p",
             )
+
+            df[["TOTAL_ECON_MAX"]] = df[["TOTAL_ECON_MAX"]].astype(numpy.dtypes.Float64DType())
+            df[["MKT_INT_END_EST"]] = df[["MKT_INT_END_EST"]].apply(pd.to_datetime, format="%Y-%m-%d %H:%M:%S %p")
+            df[["COMMIT_REASON", "NUM_RESOURCES"]] = df[["COMMIT_REASON", "NUM_RESOURCES"]].astype(pandas.core.arrays.string_.StringDtype())
 
             return df
         
@@ -1148,14 +1145,11 @@ class MISOReports:
 
             df = pd.DataFrame(
                 data=dictionary["instance"],
-            ).astype(
-                dtype={
-                    "HourEndingEST": pd.Int64Dtype(),
-                    "Value": pd.Float64Dtype(),
-                }
             )
 
-            df["DateTimeEST"] = pd.to_datetime(df["DateTimeEST"], format="%Y-%m-%d %I:%M:%S %p")
+            df[["Value"]] = df[["Value"]].astype(numpy.dtypes.Float64DType())
+            df[["HourEndingEST"]] = df[["HourEndingEST"]].astype(pandas.core.arrays.integer.Int64Dtype())
+            df[["DateTimeEST"]] = df[["DateTimeEST"]].apply(pd.to_datetime, format="%Y-%m-%d %I:%M:%S %p")
 
             return df  
 
@@ -1168,14 +1162,11 @@ class MISOReports:
 
             df = pd.DataFrame(
                 data=dictionary["instance"],
-            ).astype(
-                dtype={
-                    "HourEndingEST": pd.Int64Dtype(),
-                    "Value": pd.Float64Dtype(),
-                }
             )
 
-            df["DateTimeEST"] = pd.to_datetime(df["DateTimeEST"], format="%Y-%m-%d %I:%M:%S %p")
+            df[["Value"]] = df[["Value"]].astype(numpy.dtypes.Float64DType())
+            df[["HourEndingEST"]] = df[["HourEndingEST"]].astype(pandas.core.arrays.integer.Int64Dtype())
+            df[["DateTimeEST"]] = df[["DateTimeEST"]].apply(pd.to_datetime, format="%Y-%m-%d %I:%M:%S %p")
 
             return df 
 
@@ -1496,13 +1487,13 @@ class MISOReports:
                 skiprows=5,
             ).iloc[:-1]
              
-            df.columns = [
+            df.columns = pd.Index([
                 "Hour Ending",
             ] + [
                 f"Reserve Zone {zone_num} - {direction}" 
                 for zone_num in range(1, 9) 
                 for direction in ["DA MCP Ramp Up Ex-Ante 1 Hour", "DA MCP Ramp Down Ex-Ante 1 Hour"]
-            ]
+            ])
             
             df[["Reserve Zone 1 - DA MCP Ramp Up Ex-Ante 1 Hour", "Reserve Zone 1 - DA MCP Ramp Down Ex-Ante 1 Hour", "Reserve Zone 2 - DA MCP Ramp Up Ex-Ante 1 Hour", "Reserve Zone 2 - DA MCP Ramp Down Ex-Ante 1 Hour", "Reserve Zone 3 - DA MCP Ramp Up Ex-Ante 1 Hour", "Reserve Zone 3 - DA MCP Ramp Down Ex-Ante 1 Hour", "Reserve Zone 4 - DA MCP Ramp Up Ex-Ante 1 Hour", "Reserve Zone 4 - DA MCP Ramp Down Ex-Ante 1 Hour", "Reserve Zone 5 - DA MCP Ramp Up Ex-Ante 1 Hour", "Reserve Zone 5 - DA MCP Ramp Down Ex-Ante 1 Hour", "Reserve Zone 6 - DA MCP Ramp Up Ex-Ante 1 Hour", "Reserve Zone 6 - DA MCP Ramp Down Ex-Ante 1 Hour", "Reserve Zone 7 - DA MCP Ramp Up Ex-Ante 1 Hour", "Reserve Zone 7 - DA MCP Ramp Down Ex-Ante 1 Hour", "Reserve Zone 8 - DA MCP Ramp Up Ex-Ante 1 Hour", "Reserve Zone 8 - DA MCP Ramp Down Ex-Ante 1 Hour"]] = df[["Reserve Zone 1 - DA MCP Ramp Up Ex-Ante 1 Hour", "Reserve Zone 1 - DA MCP Ramp Down Ex-Ante 1 Hour", "Reserve Zone 2 - DA MCP Ramp Up Ex-Ante 1 Hour", "Reserve Zone 2 - DA MCP Ramp Down Ex-Ante 1 Hour", "Reserve Zone 3 - DA MCP Ramp Up Ex-Ante 1 Hour", "Reserve Zone 3 - DA MCP Ramp Down Ex-Ante 1 Hour", "Reserve Zone 4 - DA MCP Ramp Up Ex-Ante 1 Hour", "Reserve Zone 4 - DA MCP Ramp Down Ex-Ante 1 Hour", "Reserve Zone 5 - DA MCP Ramp Up Ex-Ante 1 Hour", "Reserve Zone 5 - DA MCP Ramp Down Ex-Ante 1 Hour", "Reserve Zone 6 - DA MCP Ramp Up Ex-Ante 1 Hour", "Reserve Zone 6 - DA MCP Ramp Down Ex-Ante 1 Hour", "Reserve Zone 7 - DA MCP Ramp Up Ex-Ante 1 Hour", "Reserve Zone 7 - DA MCP Ramp Down Ex-Ante 1 Hour", "Reserve Zone 8 - DA MCP Ramp Up Ex-Ante 1 Hour", "Reserve Zone 8 - DA MCP Ramp Down Ex-Ante 1 Hour"]].astype(numpy.dtypes.Float64DType())
             df[["Hour Ending"]] = df[["Hour Ending"]].astype(pandas.core.arrays.integer.Int64Dtype())
@@ -1534,13 +1525,13 @@ class MISOReports:
                 skiprows=5,
             ).iloc[:-1]
              
-            df.columns = [
+            df.columns = pd.Index([
                 "Hour Ending",
             ] + [
                 f"Reserve Zone {zone_num} - {direction}" 
                 for zone_num in range(1, 9) 
                 for direction in ["DA MCP Ramp Up Ex-Post 1 Hour", "DA MCP Ramp Down Ex-Post 1 Hour"]
-            ]
+            ])
 
             df[["Reserve Zone 1 - DA MCP Ramp Up Ex-Post 1 Hour", "Reserve Zone 1 - DA MCP Ramp Down Ex-Post 1 Hour", "Reserve Zone 2 - DA MCP Ramp Up Ex-Post 1 Hour", "Reserve Zone 2 - DA MCP Ramp Down Ex-Post 1 Hour", "Reserve Zone 3 - DA MCP Ramp Up Ex-Post 1 Hour", "Reserve Zone 3 - DA MCP Ramp Down Ex-Post 1 Hour", "Reserve Zone 4 - DA MCP Ramp Up Ex-Post 1 Hour", "Reserve Zone 4 - DA MCP Ramp Down Ex-Post 1 Hour", "Reserve Zone 5 - DA MCP Ramp Up Ex-Post 1 Hour", "Reserve Zone 5 - DA MCP Ramp Down Ex-Post 1 Hour", "Reserve Zone 6 - DA MCP Ramp Up Ex-Post 1 Hour", "Reserve Zone 6 - DA MCP Ramp Down Ex-Post 1 Hour", "Reserve Zone 7 - DA MCP Ramp Up Ex-Post 1 Hour", "Reserve Zone 7 - DA MCP Ramp Down Ex-Post 1 Hour", "Reserve Zone 8 - DA MCP Ramp Up Ex-Post 1 Hour", "Reserve Zone 8 - DA MCP Ramp Down Ex-Post 1 Hour"]] = df[["Reserve Zone 1 - DA MCP Ramp Up Ex-Post 1 Hour", "Reserve Zone 1 - DA MCP Ramp Down Ex-Post 1 Hour", "Reserve Zone 2 - DA MCP Ramp Up Ex-Post 1 Hour", "Reserve Zone 2 - DA MCP Ramp Down Ex-Post 1 Hour", "Reserve Zone 3 - DA MCP Ramp Up Ex-Post 1 Hour", "Reserve Zone 3 - DA MCP Ramp Down Ex-Post 1 Hour", "Reserve Zone 4 - DA MCP Ramp Up Ex-Post 1 Hour", "Reserve Zone 4 - DA MCP Ramp Down Ex-Post 1 Hour", "Reserve Zone 5 - DA MCP Ramp Up Ex-Post 1 Hour", "Reserve Zone 5 - DA MCP Ramp Down Ex-Post 1 Hour", "Reserve Zone 6 - DA MCP Ramp Up Ex-Post 1 Hour", "Reserve Zone 6 - DA MCP Ramp Down Ex-Post 1 Hour", "Reserve Zone 7 - DA MCP Ramp Up Ex-Post 1 Hour", "Reserve Zone 7 - DA MCP Ramp Down Ex-Post 1 Hour", "Reserve Zone 8 - DA MCP Ramp Up Ex-Post 1 Hour", "Reserve Zone 8 - DA MCP Ramp Down Ex-Post 1 Hour"]].astype(numpy.dtypes.Float64DType())
             df[["Hour Ending"]] = df[["Hour Ending"]].astype(pandas.core.arrays.integer.Int64Dtype())
@@ -1572,14 +1563,14 @@ class MISOReports:
                 skiprows=6,
             ).iloc[:-1]
              
-            df.columns = [
+            df.columns = pd.Index([
                 "Time (EST)", 
                 "Preliminary / Final"
             ] + [
                 f"Reserve Zone {zone_num} - {direction}" 
                 for zone_num in range(1, 9) 
                 for direction in ["RT MCP Ramp Up Ex-Post 5 Min", "RT MCP Ramp Down Ex-Post 5 Min"]
-            ]
+            ])
 
             df[["Reserve Zone 1 - RT MCP Ramp Up Ex-Post 5 Min", "Reserve Zone 1 - RT MCP Ramp Down Ex-Post 5 Min", "Reserve Zone 2 - RT MCP Ramp Up Ex-Post 5 Min", "Reserve Zone 2 - RT MCP Ramp Down Ex-Post 5 Min", "Reserve Zone 3 - RT MCP Ramp Up Ex-Post 5 Min", "Reserve Zone 3 - RT MCP Ramp Down Ex-Post 5 Min", "Reserve Zone 4 - RT MCP Ramp Up Ex-Post 5 Min", "Reserve Zone 4 - RT MCP Ramp Down Ex-Post 5 Min", "Reserve Zone 5 - RT MCP Ramp Up Ex-Post 5 Min", "Reserve Zone 5 - RT MCP Ramp Down Ex-Post 5 Min", "Reserve Zone 6 - RT MCP Ramp Up Ex-Post 5 Min", "Reserve Zone 6 - RT MCP Ramp Down Ex-Post 5 Min", "Reserve Zone 7 - RT MCP Ramp Up Ex-Post 5 Min", "Reserve Zone 7 - RT MCP Ramp Down Ex-Post 5 Min", "Reserve Zone 8 - RT MCP Ramp Up Ex-Post 5 Min", "Reserve Zone 8 - RT MCP Ramp Down Ex-Post 5 Min"]] = df[["Reserve Zone 1 - RT MCP Ramp Up Ex-Post 5 Min", "Reserve Zone 1 - RT MCP Ramp Down Ex-Post 5 Min", "Reserve Zone 2 - RT MCP Ramp Up Ex-Post 5 Min", "Reserve Zone 2 - RT MCP Ramp Down Ex-Post 5 Min", "Reserve Zone 3 - RT MCP Ramp Up Ex-Post 5 Min", "Reserve Zone 3 - RT MCP Ramp Down Ex-Post 5 Min", "Reserve Zone 4 - RT MCP Ramp Up Ex-Post 5 Min", "Reserve Zone 4 - RT MCP Ramp Down Ex-Post 5 Min", "Reserve Zone 5 - RT MCP Ramp Up Ex-Post 5 Min", "Reserve Zone 5 - RT MCP Ramp Down Ex-Post 5 Min", "Reserve Zone 6 - RT MCP Ramp Up Ex-Post 5 Min", "Reserve Zone 6 - RT MCP Ramp Down Ex-Post 5 Min", "Reserve Zone 7 - RT MCP Ramp Up Ex-Post 5 Min", "Reserve Zone 7 - RT MCP Ramp Down Ex-Post 5 Min", "Reserve Zone 8 - RT MCP Ramp Up Ex-Post 5 Min", "Reserve Zone 8 - RT MCP Ramp Down Ex-Post 5 Min"]].astype(numpy.dtypes.Float64DType())
             df[["Time (EST)"]] = df[["Time (EST)"]].apply(pd.to_datetime, format="%m/%d/%Y  %I:%M:%S %p")
@@ -1596,7 +1587,7 @@ class MISOReports:
                 skiprows=5,
             ).iloc[:-1]
              
-            df.columns = [
+            df.columns = pd.Index([
                 "Market Date", 
                 "Hour Ending", 
                 "Preliminary / Final"
@@ -1604,7 +1595,7 @@ class MISOReports:
                 f"Reserve Zone {zone_num} - {direction}" 
                 for zone_num in range(1, 9) 
                 for direction in ["RT MCP Ramp Up Ex-Post Hourly", "RT MCP Ramp Down Ex-Post Hourly"]
-            ]
+            ])
 
             df[["Reserve Zone 1 - RT MCP Ramp Up Ex-Post Hourly", "Reserve Zone 1 - RT MCP Ramp Down Ex-Post Hourly", "Reserve Zone 2 - RT MCP Ramp Up Ex-Post Hourly", "Reserve Zone 2 - RT MCP Ramp Down Ex-Post Hourly", "Reserve Zone 3 - RT MCP Ramp Up Ex-Post Hourly", "Reserve Zone 3 - RT MCP Ramp Down Ex-Post Hourly", "Reserve Zone 4 - RT MCP Ramp Up Ex-Post Hourly", "Reserve Zone 4 - RT MCP Ramp Down Ex-Post Hourly", "Reserve Zone 5 - RT MCP Ramp Up Ex-Post Hourly", "Reserve Zone 5 - RT MCP Ramp Down Ex-Post Hourly", "Reserve Zone 6 - RT MCP Ramp Up Ex-Post Hourly", "Reserve Zone 6 - RT MCP Ramp Down Ex-Post Hourly", "Reserve Zone 7 - RT MCP Ramp Up Ex-Post Hourly", "Reserve Zone 7 - RT MCP Ramp Down Ex-Post Hourly", "Reserve Zone 8 - RT MCP Ramp Up Ex-Post Hourly", "Reserve Zone 8 - RT MCP Ramp Down Ex-Post Hourly"]] = df[["Reserve Zone 1 - RT MCP Ramp Up Ex-Post Hourly", "Reserve Zone 1 - RT MCP Ramp Down Ex-Post Hourly", "Reserve Zone 2 - RT MCP Ramp Up Ex-Post Hourly", "Reserve Zone 2 - RT MCP Ramp Down Ex-Post Hourly", "Reserve Zone 3 - RT MCP Ramp Up Ex-Post Hourly", "Reserve Zone 3 - RT MCP Ramp Down Ex-Post Hourly", "Reserve Zone 4 - RT MCP Ramp Up Ex-Post Hourly", "Reserve Zone 4 - RT MCP Ramp Down Ex-Post Hourly", "Reserve Zone 5 - RT MCP Ramp Up Ex-Post Hourly", "Reserve Zone 5 - RT MCP Ramp Down Ex-Post Hourly", "Reserve Zone 6 - RT MCP Ramp Up Ex-Post Hourly", "Reserve Zone 6 - RT MCP Ramp Down Ex-Post Hourly", "Reserve Zone 7 - RT MCP Ramp Up Ex-Post Hourly", "Reserve Zone 7 - RT MCP Ramp Down Ex-Post Hourly", "Reserve Zone 8 - RT MCP Ramp Up Ex-Post Hourly", "Reserve Zone 8 - RT MCP Ramp Down Ex-Post Hourly"]].astype(numpy.dtypes.Float64DType())
             df[["Market Date"]] = df[["Market Date"]].apply(pd.to_datetime, format="%Y-%m-%d")
@@ -2214,7 +2205,7 @@ class MISOReports:
             ),
             type_to_parse="xlsx",
             parser=ReportParsers.parse_ms_ecf_srw,
-            example_url="https://docs.misoenergy.org/marketreports/20241102_ms_ecf_srw.xlsx",
+            example_url="https://docs.misoenergy.org/marketreports/20241107_ms_ecf_srw.xlsx",
         ),
 
 
