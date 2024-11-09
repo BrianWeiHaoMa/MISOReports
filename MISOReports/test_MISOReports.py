@@ -3,6 +3,7 @@ import datetime
 
 import pandas as pd, pandas
 import numpy as np, numpy
+import requests
 
 from MISOReports.MISOReports import (
     MISORTWDDataBrokerURLBuilder,
@@ -12,6 +13,36 @@ from MISOReports.MISOReports import (
     MULTI_DF_NAMES_COLUMN,
     MULTI_DF_DFS_COLUMN,
 )
+
+
+def try_to_get_df_res(
+    report_name: str, 
+    datetime_increment_limit: int,
+) -> pd.DataFrame:
+    """Tries to get the df for the report_name and returns it. If a request fails, it will 
+    increment the datetime and try again up to datetime_increment_limit times.
+
+    :param str report_name: The name of the report to get the df for.
+    :param int datetime_increment_limit: The number of times to try to get the df before raising an error.
+    :return pd.DataFrame: The df for the report_name.
+    """
+    report_mappings = MISOReports.report_mappings
+
+    cnt = -1 # We want to try at least one time.
+    while cnt < datetime_increment_limit:
+        try:
+            df = MISOReports.get_df(
+                report_name=report_name,
+                url=report_mappings[report_name].example_url,
+            )
+            break
+        except requests.exceptions.RequestException as e:
+            cnt += 1
+    
+    if cnt >= datetime_increment_limit:
+        raise ValueError(f"Failed to get {report_name} after {datetime_increment_limit} attempts.")
+    
+    return df
 
 
 def get_dtype_frozenset(
@@ -31,6 +62,18 @@ def get_dtype_frozenset(
         res.append(type(dtypes[k]))
     
     return frozenset(res)
+
+
+@pytest.fixture
+def get_df_test_names():
+    single_df_tests = [v[0] for v in single_df_test_list]
+    multiple_dfs_tests = [v[0] for v in multiple_dfs_test_list]
+    return single_df_tests + multiple_dfs_tests
+
+
+@pytest.fixture
+def datetime_increment_limit(request):
+    return request.config.getoption("--datetime-increments-limit")
 
 
 @pytest.mark.parametrize(
@@ -146,7 +189,6 @@ def test_MISOMarketReportsURLBuilder_build_url(
     assert url_builder.build_url(ddatetime=ddatetime, file_extension=file_extension) == expected
         
 
-@pytest.mark.completion
 def test_get_df_every_report_example_url_returns_non_empty_df():
     mappings = MISOReports.report_mappings
 
@@ -856,12 +898,10 @@ single_df_test_list = [
 @pytest.mark.parametrize(
     "report_name, columns_mapping", single_df_test_list
 )
-def test_get_df_single_df_correct_columns(report_name, columns_mapping):
-    report_mappings = MISOReports.report_mappings
-
-    df = MISOReports.get_df(
+def test_get_df_single_df_correct_columns(report_name, columns_mapping, datetime_increment_limit):
+    df = try_to_get_df_res(
         report_name=report_name,
-        url=report_mappings[report_name].example_url,
+        datetime_increment_limit=datetime_increment_limit,
     )
 
     columns_mapping_columns = []
@@ -904,12 +944,10 @@ multiple_dfs_test_list = [
 @pytest.mark.parametrize(
     "report_name, dfs_mapping", multiple_dfs_test_list
 )
-def test_get_df_multiple_dfs_correct_columns_and_matching_df_names(report_name, dfs_mapping):
-    report_mappings = MISOReports.report_mappings
-
-    df = MISOReports.get_df(
+def test_get_df_multiple_dfs_correct_columns_and_matching_df_names(report_name, dfs_mapping, datetime_increment_limit):
+    df = try_to_get_df_res(
         report_name=report_name,
-        url=report_mappings[report_name].example_url,
+        datetime_increment_limit=datetime_increment_limit,
     )
 
     # Check that df names are as expected.
@@ -941,13 +979,6 @@ def test_get_df_multiple_dfs_correct_columns_and_matching_df_names(report_name, 
                 f"For multi-df report {report_name}, df {df_name}, columns {columns} are not of type {column_type}."
 
 
-@pytest.fixture
-def get_df_test_names():
-    single_df_tests = [v[0] for v in single_df_test_list]
-    multiple_dfs_tests = [v[0] for v in multiple_dfs_test_list]
-    return single_df_tests + multiple_dfs_tests
-
-
 def test_get_df_test_test_names_have_no_duplicates(get_df_test_names):
     holder = set()
     for name in get_df_test_names:
@@ -963,3 +994,45 @@ def test_get_df_test_correct_columns_check_for_every_report(get_df_test_names):
     
     assert correct_column_types_check_reports == reports, \
         "Not all reports are checked for correct columns."
+    
+@pytest.mark.parametrize(
+    "direction, target, supported_extensions, url_generator, ddatetime, file_extension, expected", [
+        (4, "DA_Load_EPNodes", ["zip"], MISOMarketReportsURLBuilder.url_generator_YYYYmmdd_last, datetime.datetime(year=2024, month=10, day=21), "zip", "https://docs.misoenergy.org/marketreports/DA_Load_EPNodes_20241025.zip"),
+        (1, "da_exante_lmp", ["csv"], MISOMarketReportsURLBuilder.url_generator_YYYYmmdd_first, datetime.datetime(year=2024, month=10, day=26), "csv", "https://docs.misoenergy.org/marketreports/20241027_da_exante_lmp.csv"),
+        (1, "da_expost_lmp", ["csv"], MISOMarketReportsURLBuilder.url_generator_YYYYmmdd_first, datetime.datetime(year=2024, month=10, day=26), "csv", "https://docs.misoenergy.org/marketreports/20241027_da_expost_lmp.csv"),
+        (-1, "DA_LMPs", ["zip"], MISOMarketReportsURLBuilder.url_generator_YYYY_current_month_name_to_two_months_later_name_first, datetime.datetime(year=2024, month=7, day=1), "zip", "https://docs.misoenergy.org/marketreports/2024-Apr-Jun_DA_LMPs.zip"),
+        (0, "DA_LMPs", ["zip"], MISOMarketReportsURLBuilder.url_generator_YYYY_current_month_name_to_two_months_later_name_first, datetime.datetime(year=2024, month=11, day=1), "zip", "https://docs.misoenergy.org/marketreports/2024-Nov-Jan_DA_LMPs.zip"),
+        (-3, "rt_expost_str_5min_mcp", ["xlsx"], MISOMarketReportsURLBuilder.url_generator_YYYYmm_first, datetime.datetime(year=2024, month=10, day=1), "xlsx", "https://docs.misoenergy.org/marketreports/202407_rt_expost_str_5min_mcp.xlsx"),
+        (1, "MARKET_SETTLEMENT_DATA_SRW", ["zip"], MISOMarketReportsURLBuilder.url_generator_no_date, datetime.datetime(year=2024, month=10, day=1), "zip", "https://docs.misoenergy.org/marketreports/MARKET_SETTLEMENT_DATA_SRW.zip"),
+        (1, "MARKET_SETTLEMENT_DATA_SRW", ["zip"], MISOMarketReportsURLBuilder.url_generator_no_date, datetime.datetime.now(), "zip", "https://docs.misoenergy.org/marketreports/MARKET_SETTLEMENT_DATA_SRW.zip"),
+        (1, "M2M_Settlement_srw", ["csv"], MISOMarketReportsURLBuilder.url_generator_YYYY_last, datetime.datetime(year=2024, month=10, day=1), "csv", "https://docs.misoenergy.org/marketreports/M2M_Settlement_srw_2025.csv"),
+        (1, "Allocation_on_MISO_Flowgates", ["csv"], MISOMarketReportsURLBuilder.url_generator_YYYY_mm_dd_last, datetime.datetime(year=2024, month=10, day=29), "csv", "https://docs.misoenergy.org/marketreports/Allocation_on_MISO_Flowgates_2024_10_30.csv"),
+    ]
+)
+def test_MISOMarketReportsURLBuilder_add_to_datetime(
+    direction,
+    target, 
+    supported_extensions, 
+    url_generator,
+    ddatetime,
+    file_extension,
+    expected, 
+):
+    url_builder = MISOMarketReportsURLBuilder(
+        target=target,
+        supported_extensions=supported_extensions,
+        url_generator=url_generator,
+    )
+
+    new_datetime = url_builder.add_to_datetime(
+        ddatetime=ddatetime, 
+        direction=direction,
+    )
+
+    url = url_builder.build_url(
+        ddatetime=new_datetime,
+        file_extension=file_extension,
+    )
+
+    assert url == expected, f"Expected {expected}, got {url}."
+    

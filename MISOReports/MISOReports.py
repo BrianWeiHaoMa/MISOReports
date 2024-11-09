@@ -9,6 +9,7 @@ import io
 import requests
 import pandas as pd, pandas
 import numpy as np, numpy
+from dateutil.relativedelta import relativedelta
 
 
 MULTI_DF_NAMES_COLUMN = "names"
@@ -25,6 +26,7 @@ class URLBuilder(ABC):
         self,
         target: str,
         supported_extensions: list[str],
+        default_extension: str | None = None,
     ):
         """Constructor for URLBuilder class.
 
@@ -34,19 +36,36 @@ class URLBuilder(ABC):
         self.target = target
         self.supported_extensions = supported_extensions
 
+        self.default_extension = default_extension
+
     @abstractmethod
     def build_url(
         self,
-        file_extension: str,
+        file_extension: str | None,
         ddatetime: datetime.datetime | None,
     ) -> str:
         """Builds the URL to download from.
 
-        :param str file_extension: The file type to download.
+        :param str | None file_extension: The file type to download. If None, the default extension is used.
         :param datetime.datetime | None ddatetime: The date/datetime to download the report for.
         :return str: A URL to download the report from.
         """
         pass
+
+    def _build_url_extension_check(
+        self,
+        file_extension: str | None,
+    ) -> str:
+        if file_extension is None:
+            if self.default_extension is None:
+                raise ValueError("No file extension provided and no default extension set.")
+
+            file_extension = self.default_extension
+
+        if file_extension not in self.supported_extensions:
+            raise ValueError(f"Unsupported file extension: {file_extension}")
+
+        return file_extension
     
     
 class MISORTWDDataBrokerURLBuilder(URLBuilder):
@@ -54,21 +73,22 @@ class MISORTWDDataBrokerURLBuilder(URLBuilder):
         self,
         target: str,
         supported_extensions: list[str],
+        default_extension: str | None = None,
     ):
         super().__init__(
             target=target, 
-            supported_extensions=supported_extensions
+            supported_extensions=supported_extensions,
+            default_extension=default_extension,
         )
 
         self._format_url = f"https://api.misoenergy.org/MISORTWDDataBroker/DataBrokerServices.asmx?messageType={target}&returnType={URLBuilder.extension_placeholder}"
 
     def build_url(
         self,
-        file_extension: str,
+        file_extension: str | None,
         ddatetime: datetime.datetime | None = None,
     ) -> str:
-        if file_extension not in self.supported_extensions:
-            raise ValueError(f"Unsupported file extension: {file_extension}")
+        file_extension = self._build_url_extension_check(file_extension)
         
         res = self._format_url.replace(URLBuilder.extension_placeholder, file_extension)
         return res
@@ -79,21 +99,22 @@ class MISORTWDBIReporterURLBuilder(URLBuilder):
         self,
         target: str,
         supported_extensions: list[str],
+        default_extension: str | None = None,
     ):
         super().__init__(
             target=target, 
-            supported_extensions=supported_extensions
+            supported_extensions=supported_extensions,
+            default_extension=default_extension,
         )
 
         self._format_url = f"https://api.misoenergy.org/MISORTWDBIReporter/Reporter.asmx?messageType={target}&returnType={URLBuilder.extension_placeholder}"
 
     def build_url(
         self,
-        file_extension: str,
+        file_extension: str | None,
         ddatetime: datetime.datetime | None = None,
     ) -> str:
-        if file_extension not in self.supported_extensions:
-            raise ValueError(f"Unsupported file extension: {file_extension}")
+        file_extension = self._build_url_extension_check(file_extension)
         
         res = self._format_url.replace(URLBuilder.extension_placeholder, file_extension)
         return res
@@ -105,25 +126,54 @@ class MISOMarketReportsURLBuilder(URLBuilder):
         target: str,
         supported_extensions: list[str],
         url_generator: Callable[[datetime.datetime | None, str], str],
+        default_extension: str | None = None,
     ):
         super().__init__(
             target=target, 
-            supported_extensions=supported_extensions
+            supported_extensions=supported_extensions,
+            default_extension=default_extension,
         )
 
         self.url_generator = url_generator
 
     def build_url(
         self,
-        file_extension: str,
+        file_extension: str | None,
         ddatetime: datetime.datetime | None,
     ) -> str:
-        if file_extension not in self.supported_extensions:
-            raise ValueError(f"Unsupported file extension: {file_extension}")
+        file_extension = self._build_url_extension_check(file_extension)
         
         res = self.url_generator(ddatetime, self.target)
         res = res.replace(URLBuilder.extension_placeholder, file_extension)
         return res
+    
+    def add_to_datetime(
+        self,
+        ddatetime: datetime.datetime,
+        direction: int,
+    ) -> datetime.datetime:
+        """Changes the datetime by one unit (according to the URL generator) 
+        in the direction specified.
+
+        :param datetime.datetime ddatetime: The datetime to change.
+        :param int direction: The multiple for the increment (negative for backwards increment).
+        :return datetime.datetime: The new datetime.
+        """
+        increment_mappings: dict[Callable[[datetime.datetime | None, str], str], relativedelta] = {
+            MISOMarketReportsURLBuilder.url_generator_YYYY_current_month_name_to_two_months_later_name_first: relativedelta(months=3),
+            MISOMarketReportsURLBuilder.url_generator_YYYYmmdd_first: relativedelta(days=1),
+            MISOMarketReportsURLBuilder.url_generator_YYYYmm_first: relativedelta(months=1),
+            MISOMarketReportsURLBuilder.url_generator_YYYY_first: relativedelta(years=1),
+            MISOMarketReportsURLBuilder.url_generator_YYYYmmdd_last: relativedelta(days=1),
+            MISOMarketReportsURLBuilder.url_generator_YYYY_mm_dd_last: relativedelta(days=1),
+            MISOMarketReportsURLBuilder.url_generator_YYYY_last: relativedelta(years=1),
+            MISOMarketReportsURLBuilder.url_generator_no_date: relativedelta(days=0),
+        }
+
+        if self.url_generator not in increment_mappings.keys():
+            raise ValueError("This URL generator has no mapped increment.")    
+
+        return ddatetime + direction * increment_mappings[self.url_generator]
 
     @staticmethod    
     def _url_generator_datetime_first(
@@ -214,8 +264,6 @@ class MISOMarketReportsURLBuilder(URLBuilder):
         res = f"https://docs.misoenergy.org/marketreports/{target}.{URLBuilder.extension_placeholder}"
         return res
     
-        
-
 
 class MISOReports:
     """A class for downloading MISO reports.
@@ -1983,7 +2031,8 @@ class MISOReports:
             url_builder=MISOMarketReportsURLBuilder(
                 target="rt_bc_HIST",
                 supported_extensions=["csv"],
-                url_generator=MISOMarketReportsURLBuilder.url_generator_YYYY_first
+                url_generator=MISOMarketReportsURLBuilder.url_generator_YYYY_first,
+                default_extension="csv",
             ),
             type_to_parse="csv",
             parser=ReportParsers.parse_rt_bc_HIST,
@@ -1994,7 +2043,8 @@ class MISOReports:
             url_builder=MISOMarketReportsURLBuilder(
                 target="RT_UDS_Approved_Case_Percentage",
                 supported_extensions=["csv"],
-                url_generator=MISOMarketReportsURLBuilder.url_generator_YYYYmmdd_first
+                url_generator=MISOMarketReportsURLBuilder.url_generator_YYYYmmdd_first,
+                default_extension="csv",
             ),
             type_to_parse="csv",
             parser=ReportParsers.parse_RT_UDS_Approved_Case_Percentage,
@@ -2005,7 +2055,8 @@ class MISOReports:
             url_builder=MISOMarketReportsURLBuilder(
                 target="Resource_Uplift_by_Commitment_Reason",
                 supported_extensions=["xls"],
-                url_generator=MISOMarketReportsURLBuilder.url_generator_YYYYmmdd_first
+                url_generator=MISOMarketReportsURLBuilder.url_generator_YYYYmmdd_first,
+                default_extension="xls",
             ),
             type_to_parse="xls",
             parser=ReportParsers.parse_Resource_Uplift_by_Commitment_Reason,
@@ -2016,7 +2067,8 @@ class MISOReports:
             url_builder=MISOMarketReportsURLBuilder(
                 target="rt_rpe",
                 supported_extensions=["xls"],
-                url_generator=MISOMarketReportsURLBuilder.url_generator_YYYYmmdd_first
+                url_generator=MISOMarketReportsURLBuilder.url_generator_YYYYmmdd_first,
+                default_extension="xls",
             ),
             type_to_parse="xls",
             parser=ReportParsers.parse_rt_rpe,
@@ -2027,7 +2079,8 @@ class MISOReports:
             url_builder=MISOMarketReportsURLBuilder(
                 target="Historical_RT_RSG_Commitment",
                 supported_extensions=["csv"],
-                url_generator=MISOMarketReportsURLBuilder.url_generator_YYYY_first
+                url_generator=MISOMarketReportsURLBuilder.url_generator_YYYY_first,
+                default_extension="csv",
             ),
             type_to_parse="csv",
             parser=ReportParsers.parse_Historical_RT_RSG_Commitment,
@@ -2038,7 +2091,8 @@ class MISOReports:
             url_builder=MISOMarketReportsURLBuilder(
                 target="da_pr",
                 supported_extensions=["xls"],
-                url_generator=MISOMarketReportsURLBuilder.url_generator_YYYYmmdd_first
+                url_generator=MISOMarketReportsURLBuilder.url_generator_YYYYmmdd_first,
+                default_extension="xls",
             ),
             type_to_parse="xls",
             parser=ReportParsers.parse_da_pr,
@@ -2049,7 +2103,8 @@ class MISOReports:
             url_builder=MISOMarketReportsURLBuilder(
                 target="da_pbc",
                 supported_extensions=["csv"],
-                url_generator=MISOMarketReportsURLBuilder.url_generator_YYYYmmdd_first
+                url_generator=MISOMarketReportsURLBuilder.url_generator_YYYYmmdd_first,
+                default_extension="csv",
             ),
             type_to_parse="csv",
             parser=ReportParsers.parse_da_pbc,
@@ -2060,7 +2115,8 @@ class MISOReports:
             url_builder=MISOMarketReportsURLBuilder(
                 target="da_bc",
                 supported_extensions=["xls"],
-                url_generator=MISOMarketReportsURLBuilder.url_generator_YYYYmmdd_first
+                url_generator=MISOMarketReportsURLBuilder.url_generator_YYYYmmdd_first,
+                default_extension="xls",
             ),
             type_to_parse="xls",
             parser=ReportParsers.parse_da_bc,
@@ -2071,7 +2127,8 @@ class MISOReports:
             url_builder=MISOMarketReportsURLBuilder(
                 target="da_bcsf",
                 supported_extensions=["xls"],
-                url_generator=MISOMarketReportsURLBuilder.url_generator_YYYYmmdd_first
+                url_generator=MISOMarketReportsURLBuilder.url_generator_YYYYmmdd_first,
+                default_extension="xls",
             ),
             type_to_parse="xls",
             parser=ReportParsers.parse_da_bcsf,
@@ -2082,7 +2139,8 @@ class MISOReports:
             url_builder=MISOMarketReportsURLBuilder(
                 target="rt_pr",
                 supported_extensions=["xls"],
-                url_generator=MISOMarketReportsURLBuilder.url_generator_YYYYmmdd_first
+                url_generator=MISOMarketReportsURLBuilder.url_generator_YYYYmmdd_first,
+                default_extension="xls",
             ),
             type_to_parse="xls",
             parser=ReportParsers.parse_rt_pr,
@@ -2093,7 +2151,8 @@ class MISOReports:
             url_builder=MISOMarketReportsURLBuilder(
                 target="rt_irsf",
                 supported_extensions=["csv"],
-                url_generator=MISOMarketReportsURLBuilder.url_generator_YYYYmmdd_first
+                url_generator=MISOMarketReportsURLBuilder.url_generator_YYYYmmdd_first,
+                default_extension="csv",
             ),
             type_to_parse="csv",
             parser=ReportParsers.parse_rt_irsf,
@@ -2104,7 +2163,8 @@ class MISOReports:
             url_builder=MISOMarketReportsURLBuilder(
                 target="rt_mf",
                 supported_extensions=["xlsx"],
-                url_generator=MISOMarketReportsURLBuilder.url_generator_YYYYmmdd_first
+                url_generator=MISOMarketReportsURLBuilder.url_generator_YYYYmmdd_first,
+                default_extension="xlsx",
             ),
             type_to_parse="xlsx",
             parser=ReportParsers.parse_rt_mf,
@@ -2115,7 +2175,8 @@ class MISOReports:
             url_builder=MISOMarketReportsURLBuilder(
                 target="rt_ex",
                 supported_extensions=["xls"],
-                url_generator=MISOMarketReportsURLBuilder.url_generator_YYYYmmdd_first
+                url_generator=MISOMarketReportsURLBuilder.url_generator_YYYYmmdd_first,
+                default_extension="xls",
             ),
             type_to_parse="xls",
             parser=ReportParsers.parse_rt_ex,
@@ -2126,7 +2187,8 @@ class MISOReports:
             url_builder=MISOMarketReportsURLBuilder(
                 target="rt_pbc",
                 supported_extensions=["csv"],
-                url_generator=MISOMarketReportsURLBuilder.url_generator_YYYYmmdd_first
+                url_generator=MISOMarketReportsURLBuilder.url_generator_YYYYmmdd_first,
+                default_extension="csv",
             ),
             type_to_parse="csv",
             parser=ReportParsers.parse_rt_pbc,
@@ -2137,7 +2199,8 @@ class MISOReports:
             url_builder=MISOMarketReportsURLBuilder(
                 target="rt_bc",
                 supported_extensions=["xls"],
-                url_generator=MISOMarketReportsURLBuilder.url_generator_YYYYmmdd_first
+                url_generator=MISOMarketReportsURLBuilder.url_generator_YYYYmmdd_first,
+                default_extension="xls",
             ),
             type_to_parse="xls",
             parser=ReportParsers.parse_rt_bc,
@@ -2148,7 +2211,8 @@ class MISOReports:
             url_builder=MISOMarketReportsURLBuilder(
                 target="rt_or",
                 supported_extensions=["xls"],
-                url_generator=MISOMarketReportsURLBuilder.url_generator_YYYYmmdd_first
+                url_generator=MISOMarketReportsURLBuilder.url_generator_YYYYmmdd_first,
+                default_extension="xls",
             ),
             type_to_parse="xls",
             parser=ReportParsers.parse_rt_or,
@@ -2159,7 +2223,8 @@ class MISOReports:
             url_builder=MISOMarketReportsURLBuilder(
                 target="rt_fuel_on_margin",
                 supported_extensions=["zip"],
-                url_generator=MISOMarketReportsURLBuilder.url_generator_YYYY_first
+                url_generator=MISOMarketReportsURLBuilder.url_generator_YYYY_first,
+                default_extension="zip",
             ),
             type_to_parse="zip",
             parser=ReportParsers.parse_rt_fuel_on_margin,
@@ -2170,7 +2235,8 @@ class MISOReports:
             url_builder=MISOMarketReportsURLBuilder(
                 target="Total_Uplift_by_Resource",
                 supported_extensions=["xlsx"],
-                url_generator=MISOMarketReportsURLBuilder.url_generator_YYYYmmdd_first
+                url_generator=MISOMarketReportsURLBuilder.url_generator_YYYYmmdd_first,
+                default_extension="xlsx",
             ),
             type_to_parse="xlsx",
             parser=ReportParsers.parse_Total_Uplift_by_Resource,
@@ -2181,7 +2247,8 @@ class MISOReports:
             url_builder=MISOMarketReportsURLBuilder(
                 target="ms_vlr_srw",
                 supported_extensions=["xlsx"],
-                url_generator=MISOMarketReportsURLBuilder.url_generator_YYYYmmdd_first
+                url_generator=MISOMarketReportsURLBuilder.url_generator_YYYYmmdd_first,
+                default_extension="xlsx",
             ),
             type_to_parse="xlsx",
             parser=ReportParsers.parse_ms_vlr_srw,
@@ -2192,7 +2259,8 @@ class MISOReports:
             url_builder=MISOMarketReportsURLBuilder(
                 target="ms_rsg_srw",
                 supported_extensions=["xlsx"],
-                url_generator=MISOMarketReportsURLBuilder.url_generator_YYYYmmdd_first
+                url_generator=MISOMarketReportsURLBuilder.url_generator_YYYYmmdd_first,
+                default_extension="xlsx",
             ),
             type_to_parse="xlsx",
             parser=ReportParsers.parse_ms_rsg_srw,
@@ -2203,7 +2271,8 @@ class MISOReports:
             url_builder=MISOMarketReportsURLBuilder(
                 target="ms_rnu_srw",
                 supported_extensions=["xlsx"],
-                url_generator=MISOMarketReportsURLBuilder.url_generator_YYYYmmdd_first
+                url_generator=MISOMarketReportsURLBuilder.url_generator_YYYYmmdd_first,
+                default_extension="xlsx",
             ),
             type_to_parse="xlsx",
             parser=ReportParsers.parse_ms_rnu_srw,
@@ -2214,7 +2283,8 @@ class MISOReports:
             url_builder=MISOMarketReportsURLBuilder(
                 target="ms_ri_srw",
                 supported_extensions=["xlsx"],
-                url_generator=MISOMarketReportsURLBuilder.url_generator_YYYYmmdd_first
+                url_generator=MISOMarketReportsURLBuilder.url_generator_YYYYmmdd_first,
+                default_extension="xlsx",
             ),
             type_to_parse="xlsx",
             parser=ReportParsers.parse_ms_ri_srw,
@@ -2225,7 +2295,8 @@ class MISOReports:
             url_builder=MISOMarketReportsURLBuilder(
                 target="MARKET_SETTLEMENT_DATA_SRW",
                 supported_extensions=["zip"],
-                url_generator=MISOMarketReportsURLBuilder.url_generator_no_date
+                url_generator=MISOMarketReportsURLBuilder.url_generator_no_date,
+                default_extension="zip",
             ),
             type_to_parse="zip",
             parser=ReportParsers.parse_MARKET_SETTLEMENT_DATA_SRW,
@@ -2236,7 +2307,8 @@ class MISOReports:
             url_builder=MISOMarketReportsURLBuilder(
                 target="ms_vlr_HIST_SRW",
                 supported_extensions=["xlsx"],
-                url_generator=MISOMarketReportsURLBuilder.url_generator_YYYY_first
+                url_generator=MISOMarketReportsURLBuilder.url_generator_YYYY_first,
+                default_extension="xlsx",
             ),
             type_to_parse="xlsx",
             parser=ReportParsers.parse_ms_vlr_HIST_SRW,
@@ -2247,7 +2319,8 @@ class MISOReports:
             url_builder=MISOMarketReportsURLBuilder(
                 target="ms_ecf_srw",
                 supported_extensions=["xlsx"],
-                url_generator=MISOMarketReportsURLBuilder.url_generator_YYYYmmdd_first
+                url_generator=MISOMarketReportsURLBuilder.url_generator_YYYYmmdd_first,
+                default_extension="xlsx",
             ),
             type_to_parse="xlsx",
             parser=ReportParsers.parse_ms_ecf_srw,
@@ -2259,7 +2332,8 @@ class MISOReports:
             url_builder=MISOMarketReportsURLBuilder(
                 target="ccf_co",
                 supported_extensions=["csv"],
-                url_generator=MISOMarketReportsURLBuilder.url_generator_YYYYmmdd_first
+                url_generator=MISOMarketReportsURLBuilder.url_generator_YYYYmmdd_first,
+                default_extension="csv",
             ),
             type_to_parse="csv",
             parser=ReportParsers.parse_ccf_co,
@@ -2270,7 +2344,8 @@ class MISOReports:
             url_builder=MISOMarketReportsURLBuilder(
                 target="ms_vlr_HIST",
                 supported_extensions=["csv"],
-                url_generator=MISOMarketReportsURLBuilder.url_generator_YYYY_first
+                url_generator=MISOMarketReportsURLBuilder.url_generator_YYYY_first,\
+                default_extension="csv",
             ),
             type_to_parse="csv",
             parser=ReportParsers.parse_ms_vlr_HIST,
@@ -2281,7 +2356,8 @@ class MISOReports:
             url_builder=MISOMarketReportsURLBuilder(
                 target="Daily_Uplift_by_Local_Resource_Zone",
                 supported_extensions=["xlsx"],
-                url_generator=MISOMarketReportsURLBuilder.url_generator_YYYYmmdd_first
+                url_generator=MISOMarketReportsURLBuilder.url_generator_YYYYmmdd_first,
+                default_extension="xlsx",
             ),
             type_to_parse="xlsx",
             parser=ReportParsers.parse_Daily_Uplift_by_Local_Resource_Zone,
@@ -2292,6 +2368,7 @@ class MISOReports:
             url_builder=MISORTWDDataBrokerURLBuilder(
                 target="getfuelmix",
                 supported_extensions=["csv", "xml", "json"],
+                default_extension="csv",
             ),
             type_to_parse="csv",
             parser=ReportParsers.parse_fuelmix,
@@ -2302,6 +2379,7 @@ class MISOReports:
             url_builder=MISORTWDDataBrokerURLBuilder(
                 target="getace",
                 supported_extensions=["csv", "xml", "json"],
+                default_extension="csv",
             ),
             type_to_parse="csv",
             parser=ReportParsers.parse_ace,
@@ -2312,6 +2390,7 @@ class MISOReports:
             url_builder=MISORTWDDataBrokerURLBuilder(
                 target="getAncillaryServicesMCP",
                 supported_extensions=["csv", "xml", "json"],
+                default_extension="csv",
             ),
             type_to_parse="csv",
             parser=ReportParsers.parse_AncillaryServicesMCP,
@@ -2322,6 +2401,7 @@ class MISOReports:
             url_builder=MISORTWDDataBrokerURLBuilder(
                 target="getcts",
                 supported_extensions=["csv", "xml", "json"],
+                default_extension="csv",
             ),
             type_to_parse="csv",
             parser=ReportParsers.parse_cts,
@@ -2332,6 +2412,7 @@ class MISOReports:
             url_builder=MISORTWDDataBrokerURLBuilder(
                 target="getcombinedwindsolar",
                 supported_extensions=["csv", "xml", "json"],
+                default_extension="csv",
             ),
             type_to_parse="csv",
             parser=ReportParsers.parse_combinedwindsolar,
@@ -2342,6 +2423,7 @@ class MISOReports:
             url_builder=MISORTWDDataBrokerURLBuilder(
                 target="getWindForecast",
                 supported_extensions=["xml", "json"],
+                default_extension="json",
             ),
             type_to_parse="json",
             parser=ReportParsers.parse_WindForecast,
@@ -2352,6 +2434,7 @@ class MISOReports:
             url_builder=MISORTWDDataBrokerURLBuilder(
                 target="getWind",
                 supported_extensions=["csv", "xml", "json"],
+                default_extension="csv",
             ),
             type_to_parse="csv",
             parser=ReportParsers.parse_Wind,
@@ -2362,6 +2445,7 @@ class MISOReports:
             url_builder=MISORTWDDataBrokerURLBuilder(
                 target="getSolarForecast",
                 supported_extensions=["xml", "json"],
+                default_extension="json",
             ),
             type_to_parse="json",
             parser=ReportParsers.parse_SolarForecast,
@@ -2372,6 +2456,7 @@ class MISOReports:
             url_builder=MISORTWDDataBrokerURLBuilder(
                 target="getSolar",
                 supported_extensions=["csv", "xml", "json"],
+                default_extension="csv",
             ),
             type_to_parse="csv",
             parser=ReportParsers.parse_Solar,
@@ -2382,6 +2467,7 @@ class MISOReports:
             url_builder=MISORTWDDataBrokerURLBuilder(
                 target="getexantelmp",
                 supported_extensions=["csv", "xml", "json"],
+                default_extension="csv",
             ),
             type_to_parse="csv",
             parser=ReportParsers.parse_exantelmp,
@@ -2393,6 +2479,7 @@ class MISOReports:
                 target="da_exante_lmp",
                 supported_extensions=["csv"],
                 url_generator=MISOMarketReportsURLBuilder.url_generator_YYYYmmdd_first,
+                default_extension="csv",
             ),
             type_to_parse="csv",
             parser=ReportParsers.parse_da_exante_lmp,
@@ -2404,6 +2491,7 @@ class MISOReports:
                 target="da_expost_lmp",
                 supported_extensions=["csv"],
                 url_generator=MISOMarketReportsURLBuilder.url_generator_YYYYmmdd_first,
+                default_extension="csv",
             ),
             type_to_parse="csv",
             parser=ReportParsers.parse_da_expost_lmp,
@@ -2415,6 +2503,7 @@ class MISOReports:
                 target="rt_lmp_final",
                 supported_extensions=["csv"],
                 url_generator=MISOMarketReportsURLBuilder.url_generator_YYYYmmdd_first,
+                default_extension="csv",
             ),
             type_to_parse="csv",
             parser=ReportParsers.parse_rt_lmp_final,
@@ -2426,6 +2515,7 @@ class MISOReports:
                 target="rt_lmp_prelim",
                 supported_extensions=["csv"],
                 url_generator=MISOMarketReportsURLBuilder.url_generator_YYYYmmdd_first,
+                default_extension="csv",
             ),
             type_to_parse="csv",
             parser=ReportParsers.parse_rt_lmp_prelim,
@@ -2437,6 +2527,7 @@ class MISOReports:
                 target="DA_Load_EPNodes",
                 supported_extensions=["zip"],
                 url_generator=MISOMarketReportsURLBuilder.url_generator_YYYYmmdd_last,
+                default_extension="zip",
             ),
             type_to_parse="zip",
             parser=ReportParsers.parse_DA_Load_EPNodes,
@@ -2448,6 +2539,7 @@ class MISOReports:
                 target="DA_LMPs",
                 supported_extensions=["zip"],
                 url_generator=MISOMarketReportsURLBuilder.url_generator_YYYY_current_month_name_to_two_months_later_name_first,
+                default_extension="zip",
             ),
             type_to_parse="zip",
             parser=ReportParsers.parse_DA_LMPs,
@@ -2459,6 +2551,7 @@ class MISOReports:
                 target="5min_exante_lmp",
                 supported_extensions=["xlsx"],
                 url_generator=MISOMarketReportsURLBuilder.url_generator_YYYYmmdd_first,
+                default_extension="xlsx",
             ),
             type_to_parse="xlsx",
             parser=ReportParsers.parse_5min_exante_lmp,
@@ -2469,6 +2562,7 @@ class MISOReports:
             url_builder=MISORTWDDataBrokerURLBuilder(
                 target="getnsi1",
                 supported_extensions=["csv", "xml", "json"],
+                default_extension="csv",
             ),
             type_to_parse="csv",
             parser=ReportParsers.parse_nsi1,
@@ -2479,6 +2573,7 @@ class MISOReports:
             url_builder=MISORTWDDataBrokerURLBuilder(
                 target="getnsi5",
                 supported_extensions=["csv", "xml", "json"],
+                default_extension="csv",
             ),
             type_to_parse="csv",
             parser=ReportParsers.parse_nsi5,
@@ -2489,6 +2584,7 @@ class MISOReports:
             url_builder=MISORTWDDataBrokerURLBuilder(
                 target="getnsi1miso",
                 supported_extensions=["csv", "xml", "json"],
+                default_extension="csv",
             ),
             type_to_parse="csv",
             parser=ReportParsers.parse_nsi1miso,
@@ -2499,6 +2595,7 @@ class MISOReports:
             url_builder=MISORTWDDataBrokerURLBuilder(
                 target="getnsi5miso",
                 supported_extensions=["csv", "xml", "json"],
+                default_extension="csv",
             ),
             type_to_parse="csv",
             parser=ReportParsers.parse_nsi5miso,
@@ -2509,6 +2606,7 @@ class MISOReports:
             url_builder=MISORTWDDataBrokerURLBuilder(
                 target="getimporttotal5",
                 supported_extensions=["csv", "xml", "json"],
+                default_extension="csv",
             ),
             type_to_parse="json",
             parser=ReportParsers.parse_importtotal5,
@@ -2519,6 +2617,7 @@ class MISOReports:
             url_builder=MISORTWDDataBrokerURLBuilder(
                 target="getreservebindingconstraints",
                 supported_extensions=["csv", "xml", "json"],
+                default_extension="csv",
             ),
             type_to_parse="csv",
             parser=ReportParsers.parse_reservebindingconstraints,
@@ -2529,6 +2628,7 @@ class MISOReports:
             url_builder=MISORTWDDataBrokerURLBuilder(
                 target="getRSG",
                 supported_extensions=["csv", "xml", "json"],
+                default_extension="csv",
             ),
             type_to_parse="csv",
             parser=ReportParsers.parse_RSG,
@@ -2539,6 +2639,7 @@ class MISOReports:
             url_builder=MISORTWDDataBrokerURLBuilder(
                 target="gettotalload",
                 supported_extensions=["csv", "xml", "json"],
+                default_extension="csv",
             ),
             type_to_parse="csv",
             parser=ReportParsers.parse_totalload,
@@ -2549,6 +2650,7 @@ class MISOReports:
             url_builder=MISORTWDDataBrokerURLBuilder(
                 target="getWindActual",
                 supported_extensions=["xml", "json"],
+                default_extension="json",
             ),
             type_to_parse="json",
             parser=ReportParsers.parse_WindActual,
@@ -2559,6 +2661,7 @@ class MISOReports:
             url_builder=MISORTWDDataBrokerURLBuilder(
                 target="getSolarActual",
                 supported_extensions=["xml", "json"],
+                default_extension="json",
             ),
             type_to_parse="json",
             parser=ReportParsers.parse_SolarActual,
@@ -2569,6 +2672,7 @@ class MISOReports:
             url_builder=MISORTWDDataBrokerURLBuilder(
                 target="getNAI",
                 supported_extensions=["csv", "xml", "json"],
+                default_extension="csv",
             ),
             type_to_parse="csv",
             parser=ReportParsers.parse_NAI,
@@ -2579,6 +2683,7 @@ class MISOReports:
             url_builder=MISORTWDDataBrokerURLBuilder(
                 target="getregionaldirectionaltransfer",
                 supported_extensions=["csv", "xml", "json"],
+                default_extension="csv",
             ),
             type_to_parse="csv",
             parser=ReportParsers.parse_regionaldirectionaltransfer,
@@ -2589,6 +2694,7 @@ class MISOReports:
             url_builder=MISORTWDDataBrokerURLBuilder(
                 target="getgenerationoutagesplusminusfivedays",
                 supported_extensions=["csv", "xml", "json"],
+                default_extension="csv",
             ),
             type_to_parse="csv",
             parser=ReportParsers.parse_generationoutagesplusminusfivedays,
@@ -2599,6 +2705,7 @@ class MISOReports:
             url_builder=MISORTWDDataBrokerURLBuilder(
                 target="getapiversion",
                 supported_extensions=["json"],
+                default_extension="json",
             ),
             type_to_parse="json",
             parser=ReportParsers.parse_apiversion,
@@ -2609,6 +2716,7 @@ class MISOReports:
             url_builder=MISORTWDDataBrokerURLBuilder(
                 target="getlmpconsolidatedtable",
                 supported_extensions=["csv", "xml", "json"],
+                default_extension="csv",
             ),
             type_to_parse="csv",
             parser=ReportParsers.parse_lmpconsolidatedtable,
@@ -2619,6 +2727,7 @@ class MISOReports:
             url_builder=MISORTWDDataBrokerURLBuilder(
                 target="getrealtimebindingconstraints",
                 supported_extensions=["csv", "xml", "json"],
+                default_extension="csv",
             ),
             type_to_parse="csv",
             parser=ReportParsers.parse_realtimebindingconstraints,
@@ -2629,6 +2738,7 @@ class MISOReports:
             url_builder=MISORTWDDataBrokerURLBuilder(
                 target="getrealtimebindingsrpbconstraints",
                 supported_extensions=["csv", "xml", "json"],
+                default_extension="csv",
             ),
             type_to_parse="csv",
             parser=ReportParsers.parse_realtimebindingsrpbconstraints,
@@ -2640,6 +2750,7 @@ class MISOReports:
                 target="RT_Load_EPNodes",
                 supported_extensions=["zip"],
                 url_generator=MISOMarketReportsURLBuilder.url_generator_YYYYmmdd_last,
+                default_extension="zip",
             ),
             type_to_parse="zip",
             parser=ReportParsers.parse_RT_Load_EPNodes,
@@ -2651,6 +2762,7 @@ class MISOReports:
                 target="5MIN_LMP",
                 supported_extensions=["zip"],
                 url_generator=MISOMarketReportsURLBuilder.url_generator_YYYYmmdd_first,
+                default_extension="zip",
             ),
             type_to_parse="zip",
             parser=ReportParsers.parse_5MIN_LMP,
@@ -2662,6 +2774,7 @@ class MISOReports:
                 target="bids_cb",
                 supported_extensions=["zip"],
                 url_generator=MISOMarketReportsURLBuilder.url_generator_YYYYmmdd_first,
+                default_extension="zip",
             ),
             type_to_parse="zip",
             parser=ReportParsers.parse_bids_cb,
@@ -2673,6 +2786,7 @@ class MISOReports:
                 target="asm_exante_damcp",
                 supported_extensions=["csv"],
                 url_generator=MISOMarketReportsURLBuilder.url_generator_YYYYmmdd_first,
+                default_extension="csv",
             ),
             type_to_parse="csv",
             parser=ReportParsers.parse_asm_exante_damcp,
@@ -2684,6 +2798,7 @@ class MISOReports:
                 target="ftr_allocation_restoration",
                 supported_extensions=["zip"],
                 url_generator=MISOMarketReportsURLBuilder.url_generator_YYYYmmdd_first,
+                default_extension="zip",
             ),
             type_to_parse="zip",
             parser=ReportParsers.parse_ftr_allocation_restoration,
@@ -2695,6 +2810,7 @@ class MISOReports:
                 target="ftr_allocation_stage_1A",
                 supported_extensions=["zip"],
                 url_generator=MISOMarketReportsURLBuilder.url_generator_YYYYmmdd_first,
+                default_extension="zip",
             ),
             type_to_parse="zip",
             parser=ReportParsers.parse_ftr_allocation_stage_1A,
@@ -2706,6 +2822,7 @@ class MISOReports:
                 target="ftr_allocation_stage_1B",
                 supported_extensions=["zip"],
                 url_generator=MISOMarketReportsURLBuilder.url_generator_YYYYmmdd_first,
+                default_extension="zip",
             ),
             type_to_parse="zip",
             parser=ReportParsers.parse_ftr_allocation_stage_1B,
@@ -2717,6 +2834,7 @@ class MISOReports:
                 target="ftr_allocation_summary",
                 supported_extensions=["zip"],
                 url_generator=MISOMarketReportsURLBuilder.url_generator_YYYYmmdd_first,
+                default_extension="zip",
             ),
             type_to_parse="zip",
             parser=ReportParsers.parse_ftr_allocation_summary,
@@ -2728,6 +2846,7 @@ class MISOReports:
                 target="ftr_annual_results_round_1",
                 supported_extensions=["zip"],
                 url_generator=MISOMarketReportsURLBuilder.url_generator_YYYYmmdd_first,
+                default_extension="zip",
             ),
             type_to_parse="zip",
             parser=ReportParsers.parse_ftr_annual_results_round_1,
@@ -2739,6 +2858,7 @@ class MISOReports:
                 target="ftr_annual_results_round_2",
                 supported_extensions=["zip"],
                 url_generator=MISOMarketReportsURLBuilder.url_generator_YYYYmmdd_first,
+                default_extension="zip",
             ),
             type_to_parse="zip",
             parser=ReportParsers.parse_ftr_annual_results_round_2,
@@ -2750,6 +2870,7 @@ class MISOReports:
                 target="ftr_annual_results_round_3",
                 supported_extensions=["zip"],
                 url_generator=MISOMarketReportsURLBuilder.url_generator_YYYYmmdd_first,
+                default_extension="zip",
             ),
             type_to_parse="zip",
             parser=ReportParsers.parse_ftr_annual_results_round_3,
@@ -2761,6 +2882,7 @@ class MISOReports:
                 target="ftr_annual_bids_offers",
                 supported_extensions=["zip"],
                 url_generator=MISOMarketReportsURLBuilder.url_generator_YYYY_first,
+                default_extension="zip",
             ),
             type_to_parse="zip",
             parser=ReportParsers.parse_ftr_annual_bids_offers,
@@ -2772,6 +2894,7 @@ class MISOReports:
                 target="ftr_mpma_results",
                 supported_extensions=["zip"],
                 url_generator=MISOMarketReportsURLBuilder.url_generator_YYYYmmdd_first,
+                default_extension="zip",
             ),
             type_to_parse="zip",
             parser=ReportParsers.parse_ftr_mpma_results,
@@ -2783,6 +2906,7 @@ class MISOReports:
                 target="ftr_mpma_bids_offers",
                 supported_extensions=["zip"],
                 url_generator=MISOMarketReportsURLBuilder.url_generator_YYYYmmdd_first,
+                default_extension="zip",
             ),
             type_to_parse="zip",
             parser=ReportParsers.parse_ftr_mpma_bids_offers,
@@ -2794,6 +2918,7 @@ class MISOReports:
                 target="asm_expost_damcp",
                 supported_extensions=["csv"],
                 url_generator=MISOMarketReportsURLBuilder.url_generator_YYYYmmdd_first,
+                default_extension="csv",
             ),
             type_to_parse="csv",
             parser=ReportParsers.parse_asm_expost_damcp,
@@ -2805,6 +2930,7 @@ class MISOReports:
                 target="asm_rtmcp_final",
                 supported_extensions=["csv"],
                 url_generator=MISOMarketReportsURLBuilder.url_generator_YYYYmmdd_first,
+                default_extension="csv",
             ),
             type_to_parse="csv",
             parser=ReportParsers.parse_asm_rtmcp_final,
@@ -2816,6 +2942,7 @@ class MISOReports:
                 target="asm_rtmcp_prelim",
                 supported_extensions=["csv"],
                 url_generator=MISOMarketReportsURLBuilder.url_generator_YYYYmmdd_first,
+                default_extension="csv",
             ),
             type_to_parse="csv",
             parser=ReportParsers.parse_asm_rtmcp_prelim,
@@ -2826,7 +2953,8 @@ class MISOReports:
             url_builder=MISOMarketReportsURLBuilder(
                 target="5min_exante_mcp",
                 supported_extensions=["xlsx"],
-                url_generator=MISOMarketReportsURLBuilder.url_generator_YYYYmmdd_first
+                url_generator=MISOMarketReportsURLBuilder.url_generator_YYYYmmdd_first,
+                default_extension="xlsx",
             ),
             type_to_parse="xlsx",
             parser=ReportParsers.parse_5min_exante_mcp,
@@ -2837,7 +2965,8 @@ class MISOReports:
             url_builder=MISOMarketReportsURLBuilder(
                 target="5min_expost_mcp",
                 supported_extensions=["xlsx"],
-                url_generator=MISOMarketReportsURLBuilder.url_generator_YYYYmmdd_first
+                url_generator=MISOMarketReportsURLBuilder.url_generator_YYYYmmdd_first,
+                default_extension="xlsx",
             ),
             type_to_parse="xlsx",
             parser=ReportParsers.parse_5min_expost_mcp,
@@ -2848,7 +2977,8 @@ class MISOReports:
             url_builder=MISOMarketReportsURLBuilder(
                 target="da_exante_ramp_mcp",
                 supported_extensions=["xlsx"],
-                url_generator=MISOMarketReportsURLBuilder.url_generator_YYYYmmdd_first
+                url_generator=MISOMarketReportsURLBuilder.url_generator_YYYYmmdd_first,
+                default_extension="xlsx",
             ),
             type_to_parse="xlsx",
             parser=ReportParsers.parse_da_exante_ramp_mcp,
@@ -2859,7 +2989,8 @@ class MISOReports:
             url_builder=MISOMarketReportsURLBuilder(
                 target="da_exante_str_mcp",
                 supported_extensions=["xlsx"],
-                url_generator=MISOMarketReportsURLBuilder.url_generator_YYYYmmdd_first
+                url_generator=MISOMarketReportsURLBuilder.url_generator_YYYYmmdd_first,
+                default_extension="xlsx",
             ),
             type_to_parse="xlsx",
             parser=ReportParsers.parse_da_exante_str_mcp,
@@ -2870,7 +3001,8 @@ class MISOReports:
             url_builder=MISOMarketReportsURLBuilder(
                 target="da_expost_ramp_mcp",
                 supported_extensions=["xlsx"],
-                url_generator=MISOMarketReportsURLBuilder.url_generator_YYYYmmdd_first
+                url_generator=MISOMarketReportsURLBuilder.url_generator_YYYYmmdd_first,
+                default_extension="xlsx",
             ),
             type_to_parse="xlsx",
             parser=ReportParsers.parse_da_expost_ramp_mcp,
@@ -2881,7 +3013,8 @@ class MISOReports:
             url_builder=MISOMarketReportsURLBuilder(
                 target="da_expost_str_mcp",
                 supported_extensions=["xlsx"],
-                url_generator=MISOMarketReportsURLBuilder.url_generator_YYYYmmdd_first
+                url_generator=MISOMarketReportsURLBuilder.url_generator_YYYYmmdd_first,
+                default_extension="xlsx",
             ),
             type_to_parse="xlsx",
             parser=ReportParsers.parse_da_expost_str_mcp,
@@ -2892,7 +3025,8 @@ class MISOReports:
             url_builder=MISOMarketReportsURLBuilder(
                 target="rt_expost_ramp_5min_mcp",
                 supported_extensions=["xlsx"],
-                url_generator=MISOMarketReportsURLBuilder.url_generator_YYYYmm_first
+                url_generator=MISOMarketReportsURLBuilder.url_generator_YYYYmm_first,
+                default_extension="xlsx",
             ),
             type_to_parse="xlsx",
             parser=ReportParsers.parse_rt_expost_ramp_5min_mcp,
@@ -2903,7 +3037,8 @@ class MISOReports:
             url_builder=MISOMarketReportsURLBuilder(
                 target="rt_expost_ramp_mcp",
                 supported_extensions=["xlsx"],
-                url_generator=MISOMarketReportsURLBuilder.url_generator_YYYYmm_first
+                url_generator=MISOMarketReportsURLBuilder.url_generator_YYYYmm_first,
+                default_extension="xlsx",
             ),
             type_to_parse="xlsx",
             parser=ReportParsers.parse_rt_expost_ramp_mcp,
@@ -2914,7 +3049,8 @@ class MISOReports:
             url_builder=MISOMarketReportsURLBuilder(
                 target="rt_expost_str_5min_mcp",
                 supported_extensions=["xlsx"],
-                url_generator=MISOMarketReportsURLBuilder.url_generator_YYYYmm_first
+                url_generator=MISOMarketReportsURLBuilder.url_generator_YYYYmm_first,
+                default_extension="xlsx",
             ),
             type_to_parse="xlsx",
             parser=ReportParsers.parse_rt_expost_str_5min_mcp,
@@ -2925,7 +3061,8 @@ class MISOReports:
             url_builder=MISOMarketReportsURLBuilder(
                 target="rt_expost_str_mcp",
                 supported_extensions=["xlsx"],
-                url_generator=MISOMarketReportsURLBuilder.url_generator_YYYYmm_first
+                url_generator=MISOMarketReportsURLBuilder.url_generator_YYYYmm_first,
+                default_extension="xlsx",
             ),
             type_to_parse="xlsx",
             parser=ReportParsers.parse_rt_expost_str_mcp,
@@ -2937,6 +3074,7 @@ class MISOReports:
                 target="Allocation_on_MISO_Flowgates",
                 supported_extensions=["csv"],
                 url_generator=MISOMarketReportsURLBuilder.url_generator_YYYY_mm_dd_last,
+                default_extension="csv",
             ),
             type_to_parse="csv",
             parser=ReportParsers.parse_Allocation_on_MISO_Flowgates,
@@ -2948,6 +3086,7 @@ class MISOReports:
                 target="M2M_FFE",
                 supported_extensions=["CSV"],
                 url_generator=MISOMarketReportsURLBuilder.url_generator_YYYY_mm_dd_last,
+                default_extension="CSV",
             ),
             type_to_parse="CSV",
             parser=ReportParsers.parse_M2M_FFE,
@@ -2959,6 +3098,7 @@ class MISOReports:
                 target="M2M_Flowgates_as_of",
                 supported_extensions=["CSV"],
                 url_generator=MISOMarketReportsURLBuilder.url_generator_YYYYmmdd_last,
+                default_extension="CSV",
             ),
             type_to_parse="CSV",
             parser=ReportParsers.parse_M2M_Flowgates_as_of,
@@ -2971,6 +3111,7 @@ class MISOReports:
                 target="da_M2M_Settlement_srw",
                 supported_extensions=["csv"],
                 url_generator=MISOMarketReportsURLBuilder.url_generator_YYYY_last,
+                default_extension="csv",
             ),
             type_to_parse="csv",
             parser=ReportParsers.parse_da_M2M_Settlement_srw,
@@ -2982,6 +3123,7 @@ class MISOReports:
                 target="M2M_Settlement_srw",
                 supported_extensions=["csv"],
                 url_generator=MISOMarketReportsURLBuilder.url_generator_YYYY_last,
+                default_extension="csv",
             ),
             type_to_parse="csv",
             parser=ReportParsers.parse_M2M_Settlement_srw,
@@ -2993,6 +3135,7 @@ class MISOReports:
                 target="MM_Annual_Report",
                 supported_extensions=["zip"],
                 url_generator=MISOMarketReportsURLBuilder.url_generator_YYYYmmdd_first,
+                default_extension="zip",
             ),
             type_to_parse="zip",
             parser=ReportParsers.parse_MM_Annual_Report,
@@ -3004,6 +3147,7 @@ class MISOReports:
                 target="asm_da_co",
                 supported_extensions=["zip"],
                 url_generator=MISOMarketReportsURLBuilder.url_generator_YYYYmmdd_first,
+                default_extension="zip",
             ),
             type_to_parse="zip",
             parser=ReportParsers.parse_asm_da_co,
@@ -3015,6 +3159,7 @@ class MISOReports:
                 target="asm_rt_co",
                 supported_extensions=["zip"],
                 url_generator=MISOMarketReportsURLBuilder.url_generator_YYYYmmdd_first,
+                default_extension="zip",
             ),
             type_to_parse="zip",
             parser=ReportParsers.parse_asm_rt_co,
@@ -3026,6 +3171,7 @@ class MISOReports:
                 target="Dead_Node_Report",
                 supported_extensions=["xls"],
                 url_generator=MISOMarketReportsURLBuilder.url_generator_YYYYmmdd_last,
+                default_extension="xls",
             ),
             type_to_parse="xls",
             parser=ReportParsers.parse_Dead_Node_Report,
@@ -3037,6 +3183,7 @@ class MISOReports:
                 target="rt_co",
                 supported_extensions=["zip"],
                 url_generator=MISOMarketReportsURLBuilder.url_generator_YYYYmmdd_first,
+                default_extension="zip",
             ),
             type_to_parse="zip",
             parser=ReportParsers.parse_rt_co,
@@ -3048,6 +3195,7 @@ class MISOReports:
                 target="da_co",
                 supported_extensions=["zip"],
                 url_generator=MISOMarketReportsURLBuilder.url_generator_YYYYmmdd_first,
+                default_extension="zip",
             ),
             type_to_parse="zip",
             parser=ReportParsers.parse_da_co,
@@ -3059,6 +3207,7 @@ class MISOReports:
                 target="cpnode_reszone",
                 supported_extensions=["xlsx"],
                 url_generator=MISOMarketReportsURLBuilder.url_generator_YYYYmmdd_first,
+                default_extension="xlsx",
             ),
             type_to_parse="xlsx",
             parser=ReportParsers.parse_cpnode_reszone,
@@ -3070,6 +3219,7 @@ class MISOReports:
                 target="sr_ctsl",
                 supported_extensions=["pdf"],
                 url_generator=MISOMarketReportsURLBuilder.url_generator_YYYYmmdd_first,
+                default_extension="pdf",
             ),
             type_to_parse="pdf",
             parser=ReportParsers.parse_sr_ctsl,
@@ -3081,6 +3231,7 @@ class MISOReports:
                 target="df_al",
                 supported_extensions=["xls"],
                 url_generator=MISOMarketReportsURLBuilder.url_generator_YYYYmmdd_first,
+                default_extension="xls",
             ),
             type_to_parse="xls",
             parser=ReportParsers.parse_df_al,
@@ -3092,6 +3243,7 @@ class MISOReports:
                 target="rf_al",
                 supported_extensions=["xls"],
                 url_generator=MISOMarketReportsURLBuilder.url_generator_YYYYmmdd_first,
+                default_extension="xls",
             ),
             type_to_parse="xls",
             parser=ReportParsers.parse_rf_al,
@@ -3103,6 +3255,7 @@ class MISOReports:
                 target="da_bc_HIST",
                 supported_extensions=["csv"],
                 url_generator=MISOMarketReportsURLBuilder.url_generator_YYYY_first,
+                default_extension="csv",
             ),
             type_to_parse="csv",
             parser=ReportParsers.parse_da_bc_HIST,
@@ -3113,7 +3266,8 @@ class MISOReports:
             url_builder=MISOMarketReportsURLBuilder(
                 target="da_ex_rg",
                 supported_extensions=["xlsx"],
-                url_generator=MISOMarketReportsURLBuilder.url_generator_YYYYmmdd_first
+                url_generator=MISOMarketReportsURLBuilder.url_generator_YYYYmmdd_first,
+                default_extension="xlsx",
             ),
             type_to_parse="xlsx",
             parser=ReportParsers.parse_da_ex_rg,
@@ -3124,7 +3278,8 @@ class MISOReports:
             url_builder=MISOMarketReportsURLBuilder(
                 target="da_ex",
                 supported_extensions=["xls"],
-                url_generator=MISOMarketReportsURLBuilder.url_generator_YYYYmmdd_first
+                url_generator=MISOMarketReportsURLBuilder.url_generator_YYYYmmdd_first,
+                default_extension="xls",
             ),
             type_to_parse="xls",
             parser=ReportParsers.parse_da_ex,
@@ -3135,7 +3290,8 @@ class MISOReports:
             url_builder=MISOMarketReportsURLBuilder(
                 target="da_rpe",
                 supported_extensions=["xls"],
-                url_generator=MISOMarketReportsURLBuilder.url_generator_YYYYmmdd_first
+                url_generator=MISOMarketReportsURLBuilder.url_generator_YYYYmmdd_first,
+                default_extension="xls",
             ),
             type_to_parse="xls",
             parser=ReportParsers.parse_da_rpe,
@@ -3146,7 +3302,7 @@ class MISOReports:
     @staticmethod
     def get_url(
         report_name: str,
-        file_extension: str,
+        file_extension: str | None = None,
         ddatetime: datetime.datetime | None = None,
     ) -> str:
         """Get the URL for the report.
@@ -3170,7 +3326,7 @@ class MISOReports:
     @staticmethod
     def get_response(
         report_name: str,
-        file_extension: str, 
+        file_extension: str | None = None, 
         ddatetime: datetime.datetime | None = None,
     ) -> requests.Response:
         """Get the response for the report download.
