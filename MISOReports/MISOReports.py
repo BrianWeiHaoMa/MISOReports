@@ -11,6 +11,10 @@ import pandas as pd, pandas
 import numpy as np, numpy
 
 
+MULTI_DF_NAMES_COLUMN = "names"
+MULTI_DF_DFS_COLUMN = "dfs"
+
+
 class URLBuilder(ABC):
     """A class to build URLs for MISO reports.
     """
@@ -811,15 +815,15 @@ class MISOReports:
             df3[["GenRegMCP", "GenSpinMCP", "GenSuppMCP", "StrMcp", "DemandRegMcp", "DemandSpinMcp", "DemandSuppMCP", "RcpUpMcp", "RcpDownMcp"]] = df3[["GenRegMCP", "GenSpinMCP", "GenSuppMCP", "StrMcp", "DemandRegMcp", "DemandSpinMcp", "DemandSuppMCP", "RcpUpMcp", "RcpDownMcp"]].astype(numpy.dtypes.Float64DType())
             
             df = pd.DataFrame({
-                'idx': [
-                    "Interval", 
-                    f"{csv2_lines[0]}", 
-                    f"{csv3_lines[0]}"
+                MULTI_DF_NAMES_COLUMN: [
+                        "Interval", 
+                        f"{csv2_lines[0]}", 
+                        f"{csv3_lines[0]}"
                     ], 
-                'dfs': [
-                    df1, 
-                    df2, 
-                    df3
+                MULTI_DF_DFS_COLUMN: [
+                        df1, 
+                        df2, 
+                        df3
                     ]
                 })
             
