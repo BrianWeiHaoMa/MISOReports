@@ -27,20 +27,26 @@ def try_to_get_df_res(
     :return pd.DataFrame: The df for the report_name.
     """
     report_mappings = MISOReports.report_mappings
+    report = report_mappings[report_name]
 
-    cnt = -1 # We want to try at least one time.
-    while cnt < datetime_increment_limit:
+    cnt = 0
+    curr_target_date = report.example_datetime
+    while cnt <= datetime_increment_limit:
         try:
             df = MISOReports.get_df(
                 report_name=report_name,
-                url=report_mappings[report_name].example_url,
+                ddatetime=curr_target_date,
             )
             break
         except requests.exceptions.RequestException as e:
+            curr_target_date = report.url_builder.add_to_datetime(
+                ddatetime=curr_target_date, 
+                direction=1,
+            )
             cnt += 1
     
-    if cnt >= datetime_increment_limit:
-        raise ValueError(f"Failed to get {report_name} after {datetime_increment_limit} attempts.")
+    if cnt > datetime_increment_limit:
+        raise ValueError(f"Failed to get {report_name} after {datetime_increment_limit} attempts (last datetime tried: {curr_target_date}).")
     
     return df
 
