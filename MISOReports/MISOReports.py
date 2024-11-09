@@ -781,7 +781,49 @@ class MISOReports:
         def parse_AncillaryServicesMCP(
             res: requests.Response,
         ) -> pd.DataFrame:
-            raise NotImplementedError("Result contains 2 csv tables.")
+            text = res.text
+            csv1, csv2, csv3 = text.split("\n\n")
+
+            df1 = pd.read_csv(
+                filepath_or_buffer=io.StringIO("\n".join(csv1.split(","))),
+            )
+
+            df1[["RefId"]] = df1[["RefId"]].astype(pandas.core.arrays.string_.StringDtype())
+
+            csv2_lines = csv2.splitlines()
+            
+            df2 = pd.read_csv(
+                filepath_or_buffer=io.StringIO("\n".join(csv2_lines[1:])),
+            )
+
+            df2.rename(columns={" GenRegMCP": "GenRegMCP"}, inplace=True)
+
+            df2[["number"]] = df2[["number"]].astype(pandas.core.arrays.integer.Int64Dtype())
+            df2[["GenRegMCP", "GenSpinMCP", "GenSuppMCP", "StrMcp", "DemandRegMcp", "DemandSpinMcp", "DemandSuppMCP", "RcpUpMcp", "RcpDownMcp"]] = df2[["GenRegMCP", "GenSpinMCP", "GenSuppMCP", "StrMcp", "DemandRegMcp", "DemandSpinMcp", "DemandSuppMCP", "RcpUpMcp", "RcpDownMcp"]].astype(numpy.dtypes.Float64DType())
+    
+            csv3_lines = csv3.splitlines()
+
+            df3 = pd.read_csv(
+                filepath_or_buffer=io.StringIO("\n".join(csv3_lines[1:])),
+            )
+
+            df3[["number"]] = df3[["number"]].astype(pandas.core.arrays.integer.Int64Dtype())
+            df3[["GenRegMCP", "GenSpinMCP", "GenSuppMCP", "StrMcp", "DemandRegMcp", "DemandSpinMcp", "DemandSuppMCP", "RcpUpMcp", "RcpDownMcp"]] = df3[["GenRegMCP", "GenSpinMCP", "GenSuppMCP", "StrMcp", "DemandRegMcp", "DemandSpinMcp", "DemandSuppMCP", "RcpUpMcp", "RcpDownMcp"]].astype(numpy.dtypes.Float64DType())
+            
+            df = pd.DataFrame({
+                'idx': [
+                    "Interval", 
+                    f"{csv2_lines[0]}", 
+                    f"{csv3_lines[0]}"
+                    ], 
+                'dfs': [
+                    df1, 
+                    df2, 
+                    df3
+                    ]
+                })
+            
+            return df
         
         @staticmethod
         def parse_cts(
