@@ -196,6 +196,11 @@ https://docs.misoenergy.org/marketreports/PeakHourOverview_03052022.csv
 https://docs.misoenergy.org/marketreports/2024_sr_tcdc_group2.csv
 ```
 
+## NotImplemented tasks
+Brian: Top up until parse_asm_exante_damcp (inclusive)
+William: Between parse_asm_exante_damcp up until parse_ftr_annual_results_round_3 (inclusive).
+Ryan: Bottom.
+
 ## Add all entries to test_get_df_correct_column_types()
 Make every entry use only the data types listed in DEV.md and add their respective automated tests.
 
