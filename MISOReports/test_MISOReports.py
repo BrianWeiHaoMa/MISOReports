@@ -195,7 +195,7 @@ def test_MISOMarketReportsURLBuilder_build_url(
     assert url_builder.build_url(ddatetime=ddatetime, file_extension=file_extension) == expected
         
 
-def test_get_df_every_report_example_url_returns_non_empty_df():
+def test_get_df_every_report_example_url_returns_non_empty_df(datetime_increment_limit):
     mappings = MISOReports.report_mappings
 
     # These reports have no non-empty tables as of 2024-11-02.
@@ -207,9 +207,9 @@ def test_get_df_every_report_example_url_returns_non_empty_df():
 
     for report_name, report in mappings.items():
         try:
-            df = MISOReports.get_df(
+            df = try_to_get_df_res(
                 report_name=report_name,
-                url=report.example_url,
+                datetime_increment_limit=datetime_increment_limit,
             )
 
             assert not df.columns.empty

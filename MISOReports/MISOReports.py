@@ -3508,8 +3508,6 @@ class MISOReports:
             timeout=30,
         )
 
-        res.raise_for_status()
-
         if res.status_code != 200:
             raise requests.exceptions.RequestException(f"Request status code: {res.status_code}")
         
