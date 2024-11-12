@@ -5,6 +5,7 @@ import datetime
 import json
 import zipfile
 import io
+import typing
 
 import requests
 import pandas as pd, pandas
@@ -1538,7 +1539,7 @@ class MISOReports:
                         "data": z.read(filename).decode("utf-8"),
                     })
 
-            dfs = {
+            dfs: typing.Dict[str, typing.List[pd.DataFrame]] = {
                 MULTI_DF_NAMES_COLUMN: [], 
                 MULTI_DF_DFS_COLUMN: [],
             }
@@ -3072,7 +3073,7 @@ class MISOReports:
             ),
             type_to_parse="csv",
             parser=ReportParsers.parse_asm_rtmcp_prelim,
-            example_url="https://docs.misoenergy.org/marketreports/20241105_asm_rtmcp_prelim.csv",
+            example_url="https://docs.misoenergy.org/marketreports/20241110_asm_rtmcp_prelim.csv",
             example_datetime=datetime.datetime(year=2024, month=11, day=5),
         ),
 
