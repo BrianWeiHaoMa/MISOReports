@@ -1539,7 +1539,7 @@ class MISOReports:
                         "data": z.read(filename).decode("utf-8"),
                     })
 
-            dfs: typing.Dict[str, typing.List[pd.DataFrame]] = {
+            dfs: typing.Dict[str, typing.List[str] | typing.List[pd.DataFrame]] = {
                 MULTI_DF_NAMES_COLUMN: [], 
                 MULTI_DF_DFS_COLUMN: [],
             }
