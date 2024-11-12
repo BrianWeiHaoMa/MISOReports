@@ -240,6 +240,20 @@ class MISOMarketReportsURLBuilder(URLBuilder):
         datetime_part = f"{ddatetime.strftime('%Y')}-{ddatetime.strftime('%b')}-{two_months_later_datetime.strftime('%b')}" 
         res = f"https://docs.misoenergy.org/marketreports/{datetime_part}_{target}.{URLBuilder.extension_placeholder}"
         return res
+
+    @staticmethod
+    def url_generator_YYYY_underscore_current_month_name_to_two_months_later_name_first(
+        ddatetime: datetime.datetime | None,
+        target: str,
+    ) -> str:
+        if ddatetime is None:
+            raise ValueError("ddatetime required for this URL builder.")
+
+        new_month = ddatetime.month + 2 if ddatetime.month + 2 < 13 else ((ddatetime.month + 2) % 13) + 1
+        two_months_later_datetime = ddatetime.replace(month=new_month)
+        datetime_part = f"{ddatetime.strftime('%Y')}_{ddatetime.strftime('%b')}-{two_months_later_datetime.strftime('%b')}" 
+        res = f"https://docs.misoenergy.org/marketreports/{datetime_part}_{target}.{URLBuilder.extension_placeholder}"
+        return res
     
     @staticmethod
     def url_generator_YYYYmmdd_last(
@@ -2191,7 +2205,7 @@ class MISOReports:
 
             df = pd.read_csv(
                 filepath_or_buffer=io.StringIO(csv_data),
-                thousands=',',
+                thousands=",",
             )
 
             df[["Allocation (MW)"]] = df[["Allocation (MW)"]].astype(numpy.dtypes.Float64DType())
@@ -2209,7 +2223,7 @@ class MISOReports:
 
             df = pd.read_csv(
                 filepath_or_buffer=io.StringIO(csv_data),
-                thousands=',',
+                thousands=",",
             )
 
             df[["Adjusted FFE", "Non Monitoring RTO FFE"]] = df[["Adjusted FFE", "Non Monitoring RTO FFE"]].astype(numpy.dtypes.Float64DType())
@@ -2472,6 +2486,26 @@ class MISOReports:
             df[["Constraint Name", "Constraint Description"]] = df[["Constraint Name", "Constraint Description"]].astype(pandas.core.arrays.string_.StringDtype())
             df[["Shadow Price"]] = df[["Shadow Price"]].astype(numpy.dtypes.Float64DType())
             
+            return df
+
+        @staticmethod
+        def parse_RT_LMPs(
+            res: requests.Response,
+        ) -> pd.DataFrame:
+            with zipfile.ZipFile(file=io.BytesIO(res.content)) as z:
+                text = z.read(z.namelist()[0]).decode("utf-8")
+
+            csv_data = "\n".join(text.splitlines()[1:])
+
+            df = pd.read_csv(
+                filepath_or_buffer=io.StringIO(csv_data),
+                thousands=",",
+            )
+
+            df[["MARKET_DAY"]] = df[["MARKET_DAY"]].apply(pd.to_datetime, format="%m/%d/%Y")
+            df[["HE1", "HE2", "HE3", "HE4", "HE5", "HE6", "HE7", "HE8", "HE9", "HE10", "HE11", "HE12", "HE13", "HE14", "HE15", "HE16", "HE17", "HE18", "HE19", "HE20", "HE21", "HE22", "HE23", "HE24"]] = df[["HE1", "HE2", "HE3", "HE4", "HE5", "HE6", "HE7", "HE8", "HE9", "HE10", "HE11", "HE12", "HE13", "HE14", "HE15", "HE16", "HE17", "HE18", "HE19", "HE20", "HE21", "HE22", "HE23", "HE24"]].astype(numpy.dtypes.Float64DType())
+            df[["NODE", "TYPE", "VALUE"]] = df[["NODE", "TYPE", "VALUE"]].astype(pandas.core.arrays.string_.StringDtype())
+
             return df
 
 
@@ -3825,6 +3859,19 @@ class MISOReports:
             parser=ReportParsers.parse_da_rpe,
             example_url="https://docs.misoenergy.org/marketreports/20241029_da_rpe.xls",
             example_datetime=datetime.datetime(year=2024, month=10, day=29),
+        ),
+
+        "RT_LMPs": Report(
+            url_builder=MISOMarketReportsURLBuilder(
+                target="RT_LMPs",
+                supported_extensions=["zip"],
+                url_generator=MISOMarketReportsURLBuilder.url_generator_YYYY_underscore_current_month_name_to_two_months_later_name_first,
+                default_extension="zip",
+            ),
+            type_to_parse="zip",
+            parser=ReportParsers.parse_RT_LMPs,
+            example_url="https://docs.misoenergy.org/marketreports/2024_Jul-Sep_RT_LMPs.zip",
+            example_datetime=datetime.datetime(year=2024, month=7, day=1),
         ),
     }
 

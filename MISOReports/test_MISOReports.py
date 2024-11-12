@@ -898,6 +898,14 @@ single_df_test_list = [
             ("AEC", "AECI", "CSWS", "GLHB", "LGEE", "MHEB", "MISO", "OKGE", "ONT", "PJM", "SOCO", "SPA", "SWPP", "TVA", "WAUE",): pandas.core.arrays.integer.Int64Dtype,
         }
     ),
+    (
+        "RT_LMPs",
+        {
+            ("HE1", "HE2", "HE3", "HE4", "HE5", "HE6", "HE7", "HE8", "HE9", "HE10", "HE11", "HE12", "HE13", "HE14", "HE15", "HE16", "HE17", "HE18", "HE19", "HE20", "HE21", "HE22", "HE23", "HE24",): numpy.dtypes.Float64DType,
+            ("NODE", "TYPE", "VALUE",): pandas.core.arrays.string_.StringDtype,
+            ("MARKET_DAY",): numpy.dtypes.DateTime64DType,
+        },
+    ),
 ]
 
 
