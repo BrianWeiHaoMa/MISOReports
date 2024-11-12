@@ -1539,10 +1539,8 @@ class MISOReports:
                         "data": z.read(filename).decode("utf-8"),
                     })
 
-            dfs: typing.Dict[str, typing.List[str] | typing.List[pd.DataFrame]] = {
-                MULTI_DF_NAMES_COLUMN: [], 
-                MULTI_DF_DFS_COLUMN: [],
-            }
+            df_names = []
+            dfs = []
 
             for csv_file in files_by_type["BindingConstraint"]:
                 df = pd.read_csv(
@@ -1553,8 +1551,8 @@ class MISOReports:
                 df[["Flow", "Limit", "MarginalCost", "Violation"]] = df[["Flow", "Limit", "MarginalCost", "Violation"]].astype(numpy.dtypes.Float64DType())
                 df[["DeviceName", "DeviceType", "ControlArea", "Direction", "Contingency", "Class", "Description"]] = df[["DeviceName", "DeviceType", "ControlArea", "Direction", "Contingency", "Class", "Description"]].astype(pandas.core.arrays.string_.StringDtype())
 
-                dfs[MULTI_DF_NAMES_COLUMN].append(csv_file["name"].split('/')[-1].split('.')[0])
-                dfs[MULTI_DF_DFS_COLUMN].append(df)
+                df_names.append(csv_file["name"].split('/')[-1].split('.')[0])
+                dfs.append(df)
 
             for csv_file in files_by_type["MarketResults"]:
                 df = pd.read_csv(
@@ -1565,8 +1563,8 @@ class MISOReports:
                 df[["MarketParticipant", "Source", "Sink", "Category", "FTRID", "Round", "HedgeType", "Type", "Class"]] = df[["MarketParticipant", "Source", "Sink", "Category", "FTRID", "Round", "HedgeType", "Type", "Class"]].astype(pandas.core.arrays.string_.StringDtype())
                 df[["StartDate", "EndDate"]] = df[["StartDate", "EndDate"]].apply(pd.to_datetime, format="%m/%d/%Y")
 
-                dfs[MULTI_DF_NAMES_COLUMN].append(csv_file["name"].split('/')[-1].split('.')[0])
-                dfs[MULTI_DF_DFS_COLUMN].append(df)
+                df_names.append(csv_file["name"].split('/')[-1].split('.')[0])
+                dfs.append(df)
             
             for csv_file in files_by_type["SourceSinkShadowPrices"]:
                 df = pd.read_csv(
@@ -1577,10 +1575,13 @@ class MISOReports:
                 df[["ShadowPrice"]] = df[["ShadowPrice"]].astype(numpy.dtypes.Float64DType())
                 df[["SourceSink", "Class"]] = df[["SourceSink", "Class"]].astype(pandas.core.arrays.string_.StringDtype())
 
-                dfs[MULTI_DF_NAMES_COLUMN].append(csv_file["name"].split('/')[-1].split('.')[0])
-                dfs[MULTI_DF_DFS_COLUMN].append(df)
+                df_names.append(csv_file["name"].split('/')[-1].split('.')[0])
+                dfs.append(df)
                 
-            df = pd.DataFrame(data=dfs)
+            df = pd.DataFrame(data={
+                MULTI_DF_NAMES_COLUMN: df_names, 
+                MULTI_DF_DFS_COLUMN: dfs,
+            })
             
             return df
 
