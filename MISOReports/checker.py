@@ -6,7 +6,11 @@ from argparse import ArgumentParser
 import pandas as pd
 import numpy as np
 
-from MISOReports.MISOReports import MISOReports
+from MISOReports.MISOReports import (
+    MISOReports,
+    MULTI_DF_NAMES_COLUMN,
+    MULTI_DF_DFS_COLUMN,
+)
 
 
 def string_format_suggestions(
@@ -197,7 +201,23 @@ if __name__ == "__main__":
 
             continue
         
-        new_string = f"""
+        if df.columns[0] == MULTI_DF_NAMES_COLUMN:
+            for table_name, df in zip(df[MULTI_DF_NAMES_COLUMN], df[MULTI_DF_DFS_COLUMN]):            
+                new_string = f"""
+    Report: {table_name}
+URL: {url}
+{string_format_split_df(df=df, top=i_top, bottom=i_bottom, auto_size=i_auto_size)}
+{string_format_suggestions(df=df, report_name=report_name)}
+
+
+"""
+                res_string += new_string
+
+                if i_print:
+                    print(new_string)
+
+        else:
+            new_string = f"""
     Report: {report_name}
 URL: {url}
 {string_format_split_df(df=df, top=i_top, bottom=i_bottom, auto_size=i_auto_size)}
@@ -205,10 +225,10 @@ URL: {url}
 
 
 """
-        res_string += new_string
+            res_string += new_string
 
-        if i_print:
-            print(new_string)
+            if i_print:
+                print(new_string)
     
     if i_output is not None:
         if i_output == "":
