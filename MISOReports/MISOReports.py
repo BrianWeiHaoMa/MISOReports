@@ -1561,19 +1561,186 @@ class MISOReports:
         def parse_ftr_annual_results_round_1(
             res: requests.Response,
         ) -> pd.DataFrame:
-            raise NotImplementedError("Result contains 12 csv tables.")
+            files_by_type = defaultdict(list)
+
+            with zipfile.ZipFile(file=io.BytesIO(res.content)) as z:
+                for filename in z.namelist():
+                    prefix = filename.split('_')[0]
+                    
+                    files_by_type[prefix].append({
+                        "name": filename, 
+                        "data": z.read(filename).decode("utf-8"),
+                    })
+
+            df_names = []
+            dfs = []
+
+            for csv_file in files_by_type["BindingConstraint"]:
+                df = pd.read_csv(
+                    filepath_or_buffer=io.StringIO(csv_file["data"]),
+                )
+
+                df[["Round"]] = df[["Round"]].replace('[^\\d]+', '', regex=True).astype(pandas.core.arrays.integer.Int64Dtype())
+                df[["Flow", "Limit", "MarginalCost", "Violation"]] = df[["Flow", "Limit", "MarginalCost", "Violation"]].astype(numpy.dtypes.Float64DType())
+                df[["DeviceName", "DeviceType", "ControlArea", "Direction", "Contingency", "Class", "Description"]] = df[["DeviceName", "DeviceType", "ControlArea", "Direction", "Contingency", "Class", "Description"]].astype(pandas.core.arrays.string_.StringDtype())
+
+                df_names.append(csv_file["name"].split('/')[-1].split('.')[0])
+                dfs.append(df)
+
+            for csv_file in files_by_type["MarketResults"]:
+                df = pd.read_csv(
+                    filepath_or_buffer=io.StringIO(csv_file["data"]),
+                )
+
+                df[["MW", "ClearingPrice"]] = df[["MW", "ClearingPrice"]].astype(numpy.dtypes.Float64DType())
+                df[["MarketParticipant", "Source", "Sink", "Category", "FTRID", "Round", "HedgeType", "Type", "Class"]] = df[["MarketParticipant", "Source", "Sink", "Category", "FTRID", "Round", "HedgeType", "Type", "Class"]].astype(pandas.core.arrays.string_.StringDtype())
+                df[["StartDate", "EndDate"]] = df[["StartDate", "EndDate"]].apply(pd.to_datetime, format="%m/%d/%Y")
+
+                df_names.append(csv_file["name"].split('/')[-1].split('.')[0])
+                dfs.append(df)
+            
+            for csv_file in files_by_type["SourceSinkShadowPrices"]:
+                df = pd.read_csv(
+                    filepath_or_buffer=io.StringIO(csv_file["data"]),
+                )
+
+                df[["Round"]] = df[["Round"]].replace('[^\\d]+', '', regex=True).astype(pandas.core.arrays.integer.Int64Dtype())
+                df[["ShadowPrice"]] = df[["ShadowPrice"]].astype(numpy.dtypes.Float64DType())
+                df[["SourceSink", "Class"]] = df[["SourceSink", "Class"]].astype(pandas.core.arrays.string_.StringDtype())
+
+                df_names.append(csv_file["name"].split('/')[-1].split('.')[0])
+                dfs.append(df)
+                
+            df = pd.DataFrame(data={
+                MULTI_DF_NAMES_COLUMN: df_names, 
+                MULTI_DF_DFS_COLUMN: dfs,
+            })
+            
+            return df
 
         @staticmethod
         def parse_ftr_annual_results_round_2(
             res: requests.Response,
         ) -> pd.DataFrame:
-            raise NotImplementedError("Result contains 12 csv tables.")
+            files_by_type = defaultdict(list)
+
+            with zipfile.ZipFile(file=io.BytesIO(res.content)) as z:
+                for filename in z.namelist():
+                    filepath = filename.split('/')
+                    prefix = filepath[1].split('_')[0]
+                    
+                    files_by_type[prefix].append({
+                        "name": filename, 
+                        "data": z.read(filename).decode("utf-8"),
+                    })
+
+            df_names = []
+            dfs = []
+
+            for csv_file in files_by_type["BindingConstraint"]:
+                df = pd.read_csv(
+                    filepath_or_buffer=io.StringIO(csv_file["data"]),
+                )
+
+                df[["Round"]] = df[["Round"]].replace('[^\\d]+', '', regex=True).astype(pandas.core.arrays.integer.Int64Dtype())
+                df[["Flow", "Limit", "MarginalCost", "Violation"]] = df[["Flow", "Limit", "MarginalCost", "Violation"]].astype(numpy.dtypes.Float64DType())
+                df[["DeviceName", "DeviceType", "ControlArea", "Direction", "Contingency", "Class", "Description"]] = df[["DeviceName", "DeviceType", "ControlArea", "Direction", "Contingency", "Class", "Description"]].astype(pandas.core.arrays.string_.StringDtype())
+
+                df_names.append(csv_file["name"].split('/')[-1].split('.')[0])
+                dfs.append(df)
+
+            for csv_file in files_by_type["MarketResults"]:
+                df = pd.read_csv(
+                    filepath_or_buffer=io.StringIO(csv_file["data"]),
+                )
+
+                df[["MW", "ClearingPrice"]] = df[["MW", "ClearingPrice"]].astype(numpy.dtypes.Float64DType())
+                df[["MarketParticipant", "Source", "Sink", "Category", "FTRID", "Round", "HedgeType", "Type", "Class"]] = df[["MarketParticipant", "Source", "Sink", "Category", "FTRID", "Round", "HedgeType", "Type", "Class"]].astype(pandas.core.arrays.string_.StringDtype())
+                df[["StartDate", "EndDate"]] = df[["StartDate", "EndDate"]].apply(pd.to_datetime, format="%m/%d/%Y")
+
+                df_names.append(csv_file["name"].split('/')[-1].split('.')[0])
+                dfs.append(df)
+            
+            for csv_file in files_by_type["SourceSinkShadowPrices"]:
+                df = pd.read_csv(
+                    filepath_or_buffer=io.StringIO(csv_file["data"]),
+                )
+
+                df[["Round"]] = df[["Round"]].replace('[^\\d]+', '', regex=True).astype(pandas.core.arrays.integer.Int64Dtype())
+                df[["ShadowPrice"]] = df[["ShadowPrice"]].astype(numpy.dtypes.Float64DType())
+                df[["SourceSink", "Class"]] = df[["SourceSink", "Class"]].astype(pandas.core.arrays.string_.StringDtype())
+
+                df_names.append(csv_file["name"].split('/')[-1].split('.')[0])
+                dfs.append(df)
+                
+            df = pd.DataFrame(data={
+                MULTI_DF_NAMES_COLUMN: df_names, 
+                MULTI_DF_DFS_COLUMN: dfs,
+            })
+            
+            return df
 
         @staticmethod
         def parse_ftr_annual_results_round_3(
             res: requests.Response,
         ) -> pd.DataFrame:
-            raise NotImplementedError("Result contains 12 csv tables.")
+            files_by_type = defaultdict(list)
+
+            with zipfile.ZipFile(file=io.BytesIO(res.content)) as z:
+                for filename in z.namelist():
+                    filepath = filename.split('/')
+                    prefix = filepath[1].split('_')[0]
+                    
+                    files_by_type[prefix].append({
+                        "name": filename, 
+                        "data": z.read(filename).decode("utf-8"),
+                    })
+
+            df_names = []
+            dfs = []
+
+            for csv_file in files_by_type["BindingConstraint"]:
+                df = pd.read_csv(
+                    filepath_or_buffer=io.StringIO(csv_file["data"]),
+                )
+
+                df[["Round"]] = df[["Round"]].replace('[^\\d]+', '', regex=True).astype(pandas.core.arrays.integer.Int64Dtype())
+                df[["Flow", "Limit", "MarginalCost", "Violation"]] = df[["Flow", "Limit", "MarginalCost", "Violation"]].astype(numpy.dtypes.Float64DType())
+                df[["DeviceName", "DeviceType", "ControlArea", "Direction", "Contingency", "Class", "Description"]] = df[["DeviceName", "DeviceType", "ControlArea", "Direction", "Contingency", "Class", "Description"]].astype(pandas.core.arrays.string_.StringDtype())
+
+                df_names.append(csv_file["name"].split('/')[-1].split('.')[0])
+                dfs.append(df)
+
+            for csv_file in files_by_type["MarketResults"]:
+                df = pd.read_csv(
+                    filepath_or_buffer=io.StringIO(csv_file["data"]),
+                )
+
+                df[["MW", "ClearingPrice"]] = df[["MW", "ClearingPrice"]].astype(numpy.dtypes.Float64DType())
+                df[["MarketParticipant", "Source", "Sink", "Category", "FTRID", "Round", "HedgeType", "Type", "Class"]] = df[["MarketParticipant", "Source", "Sink", "Category", "FTRID", "Round", "HedgeType", "Type", "Class"]].astype(pandas.core.arrays.string_.StringDtype())
+                df[["StartDate", "EndDate"]] = df[["StartDate", "EndDate"]].apply(pd.to_datetime, format="%m/%d/%Y")
+
+                df_names.append(csv_file["name"].split('/')[-1].split('.')[0])
+                dfs.append(df)
+            
+            for csv_file in files_by_type["SourceSinkShadowPrices"]:
+                df = pd.read_csv(
+                    filepath_or_buffer=io.StringIO(csv_file["data"]),
+                )
+
+                df[["Round"]] = df[["Round"]].replace('[^\\d]+', '', regex=True).astype(pandas.core.arrays.integer.Int64Dtype())
+                df[["ShadowPrice"]] = df[["ShadowPrice"]].astype(numpy.dtypes.Float64DType())
+                df[["SourceSink", "Class"]] = df[["SourceSink", "Class"]].astype(pandas.core.arrays.string_.StringDtype())
+
+                df_names.append(csv_file["name"].split('/')[-1].split('.')[0])
+                dfs.append(df)
+                
+            df = pd.DataFrame(data={
+                MULTI_DF_NAMES_COLUMN: df_names, 
+                MULTI_DF_DFS_COLUMN: dfs,
+            })
+            
+            return df
 
         @staticmethod
         def parse_ftr_annual_bids_offers(
