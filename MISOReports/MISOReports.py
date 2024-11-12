@@ -5,7 +5,6 @@ import datetime
 import json
 import zipfile
 import io
-import typing
 
 import requests
 import pandas as pd, pandas
@@ -1676,19 +1675,154 @@ class MISOReports:
         def parse_asm_expost_damcp(
             res: requests.Response,
         ) -> pd.DataFrame:
-            raise NotImplementedError("Result contains 2 csv tables.")
+            text = res.text
+            csv1, csv2 = text.split("\n\n\n")
+
+            csv1_lines = csv1.splitlines()
+            
+            df1 = pd.read_csv(
+                filepath_or_buffer=io.StringIO("\n".join(csv1_lines[4:])),
+            )
+
+            df1.rename(columns={
+                    "Unnamed: 0": "Label",
+                    " HE 1": "HE 1",
+                }, 
+                inplace=True,
+            )
+            df1.drop(columns=["Unnamed: 1"], inplace=True)
+
+            df1[["HE 1", "HE 2", "HE 3", "HE 4", "HE 5", "HE 6", "HE 7", "HE 8", "HE 9", "HE 10", "HE 11", "HE 12", "HE 13", "HE 14", "HE 15", "HE 16", "HE 17", "HE 18", "HE 19", "HE 20", "HE 21", "HE 22", "HE 23", "HE 24"]] = df1[["HE 1", "HE 2", "HE 3", "HE 4", "HE 5", "HE 6", "HE 7", "HE 8", "HE 9", "HE 10", "HE 11", "HE 12", "HE 13", "HE 14", "HE 15", "HE 16", "HE 17", "HE 18", "HE 19", "HE 20", "HE 21", "HE 22", "HE 23", "HE 24"]].astype(numpy.dtypes.Float64DType())
+            df1[["Label", "MCP Type"]] = df1[["Label", "MCP Type"]].astype(pandas.core.arrays.string_.StringDtype())
+
+            csv2_lines = csv2.splitlines()
+
+            df2 = pd.read_csv(
+                filepath_or_buffer=io.StringIO("\n".join(csv2_lines)),
+            )
+
+            df2.rename(columns={
+                    " HE 1": "HE 1",
+                }, 
+                inplace=True,
+            )
+
+            df2[["Zone"]] = df2[["Zone"]].replace('[^\\d]+', '', regex=True).astype(pandas.core.arrays.integer.Int64Dtype())
+            df2[["HE 1", "HE 2", "HE 3", "HE 4", "HE 5", "HE 6", "HE 7", "HE 8", "HE 9", "HE 10", "HE 11", "HE 12", "HE 13", "HE 14", "HE 15", "HE 16", "HE 17", "HE 18", "HE 19", "HE 20", "HE 21", "HE 22", "HE 23", "HE 24"]] = df2[["HE 1", "HE 2", "HE 3", "HE 4", "HE 5", "HE 6", "HE 7", "HE 8", "HE 9", "HE 10", "HE 11", "HE 12", "HE 13", "HE 14", "HE 15", "HE 16", "HE 17", "HE 18", "HE 19", "HE 20", "HE 21", "HE 22", "HE 23", "HE 24"]].astype(numpy.dtypes.Float64DType())
+            df2[["Pnode", "MCP Type"]] = df2[["Pnode", "MCP Type"]].astype(pandas.core.arrays.string_.StringDtype())
+            
+            df = pd.DataFrame({
+                MULTI_DF_NAMES_COLUMN: [
+                       "Table 1",
+                       "Table 2",
+                ], 
+                MULTI_DF_DFS_COLUMN: [
+                        df1, 
+                        df2,
+                ],
+            })
+            
+            return df
         
         @staticmethod
         def parse_asm_rtmcp_final(
             res: requests.Response,
         ) -> pd.DataFrame:
-            raise NotImplementedError("Result contains 2 csv tables.")
+            text = res.text
+            _, _, csv1, csv2 = text.split("\r\n\r\n")
+
+            csv1_lines = csv1.splitlines()
+            
+            df1 = pd.read_csv(
+                filepath_or_buffer=io.StringIO("\n".join(csv1_lines)),
+            )
+
+            df1.rename(columns={"Unnamed: 0": "Label"}, inplace=True)
+            df1.drop(columns=["Unnamed: 1"], inplace=True)
+
+            df1[["HE 1", "HE 2", "HE 3", "HE 4", "HE 5", "HE 6", "HE 7", "HE 8", "HE 9", "HE 10", "HE 11", "HE 12", "HE 13", "HE 14", "HE 15", "HE 16", "HE 17", "HE 18", "HE 19", "HE 20", "HE 21", "HE 22", "HE 23", "HE 24"]] = df1[["HE 1", "HE 2", "HE 3", "HE 4", "HE 5", "HE 6", "HE 7", "HE 8", "HE 9", "HE 10", "HE 11", "HE 12", "HE 13", "HE 14", "HE 15", "HE 16", "HE 17", "HE 18", "HE 19", "HE 20", "HE 21", "HE 22", "HE 23", "HE 24"]].astype(numpy.dtypes.Float64DType())
+            df1[["Label", "MCP Type"]] = df1[["Label", "MCP Type"]].astype(pandas.core.arrays.string_.StringDtype())
+
+            csv2_lines = csv2.splitlines()
+
+            df2 = pd.read_csv(
+                filepath_or_buffer=io.StringIO("\n".join(csv2_lines)),
+            )
+
+            df2.rename(columns={
+                    " HE 1": "HE 1",
+                    " Zone": "Zone",
+                    " MCP Type": "MCP Type",
+                }, 
+                inplace=True,
+            )
+
+            df2[["Zone"]] = df2[["Zone"]].replace('[^\\d]+', '', regex=True).astype(pandas.core.arrays.integer.Int64Dtype())
+            df2[["HE 1", "HE 2", "HE 3", "HE 4", "HE 5", "HE 6", "HE 7", "HE 8", "HE 9", "HE 10", "HE 11", "HE 12", "HE 13", "HE 14", "HE 15", "HE 16", "HE 17", "HE 18", "HE 19", "HE 20", "HE 21", "HE 22", "HE 23", "HE 24"]] = df2[["HE 1", "HE 2", "HE 3", "HE 4", "HE 5", "HE 6", "HE 7", "HE 8", "HE 9", "HE 10", "HE 11", "HE 12", "HE 13", "HE 14", "HE 15", "HE 16", "HE 17", "HE 18", "HE 19", "HE 20", "HE 21", "HE 22", "HE 23", "HE 24"]].astype(numpy.dtypes.Float64DType())
+            df2[["Pnode", "MCP Type"]] = df2[["Pnode", "MCP Type"]].astype(pandas.core.arrays.string_.StringDtype())
+            
+            df = pd.DataFrame({
+                MULTI_DF_NAMES_COLUMN: [
+                       "Table 1",
+                       "Table 2",
+                ], 
+                MULTI_DF_DFS_COLUMN: [
+                        df1, 
+                        df2,
+                ],
+            })
+            
+            return df
         
         @staticmethod
         def parse_asm_rtmcp_prelim(
             res: requests.Response,
         ) -> pd.DataFrame:
-            raise NotImplementedError("Result contains 2 csv tables.")
+            text = res.text
+            _, _, csv1, csv2 = text.split("\r\n\r\n")
+
+            csv1_lines = csv1.splitlines()
+            
+            df1 = pd.read_csv(
+                filepath_or_buffer=io.StringIO("\n".join(csv1_lines)),
+            )
+
+            df1.rename(columns={"Unnamed: 0": "Label"}, inplace=True)
+            df1.drop(columns=["Unnamed: 1"], inplace=True)
+
+            df1[["HE 1", "HE 2", "HE 3", "HE 4", "HE 5", "HE 6", "HE 7", "HE 8", "HE 9", "HE 10", "HE 11", "HE 12", "HE 13", "HE 14", "HE 15", "HE 16", "HE 17", "HE 18", "HE 19", "HE 20", "HE 21", "HE 22", "HE 23", "HE 24"]] = df1[["HE 1", "HE 2", "HE 3", "HE 4", "HE 5", "HE 6", "HE 7", "HE 8", "HE 9", "HE 10", "HE 11", "HE 12", "HE 13", "HE 14", "HE 15", "HE 16", "HE 17", "HE 18", "HE 19", "HE 20", "HE 21", "HE 22", "HE 23", "HE 24"]].astype(numpy.dtypes.Float64DType())
+            df1[["Label", "MCP Type"]] = df1[["Label", "MCP Type"]].astype(pandas.core.arrays.string_.StringDtype())
+
+            csv2_lines = csv2.splitlines()
+
+            df2 = pd.read_csv(
+                filepath_or_buffer=io.StringIO("\n".join(csv2_lines)),
+            )
+
+            df2.rename(columns={
+                    " HE 1": "HE 1",
+                    " Zone": "Zone",
+                    " MCP Type": "MCP Type",
+                }, 
+                inplace=True,
+            )
+
+            df2[["Zone"]] = df2[["Zone"]].replace('[^\\d]+', '', regex=True).astype(pandas.core.arrays.integer.Int64Dtype())
+            df2[["HE 1", "HE 2", "HE 3", "HE 4", "HE 5", "HE 6", "HE 7", "HE 8", "HE 9", "HE 10", "HE 11", "HE 12", "HE 13", "HE 14", "HE 15", "HE 16", "HE 17", "HE 18", "HE 19", "HE 20", "HE 21", "HE 22", "HE 23", "HE 24"]] = df2[["HE 1", "HE 2", "HE 3", "HE 4", "HE 5", "HE 6", "HE 7", "HE 8", "HE 9", "HE 10", "HE 11", "HE 12", "HE 13", "HE 14", "HE 15", "HE 16", "HE 17", "HE 18", "HE 19", "HE 20", "HE 21", "HE 22", "HE 23", "HE 24"]].astype(numpy.dtypes.Float64DType())
+            df2[["Pnode", "MCP Type"]] = df2[["Pnode", "MCP Type"]].astype(pandas.core.arrays.string_.StringDtype())
+            
+            df = pd.DataFrame({
+                MULTI_DF_NAMES_COLUMN: [
+                       "Table 1",
+                       "Table 2",
+                ], 
+                MULTI_DF_DFS_COLUMN: [
+                        df1, 
+                        df2,
+                ],
+            })
+            
+            return df
         
         @staticmethod
         def parse_5min_exante_mcp(
