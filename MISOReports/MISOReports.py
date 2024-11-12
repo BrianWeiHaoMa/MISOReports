@@ -422,7 +422,77 @@ class MISOReports:
         def parse_da_pr(
             res: requests.Response,
         ) -> pd.DataFrame:
-            raise NotImplementedError("Result has an atypical format.")
+            df1 = pd.read_excel(
+                io=io.BytesIO(res.content),
+                skiprows=6,
+                nrows=2,
+            )
+            df1.rename(columns={df1.columns[0]: "Type"}, inplace=True)
+            df1.drop(labels=df1.columns[5:], axis=1, inplace=True)
+            df1[["Type"]] = df1[["Type"]].astype(pandas.core.arrays.string_.StringDtype())
+            df1[["Demand Fixed", " Demand Price Sensitive", "Demand Virtual", "Demand Total"]] = df1[["Demand Fixed", " Demand Price Sensitive", "Demand Virtual", "Demand Total"]].astype(numpy.dtypes.Float64DType())
+
+            df2 = pd.read_excel(
+                io=io.BytesIO(res.content),
+                skiprows=9,
+                nrows=3,
+            )
+            df2.rename(columns={df2.columns[0]: "Type"}, inplace=True)
+            df2.drop(labels=df2.columns[4:], axis=1, inplace=True)
+            df2[["Type"]] = df2[["Type"]].astype(pandas.core.arrays.string_.StringDtype())
+            df2[["Supply Physical", "Supply Virtual", "Supply Total"]] = df2[["Supply Physical", "Supply Virtual", "Supply Total"]].astype(numpy.dtypes.Float64DType())
+
+            df3 = pd.read_excel(
+                io=io.BytesIO(res.content),
+                skiprows=14,
+                nrows=24,
+            )
+            shared_column_names = list(df3.columns)[1:]
+
+            df3.rename(columns={df3.columns[0]: "Hour"}, inplace=True)
+            df3[["Hour"]] = df3[["Hour"]].replace('[^\\d]+', '', regex=True).astype(pandas.core.arrays.integer.Int64Dtype())
+            df3[shared_column_names] = df3[shared_column_names].astype(numpy.dtypes.Float64DType())            
+
+            df4 = pd.read_excel(
+                io=io.BytesIO(res.content),
+                skiprows=39,
+                nrows=3,
+                names=["Around the Clock"] + shared_column_names,
+            )
+
+            df5 = pd.read_excel(
+                io=io.BytesIO(res.content),
+                skiprows=43,
+                nrows=3,
+                names=["On-Peak"] + shared_column_names,
+            )
+
+            df6 = pd.read_excel(
+                io=io.BytesIO(res.content),
+                skiprows=47,
+                nrows=3,
+                names=["Off-Peak"] + shared_column_names,
+            )
+
+            bottom_dfs = [df4, df5, df6]
+            for i in range(len(bottom_dfs)):
+                first_column = bottom_dfs[i].columns[0]
+                bottom_dfs[i][[first_column]] = bottom_dfs[i][[first_column]].astype(pandas.core.arrays.string_.StringDtype())
+                bottom_dfs[i][shared_column_names] = bottom_dfs[i][shared_column_names].astype(numpy.dtypes.Float64DType())
+
+            # No names written for any of the tables in the report.
+            df = pd.DataFrame({
+                MULTI_DF_NAMES_COLUMN: [
+                        f"Table {i}" for i in range(1, 7)
+                ], 
+                MULTI_DF_DFS_COLUMN: [
+                        df1, 
+                        df2, 
+                        df3,
+                ] + bottom_dfs,
+            })
+
+            return df
 
         @staticmethod
         def parse_da_pbc(
@@ -889,13 +959,13 @@ class MISOReports:
                         "Interval", 
                         f"{csv2_lines[0]}", 
                         f"{csv3_lines[0]}"
-                    ], 
+                ], 
                 MULTI_DF_DFS_COLUMN: [
                         df1, 
                         df2, 
                         df3
-                    ]
-                })
+                ],
+            })
             
             return df
         
@@ -3486,12 +3556,14 @@ class MISOReports:
         report_name: str,
         file_extension: str | None = None, 
         ddatetime: datetime.datetime | None = None,
+        timeout: int | None = None,
     ) -> requests.Response:
         """Get the response for the report download.
 
         :param str report_name: The name of the report.
         :param str file_extension: The type of file to download.
         :param datetime.datetime | None ddatetime: The date of the report, defaults to None
+        :param int | None timeout: The timeout for the request, defaults to None
         """
         url = MISOReports.get_url(
             report_name=report_name, 
@@ -3504,14 +3576,14 @@ class MISOReports:
     @staticmethod
     def _get_response_helper(
         url: str,
+        timeout: int | None = None,
     ) -> requests.Response:
         res = requests.get(
             url=url,
-            timeout=30,
+            timeout=timeout,
         )
 
-        if res.status_code != 200:
-            raise requests.exceptions.RequestException(f"Request status code: {res.status_code}")
+        res.raise_for_status()
         
         return res
     
@@ -3520,23 +3592,29 @@ class MISOReports:
         report_name: str,
         url: str | None = None,
         ddatetime: datetime.datetime | None = None,
+        timeout: int | None = None,
     ) -> pd.DataFrame:
         """Get a parsed DataFrame for the report.
 
         :param str report_name: The name of the report.
         :param str | None url: A url to download directly from, defaults to None
         :param datetime.datetime | None ddatetime: The date of the report, defaults to None
+        :param int | None timeout: The timeout for the request, defaults to None
         :return pd.DataFrame: A DataFrame containing the data of the report.
         """
         report = MISOReports.report_mappings[report_name]
 
         if url is not None:
-            response = MISOReports._get_response_helper(url)
+            response = MISOReports._get_response_helper(
+                url=url, 
+                timeout=timeout,
+            )
         else:
             response = MISOReports.get_response(
                 report_name=report_name, 
                 file_extension=report.type_to_parse, 
                 ddatetime=ddatetime,
+                timeout=timeout,
             )
 
         df = report.report_parser(response)

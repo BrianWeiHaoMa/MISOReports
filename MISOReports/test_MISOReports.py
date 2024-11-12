@@ -38,7 +38,7 @@ def try_to_get_df_res(
                 ddatetime=curr_target_date,
             )
             break
-        except requests.exceptions.RequestException as e:
+        except requests.HTTPError as e:
             curr_target_date = report.url_builder.add_to_datetime(
                 ddatetime=curr_target_date, 
                 direction=1,
@@ -1010,6 +1010,35 @@ multiple_dfs_test_list = [
                 ("ShadowPrice",): numpy.dtypes.Float64DType,
                 ("Round",): pandas.core.arrays.integer.Int64Dtype,
                 ("SourceSink", "Class",): pandas.core.arrays.string_.StringDtype,
+            }
+        },
+    ),
+    (
+        "da_pr",
+        {
+            "Table 1": {
+                ("Type",): pandas.core.arrays.string_.StringDtype,
+                ("Demand Fixed", " Demand Price Sensitive", "Demand Virtual", "Demand Total",): numpy.dtypes.Float64DType,
+            },
+            "Table 2": {
+                ("Type",): pandas.core.arrays.string_.StringDtype,
+                ("Supply Physical", "Supply Virtual", "Supply Total",): numpy.dtypes.Float64DType,
+            },
+            "Table 3": {
+                ("MISO System", "Illinois Hub", "Michigan Hub", "Minnesota Hub", "Indiana Hub", "Arkansas Hub", "Louisiana Hub", "Texas Hub", "MS.HUB",): numpy.dtypes.Float64DType,
+                ("Hour",): pandas.core.arrays.integer.Int64Dtype,
+            },
+            "Table 4": {
+                ("MISO System", "Illinois Hub", "Michigan Hub", "Minnesota Hub", "Indiana Hub", "Arkansas Hub", "Louisiana Hub", "Texas Hub", "MS.HUB",): numpy.dtypes.Float64DType,
+                ("Around the Clock",): pandas.core.arrays.string_.StringDtype,
+            },
+            "Table 5": {
+                ("MISO System", "Illinois Hub", "Michigan Hub", "Minnesota Hub", "Indiana Hub", "Arkansas Hub", "Louisiana Hub", "Texas Hub", "MS.HUB",): numpy.dtypes.Float64DType,
+                ("On-Peak",): pandas.core.arrays.string_.StringDtype,  
+            },
+            "Table 6": {
+                ("MISO System", "Illinois Hub", "Michigan Hub", "Minnesota Hub", "Indiana Hub", "Arkansas Hub", "Louisiana Hub", "Texas Hub", "MS.HUB",): numpy.dtypes.Float64DType,
+                ("Off-Peak",): pandas.core.arrays.string_.StringDtype, 
             }
         },
     ),
