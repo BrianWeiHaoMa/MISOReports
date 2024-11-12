@@ -5,11 +5,13 @@ import datetime
 import json
 import zipfile
 import io
+import typing
 
 import requests
 import pandas as pd, pandas
 import numpy as np, numpy
 from dateutil.relativedelta import relativedelta
+from collections import defaultdict
 
 
 MULTI_DF_NAMES_COLUMN = "names"
@@ -1595,7 +1597,62 @@ class MISOReports:
         def parse_ftr_mpma_results(
             res: requests.Response,
         ) -> pd.DataFrame:
-            raise NotImplementedError("Result contains 12 csv tables.")
+            files_by_type = defaultdict(list)
+
+            with zipfile.ZipFile(file=io.BytesIO(res.content)) as z:
+                for filename in z.namelist():
+                    filepath = filename.split('/')
+                    prefix = filepath[1].split('_')[0]
+                    
+                    files_by_type[prefix].append({
+                        "name": filename, 
+                        "data": z.read(filename).decode("utf-8"),
+                    })
+
+            dfs: typing.Dict[str, typing.List[str] | typing.List[pd.DataFrame]] = {
+                MULTI_DF_NAMES_COLUMN: [], 
+                MULTI_DF_DFS_COLUMN: [],
+            }
+
+            for csv_file in files_by_type["BindingConstraint"]:
+                df = pd.read_csv(
+                    filepath_or_buffer=io.StringIO(csv_file["data"]),
+                )
+
+                df[["Round"]] = df[["Round"]].replace('[^\\d]+', '', regex=True).astype(pandas.core.arrays.integer.Int64Dtype())
+                df[["Flow", "Limit", "MarginalCost", "Violation"]] = df[["Flow", "Limit", "MarginalCost", "Violation"]].astype(numpy.dtypes.Float64DType())
+                df[["DeviceName", "DeviceType", "ControlArea", "Direction", "Contingency", "Class", "Description"]] = df[["DeviceName", "DeviceType", "ControlArea", "Direction", "Contingency", "Class", "Description"]].astype(pandas.core.arrays.string_.StringDtype())
+
+                dfs[MULTI_DF_NAMES_COLUMN].append(csv_file["name"].split('/')[-1].split('.')[0])
+                dfs[MULTI_DF_DFS_COLUMN].append(df)
+
+            for csv_file in files_by_type["MarketResults"]:
+                df = pd.read_csv(
+                    filepath_or_buffer=io.StringIO(csv_file["data"]),
+                )
+
+                df[["MW", "ClearingPrice"]] = df[["MW", "ClearingPrice"]].astype(numpy.dtypes.Float64DType())
+                df[["MarketParticipant", "Source", "Sink", "Category", "FTRID", "Round", "HedgeType", "Type", "Class"]] = df[["MarketParticipant", "Source", "Sink", "Category", "FTRID", "Round", "HedgeType", "Type", "Class"]].astype(pandas.core.arrays.string_.StringDtype())
+                df[["StartDate", "EndDate"]] = df[["StartDate", "EndDate"]].apply(pd.to_datetime, format="%m/%d/%Y")
+
+                dfs[MULTI_DF_NAMES_COLUMN].append(csv_file["name"].split('/')[-1].split('.')[0])
+                dfs[MULTI_DF_DFS_COLUMN].append(df)
+            
+            for csv_file in files_by_type["SourceSinkShadowPrices"]:
+                df = pd.read_csv(
+                    filepath_or_buffer=io.StringIO(csv_file["data"]),
+                )
+
+                df[["Round"]] = df[["Round"]].replace('[^\\d]+', '', regex=True).astype(pandas.core.arrays.integer.Int64Dtype())
+                df[["ShadowPrice"]] = df[["ShadowPrice"]].astype(numpy.dtypes.Float64DType())
+                df[["SourceSink", "Class"]] = df[["SourceSink", "Class"]].astype(pandas.core.arrays.string_.StringDtype())
+
+                dfs[MULTI_DF_NAMES_COLUMN].append(csv_file["name"].split('/')[-1].split('.')[0])
+                dfs[MULTI_DF_DFS_COLUMN].append(df)
+                
+            df = pd.DataFrame(data=dfs)
+            
+            return df
 
         @staticmethod
         def parse_ftr_mpma_bids_offers(
@@ -3086,7 +3143,7 @@ class MISOReports:
             ),
             type_to_parse="csv",
             parser=ReportParsers.parse_asm_rtmcp_prelim,
-            example_url="https://docs.misoenergy.org/marketreports/20241105_asm_rtmcp_prelim.csv",
+            example_url="https://docs.misoenergy.org/marketreports/20241110_asm_rtmcp_prelim.csv",
             example_datetime=datetime.datetime(year=2024, month=11, day=5),
         ),
 
