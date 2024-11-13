@@ -5,7 +5,6 @@ import datetime
 import json
 import zipfile
 import io
-import typing
 
 import requests
 import pandas as pd, pandas
@@ -239,6 +238,20 @@ class MISOMarketReportsURLBuilder(URLBuilder):
         new_month = ddatetime.month + 2 if ddatetime.month + 2 < 13 else ((ddatetime.month + 2) % 13) + 1
         two_months_later_datetime = ddatetime.replace(month=new_month)
         datetime_part = f"{ddatetime.strftime('%Y')}-{ddatetime.strftime('%b')}-{two_months_later_datetime.strftime('%b')}" 
+        res = f"https://docs.misoenergy.org/marketreports/{datetime_part}_{target}.{URLBuilder.extension_placeholder}"
+        return res
+
+    @staticmethod
+    def url_generator_YYYY_underscore_current_month_name_to_two_months_later_name_first(
+        ddatetime: datetime.datetime | None,
+        target: str,
+    ) -> str:
+        if ddatetime is None:
+            raise ValueError("ddatetime required for this URL builder.")
+
+        new_month = ddatetime.month + 2 if ddatetime.month + 2 < 13 else ((ddatetime.month + 2) % 13) + 1
+        two_months_later_datetime = ddatetime.replace(month=new_month)
+        datetime_part = f"{ddatetime.strftime('%Y')}_{ddatetime.strftime('%b')}-{two_months_later_datetime.strftime('%b')}" 
         res = f"https://docs.misoenergy.org/marketreports/{datetime_part}_{target}.{URLBuilder.extension_placeholder}"
         return res
     
@@ -1669,19 +1682,186 @@ class MISOReports:
         def parse_ftr_annual_results_round_1(
             res: requests.Response,
         ) -> pd.DataFrame:
-            raise NotImplementedError("Result contains 12 csv tables.")
+            files_by_type = defaultdict(list)
+
+            with zipfile.ZipFile(file=io.BytesIO(res.content)) as z:
+                for filename in z.namelist():
+                    prefix = filename.split('_')[0]
+                    
+                    files_by_type[prefix].append({
+                        "name": filename, 
+                        "data": z.read(filename).decode("utf-8"),
+                    })
+
+            df_names = []
+            dfs = []
+
+            for csv_file in files_by_type["BindingConstraint"]:
+                df = pd.read_csv(
+                    filepath_or_buffer=io.StringIO(csv_file["data"]),
+                )
+
+                df[["Round"]] = df[["Round"]].replace('[^\\d]+', '', regex=True).astype(pandas.core.arrays.integer.Int64Dtype())
+                df[["Flow", "Limit", "MarginalCost", "Violation"]] = df[["Flow", "Limit", "MarginalCost", "Violation"]].astype(numpy.dtypes.Float64DType())
+                df[["DeviceName", "DeviceType", "ControlArea", "Direction", "Contingency", "Class", "Description"]] = df[["DeviceName", "DeviceType", "ControlArea", "Direction", "Contingency", "Class", "Description"]].astype(pandas.core.arrays.string_.StringDtype())
+
+                df_names.append(csv_file["name"].split('/')[-1].split('.')[0])
+                dfs.append(df)
+
+            for csv_file in files_by_type["MarketResults"]:
+                df = pd.read_csv(
+                    filepath_or_buffer=io.StringIO(csv_file["data"]),
+                )
+
+                df[["MW", "ClearingPrice"]] = df[["MW", "ClearingPrice"]].astype(numpy.dtypes.Float64DType())
+                df[["MarketParticipant", "Source", "Sink", "Category", "FTRID", "Round", "HedgeType", "Type", "Class"]] = df[["MarketParticipant", "Source", "Sink", "Category", "FTRID", "Round", "HedgeType", "Type", "Class"]].astype(pandas.core.arrays.string_.StringDtype())
+                df[["StartDate", "EndDate"]] = df[["StartDate", "EndDate"]].apply(pd.to_datetime, format="%m/%d/%Y")
+
+                df_names.append(csv_file["name"].split('/')[-1].split('.')[0])
+                dfs.append(df)
+            
+            for csv_file in files_by_type["SourceSinkShadowPrices"]:
+                df = pd.read_csv(
+                    filepath_or_buffer=io.StringIO(csv_file["data"]),
+                )
+
+                df[["Round"]] = df[["Round"]].replace('[^\\d]+', '', regex=True).astype(pandas.core.arrays.integer.Int64Dtype())
+                df[["ShadowPrice"]] = df[["ShadowPrice"]].astype(numpy.dtypes.Float64DType())
+                df[["SourceSink", "Class"]] = df[["SourceSink", "Class"]].astype(pandas.core.arrays.string_.StringDtype())
+
+                df_names.append(csv_file["name"].split('/')[-1].split('.')[0])
+                dfs.append(df)
+                
+            df = pd.DataFrame(data={
+                MULTI_DF_NAMES_COLUMN: df_names, 
+                MULTI_DF_DFS_COLUMN: dfs,
+            })
+            
+            return df
 
         @staticmethod
         def parse_ftr_annual_results_round_2(
             res: requests.Response,
         ) -> pd.DataFrame:
-            raise NotImplementedError("Result contains 12 csv tables.")
+            files_by_type = defaultdict(list)
+
+            with zipfile.ZipFile(file=io.BytesIO(res.content)) as z:
+                for filename in z.namelist():
+                    filepath = filename.split('/')
+                    prefix = filepath[1].split('_')[0]
+                    
+                    files_by_type[prefix].append({
+                        "name": filename, 
+                        "data": z.read(filename).decode("utf-8"),
+                    })
+
+            df_names = []
+            dfs = []
+
+            for csv_file in files_by_type["BindingConstraint"]:
+                df = pd.read_csv(
+                    filepath_or_buffer=io.StringIO(csv_file["data"]),
+                )
+
+                df[["Round"]] = df[["Round"]].replace('[^\\d]+', '', regex=True).astype(pandas.core.arrays.integer.Int64Dtype())
+                df[["Flow", "Limit", "MarginalCost", "Violation"]] = df[["Flow", "Limit", "MarginalCost", "Violation"]].astype(numpy.dtypes.Float64DType())
+                df[["DeviceName", "DeviceType", "ControlArea", "Direction", "Contingency", "Class", "Description"]] = df[["DeviceName", "DeviceType", "ControlArea", "Direction", "Contingency", "Class", "Description"]].astype(pandas.core.arrays.string_.StringDtype())
+
+                df_names.append(csv_file["name"].split('/')[-1].split('.')[0])
+                dfs.append(df)
+
+            for csv_file in files_by_type["MarketResults"]:
+                df = pd.read_csv(
+                    filepath_or_buffer=io.StringIO(csv_file["data"]),
+                )
+
+                df[["MW", "ClearingPrice"]] = df[["MW", "ClearingPrice"]].astype(numpy.dtypes.Float64DType())
+                df[["MarketParticipant", "Source", "Sink", "Category", "FTRID", "Round", "HedgeType", "Type", "Class"]] = df[["MarketParticipant", "Source", "Sink", "Category", "FTRID", "Round", "HedgeType", "Type", "Class"]].astype(pandas.core.arrays.string_.StringDtype())
+                df[["StartDate", "EndDate"]] = df[["StartDate", "EndDate"]].apply(pd.to_datetime, format="%m/%d/%Y")
+
+                df_names.append(csv_file["name"].split('/')[-1].split('.')[0])
+                dfs.append(df)
+            
+            for csv_file in files_by_type["SourceSinkShadowPrices"]:
+                df = pd.read_csv(
+                    filepath_or_buffer=io.StringIO(csv_file["data"]),
+                )
+
+                df[["Round"]] = df[["Round"]].replace('[^\\d]+', '', regex=True).astype(pandas.core.arrays.integer.Int64Dtype())
+                df[["ShadowPrice"]] = df[["ShadowPrice"]].astype(numpy.dtypes.Float64DType())
+                df[["SourceSink", "Class"]] = df[["SourceSink", "Class"]].astype(pandas.core.arrays.string_.StringDtype())
+
+                df_names.append(csv_file["name"].split('/')[-1].split('.')[0])
+                dfs.append(df)
+                
+            df = pd.DataFrame(data={
+                MULTI_DF_NAMES_COLUMN: df_names, 
+                MULTI_DF_DFS_COLUMN: dfs,
+            })
+            
+            return df
 
         @staticmethod
         def parse_ftr_annual_results_round_3(
             res: requests.Response,
         ) -> pd.DataFrame:
-            raise NotImplementedError("Result contains 12 csv tables.")
+            files_by_type = defaultdict(list)
+
+            with zipfile.ZipFile(file=io.BytesIO(res.content)) as z:
+                for filename in z.namelist():
+                    filepath = filename.split('/')
+                    prefix = filepath[1].split('_')[0]
+                    
+                    files_by_type[prefix].append({
+                        "name": filename, 
+                        "data": z.read(filename).decode("utf-8"),
+                    })
+
+            df_names = []
+            dfs = []
+
+            for csv_file in files_by_type["BindingConstraint"]:
+                df = pd.read_csv(
+                    filepath_or_buffer=io.StringIO(csv_file["data"]),
+                )
+
+                df[["Round"]] = df[["Round"]].replace('[^\\d]+', '', regex=True).astype(pandas.core.arrays.integer.Int64Dtype())
+                df[["Flow", "Limit", "MarginalCost", "Violation"]] = df[["Flow", "Limit", "MarginalCost", "Violation"]].astype(numpy.dtypes.Float64DType())
+                df[["DeviceName", "DeviceType", "ControlArea", "Direction", "Contingency", "Class", "Description"]] = df[["DeviceName", "DeviceType", "ControlArea", "Direction", "Contingency", "Class", "Description"]].astype(pandas.core.arrays.string_.StringDtype())
+
+                df_names.append(csv_file["name"].split('/')[-1].split('.')[0])
+                dfs.append(df)
+
+            for csv_file in files_by_type["MarketResults"]:
+                df = pd.read_csv(
+                    filepath_or_buffer=io.StringIO(csv_file["data"]),
+                )
+
+                df[["MW", "ClearingPrice"]] = df[["MW", "ClearingPrice"]].astype(numpy.dtypes.Float64DType())
+                df[["MarketParticipant", "Source", "Sink", "Category", "FTRID", "Round", "HedgeType", "Type", "Class"]] = df[["MarketParticipant", "Source", "Sink", "Category", "FTRID", "Round", "HedgeType", "Type", "Class"]].astype(pandas.core.arrays.string_.StringDtype())
+                df[["StartDate", "EndDate"]] = df[["StartDate", "EndDate"]].apply(pd.to_datetime, format="%m/%d/%Y")
+
+                df_names.append(csv_file["name"].split('/')[-1].split('.')[0])
+                dfs.append(df)
+            
+            for csv_file in files_by_type["SourceSinkShadowPrices"]:
+                df = pd.read_csv(
+                    filepath_or_buffer=io.StringIO(csv_file["data"]),
+                )
+
+                df[["Round"]] = df[["Round"]].replace('[^\\d]+', '', regex=True).astype(pandas.core.arrays.integer.Int64Dtype())
+                df[["ShadowPrice"]] = df[["ShadowPrice"]].astype(numpy.dtypes.Float64DType())
+                df[["SourceSink", "Class"]] = df[["SourceSink", "Class"]].astype(pandas.core.arrays.string_.StringDtype())
+
+                df_names.append(csv_file["name"].split('/')[-1].split('.')[0])
+                dfs.append(df)
+                
+            df = pd.DataFrame(data={
+                MULTI_DF_NAMES_COLUMN: df_names, 
+                MULTI_DF_DFS_COLUMN: dfs,
+            })
+            
+            return df
 
         @staticmethod
         def parse_ftr_annual_bids_offers(
@@ -1716,10 +1896,8 @@ class MISOReports:
                         "data": z.read(filename).decode("utf-8"),
                     })
 
-            dfs: typing.Dict[str, typing.List[str] | typing.List[pd.DataFrame]] = {
-                MULTI_DF_NAMES_COLUMN: [], 
-                MULTI_DF_DFS_COLUMN: [],
-            }
+            df_names = []
+            dfs = []
 
             for csv_file in files_by_type["BindingConstraint"]:
                 df = pd.read_csv(
@@ -1730,8 +1908,8 @@ class MISOReports:
                 df[["Flow", "Limit", "MarginalCost", "Violation"]] = df[["Flow", "Limit", "MarginalCost", "Violation"]].astype(numpy.dtypes.Float64DType())
                 df[["DeviceName", "DeviceType", "ControlArea", "Direction", "Contingency", "Class", "Description"]] = df[["DeviceName", "DeviceType", "ControlArea", "Direction", "Contingency", "Class", "Description"]].astype(pandas.core.arrays.string_.StringDtype())
 
-                dfs[MULTI_DF_NAMES_COLUMN].append(csv_file["name"].split('/')[-1].split('.')[0])
-                dfs[MULTI_DF_DFS_COLUMN].append(df)
+                df_names.append(csv_file["name"].split('/')[-1].split('.')[0])
+                dfs.append(df)
 
             for csv_file in files_by_type["MarketResults"]:
                 df = pd.read_csv(
@@ -1742,8 +1920,8 @@ class MISOReports:
                 df[["MarketParticipant", "Source", "Sink", "Category", "FTRID", "Round", "HedgeType", "Type", "Class"]] = df[["MarketParticipant", "Source", "Sink", "Category", "FTRID", "Round", "HedgeType", "Type", "Class"]].astype(pandas.core.arrays.string_.StringDtype())
                 df[["StartDate", "EndDate"]] = df[["StartDate", "EndDate"]].apply(pd.to_datetime, format="%m/%d/%Y")
 
-                dfs[MULTI_DF_NAMES_COLUMN].append(csv_file["name"].split('/')[-1].split('.')[0])
-                dfs[MULTI_DF_DFS_COLUMN].append(df)
+                df_names.append(csv_file["name"].split('/')[-1].split('.')[0])
+                dfs.append(df)
             
             for csv_file in files_by_type["SourceSinkShadowPrices"]:
                 df = pd.read_csv(
@@ -1754,10 +1932,13 @@ class MISOReports:
                 df[["ShadowPrice"]] = df[["ShadowPrice"]].astype(numpy.dtypes.Float64DType())
                 df[["SourceSink", "Class"]] = df[["SourceSink", "Class"]].astype(pandas.core.arrays.string_.StringDtype())
 
-                dfs[MULTI_DF_NAMES_COLUMN].append(csv_file["name"].split('/')[-1].split('.')[0])
-                dfs[MULTI_DF_DFS_COLUMN].append(df)
+                df_names.append(csv_file["name"].split('/')[-1].split('.')[0])
+                dfs.append(df)
                 
-            df = pd.DataFrame(data=dfs)
+            df = pd.DataFrame(data={
+                MULTI_DF_NAMES_COLUMN: df_names, 
+                MULTI_DF_DFS_COLUMN: dfs,
+            })
             
             return df
 
@@ -1782,19 +1963,154 @@ class MISOReports:
         def parse_asm_expost_damcp(
             res: requests.Response,
         ) -> pd.DataFrame:
-            raise NotImplementedError("Result contains 2 csv tables.")
+            text = res.text
+            csv1, csv2 = text.split("\n\n\n")
+
+            csv1_lines = csv1.splitlines()
+            
+            df1 = pd.read_csv(
+                filepath_or_buffer=io.StringIO("\n".join(csv1_lines[4:])),
+            )
+
+            df1.rename(columns={
+                    "Unnamed: 0": "Label",
+                    " HE 1": "HE 1",
+                }, 
+                inplace=True,
+            )
+            df1.drop(columns=["Unnamed: 1"], inplace=True)
+
+            df1[["HE 1", "HE 2", "HE 3", "HE 4", "HE 5", "HE 6", "HE 7", "HE 8", "HE 9", "HE 10", "HE 11", "HE 12", "HE 13", "HE 14", "HE 15", "HE 16", "HE 17", "HE 18", "HE 19", "HE 20", "HE 21", "HE 22", "HE 23", "HE 24"]] = df1[["HE 1", "HE 2", "HE 3", "HE 4", "HE 5", "HE 6", "HE 7", "HE 8", "HE 9", "HE 10", "HE 11", "HE 12", "HE 13", "HE 14", "HE 15", "HE 16", "HE 17", "HE 18", "HE 19", "HE 20", "HE 21", "HE 22", "HE 23", "HE 24"]].astype(numpy.dtypes.Float64DType())
+            df1[["Label", "MCP Type"]] = df1[["Label", "MCP Type"]].astype(pandas.core.arrays.string_.StringDtype())
+
+            csv2_lines = csv2.splitlines()
+
+            df2 = pd.read_csv(
+                filepath_or_buffer=io.StringIO("\n".join(csv2_lines)),
+            )
+
+            df2.rename(columns={
+                    " HE 1": "HE 1",
+                }, 
+                inplace=True,
+            )
+
+            df2[["Zone"]] = df2[["Zone"]].replace('[^\\d]+', '', regex=True).astype(pandas.core.arrays.integer.Int64Dtype())
+            df2[["HE 1", "HE 2", "HE 3", "HE 4", "HE 5", "HE 6", "HE 7", "HE 8", "HE 9", "HE 10", "HE 11", "HE 12", "HE 13", "HE 14", "HE 15", "HE 16", "HE 17", "HE 18", "HE 19", "HE 20", "HE 21", "HE 22", "HE 23", "HE 24"]] = df2[["HE 1", "HE 2", "HE 3", "HE 4", "HE 5", "HE 6", "HE 7", "HE 8", "HE 9", "HE 10", "HE 11", "HE 12", "HE 13", "HE 14", "HE 15", "HE 16", "HE 17", "HE 18", "HE 19", "HE 20", "HE 21", "HE 22", "HE 23", "HE 24"]].astype(numpy.dtypes.Float64DType())
+            df2[["Pnode", "MCP Type"]] = df2[["Pnode", "MCP Type"]].astype(pandas.core.arrays.string_.StringDtype())
+            
+            df = pd.DataFrame({
+                MULTI_DF_NAMES_COLUMN: [
+                       "Table 1",
+                       "Table 2",
+                ], 
+                MULTI_DF_DFS_COLUMN: [
+                        df1, 
+                        df2,
+                ],
+            })
+            
+            return df
         
         @staticmethod
         def parse_asm_rtmcp_final(
             res: requests.Response,
         ) -> pd.DataFrame:
-            raise NotImplementedError("Result contains 2 csv tables.")
+            text = res.text
+            _, _, csv1, csv2 = text.split("\r\n\r\n")
+
+            csv1_lines = csv1.splitlines()
+            
+            df1 = pd.read_csv(
+                filepath_or_buffer=io.StringIO("\n".join(csv1_lines)),
+            )
+
+            df1.rename(columns={"Unnamed: 0": "Label"}, inplace=True)
+            df1.drop(columns=["Unnamed: 1"], inplace=True)
+
+            df1[["HE 1", "HE 2", "HE 3", "HE 4", "HE 5", "HE 6", "HE 7", "HE 8", "HE 9", "HE 10", "HE 11", "HE 12", "HE 13", "HE 14", "HE 15", "HE 16", "HE 17", "HE 18", "HE 19", "HE 20", "HE 21", "HE 22", "HE 23", "HE 24"]] = df1[["HE 1", "HE 2", "HE 3", "HE 4", "HE 5", "HE 6", "HE 7", "HE 8", "HE 9", "HE 10", "HE 11", "HE 12", "HE 13", "HE 14", "HE 15", "HE 16", "HE 17", "HE 18", "HE 19", "HE 20", "HE 21", "HE 22", "HE 23", "HE 24"]].astype(numpy.dtypes.Float64DType())
+            df1[["Label", "MCP Type"]] = df1[["Label", "MCP Type"]].astype(pandas.core.arrays.string_.StringDtype())
+
+            csv2_lines = csv2.splitlines()
+
+            df2 = pd.read_csv(
+                filepath_or_buffer=io.StringIO("\n".join(csv2_lines)),
+            )
+
+            df2.rename(columns={
+                    " HE 1": "HE 1",
+                    " Zone": "Zone",
+                    " MCP Type": "MCP Type",
+                }, 
+                inplace=True,
+            )
+
+            df2[["Zone"]] = df2[["Zone"]].replace('[^\\d]+', '', regex=True).astype(pandas.core.arrays.integer.Int64Dtype())
+            df2[["HE 1", "HE 2", "HE 3", "HE 4", "HE 5", "HE 6", "HE 7", "HE 8", "HE 9", "HE 10", "HE 11", "HE 12", "HE 13", "HE 14", "HE 15", "HE 16", "HE 17", "HE 18", "HE 19", "HE 20", "HE 21", "HE 22", "HE 23", "HE 24"]] = df2[["HE 1", "HE 2", "HE 3", "HE 4", "HE 5", "HE 6", "HE 7", "HE 8", "HE 9", "HE 10", "HE 11", "HE 12", "HE 13", "HE 14", "HE 15", "HE 16", "HE 17", "HE 18", "HE 19", "HE 20", "HE 21", "HE 22", "HE 23", "HE 24"]].astype(numpy.dtypes.Float64DType())
+            df2[["Pnode", "MCP Type"]] = df2[["Pnode", "MCP Type"]].astype(pandas.core.arrays.string_.StringDtype())
+            
+            df = pd.DataFrame({
+                MULTI_DF_NAMES_COLUMN: [
+                       "Table 1",
+                       "Table 2",
+                ], 
+                MULTI_DF_DFS_COLUMN: [
+                        df1, 
+                        df2,
+                ],
+            })
+            
+            return df
         
         @staticmethod
         def parse_asm_rtmcp_prelim(
             res: requests.Response,
         ) -> pd.DataFrame:
-            raise NotImplementedError("Result contains 2 csv tables.")
+            text = res.text
+            _, _, csv1, csv2 = text.split("\r\n\r\n")
+
+            csv1_lines = csv1.splitlines()
+            
+            df1 = pd.read_csv(
+                filepath_or_buffer=io.StringIO("\n".join(csv1_lines)),
+            )
+
+            df1.rename(columns={"Unnamed: 0": "Label"}, inplace=True)
+            df1.drop(columns=["Unnamed: 1"], inplace=True)
+
+            df1[["HE 1", "HE 2", "HE 3", "HE 4", "HE 5", "HE 6", "HE 7", "HE 8", "HE 9", "HE 10", "HE 11", "HE 12", "HE 13", "HE 14", "HE 15", "HE 16", "HE 17", "HE 18", "HE 19", "HE 20", "HE 21", "HE 22", "HE 23", "HE 24"]] = df1[["HE 1", "HE 2", "HE 3", "HE 4", "HE 5", "HE 6", "HE 7", "HE 8", "HE 9", "HE 10", "HE 11", "HE 12", "HE 13", "HE 14", "HE 15", "HE 16", "HE 17", "HE 18", "HE 19", "HE 20", "HE 21", "HE 22", "HE 23", "HE 24"]].astype(numpy.dtypes.Float64DType())
+            df1[["Label", "MCP Type"]] = df1[["Label", "MCP Type"]].astype(pandas.core.arrays.string_.StringDtype())
+
+            csv2_lines = csv2.splitlines()
+
+            df2 = pd.read_csv(
+                filepath_or_buffer=io.StringIO("\n".join(csv2_lines)),
+            )
+
+            df2.rename(columns={
+                    " HE 1": "HE 1",
+                    " Zone": "Zone",
+                    " MCP Type": "MCP Type",
+                }, 
+                inplace=True,
+            )
+
+            df2[["Zone"]] = df2[["Zone"]].replace('[^\\d]+', '', regex=True).astype(pandas.core.arrays.integer.Int64Dtype())
+            df2[["HE 1", "HE 2", "HE 3", "HE 4", "HE 5", "HE 6", "HE 7", "HE 8", "HE 9", "HE 10", "HE 11", "HE 12", "HE 13", "HE 14", "HE 15", "HE 16", "HE 17", "HE 18", "HE 19", "HE 20", "HE 21", "HE 22", "HE 23", "HE 24"]] = df2[["HE 1", "HE 2", "HE 3", "HE 4", "HE 5", "HE 6", "HE 7", "HE 8", "HE 9", "HE 10", "HE 11", "HE 12", "HE 13", "HE 14", "HE 15", "HE 16", "HE 17", "HE 18", "HE 19", "HE 20", "HE 21", "HE 22", "HE 23", "HE 24"]].astype(numpy.dtypes.Float64DType())
+            df2[["Pnode", "MCP Type"]] = df2[["Pnode", "MCP Type"]].astype(pandas.core.arrays.string_.StringDtype())
+            
+            df = pd.DataFrame({
+                MULTI_DF_NAMES_COLUMN: [
+                       "Table 1",
+                       "Table 2",
+                ], 
+                MULTI_DF_DFS_COLUMN: [
+                        df1, 
+                        df2,
+                ],
+            })
+            
+            return df
         
         @staticmethod
         def parse_5min_exante_mcp(
@@ -1996,7 +2312,7 @@ class MISOReports:
 
             df = pd.read_csv(
                 filepath_or_buffer=io.StringIO(csv_data),
-                thousands=',',
+                thousands=",",
             )
 
             df[["Allocation (MW)"]] = df[["Allocation (MW)"]].astype(numpy.dtypes.Float64DType())
@@ -2014,7 +2330,7 @@ class MISOReports:
 
             df = pd.read_csv(
                 filepath_or_buffer=io.StringIO(csv_data),
-                thousands=',',
+                thousands=",",
             )
 
             df[["Adjusted FFE", "Non Monitoring RTO FFE"]] = df[["Adjusted FFE", "Non Monitoring RTO FFE"]].astype(numpy.dtypes.Float64DType())
@@ -2277,6 +2593,26 @@ class MISOReports:
             df[["Constraint Name", "Constraint Description"]] = df[["Constraint Name", "Constraint Description"]].astype(pandas.core.arrays.string_.StringDtype())
             df[["Shadow Price"]] = df[["Shadow Price"]].astype(numpy.dtypes.Float64DType())
             
+            return df
+
+        @staticmethod
+        def parse_RT_LMPs(
+            res: requests.Response,
+        ) -> pd.DataFrame:
+            with zipfile.ZipFile(file=io.BytesIO(res.content)) as z:
+                text = z.read(z.namelist()[0]).decode("utf-8")
+
+            csv_data = "\n".join(text.splitlines()[1:])
+
+            df = pd.read_csv(
+                filepath_or_buffer=io.StringIO(csv_data),
+                thousands=",",
+            )
+
+            df[["MARKET_DAY"]] = df[["MARKET_DAY"]].apply(pd.to_datetime, format="%m/%d/%Y")
+            df[["HE1", "HE2", "HE3", "HE4", "HE5", "HE6", "HE7", "HE8", "HE9", "HE10", "HE11", "HE12", "HE13", "HE14", "HE15", "HE16", "HE17", "HE18", "HE19", "HE20", "HE21", "HE22", "HE23", "HE24"]] = df[["HE1", "HE2", "HE3", "HE4", "HE5", "HE6", "HE7", "HE8", "HE9", "HE10", "HE11", "HE12", "HE13", "HE14", "HE15", "HE16", "HE17", "HE18", "HE19", "HE20", "HE21", "HE22", "HE23", "HE24"]].astype(numpy.dtypes.Float64DType())
+            df[["NODE", "TYPE", "VALUE"]] = df[["NODE", "TYPE", "VALUE"]].astype(pandas.core.arrays.string_.StringDtype())
+
             return df
 
 
@@ -3630,6 +3966,19 @@ class MISOReports:
             parser=ReportParsers.parse_da_rpe,
             example_url="https://docs.misoenergy.org/marketreports/20241029_da_rpe.xls",
             example_datetime=datetime.datetime(year=2024, month=10, day=29),
+        ),
+
+        "RT_LMPs": Report(
+            url_builder=MISOMarketReportsURLBuilder(
+                target="RT_LMPs",
+                supported_extensions=["zip"],
+                url_generator=MISOMarketReportsURLBuilder.url_generator_YYYY_underscore_current_month_name_to_two_months_later_name_first,
+                default_extension="zip",
+            ),
+            type_to_parse="zip",
+            parser=ReportParsers.parse_RT_LMPs,
+            example_url="https://docs.misoenergy.org/marketreports/2024_Jul-Sep_RT_LMPs.zip",
+            example_datetime=datetime.datetime(year=2024, month=7, day=1),
         ),
     }
 
