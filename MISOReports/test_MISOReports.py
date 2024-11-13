@@ -82,6 +82,30 @@ def datetime_increment_limit(request):
     return request.config.getoption("--datetime-increments-limit")
 
 
+def test_MISOMarketReportsURLBuilder_add_to_datetime_has_an_increment_mapping_for_all_url_generators():
+    url_generators = []
+    for func_str in dir(MISOMarketReportsURLBuilder):
+        func = getattr(MISOMarketReportsURLBuilder, func_str)
+        if callable(func) and func_str.startswith("url_generator_"):
+            url_generators.append(func)
+    
+    dummy_datetime = datetime.datetime.now()
+    for url_generator in url_generators:
+        obj = MISOMarketReportsURLBuilder(
+            target="test",
+            supported_extensions=["csv"],
+            url_generator=url_generator,
+        )
+
+        try:
+            obj.add_to_datetime(
+                ddatetime=dummy_datetime, 
+                direction=1,
+            )
+        except ValueError as e:
+            raise AssertionError(f"{url_generator}: {e}")
+
+
 @pytest.mark.parametrize(
     "target, supported_extensions, file_extension, expected", [
         ("getapiversion", ["json"], "json", "https://api.misoenergy.org/MISORTWDDataBroker/DataBrokerServices.asmx?messageType=getapiversion&returnType=json"),

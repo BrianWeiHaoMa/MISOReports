@@ -176,6 +176,7 @@ class MISOMarketReportsURLBuilder(URLBuilder):
         """
         increment_mappings: dict[Callable[[datetime.datetime | None, str], str], relativedelta] = {
             MISOMarketReportsURLBuilder.url_generator_YYYY_current_month_name_to_two_months_later_name_first: relativedelta(months=3),
+            MISOMarketReportsURLBuilder.url_generator_YYYY_underscore_current_month_name_to_two_months_later_name_first: relativedelta(months=3),
             MISOMarketReportsURLBuilder.url_generator_YYYYmmdd_first: relativedelta(days=1),
             MISOMarketReportsURLBuilder.url_generator_YYYYmm_first: relativedelta(months=1),
             MISOMarketReportsURLBuilder.url_generator_YYYY_first: relativedelta(years=1),
