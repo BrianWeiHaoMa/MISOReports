@@ -550,7 +550,77 @@ class MISOReports:
         def parse_rt_pr(
             res: requests.Response,
         ) -> pd.DataFrame:
-            raise NotImplementedError("Result has an atypical format.")
+            df1 = pd.read_excel(
+                io=io.BytesIO(res.content),
+                skiprows=6,
+                nrows=1,
+            )
+            df1.rename(columns={df1.columns[0]: "Type"}, inplace=True)
+            df1.drop(labels=df1.columns[4:], axis=1, inplace=True)
+            df1[["Type"]] = df1[["Type"]].astype(pandas.core.arrays.string_.StringDtype())
+            df1[["Demand", "Supply", "Total"]] = df1[["Demand", "Supply", "Total"]].astype(numpy.dtypes.Float64DType())
+
+            df2 = pd.read_excel(
+                io=io.BytesIO(res.content),
+                skiprows=8,
+                nrows=2,
+            )
+            df2.rename(columns={df2.columns[0]: "Type"}, inplace=True)
+            df2.drop(labels=df2.columns[4:], axis=1, inplace=True)
+            df2[["Type"]] = df2[["Type"]].astype(pandas.core.arrays.string_.StringDtype())
+            df2[["Demand", "Supply", "Total"]] = df2[["Demand", "Supply", "Total"]].astype(numpy.dtypes.Float64DType())
+
+            df3 = pd.read_excel(
+                io=io.BytesIO(res.content),
+                skiprows=11,
+                nrows=24,
+            )
+            shared_column_names = list(df3.columns)[1:]
+
+            df3.rename(columns={df3.columns[0]: "Hour"}, inplace=True)
+            df3[["Hour"]] = df3[["Hour"]].replace('[^\\d]+', '', regex=True).astype(pandas.core.arrays.integer.Int64Dtype())
+            df3[shared_column_names] = df3[shared_column_names].astype(numpy.dtypes.Float64DType())            
+
+            df4 = pd.read_excel(
+                io=io.BytesIO(res.content),
+                skiprows=36,
+                nrows=3,
+                names=["Around the Clock"] + shared_column_names,
+            )
+
+            df5 = pd.read_excel(
+                io=io.BytesIO(res.content),
+                skiprows=40,
+                nrows=3,
+                names=["On-Peak"] + shared_column_names,
+            )
+
+            df6 = pd.read_excel(
+                io=io.BytesIO(res.content),
+                skiprows=44,
+                nrows=3,
+                names=["Off-Peak"] + shared_column_names,
+            )
+
+            bottom_dfs = [df4, df5, df6]
+            for i in range(len(bottom_dfs)):
+                first_column = bottom_dfs[i].columns[0]
+                bottom_dfs[i][[first_column]] = bottom_dfs[i][[first_column]].astype(pandas.core.arrays.string_.StringDtype())
+                bottom_dfs[i][shared_column_names] = bottom_dfs[i][shared_column_names].astype(numpy.dtypes.Float64DType())
+
+            # No names written for any of the tables in the report.
+            df = pd.DataFrame({
+                MULTI_DF_NAMES_COLUMN: [
+                        f"Table {i}" for i in range(1, 7)
+                ], 
+                MULTI_DF_DFS_COLUMN: [
+                        df1, 
+                        df2, 
+                        df3,
+                ] + bottom_dfs,
+            })
+
+            return df
 
         @staticmethod
         def parse_rt_irsf(
@@ -736,7 +806,39 @@ class MISOReports:
         def parse_ms_vlr_srw(
             res: requests.Response,
         ) -> pd.DataFrame:
-            raise NotImplementedError("Result contains 2 csv tables.")
+            float_columns = ["DA VLR RSG MWP", "RT VLR RSG MWP", "DA+RT Total"]
+            string_columns = ["Constraint"]
+            column_names = string_columns + float_columns
+
+            df1 = pd.read_excel(
+                io=io.BytesIO(res.content),
+                skiprows=7,
+                nrows=3,
+                usecols=column_names,
+            )
+            df1[float_columns] = df1[float_columns].astype(numpy.dtypes.Float64DType())
+            df1[string_columns] = df1[string_columns].astype(pandas.core.arrays.string_.StringDtype())
+
+            df2 = pd.read_excel(
+                io=io.BytesIO(res.content),
+                skiprows=15,
+                nrows=7,
+                usecols=column_names,
+            )
+            df2[float_columns] = df2[float_columns].astype(numpy.dtypes.Float64DType())
+            df2[string_columns] = df2[string_columns].astype(pandas.core.arrays.string_.StringDtype())
+
+            df = pd.DataFrame({
+                MULTI_DF_NAMES_COLUMN: [
+                        f"Table {i}" for i in range(1, 3)
+                ], 
+                MULTI_DF_DFS_COLUMN: [
+                        df1, 
+                        df2, 
+                ],
+            })
+
+            return df
 
         @staticmethod
         def parse_ms_rsg_srw(
@@ -886,7 +988,12 @@ class MISOReports:
         def parse_Daily_Uplift_by_Local_Resource_Zone(
             res: requests.Response,
         ) -> pd.DataFrame:
-            raise NotImplementedError("Result contains 10 csv tables.")
+            df = pd.read_excel(
+                io=io.BytesIO(res.content),
+                skiprows=9,
+            )
+
+            raise NotImplementedError("Parsing of this report is not yet implemented.")
 
         @staticmethod
         def parse_fuelmix(

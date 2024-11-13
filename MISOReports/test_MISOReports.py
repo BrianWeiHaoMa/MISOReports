@@ -1042,6 +1042,48 @@ multiple_dfs_test_list = [
             }
         },
     ),
+    (
+        "rt_pr",
+        {
+            "Table 1": {
+                ("Demand", "Supply", "Total",): numpy.dtypes.Float64DType,
+                ("Type",): pandas.core.arrays.string_.StringDtype,
+            },
+            "Table 2": {
+                ("Demand", "Supply", "Total",): numpy.dtypes.Float64DType,
+                ("Type",): pandas.core.arrays.string_.StringDtype,
+            },
+            "Table 3": {
+                ("MISO System", "Illinois Hub", "Michigan Hub", "Minnesota Hub", "Indiana Hub", "Arkansas Hub", "Louisiana Hub", "Texas Hub", "MS.HUB",): numpy.dtypes.Float64DType,
+                ("Hour",): pandas.core.arrays.integer.Int64Dtype,
+            },
+            "Table 4": {
+                ("MISO System", "Illinois Hub", "Michigan Hub", "Minnesota Hub", "Indiana Hub", "Arkansas Hub", "Louisiana Hub", "Texas Hub", "MS.HUB",): numpy.dtypes.Float64DType,
+                ("Around the Clock",): pandas.core.arrays.string_.StringDtype,
+            },
+            "Table 5": {
+                ("MISO System", "Illinois Hub", "Michigan Hub", "Minnesota Hub", "Indiana Hub", "Arkansas Hub", "Louisiana Hub", "Texas Hub", "MS.HUB",): numpy.dtypes.Float64DType,
+                ("On-Peak",): pandas.core.arrays.string_.StringDtype,  
+            },
+            "Table 6": {
+                ("MISO System", "Illinois Hub", "Michigan Hub", "Minnesota Hub", "Indiana Hub", "Arkansas Hub", "Louisiana Hub", "Texas Hub", "MS.HUB",): numpy.dtypes.Float64DType,
+                ("Off-Peak",): pandas.core.arrays.string_.StringDtype, 
+            }
+        },
+    ),
+    (
+        "ms_vlr_srw",
+        {
+            "Table 1": {
+                ("DA VLR RSG MWP", "RT VLR RSG MWP", "DA+RT Total",): numpy.dtypes.Float64DType,
+                ("Constraint",): pandas.core.arrays.string_.StringDtype,
+            },
+            "Table 2": {
+                ("DA VLR RSG MWP", "RT VLR RSG MWP", "DA+RT Total",): numpy.dtypes.Float64DType,
+                ("Constraint",): pandas.core.arrays.string_.StringDtype,
+            }
+        },
+    ),
 ]
 
 
