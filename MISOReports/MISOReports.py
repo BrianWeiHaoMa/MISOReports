@@ -1002,12 +1002,63 @@ class MISOReports:
         def parse_Daily_Uplift_by_Local_Resource_Zone(
             res: requests.Response,
         ) -> pd.DataFrame:
-            df = pd.read_excel(
+            df0 = pd.read_excel(
                 io=io.BytesIO(res.content),
                 skiprows=9,
+                nrows=1,
             )
 
-            raise NotImplementedError("Parsing of this report is not yet implemented.")
+            month_string = df0.iloc[0, 0]
+            year_string = df0.iloc[0, 1]
+            
+            if type(year_string) == str and type(month_string) == str:
+                year_string = year_string[-4:]
+            else:
+                raise ValueError("Unexpected: year_string or month_string is not a string.")
+            
+            date_string = f"{month_string} {year_string}"
+            month_days = pd.Period(date_string, freq='M').days_in_month
+            n_rows = month_days + 1
+            
+            def parse_report_part(skiprows: int) -> pd.DataFrame:
+                df = pd.read_excel(
+                    io=io.BytesIO(res.content),
+                    skiprows=skiprows,
+                    nrows=n_rows,
+                )
+                df.rename(columns={df.columns[1]: "Date"}, inplace=True)
+                df.drop(labels=df.columns[0], axis=1, inplace=True)
+
+                df[["Date"]] = df[["Date"]].astype(pandas.core.arrays.string_.StringDtype())
+                df[["Day Ahead Capacity", "Day Ahead VLR", "Real Time Capacity", "Real Time VLR", "Real Time Transmission Reliability", "Price Volatility Make Whole Payments\n"]] = df[["Day Ahead Capacity", "Day Ahead VLR", "Real Time Capacity", "Real Time VLR", "Real Time Transmission Reliability", "Price Volatility Make Whole Payments\n"]].astype(numpy.dtypes.Float64DType())
+
+                return df
+
+            dfs = [] # There should be 10 dfs.
+
+            for i in range(10):
+                df = parse_report_part(9 + (4 + n_rows) * i)
+                dfs.append(df)
+
+            table_names = [
+                "LRZ 1",
+                "LRZ 10",
+                "LRZ 2",
+                "LRZ 3",
+                "LRZ 4",
+                "LRZ 5",
+                "LRZ 6",
+                "LRZ 7",
+                "LRZ 8",
+                "LRZ 9",
+            ]
+
+            df = pd.DataFrame({
+                MULTI_DF_NAMES_COLUMN: table_names, 
+                MULTI_DF_DFS_COLUMN: dfs,
+            })
+
+            return df
 
         @staticmethod
         def parse_fuelmix(
@@ -1424,7 +1475,48 @@ class MISOReports:
         def parse_totalload(
             res: requests.Response,
         ) -> pd.DataFrame:
-            raise NotImplementedError("Result contains 3 csv tables.")
+            text = res.text
+
+            table_1 = "ClearedMW"
+            df1 = pd.read_csv(
+                filepath_or_buffer=io.StringIO(text),
+                skiprows=3,
+                nrows=24,
+            )
+            df1[["Load_Hour"]] = df1[["Load_Hour"]].astype(pandas.core.arrays.integer.Int64Dtype())
+            df1[["Load_Value"]] = df1[["Load_Value"]].astype(numpy.dtypes.Float64DType())
+
+            table_2 = "MediumTermLoadForecast"
+            df2 = pd.read_csv(
+                filepath_or_buffer=io.StringIO(text),
+                skiprows=29,
+                nrows=24,
+            )
+            df2[["Hour_End"]] = df2[["Hour_End"]].astype(pandas.core.arrays.integer.Int64Dtype())
+            df2[["Load_Forecast"]] = df2[["Load_Forecast"]].astype(numpy.dtypes.Float64DType())
+
+            table_3 = "FiveMinTotalLoad"
+            df3 = pd.read_csv(
+                filepath_or_buffer=io.StringIO(text),
+                skiprows=55,
+            )
+            df3[["Load_Time"]] = df3[["Load_Time"]].apply(pd.to_datetime, format="%H:%M")
+            df3[["Load_Value"]] = df3[["Load_Value"]].astype(numpy.dtypes.Float64DType())
+
+            df = pd.DataFrame({
+                MULTI_DF_NAMES_COLUMN: [
+                    table_1,
+                    table_2,
+                    table_3,
+                ],
+                MULTI_DF_DFS_COLUMN: [
+                    df1,
+                    df2,
+                    df3,
+                ],
+            })
+
+            return df
         
         @staticmethod
         def parse_RSG(
@@ -1653,7 +1745,39 @@ class MISOReports:
         def parse_asm_exante_damcp(
             res: requests.Response,
         ) -> pd.DataFrame:
-            raise NotImplementedError("Result contains 2 csv tables.")
+            text = res.text
+
+            second_table_start_idx = text.index("Pnode,Zone,MCP Type")
+
+            table_1 = "Table 1"
+            df1 = pd.read_csv(
+                filepath_or_buffer=io.StringIO(text[:second_table_start_idx]),
+                skiprows=4,
+                nrows=24,
+            )
+            hours = [" HE 1"] + [f"HE {i}" for i in range(2, 25)]
+            df1[hours] = df1[hours].astype(numpy.dtypes.Float64DType())
+            df1[df1.columns[:3]] = df1[df1.columns[:3]].astype(pandas.core.arrays.string_.StringDtype())
+
+            table_2 = "Table 2"
+            df2 = pd.read_csv(
+                filepath_or_buffer=io.StringIO(text[second_table_start_idx:]),
+            )
+            df2[hours] = df2[hours].astype(numpy.dtypes.Float64DType())
+            df2[["Pnode", "Zone", "MCP Type"]] = df2[["Pnode", "Zone", "MCP Type"]].astype(pandas.core.arrays.string_.StringDtype())
+
+            df = pd.DataFrame({
+                MULTI_DF_NAMES_COLUMN: [
+                    table_1,
+                    table_2,
+                ],
+                MULTI_DF_DFS_COLUMN: [
+                    df1,
+                    df2,
+                ],
+            })
+
+            return df
         
         @staticmethod
         def parse_ftr_allocation_restoration(
