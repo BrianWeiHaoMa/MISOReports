@@ -2647,6 +2647,7 @@ class MISOReports:
                 ],
                 relative_columns=True,
                 columns=[30, 36, 41, 47, 52, 58, 63, 69, 74, 80, 85, 91, 98],
+                java_options=["-Xms512m", "-Xmx2048m"],
             )
 
             df_names = []
