@@ -297,6 +297,28 @@ class MISOMarketReportsURLBuilder(URLBuilder):
         res = f"https://docs.misoenergy.org/marketreports/{target}.{URLBuilder.extension_placeholder}"
         return res
     
+    @staticmethod
+    def url_generator_mmddYYYY_last(
+        ddatetime: datetime.datetime | None,
+        target: str,
+    ) -> str:
+        if ddatetime is None:
+            raise ValueError("ddatetime required for this URL builder.")
+
+        res = f"https://docs.misoenergy.org/marketreports/{target}_{ddatetime.strftime('%m%d%Y')}.{URLBuilder.extension_placeholder}"
+        return res
+    
+    @staticmethod
+    def url_generator_dddYYYY_last_but_as_nth_day_in_year_and_no_underscore(
+        ddatetime: datetime.datetime | None,
+        target: str,
+    ) -> str:
+        if ddatetime is None:
+            raise ValueError("ddatetime required for this URL builder.")
+
+        res = f"https://docs.misoenergy.org/marketreports/{target}{ddatetime.strftime('%j%Y')}.{URLBuilder.extension_placeholder}"
+        return res
+    
 
 class MISOReports:
     """A class for downloading MISO reports.
@@ -2615,6 +2637,200 @@ class MISOReports:
             df[["NODE", "TYPE", "VALUE"]] = df[["NODE", "TYPE", "VALUE"]].astype(pandas.core.arrays.string_.StringDtype())
 
             return df
+        
+        @staticmethod
+        def parse_sr_gfm(
+            res: requests.Response,
+        ) -> pd.DataFrame:
+            df = pd.read_excel(
+                io=io.BytesIO(res.content),
+                skiprows=3,
+            )[:-1]
+            
+            raise NotImplementedError("Parsing of this report is not yet implemented.")
+
+        @staticmethod
+        def parse_dfal_HIST(
+            res: requests.Response,
+        ) -> pd.DataFrame:
+            df = pd.read_excel(
+                io=io.BytesIO(res.content),
+                skiprows=5,
+            )[:-2]
+
+            df = df[df["MarketDay"] != "MarketDay"]
+            df = df.reset_index(drop=True)
+            df[["HourEnding"]] = df[["HourEnding"]].astype(pandas.core.arrays.integer.Int64Dtype())
+            df[["MarketDay"]] = df[["MarketDay"]].apply(pd.to_datetime, format="%m/%d/%Y")
+            df[["MTLF (MWh)", "ActualLoad (MWh)"]] = df[["MTLF (MWh)", "ActualLoad (MWh)"]].astype(numpy.dtypes.Float64DType())
+            df[["LoadResource Zone"]] = df[["LoadResource Zone"]].astype(pandas.core.arrays.string_.StringDtype())
+
+            return df
+        
+        @staticmethod
+        def parse_historical_gen_fuel_mix(
+            res: requests.Response,
+        ) -> pd.DataFrame:
+            df = pd.read_excel(
+                io=io.BytesIO(res.content),
+                skiprows=4,
+                usecols="B:G",
+            )
+
+            df[["HourEnding"]] = df[["HourEnding"]].astype(pandas.core.arrays.integer.Int64Dtype())
+            df[["Market Date"]] = df[["Market Date"]].apply(pd.to_datetime, format="%Y-%m-%d")
+            df[["DA Cleared UDS Generation", "[RT Generation State Estimator"]] = df[["DA Cleared UDS Generation", "[RT Generation State Estimator"]].astype(numpy.dtypes.Float64DType())
+            df[["Region", "Fuel Type"]] = df[["Region", "Fuel Type"]].astype(pandas.core.arrays.string_.StringDtype())
+            
+            return df
+        
+        @staticmethod
+        def parse_hwd_HIST(
+            res: requests.Response,
+        ) -> pd.DataFrame:
+            text = res.text
+            csv_data = "\n".join(text.splitlines()[7:-1])
+
+            df = pd.read_csv(
+                filepath_or_buffer=io.StringIO(csv_data),
+            )
+
+            df[["Hour Ending"]] = df[["Hour Ending"]].astype(pandas.core.arrays.integer.Int64Dtype())
+            df[["Market Day	"]] = df[["Market Day	"]].apply(pd.to_datetime, format="%m/%d/%Y")
+            df[["MWh"]] = df[["MWh"]].astype(numpy.dtypes.Float64DType())
+
+            return df
+        
+        @staticmethod
+        def parse_sr_hist_is(
+            res: requests.Response,
+        ) -> pd.DataFrame:
+            text = res.text
+            csv_data = "\n".join(text.splitlines()[1:-2])
+
+            df = pd.read_csv(
+                filepath_or_buffer=io.StringIO(csv_data),
+                sep="|",
+            )
+
+            df[["HE1", "HE2", "HE3", "HE4", "HE5", "HE6", "HE7", "HE8", "HE9", "HE10", "HE11", "HE12", "HE13", "HE14", "HE15", "HE16", "HE17", "HE18", "HE19", "HE20", "HE21", "HE22", "HE23", "HE24"]] = df[["HE1", "HE2", "HE3", "HE4", "HE5", "HE6", "HE7", "HE8", "HE9", "HE10", "HE11", "HE12", "HE13", "HE14", "HE15", "HE16", "HE17", "HE18", "HE19", "HE20", "HE21", "HE22", "HE23", "HE24"]].astype(pandas.core.arrays.integer.Int64Dtype())
+            df[["MKTDAY"]] = df[["MKTDAY"]].apply(pd.to_datetime, format="%m/%d/%Y")
+            df[["INTERFACE"]] = df[["INTERFACE"]].astype(pandas.core.arrays.string_.StringDtype())
+
+            return df
+
+        @staticmethod
+        def parse_rfal_HIST(
+            res: requests.Response,
+        ) -> pd.DataFrame:
+            df = pd.read_excel(
+                io=io.BytesIO(res.content),
+                skiprows=4,
+                usecols="B:G",
+            )[:-4]
+
+            df[["HourEnding"]] = df[["HourEnding"]].astype(pandas.core.arrays.integer.Int64Dtype())
+            df[["Market Day"]] = df[["Market Day"]].apply(pd.to_datetime, format="%m/%d/%Y")
+            df[["MTLF (MWh)", "Actual Load (MWh)"]] = df[["MTLF (MWh)", "Actual Load (MWh)"]].astype(numpy.dtypes.Float64DType())
+            df[["Region", "Footnote"]] = df[["Region", "Footnote"]].astype(pandas.core.arrays.string_.StringDtype())
+
+            return df
+        
+        @staticmethod
+        def parse_sr_lt(
+            res: requests.Response,
+        ) -> pd.DataFrame:
+            df = pd.read_excel(
+                io=io.BytesIO(res.content),
+                skiprows=3,
+            )
+
+            df[["Minimum (GW)", "Average (GW)", "Maximum (GW)"]] = df[["Minimum (GW)", "Average (GW)", "Maximum (GW)"]].astype(numpy.dtypes.Float64DType())
+            df[["Week Starting"]] = df[["Week Starting"]].apply(pd.to_datetime)
+            
+            return df
+        
+        @staticmethod
+        def parse_sr_la_rg(
+            res: requests.Response,
+        ) -> pd.DataFrame:
+            text = res.text
+            csv_data = "\n".join(text.splitlines()[3:-1])
+
+            df = pd.read_csv(
+                filepath_or_buffer=io.StringIO(csv_data),
+            )
+
+            df = df.dropna()
+            df = df.reset_index(drop=True)
+            df[["10/24/2024 Thursday Peak Hour: HE  19 MTLF (GW)", "10/24/2024 Thursday Peak Hour: HE  19 Capacity on Outage (GW)", "10/25/2024 Friday   Peak Hour: HE  16 MTLF (GW)", "10/25/2024 Friday   Peak Hour: HE  16 Capacity on Outage (GW)", "10/26/2024 Saturday Peak Hour: HE  19 MTLF (GW)", "10/26/2024 Saturday Peak Hour: HE  19 Capacity on Outage (GW)", "10/27/2024 Sunday   Peak Hour: HE  19 MTLF (GW)", "10/27/2024 Sunday   Peak Hour: HE  19 Capacity on Outage (GW)", "10/28/2024 Monday   Peak Hour: HE  19 MTLF (GW)", "10/28/2024 Monday   Peak Hour: HE  19Capacity on Outage (GW)", "10/29/2024 Tuesday  Peak Hour: HE  19 MTLF (GW)", "10/29/2024 Tuesday  Peak Hour: HE  19 Capacity on Outage (GW)", "10/30/2024 WednesdayPeak Hour: HE  24 MTLF (GW)", "10/30/2024 WednesdayPeak Hour: HE  24 Capacity on Outage (GW)"]] = df[["10/24/2024 Thursday Peak Hour: HE  19 MTLF (GW)", "10/24/2024 Thursday Peak Hour: HE  19 Capacity on Outage (GW)", "10/25/2024 Friday   Peak Hour: HE  16 MTLF (GW)", "10/25/2024 Friday   Peak Hour: HE  16 Capacity on Outage (GW)", "10/26/2024 Saturday Peak Hour: HE  19 MTLF (GW)", "10/26/2024 Saturday Peak Hour: HE  19 Capacity on Outage (GW)", "10/27/2024 Sunday   Peak Hour: HE  19 MTLF (GW)", "10/27/2024 Sunday   Peak Hour: HE  19 Capacity on Outage (GW)", "10/28/2024 Monday   Peak Hour: HE  19 MTLF (GW)", "10/28/2024 Monday   Peak Hour: HE  19Capacity on Outage (GW)", "10/29/2024 Tuesday  Peak Hour: HE  19 MTLF (GW)", "10/29/2024 Tuesday  Peak Hour: HE  19 Capacity on Outage (GW)", "10/30/2024 WednesdayPeak Hour: HE  24 MTLF (GW)", "10/30/2024 WednesdayPeak Hour: HE  24 Capacity on Outage (GW)"]].astype(numpy.dtypes.Float64DType())
+            df[["Hourend_EST", "Region"]] = df[["Hourend_EST", "Region"]].astype(pandas.core.arrays.string_.StringDtype())
+
+            return df
+        
+        @staticmethod
+        def parse_mom(
+            res: requests.Response,
+        ) -> pd.DataFrame:
+            raise NotImplementedError("Parsing of this report is not yet implemented. **WARNING** PROCEED WITH CAUTION")
+
+        @staticmethod
+        def parse_sr_nd_is(
+            res: requests.Response,
+        ) -> pd.DataFrame:
+            df = pd.read_excel(
+                io=io.BytesIO(res.content),
+                skiprows=10,
+                usecols="B:R"
+            )[:-11]
+            
+            df.rename(
+                columns={
+                    "Unnamed: 1": "Hour",
+                }, 
+                inplace=True,
+            )
+
+            df = df.loc[:, ~df.columns.str.contains('^Unnamed')]
+            df["Hour"] = df["Hour"].replace('[^\\d]+', '', regex=True).astype(pandas.core.arrays.integer.Int64Dtype())
+            df[["GLHB", "IESO", "MHEB", "PJM", "SOCO", "SWPP", "TVA", "AECI", "LGEE", "Other", "Total"]] = df[["GLHB", "IESO", "MHEB", "PJM", "SOCO", "SWPP", "TVA", "AECI", "LGEE", "Other", "Total"]].astype(pandas.core.arrays.integer.Int64Dtype())
+
+            return df
+
+        @staticmethod
+        def parse_PeakHourOverview(
+            res: requests.Response,
+        ) -> pd.DataFrame:
+            raise NotImplementedError("Parsing of this report is not yet implemented.")
+        
+        @staticmethod
+        def parse_sr_tcdc_group2(
+            res: requests.Response,
+        ) -> pd.DataFrame:
+            text = res.text
+            csv_data = "\n".join(text.splitlines()[4:-2])
+
+            df = pd.read_csv(
+                filepath_or_buffer=io.StringIO(csv_data),
+            )
+
+            df[["EffectiveTime", "TerminationTime"]] = df[["EffectiveTime", "TerminationTime"]].apply(pd.to_datetime, format="%m/%d/%Y %H:%M:%S")
+            df[["BP1", "PC1", "BP2", "PC2"]] = df[["BP1", "PC1", "BP2", "PC2"]].astype(numpy.dtypes.Float64DType())
+            df[["ContingencyName", "ContingencyDescription", "BranchName", "CurveName", "Reason"]] = df[["ContingencyName", "ContingencyDescription", "BranchName", "CurveName", "Reason"]].astype(pandas.core.arrays.string_.StringDtype())
+
+            return df
+        
+        @staticmethod
+        def parse_MISOdaily(
+            res: requests.Response,
+        ) -> pd.DataFrame:
+            raise NotImplementedError("Parsing of this report is not yet implemented.")
+        
+        @staticmethod
+        def parse_MISOsamedaydemand(
+            res: requests.Response,
+        ) -> pd.DataFrame:
+            raise NotImplementedError("Parsing of this report is not yet implemented.")
 
 
     report_mappings: dict[str, Report] = {
@@ -3980,6 +4196,187 @@ class MISOReports:
             parser=ReportParsers.parse_RT_LMPs,
             example_url="https://docs.misoenergy.org/marketreports/2024_Jul-Sep_RT_LMPs.zip",
             example_datetime=datetime.datetime(year=2024, month=7, day=1),
+        ),
+
+        "sr_gfm": Report(
+            url_builder=MISOMarketReportsURLBuilder(
+                target="sr_gfm",
+                supported_extensions=["xlsx"],
+                url_generator=MISOMarketReportsURLBuilder.url_generator_YYYYmmdd_first,
+                default_extension="xlsx",
+            ),
+            type_to_parse="xlsx",
+            parser=ReportParsers.parse_sr_gfm,
+            example_url="https://docs.misoenergy.org/marketreports/20241030_sr_gfm.xlsx",
+            example_datetime=datetime.datetime(year=2024, month=10, day=30),
+        ),
+
+        "dfal_HIST": Report(
+            url_builder=MISOMarketReportsURLBuilder(
+                target="dfal_HIST",
+                supported_extensions=["xls"],
+                url_generator=MISOMarketReportsURLBuilder.url_generator_YYYYmmdd_first,
+                default_extension="xls",
+            ),
+            type_to_parse="xls",
+            parser=ReportParsers.parse_dfal_HIST,
+            example_url="https://docs.misoenergy.org/marketreports/20241111_dfal_HIST.xls",
+            example_datetime=datetime.datetime(year=2024, month=11, day=11),
+        ),
+
+        "historical_gen_fuel_mix": Report(
+            url_builder=MISOMarketReportsURLBuilder(
+                target="historical_gen_fuel_mix",
+                supported_extensions=["xlsx"],
+                url_generator=MISOMarketReportsURLBuilder.url_generator_YYYY_last,
+                default_extension="xlsx",
+            ),
+            type_to_parse="xlsx",
+            parser=ReportParsers.parse_historical_gen_fuel_mix,
+            example_url="https://docs.misoenergy.org/marketreports/historical_gen_fuel_mix_2023.xlsx",
+            example_datetime=datetime.datetime(year=2023, month=1, day=1),
+        ),
+
+        "hwd_HIST": Report(
+            url_builder=MISOMarketReportsURLBuilder(
+                target="hwd_HIST",
+                supported_extensions=["csv"],
+                url_generator=MISOMarketReportsURLBuilder.url_generator_YYYYmmdd_first,
+                default_extension="csv",
+            ),
+            type_to_parse="csv",
+            parser=ReportParsers.parse_hwd_HIST,
+            example_url="https://docs.misoenergy.org/marketreports/20241111_hwd_HIST.csv",
+            example_datetime=datetime.datetime(year=2024, month=11, day=11),
+        ),
+
+        "sr_hist_is": Report(
+            url_builder=MISOMarketReportsURLBuilder(
+                target="sr_hist_is",
+                supported_extensions=["csv"],
+                url_generator=MISOMarketReportsURLBuilder.url_generator_YYYY_first,
+                default_extension="csv",
+            ),
+            type_to_parse="csv",
+            parser=ReportParsers.parse_sr_hist_is,
+            example_url="https://docs.misoenergy.org/marketreports/2024_sr_hist_is.csv",
+            example_datetime=datetime.datetime(year=2024, month=1, day=1),
+        ),
+
+        "rfal_HIST": Report(
+            url_builder=MISOMarketReportsURLBuilder(
+                target="rfal_HIST",
+                supported_extensions=["xls"],
+                url_generator=MISOMarketReportsURLBuilder.url_generator_YYYYmmdd_first,
+                default_extension="xls",
+            ),
+            type_to_parse="xls",
+            parser=ReportParsers.parse_rfal_HIST,
+            example_url="https://docs.misoenergy.org/marketreports/20241111_rfal_HIST.xls",
+            example_datetime=datetime.datetime(year=2024, month=11, day=11),
+        ),
+
+        "sr_lt": Report(
+            url_builder=MISOMarketReportsURLBuilder(
+                target="sr_lt",
+                supported_extensions=["xls"],
+                url_generator=MISOMarketReportsURLBuilder.url_generator_YYYYmmdd_first,
+                default_extension="xls",
+            ),
+            type_to_parse="xls",
+            parser=ReportParsers.parse_sr_lt,
+            example_url="https://docs.misoenergy.org/marketreports/20241028_sr_lt.xls",
+            example_datetime=datetime.datetime(year=2024, month=10, day=28),
+        ),
+
+        "sr_la_rg": Report(
+            url_builder=MISOMarketReportsURLBuilder(
+                target="sr_la_rg",
+                supported_extensions=["csv"],
+                url_generator=MISOMarketReportsURLBuilder.url_generator_YYYYmmdd_first,
+                default_extension="csv",
+            ),
+            type_to_parse="csv",
+            parser=ReportParsers.parse_sr_la_rg,
+            example_url="https://docs.misoenergy.org/marketreports/20241024_sr_la_rg.csv",
+            example_datetime=datetime.datetime(year=2024, month=10, day=24),
+        ),
+
+        "mom": Report(
+            url_builder=MISOMarketReportsURLBuilder(
+                target="mom",
+                supported_extensions=["xlsx"],
+                url_generator=MISOMarketReportsURLBuilder.url_generator_YYYYmmdd_first,
+                default_extension="xlsx",
+            ),
+            type_to_parse="xlsx",
+            parser=ReportParsers.parse_mom,
+            example_url="https://docs.misoenergy.org/marketreports/20241020_mom.xlsx",
+            example_datetime=datetime.datetime(year=2024, month=10, day=20),
+        ),
+
+        "sr_nd_is": Report(
+            url_builder=MISOMarketReportsURLBuilder(
+                target="sr_nd_is",
+                supported_extensions=["xls"],
+                url_generator=MISOMarketReportsURLBuilder.url_generator_YYYYmmdd_first,
+                default_extension="xls",
+            ),
+            type_to_parse="xls",
+            parser=ReportParsers.parse_sr_nd_is,
+            example_url="https://docs.misoenergy.org/marketreports/20241020_sr_nd_is.xls",
+            example_datetime=datetime.datetime(year=2024, month=10, day=20),
+        ),
+
+        "PeakHourOverview": Report(
+            url_builder=MISOMarketReportsURLBuilder(
+                target="PeakHourOverview",
+                supported_extensions=["csv"],
+                url_generator=MISOMarketReportsURLBuilder.url_generator_mmddYYYY_last,
+                default_extension="csv",
+            ),
+            type_to_parse="csv",
+            parser=ReportParsers.parse_PeakHourOverview,
+            example_url="https://docs.misoenergy.org/marketreports/PeakHourOverview_03052022.csv",
+            example_datetime=datetime.datetime(year=2022, month=3, day=5),
+        ),
+
+        "sr_tcdc_group2": Report(
+            url_builder=MISOMarketReportsURLBuilder(
+                target="sr_tcdc_group2",
+                supported_extensions=["csv"],
+                url_generator=MISOMarketReportsURLBuilder.url_generator_YYYY_first,
+                default_extension="csv",
+            ),
+            type_to_parse="csv",
+            parser=ReportParsers.parse_sr_tcdc_group2,
+            example_url="https://docs.misoenergy.org/marketreports/2024_sr_tcdc_group2.csv",
+            example_datetime=datetime.datetime(year=2024, month=1, day=1),
+        ),
+
+        "MISOdaily": Report(
+            url_builder=MISOMarketReportsURLBuilder(
+                target="MISOdaily",
+                supported_extensions=["xml"],
+                url_generator=MISOMarketReportsURLBuilder.url_generator_dddYYYY_last_but_as_nth_day_in_year_and_no_underscore,
+                default_extension="xml",
+            ),
+            type_to_parse="xml",
+            parser=ReportParsers.parse_MISOdaily,
+            example_url="https://docs.misoenergy.org/marketreports/MISOdaily3042024.xml",
+            example_datetime=datetime.datetime(year=2024, month=10, day=30),
+        ),
+        "MISOsamedaydemand": Report(
+            url_builder=MISOMarketReportsURLBuilder(
+                target="MISOsamedaydemand",
+                supported_extensions=["xml"],
+                url_generator=MISOMarketReportsURLBuilder.url_generator_no_date,
+                default_extension="xml",
+            ),
+            type_to_parse="xml",
+            parser=ReportParsers.parse_MISOsamedaydemand,
+            example_url="https://docs.misoenergy.org/marketreports/MISOsamedaydemand.xml",
+            example_datetime=datetime.datetime(year=2024, month=10, day=30),
         ),
     }
 

@@ -930,6 +930,77 @@ single_df_test_list = [
             ("MARKET_DAY",): numpy.dtypes.DateTime64DType,
         },
     ),
+    (
+        "dfal_HIST",
+        {
+            ("MTLF (MWh)", "ActualLoad (MWh)",): numpy.dtypes.Float64DType,
+            ("HourEnding",): pandas.core.arrays.integer.Int64Dtype,
+            ("LoadResource Zone",): pandas.core.arrays.string_.StringDtype,
+            ("MarketDay",): numpy.dtypes.DateTime64DType,
+        },
+    ),
+    (
+        "historical_gen_fuel_mix", 
+        {
+            ("DA Cleared UDS Generation", "[RT Generation State Estimator",): numpy.dtypes.Float64DType,
+            ("HourEnding",): pandas.core.arrays.integer.Int64Dtype,
+            ("Region", "Fuel Type",): pandas.core.arrays.string_.StringDtype,
+            ("Market Date",): numpy.dtypes.DateTime64DType,
+        },
+    ),
+    (
+        "hwd_HIST", 
+        {
+            ("MWh",): numpy.dtypes.Float64DType,
+            ("Hour Ending",): pandas.core.arrays.integer.Int64Dtype,
+            ("Market Day	",): numpy.dtypes.DateTime64DType,
+        },
+    ),
+    (
+        "sr_hist_is",
+        {
+            ("HE1", "HE2", "HE3", "HE4", "HE5", "HE6", "HE7", "HE8", "HE9", "HE10", "HE11", "HE12", "HE13", "HE14", "HE15", "HE16", "HE17", "HE18", "HE19", "HE20", "HE21", "HE22", "HE23", "HE24",): pandas.core.arrays.integer.Int64Dtype,
+            ("INTERFACE",): pandas.core.arrays.string_.StringDtype,
+            ("MKTDAY",): numpy.dtypes.DateTime64DType,
+        },
+    ),
+    (
+        "rfal_HIST", 
+        {
+            ("MTLF (MWh)", "Actual Load (MWh)",): numpy.dtypes.Float64DType,
+            ("HourEnding",): pandas.core.arrays.integer.Int64Dtype,
+            ("Region", "Footnote",): pandas.core.arrays.string_.StringDtype,
+            ("Market Day",): numpy.dtypes.DateTime64DType,
+        },
+    ),
+    (
+        "sr_lt",
+         {
+            ("Minimum (GW)", "Average (GW)", "Maximum (GW)",): numpy.dtypes.Float64DType,
+            ("Week Starting",): numpy.dtypes.DateTime64DType,
+        },
+    ),
+    (
+        "sr_la_rg",
+        {
+            ("10/24/2024 Thursday Peak Hour: HE  19 MTLF (GW)", "10/24/2024 Thursday Peak Hour: HE  19 Capacity on Outage (GW)", "10/25/2024 Friday   Peak Hour: HE  16 MTLF (GW)", "10/25/2024 Friday   Peak Hour: HE  16 Capacity on Outage (GW)", "10/26/2024 Saturday Peak Hour: HE  19 MTLF (GW)", "10/26/2024 Saturday Peak Hour: HE  19 Capacity on Outage (GW)", "10/27/2024 Sunday   Peak Hour: HE  19 MTLF (GW)", "10/27/2024 Sunday   Peak Hour: HE  19 Capacity on Outage (GW)", "10/28/2024 Monday   Peak Hour: HE  19 MTLF (GW)", "10/28/2024 Monday   Peak Hour: HE  19Capacity on Outage (GW)", "10/29/2024 Tuesday  Peak Hour: HE  19 MTLF (GW)", "10/29/2024 Tuesday  Peak Hour: HE  19 Capacity on Outage (GW)", "10/30/2024 WednesdayPeak Hour: HE  24 MTLF (GW)", "10/30/2024 WednesdayPeak Hour: HE  24 Capacity on Outage (GW)",): numpy.dtypes.Float64DType,
+            ("Hourend_EST", "Region",): pandas.core.arrays.string_.StringDtype,
+        },
+    ),
+    (
+        "sr_nd_is",
+        {
+            ("Hour", "GLHB", "IESO", "MHEB", "PJM", "SOCO", "SWPP", "TVA", "AECI", "LGEE", "Other", "Total",): pandas.core.arrays.integer.Int64Dtype,
+        },
+    ),
+    (
+        "sr_tcdc_group2",
+        {
+            ("BP1", "PC1", "BP2", "PC2",): numpy.dtypes.Float64DType,
+            ("ContingencyName", "ContingencyDescription", "BranchName", "CurveName", "Reason",): pandas.core.arrays.string_.StringDtype,
+            ("EffectiveTime", "TerminationTime",): numpy.dtypes.DateTime64DType,
+        },
+    ),
 ]
 
 

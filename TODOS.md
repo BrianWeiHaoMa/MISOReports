@@ -80,8 +80,8 @@ Brian
 EIA 
 William
 ```
-https://docs.misoenergy.org/marketreports/MISOdaily3042024.xml
-https://docs.misoenergy.org/marketreports/MISOsamedaydemand.xml
+    https://docs.misoenergy.org/marketreports/MISOdaily3042024.xml
+    https://docs.misoenergy.org/marketreports/MISOsamedaydemand.xml
 ```
 
 FTR
@@ -182,18 +182,18 @@ William
     https://docs.misoenergy.org/marketreports/20241020_sr_ctsl.pdf
     *https://docs.misoenergy.org/marketreports/20241030_df_al.xls
     *https://docs.misoenergy.org/marketreports/20241030_rf_al.xls
-https://docs.misoenergy.org/marketreports/20241030_sr_gfm.xlsx
-https://docs.misoenergy.org/marketreports/20241030_dfal_HIST.xls
-https://docs.misoenergy.org/marketreports/historical_gen_fuel_mix_2023.xlsx
-https://docs.misoenergy.org/marketreports/20241030_hwd_HIST.csv
-https://docs.misoenergy.org/marketreports/2024_sr_hist_is.csv
-https://docs.misoenergy.org/marketreports/20241030_rfal_HIST.xls
-https://docs.misoenergy.org/marketreports/20241028_sr_lt.xls
-https://docs.misoenergy.org/marketreports/20241024_sr_la_rg.csv
-https://docs.misoenergy.org/marketreports/20241020_mom.xlsx
-https://docs.misoenergy.org/marketreports/20241020_sr_nd_is.xls
-https://docs.misoenergy.org/marketreports/PeakHourOverview_03052022.csv
-https://docs.misoenergy.org/marketreports/2024_sr_tcdc_group2.csv
+    https://docs.misoenergy.org/marketreports/20241030_sr_gfm.xlsx
+    https://docs.misoenergy.org/marketreports/20241030_dfal_HIST.xls
+    https://docs.misoenergy.org/marketreports/historical_gen_fuel_mix_2023.xlsx
+    https://docs.misoenergy.org/marketreports/20241030_hwd_HIST.csv
+    https://docs.misoenergy.org/marketreports/2024_sr_hist_is.csv
+    https://docs.misoenergy.org/marketreports/20241030_rfal_HIST.xls
+    https://docs.misoenergy.org/marketreports/20241028_sr_lt.xls
+    https://docs.misoenergy.org/marketreports/20241024_sr_la_rg.csv
+    https://docs.misoenergy.org/marketreports/20241020_mom.xlsx
+    https://docs.misoenergy.org/marketreports/20241020_sr_nd_is.xls
+    https://docs.misoenergy.org/marketreports/PeakHourOverview_03052022.csv
+    https://docs.misoenergy.org/marketreports/2024_sr_tcdc_group2.csv
 ```
 
 ## NotImplemented tasks
