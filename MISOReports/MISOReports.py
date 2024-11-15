@@ -11,6 +11,7 @@ import pandas as pd, pandas
 import numpy as np, numpy
 from dateutil.relativedelta import relativedelta
 from collections import defaultdict
+import tabula
 
 
 MULTI_DF_NAMES_COLUMN = "names"
@@ -2385,7 +2386,59 @@ class MISOReports:
         def parse_sr_ctsl(
             res: requests.Response,
         ) -> pd.DataFrame:
-            raise NotImplementedError("Data in pdf format.")
+            def merge_adjacent_rows(df):
+                rows_to_drop = []
+                i = 0
+
+                while i < len(df) - 1:
+                    if pd.isna(df.iloc[i, 0]) and not pd.isna(df.iloc[i + 1, 0]):
+                        df.iloc[i, 0] = df.iloc[i + 1, 0]
+                        df.iloc[i, 1:] = df.iloc[i, 1:].combine_first(df.iloc[i + 1, 1:])
+                        rows_to_drop.append(i + 1)
+
+                    i += 1
+                
+                df.drop(rows_to_drop, inplace=True)
+                df.reset_index(drop=True, inplace=True)
+                return df
+            
+            y1, x1, y2, x2 = 14, 0, 34, 100
+            tables = tabula.read_pdf(
+                input_path=io.BytesIO(res.content),
+                stream=True,
+                pages=1,
+                multiple_tables=True,
+                relative_area=True,
+                area=[
+                    [y1, x1, y2 + 14, x2], 
+                    [y2 + y1, x1, 88, x2]
+                ],
+                relative_columns=True,
+                columns=[30, 36, 41, 47, 52, 58, 63, 69, 74, 80, 85, 91, 98],
+            )
+
+            df_names = []
+            dfs = []
+
+            for table in tables:
+                df = merge_adjacent_rows(table)
+
+                year = df.columns[-1].split()[-1]
+
+                df[["Cost Paid by Load (Hourly Avg per Month)"]] = df[["Cost Paid by Load (Hourly Avg per Month)"]].astype(pandas.core.arrays.string_.StringDtype())
+                df[[f"Jan {year}", f"Feb {year}", f"Mar {year}", f"Apr {year}", f"May {year}", f"Jun {year}", f"Jul {year}", f"Aug {year}", f"Sep {year}", f"Oct {year}", f"Nov {year}", f"Dec {year}"]] = df[[f"Jan {year}", f"Feb {year}", f"Mar {year}", f"Apr {year}", f"May {year}", f"Jun {year}", f"Jul {year}", f"Aug {year}", f"Sep {year}", f"Oct {year}", f"Nov {year}", f"Dec {year}"]].replace(r'[\$,()]', '', regex=True).astype(numpy.dtypes.Float64DType())
+
+                dfs.append(df)
+                df_names.append(f"Cost Paid by Load - {year}")
+
+            
+            df = pd.DataFrame(data={
+                MULTI_DF_NAMES_COLUMN: df_names, 
+                MULTI_DF_DFS_COLUMN: dfs,
+            })
+            
+            return df
+
 
         @staticmethod
         def parse_df_al(
