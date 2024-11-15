@@ -177,6 +177,7 @@ class MISOMarketReportsURLBuilder(URLBuilder):
         """
         increment_mappings: dict[Callable[[datetime.datetime | None, str], str], relativedelta] = {
             MISOMarketReportsURLBuilder.url_generator_YYYY_current_month_name_to_two_months_later_name_first: relativedelta(months=3),
+            MISOMarketReportsURLBuilder.url_generator_YYYY_underscore_current_month_name_to_two_months_later_name_first: relativedelta(months=3),
             MISOMarketReportsURLBuilder.url_generator_YYYYmmdd_first: relativedelta(days=1),
             MISOMarketReportsURLBuilder.url_generator_YYYYmm_first: relativedelta(months=1),
             MISOMarketReportsURLBuilder.url_generator_YYYY_first: relativedelta(years=1),
@@ -564,7 +565,77 @@ class MISOReports:
         def parse_rt_pr(
             res: requests.Response,
         ) -> pd.DataFrame:
-            raise NotImplementedError("Result has an atypical format.")
+            df1 = pd.read_excel(
+                io=io.BytesIO(res.content),
+                skiprows=6,
+                nrows=1,
+            )
+            df1.rename(columns={df1.columns[0]: "Type"}, inplace=True)
+            df1.drop(labels=df1.columns[4:], axis=1, inplace=True)
+            df1[["Type"]] = df1[["Type"]].astype(pandas.core.arrays.string_.StringDtype())
+            df1[["Demand", "Supply", "Total"]] = df1[["Demand", "Supply", "Total"]].astype(numpy.dtypes.Float64DType())
+
+            df2 = pd.read_excel(
+                io=io.BytesIO(res.content),
+                skiprows=8,
+                nrows=2,
+            )
+            df2.rename(columns={df2.columns[0]: "Type"}, inplace=True)
+            df2.drop(labels=df2.columns[4:], axis=1, inplace=True)
+            df2[["Type"]] = df2[["Type"]].astype(pandas.core.arrays.string_.StringDtype())
+            df2[["Demand", "Supply", "Total"]] = df2[["Demand", "Supply", "Total"]].astype(numpy.dtypes.Float64DType())
+
+            df3 = pd.read_excel(
+                io=io.BytesIO(res.content),
+                skiprows=11,
+                nrows=24,
+            )
+            shared_column_names = list(df3.columns)[1:]
+
+            df3.rename(columns={df3.columns[0]: "Hour"}, inplace=True)
+            df3[["Hour"]] = df3[["Hour"]].replace('[^\\d]+', '', regex=True).astype(pandas.core.arrays.integer.Int64Dtype())
+            df3[shared_column_names] = df3[shared_column_names].astype(numpy.dtypes.Float64DType())            
+
+            df4 = pd.read_excel(
+                io=io.BytesIO(res.content),
+                skiprows=36,
+                nrows=3,
+                names=["Around the Clock"] + shared_column_names,
+            )
+
+            df5 = pd.read_excel(
+                io=io.BytesIO(res.content),
+                skiprows=40,
+                nrows=3,
+                names=["On-Peak"] + shared_column_names,
+            )
+
+            df6 = pd.read_excel(
+                io=io.BytesIO(res.content),
+                skiprows=44,
+                nrows=3,
+                names=["Off-Peak"] + shared_column_names,
+            )
+
+            bottom_dfs = [df4, df5, df6]
+            for i in range(len(bottom_dfs)):
+                first_column = bottom_dfs[i].columns[0]
+                bottom_dfs[i][[first_column]] = bottom_dfs[i][[first_column]].astype(pandas.core.arrays.string_.StringDtype())
+                bottom_dfs[i][shared_column_names] = bottom_dfs[i][shared_column_names].astype(numpy.dtypes.Float64DType())
+
+            # No names written for any of the tables in the report.
+            df = pd.DataFrame({
+                MULTI_DF_NAMES_COLUMN: [
+                        f"Table {i}" for i in range(1, 7)
+                ], 
+                MULTI_DF_DFS_COLUMN: [
+                        df1, 
+                        df2, 
+                        df3,
+                ] + bottom_dfs,
+            })
+
+            return df
 
         @staticmethod
         def parse_rt_irsf(
@@ -750,7 +821,39 @@ class MISOReports:
         def parse_ms_vlr_srw(
             res: requests.Response,
         ) -> pd.DataFrame:
-            raise NotImplementedError("Result contains 2 csv tables.")
+            float_columns = ["DA VLR RSG MWP", "RT VLR RSG MWP", "DA+RT Total"]
+            string_columns = ["Constraint"]
+            column_names = string_columns + float_columns
+
+            df1 = pd.read_excel(
+                io=io.BytesIO(res.content),
+                skiprows=7,
+                nrows=3,
+                usecols=column_names,
+            )
+            df1[float_columns] = df1[float_columns].astype(numpy.dtypes.Float64DType())
+            df1[string_columns] = df1[string_columns].astype(pandas.core.arrays.string_.StringDtype())
+
+            df2 = pd.read_excel(
+                io=io.BytesIO(res.content),
+                skiprows=15,
+                nrows=7,
+                usecols=column_names,
+            )
+            df2[float_columns] = df2[float_columns].astype(numpy.dtypes.Float64DType())
+            df2[string_columns] = df2[string_columns].astype(pandas.core.arrays.string_.StringDtype())
+
+            df = pd.DataFrame({
+                MULTI_DF_NAMES_COLUMN: [
+                        f"Table {i}" for i in range(1, 3)
+                ], 
+                MULTI_DF_DFS_COLUMN: [
+                        df1, 
+                        df2, 
+                ],
+            })
+
+            return df
 
         @staticmethod
         def parse_ms_rsg_srw(
@@ -900,7 +1003,63 @@ class MISOReports:
         def parse_Daily_Uplift_by_Local_Resource_Zone(
             res: requests.Response,
         ) -> pd.DataFrame:
-            raise NotImplementedError("Result contains 10 csv tables.")
+            df0 = pd.read_excel(
+                io=io.BytesIO(res.content),
+                skiprows=9,
+                nrows=1,
+            )
+
+            month_string = df0.iloc[0, 0]
+            year_string = df0.iloc[0, 1]
+            
+            if type(year_string) == str and type(month_string) == str:
+                year_string = year_string[-4:]
+            else:
+                raise ValueError("Unexpected: year_string or month_string is not a string.")
+            
+            date_string = f"{month_string} {year_string}"
+            month_days = pd.Period(date_string, freq='M').days_in_month
+            n_rows = month_days + 1
+            
+            def parse_report_part(skiprows: int) -> pd.DataFrame:
+                df = pd.read_excel(
+                    io=io.BytesIO(res.content),
+                    skiprows=skiprows,
+                    nrows=n_rows,
+                )
+                df.rename(columns={df.columns[1]: "Date"}, inplace=True)
+                df.drop(labels=df.columns[0], axis=1, inplace=True)
+
+                df[["Date"]] = df[["Date"]].astype(pandas.core.arrays.string_.StringDtype())
+                df[["Day Ahead Capacity", "Day Ahead VLR", "Real Time Capacity", "Real Time VLR", "Real Time Transmission Reliability", "Price Volatility Make Whole Payments\n"]] = df[["Day Ahead Capacity", "Day Ahead VLR", "Real Time Capacity", "Real Time VLR", "Real Time Transmission Reliability", "Price Volatility Make Whole Payments\n"]].astype(numpy.dtypes.Float64DType())
+
+                return df
+
+            dfs = [] # There should be 10 dfs.
+
+            for i in range(10):
+                df = parse_report_part(9 + (4 + n_rows) * i)
+                dfs.append(df)
+
+            table_names = [
+                "LRZ 1",
+                "LRZ 10",
+                "LRZ 2",
+                "LRZ 3",
+                "LRZ 4",
+                "LRZ 5",
+                "LRZ 6",
+                "LRZ 7",
+                "LRZ 8",
+                "LRZ 9",
+            ]
+
+            df = pd.DataFrame({
+                MULTI_DF_NAMES_COLUMN: table_names, 
+                MULTI_DF_DFS_COLUMN: dfs,
+            })
+
+            return df
 
         @staticmethod
         def parse_fuelmix(
@@ -1317,7 +1476,48 @@ class MISOReports:
         def parse_totalload(
             res: requests.Response,
         ) -> pd.DataFrame:
-            raise NotImplementedError("Result contains 3 csv tables.")
+            text = res.text
+
+            table_1 = "ClearedMW"
+            df1 = pd.read_csv(
+                filepath_or_buffer=io.StringIO(text),
+                skiprows=3,
+                nrows=24,
+            )
+            df1[["Load_Hour"]] = df1[["Load_Hour"]].astype(pandas.core.arrays.integer.Int64Dtype())
+            df1[["Load_Value"]] = df1[["Load_Value"]].astype(numpy.dtypes.Float64DType())
+
+            table_2 = "MediumTermLoadForecast"
+            df2 = pd.read_csv(
+                filepath_or_buffer=io.StringIO(text),
+                skiprows=29,
+                nrows=24,
+            )
+            df2[["Hour_End"]] = df2[["Hour_End"]].astype(pandas.core.arrays.integer.Int64Dtype())
+            df2[["Load_Forecast"]] = df2[["Load_Forecast"]].astype(numpy.dtypes.Float64DType())
+
+            table_3 = "FiveMinTotalLoad"
+            df3 = pd.read_csv(
+                filepath_or_buffer=io.StringIO(text),
+                skiprows=55,
+            )
+            df3[["Load_Time"]] = df3[["Load_Time"]].apply(pd.to_datetime, format="%H:%M")
+            df3[["Load_Value"]] = df3[["Load_Value"]].astype(numpy.dtypes.Float64DType())
+
+            df = pd.DataFrame({
+                MULTI_DF_NAMES_COLUMN: [
+                    table_1,
+                    table_2,
+                    table_3,
+                ],
+                MULTI_DF_DFS_COLUMN: [
+                    df1,
+                    df2,
+                    df3,
+                ],
+            })
+
+            return df
         
         @staticmethod
         def parse_RSG(
@@ -1546,7 +1746,39 @@ class MISOReports:
         def parse_asm_exante_damcp(
             res: requests.Response,
         ) -> pd.DataFrame:
-            raise NotImplementedError("Result contains 2 csv tables.")
+            text = res.text
+
+            second_table_start_idx = text.index("Pnode,Zone,MCP Type")
+
+            table_1 = "Table 1"
+            df1 = pd.read_csv(
+                filepath_or_buffer=io.StringIO(text[:second_table_start_idx]),
+                skiprows=4,
+                nrows=24,
+            )
+            hours = [" HE 1"] + [f"HE {i}" for i in range(2, 25)]
+            df1[hours] = df1[hours].astype(numpy.dtypes.Float64DType())
+            df1[df1.columns[:3]] = df1[df1.columns[:3]].astype(pandas.core.arrays.string_.StringDtype())
+
+            table_2 = "Table 2"
+            df2 = pd.read_csv(
+                filepath_or_buffer=io.StringIO(text[second_table_start_idx:]),
+            )
+            df2[hours] = df2[hours].astype(numpy.dtypes.Float64DType())
+            df2[["Pnode", "Zone", "MCP Type"]] = df2[["Pnode", "Zone", "MCP Type"]].astype(pandas.core.arrays.string_.StringDtype())
+
+            df = pd.DataFrame({
+                MULTI_DF_NAMES_COLUMN: [
+                    table_1,
+                    table_2,
+                ],
+                MULTI_DF_DFS_COLUMN: [
+                    df1,
+                    df2,
+                ],
+            })
+
+            return df
         
         @staticmethod
         def parse_ftr_allocation_restoration(

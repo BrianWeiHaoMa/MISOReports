@@ -82,6 +82,30 @@ def datetime_increment_limit(request):
     return request.config.getoption("--datetime-increments-limit")
 
 
+def test_MISOMarketReportsURLBuilder_add_to_datetime_has_an_increment_mapping_for_all_url_generators():
+    url_generators = []
+    for func_str in dir(MISOMarketReportsURLBuilder):
+        func = getattr(MISOMarketReportsURLBuilder, func_str)
+        if callable(func) and func_str.startswith("url_generator_"):
+            url_generators.append(func)
+    
+    dummy_datetime = datetime.datetime.now()
+    for url_generator in url_generators:
+        obj = MISOMarketReportsURLBuilder(
+            target="test",
+            supported_extensions=["csv"],
+            url_generator=url_generator,
+        )
+
+        try:
+            obj.add_to_datetime(
+                ddatetime=dummy_datetime, 
+                direction=1,
+            )
+        except ValueError as e:
+            raise AssertionError(f"{url_generator}: {e}")
+
+
 @pytest.mark.parametrize(
     "target, supported_extensions, file_extension, expected", [
         ("getapiversion", ["json"], "json", "https://api.misoenergy.org/MISORTWDDataBroker/DataBrokerServices.asmx?messageType=getapiversion&returnType=json"),
@@ -1310,6 +1334,123 @@ multiple_dfs_test_list = [
                 ("Jan 2023", "Feb 2023", "Mar 2023", "Apr 2023", "May 2023", "Jun 2023", "Jul 2023", "Aug 2023", "Sep 2023", "Oct 2023", "Nov 2023", "Dec 2023",): numpy.dtypes.Float64DType,    
                 ("Cost Paid by Load (Hourly Avg per Month)",): pandas.core.arrays.string_.StringDtype,
             },
+        }
+    ),
+    (
+        "rt_pr",
+        {
+            "Table 1": {
+                ("Demand", "Supply", "Total",): numpy.dtypes.Float64DType,
+                ("Type",): pandas.core.arrays.string_.StringDtype,
+            },
+            "Table 2": {
+                ("Demand", "Supply", "Total",): numpy.dtypes.Float64DType,
+                ("Type",): pandas.core.arrays.string_.StringDtype,
+            },
+            "Table 3": {
+                ("MISO System", "Illinois Hub", "Michigan Hub", "Minnesota Hub", "Indiana Hub", "Arkansas Hub", "Louisiana Hub", "Texas Hub", "MS.HUB",): numpy.dtypes.Float64DType,
+                ("Hour",): pandas.core.arrays.integer.Int64Dtype,
+            },
+            "Table 4": {
+                ("MISO System", "Illinois Hub", "Michigan Hub", "Minnesota Hub", "Indiana Hub", "Arkansas Hub", "Louisiana Hub", "Texas Hub", "MS.HUB",): numpy.dtypes.Float64DType,
+                ("Around the Clock",): pandas.core.arrays.string_.StringDtype,
+            },
+            "Table 5": {
+                ("MISO System", "Illinois Hub", "Michigan Hub", "Minnesota Hub", "Indiana Hub", "Arkansas Hub", "Louisiana Hub", "Texas Hub", "MS.HUB",): numpy.dtypes.Float64DType,
+                ("On-Peak",): pandas.core.arrays.string_.StringDtype,  
+            },
+            "Table 6": {
+                ("MISO System", "Illinois Hub", "Michigan Hub", "Minnesota Hub", "Indiana Hub", "Arkansas Hub", "Louisiana Hub", "Texas Hub", "MS.HUB",): numpy.dtypes.Float64DType,
+                ("Off-Peak",): pandas.core.arrays.string_.StringDtype, 
+            }
+        },
+    ),
+    (
+        "ms_vlr_srw",
+        {
+            "Table 1": {
+                ("DA VLR RSG MWP", "RT VLR RSG MWP", "DA+RT Total",): numpy.dtypes.Float64DType,
+                ("Constraint",): pandas.core.arrays.string_.StringDtype,
+            },
+            "Table 2": {
+                ("DA VLR RSG MWP", "RT VLR RSG MWP", "DA+RT Total",): numpy.dtypes.Float64DType,
+                ("Constraint",): pandas.core.arrays.string_.StringDtype,
+            }
+        },
+    ),
+    (
+        "Daily_Uplift_by_Local_Resource_Zone",
+        {
+            "LRZ 1": {
+                ("Day Ahead Capacity", "Day Ahead VLR", "Real Time Capacity", "Real Time VLR", "Real Time Transmission Reliability", "Price Volatility Make Whole Payments\n",): numpy.dtypes.Float64DType,
+                ("Date",): pandas.core.arrays.string_.StringDtype,
+            },
+            "LRZ 10": {
+                ("Day Ahead Capacity", "Day Ahead VLR", "Real Time Capacity", "Real Time VLR", "Real Time Transmission Reliability", "Price Volatility Make Whole Payments\n",): numpy.dtypes.Float64DType,
+                ("Date",): pandas.core.arrays.string_.StringDtype,
+            },
+            "LRZ 2": {
+                ("Day Ahead Capacity", "Day Ahead VLR", "Real Time Capacity", "Real Time VLR", "Real Time Transmission Reliability", "Price Volatility Make Whole Payments\n",): numpy.dtypes.Float64DType,
+                ("Date",): pandas.core.arrays.string_.StringDtype,
+            },
+            "LRZ 3": {
+                ("Day Ahead Capacity", "Day Ahead VLR", "Real Time Capacity", "Real Time VLR", "Real Time Transmission Reliability", "Price Volatility Make Whole Payments\n",): numpy.dtypes.Float64DType,
+                ("Date",): pandas.core.arrays.string_.StringDtype,
+            },
+            "LRZ 4": {
+                ("Day Ahead Capacity", "Day Ahead VLR", "Real Time Capacity", "Real Time VLR", "Real Time Transmission Reliability", "Price Volatility Make Whole Payments\n",): numpy.dtypes.Float64DType,
+                ("Date",): pandas.core.arrays.string_.StringDtype,
+            },
+            "LRZ 5": {
+                ("Day Ahead Capacity", "Day Ahead VLR", "Real Time Capacity", "Real Time VLR", "Real Time Transmission Reliability", "Price Volatility Make Whole Payments\n",): numpy.dtypes.Float64DType,
+                ("Date",): pandas.core.arrays.string_.StringDtype,
+            },
+            "LRZ 6": {
+                ("Day Ahead Capacity", "Day Ahead VLR", "Real Time Capacity", "Real Time VLR", "Real Time Transmission Reliability", "Price Volatility Make Whole Payments\n",): numpy.dtypes.Float64DType,
+                ("Date",): pandas.core.arrays.string_.StringDtype,
+            },
+            "LRZ 7": {
+                ("Day Ahead Capacity", "Day Ahead VLR", "Real Time Capacity", "Real Time VLR", "Real Time Transmission Reliability", "Price Volatility Make Whole Payments\n",): numpy.dtypes.Float64DType,
+                ("Date",): pandas.core.arrays.string_.StringDtype,
+            },
+            "LRZ 8": {
+                ("Day Ahead Capacity", "Day Ahead VLR", "Real Time Capacity", "Real Time VLR", "Real Time Transmission Reliability", "Price Volatility Make Whole Payments\n",): numpy.dtypes.Float64DType,
+                ("Date",): pandas.core.arrays.string_.StringDtype,
+            },
+            "LRZ 9": {
+                ("Day Ahead Capacity", "Day Ahead VLR", "Real Time Capacity", "Real Time VLR", "Real Time Transmission Reliability", "Price Volatility Make Whole Payments\n",): numpy.dtypes.Float64DType,
+                ("Date",): pandas.core.arrays.string_.StringDtype,
+            },
+        },
+    ),
+    (
+        "totalload",
+        {
+           "ClearedMW": {
+               	("Load_Value",): numpy.dtypes.Float64DType,
+                ("Load_Hour",): pandas.core.arrays.integer.Int64Dtype,
+           },
+           "MediumTermLoadForecast": {
+               	("Load_Forecast",): numpy.dtypes.Float64DType,
+                ("Hour_End",): pandas.core.arrays.integer.Int64Dtype,
+           },
+           "FiveMinTotalLoad": {
+               	("Load_Value",): numpy.dtypes.Float64DType,
+                ("Load_Time",): numpy.dtypes.DateTime64DType,
+           }
+        }
+    ),
+    (
+        "asm_exante_damcp",
+        {
+           "Table 1": {
+                (" HE 1", "HE 2", "HE 3", "HE 4", "HE 5", "HE 6", "HE 7", "HE 8", "HE 9", "HE 10", "HE 11", "HE 12", "HE 13", "HE 14", "HE 15", "HE 16", "HE 17", "HE 18", "HE 19", "HE 20", "HE 21", "HE 22", "HE 23", "HE 24",): numpy.dtypes.Float64DType,
+                ("Unnamed: 0", "Unnamed: 1", "MCP Type",): pandas.core.arrays.string_.StringDtype,
+           },
+           "Table 2": {
+                (" HE 1", "HE 2", "HE 3", "HE 4", "HE 5", "HE 6", "HE 7", "HE 8", "HE 9", "HE 10", "HE 11", "HE 12", "HE 13", "HE 14", "HE 15", "HE 16", "HE 17", "HE 18", "HE 19", "HE 20", "HE 21", "HE 22", "HE 23", "HE 24",): numpy.dtypes.Float64DType,
+                ("Pnode", "Zone", "MCP Type",): pandas.core.arrays.string_.StringDtype,
+           },
         }
     ),
 ]
