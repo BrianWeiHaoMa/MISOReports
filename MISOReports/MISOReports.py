@@ -184,6 +184,8 @@ class MISOMarketReportsURLBuilder(URLBuilder):
             MISOMarketReportsURLBuilder.url_generator_YYYY_mm_dd_last: relativedelta(days=1),
             MISOMarketReportsURLBuilder.url_generator_YYYY_last: relativedelta(years=1),
             MISOMarketReportsURLBuilder.url_generator_no_date: relativedelta(days=0),
+            MISOMarketReportsURLBuilder.url_generator_mmddYYYY_last: relativedelta(days=1),
+            MISOMarketReportsURLBuilder.url_generator_dddYYYY_last_but_as_nth_day_in_year_and_no_underscore: relativedelta(days=1),
         }
 
         if self.url_generator not in increment_mappings.keys():
