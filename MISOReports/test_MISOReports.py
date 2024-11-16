@@ -10,8 +10,10 @@ from MISOReports.MISOReports import (
     MISORTWDBIReporterURLBuilder,
     MISOMarketReportsURLBuilder,
     MISOReports,
-    MULTI_DF_NAMES_COLUMN,
+)
+from MISOReports.parsers import (
     MULTI_DF_DFS_COLUMN,
+    MULTI_DF_NAMES_COLUMN,
 )
 
 
@@ -1055,6 +1057,69 @@ def test_get_df_single_df_correct_columns(report_name, columns_mapping, datetime
 
 
 multiple_dfs_test_list = [
+    (
+        "ftr_allocation_stage_1B",
+        {
+            "Fall": {
+                ("Limit", "Flow", "Violation",): numpy.dtypes.Float64DType,
+                ("DeviceName", "DeviceType", "ControlArea", "Direction", "Description", "Contingency", "Class", "Stage",): pandas.core.arrays.string_.StringDtype,
+            },
+            "Spring": {
+                ("Limit", "Flow", "Violation",): numpy.dtypes.Float64DType,
+                ("DeviceName", "DeviceType", "ControlArea", "Direction", "Description", "Contingency", "Class", "Stage",): pandas.core.arrays.string_.StringDtype,
+            },
+            "Summer": {
+                ("Limit", "Flow", "Violation",): numpy.dtypes.Float64DType,
+                ("DeviceName", "DeviceType", "ControlArea", "Direction", "Description", "Contingency", "Class", "Stage",): pandas.core.arrays.string_.StringDtype,
+            },
+            "Winter": {
+                ("Limit", "Flow", "Violation",): numpy.dtypes.Float64DType,
+                ("DeviceName", "DeviceType", "ControlArea", "Direction", "Description", "Contingency", "Class", "Stage",): pandas.core.arrays.string_.StringDtype,
+            }
+        },
+    ),
+    (
+        "ftr_allocation_stage_1A",
+        {
+            "Fall": {
+                ("Limit", "Flow", "Violation",): numpy.dtypes.Float64DType,
+                ("DeviceName", "DeviceType", "ControlArea", "Direction", "Description", "Contingency", "Class", "Stage",): pandas.core.arrays.string_.StringDtype,
+            },
+            "Spring": {
+                ("Limit", "Flow", "Violation",): numpy.dtypes.Float64DType,
+                ("DeviceName", "DeviceType", "ControlArea", "Direction", "Description", "Contingency", "Class", "Stage",): pandas.core.arrays.string_.StringDtype,
+            },
+            "Summer": {
+                ("Limit", "Flow", "Violation",): numpy.dtypes.Float64DType,
+                ("DeviceName", "DeviceType", "ControlArea", "Direction", "Description", "Contingency", "Class", "Stage",): pandas.core.arrays.string_.StringDtype,
+            },
+            "Winter": {
+                ("Limit", "Flow", "Violation",): numpy.dtypes.Float64DType,
+                ("DeviceName", "DeviceType", "ControlArea", "Direction", "Description", "Contingency", "Class", "Stage",): pandas.core.arrays.string_.StringDtype,
+            }
+        },
+    ),
+    (
+        "ftr_allocation_restoration",
+        {
+            "Fall": {
+                ("Limit", "Flow", "Violation",): numpy.dtypes.Float64DType,
+                ("DeviceName", "DeviceType", "ControlArea", "Direction", "Description", "Contingency", "Class", "Stage",): pandas.core.arrays.string_.StringDtype,
+            },
+            "Spring": {
+                ("Limit", "Flow", "Violation",): numpy.dtypes.Float64DType,
+                ("DeviceName", "DeviceType", "ControlArea", "Direction", "Description", "Contingency", "Class", "Stage",): pandas.core.arrays.string_.StringDtype,
+            },
+            "Summer": {
+                ("Limit", "Flow", "Violation",): numpy.dtypes.Float64DType,
+                ("DeviceName", "DeviceType", "ControlArea", "Direction", "Description", "Contingency", "Class", "Stage",): pandas.core.arrays.string_.StringDtype,
+            },
+            "Winter": {
+                ("Limit", "Flow", "Violation",): numpy.dtypes.Float64DType,
+                ("DeviceName", "DeviceType", "ControlArea", "Direction", "Description", "Contingency", "Class", "Stage",): pandas.core.arrays.string_.StringDtype,
+            }
+        },
+    ),
     (
         "AncillaryServicesMCP",
         {

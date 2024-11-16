@@ -8,6 +8,8 @@ import numpy as np
 
 from MISOReports.MISOReports import (
     MISOReports,
+)
+from MISOReports.parsers import (
     MULTI_DF_NAMES_COLUMN,
     MULTI_DF_DFS_COLUMN,
 )
