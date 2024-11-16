@@ -245,6 +245,22 @@ def test_get_df_every_report_example_url_returns_non_empty_df(datetime_increment
 
 single_df_test_list = [
     (
+        "MISOdaily", 
+        {
+            ("PostedValue", "Hour", "UTCOffset",): pandas.core.arrays.integer.Int64Dtype,
+            ("Data_Code", "Data_Type", "PostingType",): pandas.core.arrays.string_.StringDtype,
+            ("Data_Date",): numpy.dtypes.DateTime64DType,
+        }
+    ),
+    (
+        "currentinterval", 
+        {
+            ("LMP", "MLC", "MCC",): numpy.dtypes.Float64DType,
+            ("CPNODE",): pandas.core.arrays.string_.StringDtype,
+            ("INTERVAL",): numpy.dtypes.DateTime64DType,
+        }
+    ),
+    (
         "rt_bc_HIST", 
         {
             ("Preliminary Shadow Price", "BP1", "PC1", "BP2", "PC2",): numpy.dtypes.Float64DType,

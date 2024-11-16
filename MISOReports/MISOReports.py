@@ -5,6 +5,7 @@ import datetime
 import json
 import zipfile
 import io
+from xml.etree import ElementTree as ET
 
 import requests
 import pandas as pd, pandas
@@ -357,6 +358,22 @@ class MISOReports:
         :raises NotImplementedError: The parsing for the report has not 
             been implemented due to design decisions.
         """
+        @staticmethod
+        def parse_currentinterval(
+            res: requests.Response,
+        ) -> pd.DataFrame:
+            text = res.text
+
+            df = pd.read_csv(
+                filepath_or_buffer=io.StringIO(text),   
+            )
+
+            df[["LMP", "MLC", "MCC"]] = df[["LMP", "MLC", "MCC"]].astype(numpy.dtypes.Float64DType())
+            df[["INTERVAL"]] = df[["INTERVAL"]].apply(pd.to_datetime, format="%Y-%m-%dT%H:%M:%S")
+            df[["CPNODE"]] = df[["CPNODE"]].astype(pandas.core.arrays.string_.StringDtype())
+
+            return df
+
         @staticmethod
         def parse_rt_bc_HIST(
             res: requests.Response,
@@ -2950,7 +2967,46 @@ class MISOReports:
         def parse_MISOdaily(
             res: requests.Response,
         ) -> pd.DataFrame:
-            raise NotImplementedError("Parsing of this report is not yet implemented.")
+            text = res.text
+                        
+            element_tree = ET.fromstring(text)
+            product = element_tree.find("Product")
+            account_header = product.find("AccountHeader") # type: ignore
+            posting_headers = account_header.findall("PostingHeader") # type: ignore
+
+            data_elements: list[ET.Element] = []
+            for posting_header in posting_headers:
+                if posting_header.find("HourlyIndicatedValue") is not None:
+                    data_elements.append(posting_header)
+            
+            data_element_columns = [tag for (tag, text) in data_elements[0].find("HourlyIndicatedValue").items()] # type: ignore
+            partial_dfs = []
+            for element in data_elements:
+                outer_mappings = {tag: text for (tag, text) in element.items()}
+                
+                inner_data = {tag: [] for tag in data_element_columns} # type: ignore
+
+                inner_elements = element.findall("HourlyIndicatedValue")
+                for inner_element in inner_elements:
+                    for tag, text in inner_element.items():
+                        inner_data[tag].append(text)
+
+                partial_df = pd.DataFrame(inner_data)
+                for key, value in outer_mappings.items():
+                    if key in partial_df.columns:
+                        raise ValueError(f"Key {key} already exists in the DataFrame.")
+                    
+                    partial_df[key] = value
+                
+                partial_dfs.append(partial_df)
+
+            df = pd.concat(partial_dfs, ignore_index=True)
+
+            df[["PostedValue", "Hour", "UTCOffset"]] = df[["PostedValue", "Hour", "UTCOffset"]].astype(pandas.core.arrays.integer.Int64Dtype())
+            df[["Data_Date"]] = df[["Data_Date"]].apply(pd.to_datetime, format="%j%Y")
+            df[["Data_Code", "Data_Type", "PostingType"]] = df[["Data_Code", "Data_Type", "PostingType"]].astype(pandas.core.arrays.string_.StringDtype())
+
+            return df
         
         @staticmethod
         def parse_MISOsamedaydemand(
@@ -4502,6 +4558,17 @@ class MISOReports:
             type_to_parse="xml",
             parser=ReportParsers.parse_MISOsamedaydemand,
             example_url="https://docs.misoenergy.org/marketreports/MISOsamedaydemand.xml",
+            example_datetime=datetime.datetime(year=2024, month=10, day=30),
+        ),
+        "currentinterval": Report(
+            url_builder=MISORTWDBIReporterURLBuilder(
+                target="currentinterval",
+                supported_extensions=["csv"],
+                default_extension="csv",
+            ),
+            type_to_parse="csv",
+            parser=ReportParsers.parse_currentinterval,
+            example_url="https://api.misoenergy.org/MISORTWDBIReporter/Reporter.asmx?messageType=currentinterval&returnType=csv",
             example_datetime=datetime.datetime(year=2024, month=10, day=30),
         ),
     }
