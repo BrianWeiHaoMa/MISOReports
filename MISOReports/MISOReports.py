@@ -2712,6 +2712,7 @@ class MISOReports:
 
             df = pd.read_csv(
                 filepath_or_buffer=io.StringIO(csv_data),
+                low_memory=False,
             )
 
             df["Shadow Price"] = df["Shadow Price"].replace(r'[\$,()]', '', regex=True)
