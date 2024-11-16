@@ -1613,6 +1613,43 @@ multiple_dfs_test_list = [
            },
         }
     ),
+    (
+        "sr_gfm",
+        {
+           "RT Generation Fuel Mix Central": {
+                ("Coal", "Gas", "Nuclear", "Hydro", "Wind", "Solar", "Other", "Storage", "Total MW",): numpy.dtypes.Float64DType,
+	            ("Market Hour Ending",): pandas.core.arrays.string_.StringDtype,
+           },
+           "RT Generation Fuel Mix North": {
+                ("Coal", "Gas", "Nuclear", "Hydro", "Wind", "Solar", "Other", "Storage", "Total MW",): numpy.dtypes.Float64DType,
+	            ("Market Hour Ending",): pandas.core.arrays.string_.StringDtype,
+           },
+           "RT Generation Fuel Mix South": {
+                ("Coal", "Gas", "Nuclear", "Hydro", "Wind", "Solar", "Other", "Total MW",): numpy.dtypes.Float64DType,
+	            ("Market Hour Ending",): pandas.core.arrays.string_.StringDtype,
+           },
+           "RT Generation Fuel Mix Totals": {
+                ("Coal", "Gas", "Nuclear", "Hydro", "Wind", "Solar", "Other", "Storage", "MISO",): numpy.dtypes.Float64DType,
+	            ("Market Hour Ending",): pandas.core.arrays.string_.StringDtype,
+           },
+           "DA Cleared Generation Fuel Mix Central": {
+                ("Coal", "Gas", "Nuclear", "Hydro", "Wind", "Solar", "Other", "Storage", "Total MW",): numpy.dtypes.Float64DType,
+	            ("Market Hour Ending",): pandas.core.arrays.string_.StringDtype,
+           },
+           "DA Cleared Generation Fuel Mix North": {
+                ("Coal", "Gas", "Nuclear", "Hydro", "Wind", "Solar", "Other", "Storage", "Total MW",): numpy.dtypes.Float64DType,
+	            ("Market Hour Ending",): pandas.core.arrays.string_.StringDtype,
+           },
+           "DA Cleared Generation Fuel Mix South": {
+                ("Coal", "Gas", "Nuclear", "Hydro", "Wind", "Solar", "Other", "Total MW",): numpy.dtypes.Float64DType,
+	            ("Market Hour Ending",): pandas.core.arrays.string_.StringDtype,
+           },
+           "DA Cleared Generation Fuel Mix Totals": {
+                ("Coal", "Gas", "Nuclear", "Hydro", "Wind", "Solar", "Other", "Storage", "MISO",): numpy.dtypes.Float64DType,
+	            ("Market Hour Ending",): pandas.core.arrays.string_.StringDtype,
+           },
+        }
+    ),
 ]
 
 
