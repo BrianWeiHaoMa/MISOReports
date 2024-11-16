@@ -245,6 +245,14 @@ def test_get_df_every_report_example_url_returns_non_empty_df(datetime_increment
 
 single_df_test_list = [
     (
+        "MISOsamedaydemand", 
+        {
+            ("PostedValue", "Hour", "UTCOffset",): pandas.core.arrays.integer.Int64Dtype,
+            ("Data_Code", "Data_Type", "PostingType",): pandas.core.arrays.string_.StringDtype,
+            ("Data_Date",): numpy.dtypes.DateTime64DType,
+        }
+    ),
+    (
         "MISOdaily", 
         {
             ("PostedValue", "Hour", "UTCOffset",): pandas.core.arrays.integer.Int64Dtype,

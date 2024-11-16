@@ -3012,7 +3012,46 @@ class MISOReports:
         def parse_MISOsamedaydemand(
             res: requests.Response,
         ) -> pd.DataFrame:
-            raise NotImplementedError("Parsing of this report is not yet implemented.")
+            text = res.text
+
+            element_tree = ET.fromstring(text)
+            product = element_tree.find("Product")
+            account_header = product.find("AccountHeader") # type: ignore
+            posting_headers = account_header.findall("PostingHeader") # type: ignore
+
+            data_elements: list[ET.Element] = []
+            for posting_header in posting_headers:
+                if posting_header.find("HourlyIndicatedValue") is not None:
+                    data_elements.append(posting_header)
+            
+            data_element_columns = [tag for (tag, text) in data_elements[0].find("HourlyIndicatedValue").items()] # type: ignore
+            partial_dfs = []
+            for element in data_elements:
+                outer_mappings = {tag: text for (tag, text) in element.items()}
+                
+                inner_data = {tag: [] for tag in data_element_columns} # type: ignore
+
+                inner_elements = element.findall("HourlyIndicatedValue")
+                for inner_element in inner_elements:
+                    for tag, text in inner_element.items():
+                        inner_data[tag].append(text)
+
+                partial_df = pd.DataFrame(inner_data)
+                for key, value in outer_mappings.items():
+                    if key in partial_df.columns:
+                        raise ValueError(f"Key {key} already exists in the DataFrame.")
+                    
+                    partial_df[key] = value
+                
+                partial_dfs.append(partial_df)
+
+            df = pd.concat(partial_dfs, ignore_index=True)
+
+            df[["PostedValue", "Hour", "UTCOffset"]] = df[["PostedValue", "Hour", "UTCOffset"]].astype(pandas.core.arrays.integer.Int64Dtype())
+            df[["Data_Date"]] = df[["Data_Date"]].apply(pd.to_datetime, format="%j%Y")
+            df[["Data_Code", "Data_Type", "PostingType"]] = df[["Data_Code", "Data_Type", "PostingType"]].astype(pandas.core.arrays.string_.StringDtype())
+
+            return df
 
 
     report_mappings: dict[str, Report] = {
