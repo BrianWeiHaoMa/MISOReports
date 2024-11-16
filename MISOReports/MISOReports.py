@@ -11,8 +11,7 @@ import pandas as pd, pandas
 import numpy as np, numpy
 from dateutil.relativedelta import relativedelta
 from collections import defaultdict
-import tabula
-
+import pdfplumber
 
 MULTI_DF_NAMES_COLUMN = "names"
 MULTI_DF_DFS_COLUMN = "dfs"
@@ -2618,60 +2617,72 @@ class MISOReports:
         def parse_sr_ctsl(
             res: requests.Response,
         ) -> pd.DataFrame:
-            def merge_adjacent_rows(df):
-                rows_to_drop = []
-                i = 0
+            def get_vertical_lines_from_header(page: pdfplumber.page.Page, column_count: int = 13) -> list[float]:
+                # Adapted from: https://github.com/jsvine/pdfplumber/discussions/972#discussioncomment-6998179
+                tables = page.find_tables(table_settings={
+                    "vertical_strategy": "lines", 
+                    "horizontal_strategy": "lines"
+                })
 
-                while i < len(df) - 1:
-                    if pd.isna(df.iloc[i, 0]) and not pd.isna(df.iloc[i + 1, 0]):
-                        df.iloc[i, 0] = df.iloc[i + 1, 0]
-                        df.iloc[i, 1:] = df.iloc[i, 1:].combine_first(df.iloc[i + 1, 1:])
-                        rows_to_drop.append(i + 1)
+                if len(tables) == 0:
+                    return []
 
-                    i += 1
-                
-                df.drop(rows_to_drop, inplace=True)
-                df.reset_index(drop=True, inplace=True)
-                return df
+                cells = None 
+
+                for table in tables:
+                    for row in table.rows:
+                        if any(cell is None for cell in row.cells) or len(row.cells) != column_count:
+                            continue
+
+                        return [cell[0] for cell in row.cells] + [row.cells[-1][2]]
+
+                    if cells is not None:
+                        break
+
+                return []
             
-            y1, x1, y2, x2 = 14, 0, 34, 100
-            tables = tabula.read_pdf(
-                input_path=io.BytesIO(res.content),
-                stream=True,
-                pages=1,
-                multiple_tables=True,
-                relative_area=True,
-                area=[
-                    [y1, x1, y2 + 14, x2], 
-                    [y2 + y1, x1, 88, x2]
-                ],
-                relative_columns=True,
-                columns=[30, 36, 41, 47, 52, 58, 63, 69, 74, 80, 85, 91, 98],
-                java_options=["-Xms512m", "-Xmx2048m"],
-            )
+
+            with pdfplumber.open(io.BytesIO(res.content)) as pdf:
+                pg = pdf.pages[0]
+
+                bounding_box = (0, pg.height / 8, pg.width, (pg.height * 3) / 4)
+                pg = pg.crop(bounding_box, relative=True)
+
+                tables = pg.extract_table(table_settings={
+                    "vertical_strategy": "explicit",
+                    "horizontal_strategy": "text",
+                    "snap_tolerance": 4,
+                    "explicit_vertical_lines": get_vertical_lines_from_header(pg),
+                    "intersection_x_tolerance": 10,
+                })
+
+            divider = tables.index(["" for i in range(13)])
+            tables = [tables[:divider], tables[divider + 1:]]
 
             df_names = []
             dfs = []
 
             for table in tables:
-                df = merge_adjacent_rows(table)
-
+                df = pd.DataFrame(
+                    data=table[1:], 
+                    columns=table[0],
+                )
+                
                 year = df.columns[-1].split()[-1]
 
                 df[["Cost Paid by Load (Hourly Avg per Month)"]] = df[["Cost Paid by Load (Hourly Avg per Month)"]].astype(pandas.core.arrays.string_.StringDtype())
-                df[[f"Jan {year}", f"Feb {year}", f"Mar {year}", f"Apr {year}", f"May {year}", f"Jun {year}", f"Jul {year}", f"Aug {year}", f"Sep {year}", f"Oct {year}", f"Nov {year}", f"Dec {year}"]] = df[[f"Jan {year}", f"Feb {year}", f"Mar {year}", f"Apr {year}", f"May {year}", f"Jun {year}", f"Jul {year}", f"Aug {year}", f"Sep {year}", f"Oct {year}", f"Nov {year}", f"Dec {year}"]].replace(r'[\$,()]', '', regex=True).astype(numpy.dtypes.Float64DType())
+                df[[f"Jan {year}", f"Feb {year}", f"Mar {year}", f"Apr {year}", f"May {year}", f"Jun {year}", f"Jul {year}", f"Aug {year}", f"Sep {year}", f"Oct {year}", f"Nov {year}", f"Dec {year}"]] = df[[f"Jan {year}", f"Feb {year}", f"Mar {year}", f"Apr {year}", f"May {year}", f"Jun {year}", f"Jul {year}", f"Aug {year}", f"Sep {year}", f"Oct {year}", f"Nov {year}", f"Dec {year}"]].replace(r'[\$,()]', '', regex=True).replace(r'^\s*$', np.nan, regex=True).astype(numpy.dtypes.Float64DType())
 
                 dfs.append(df)
                 df_names.append(f"Cost Paid by Load - {year}")
 
-            
+
             df = pd.DataFrame(data={
                 MULTI_DF_NAMES_COLUMN: df_names, 
                 MULTI_DF_DFS_COLUMN: dfs,
             })
             
             return df
-
 
         @staticmethod
         def parse_df_al(
