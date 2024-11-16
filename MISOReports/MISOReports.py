@@ -2617,28 +2617,22 @@ class MISOReports:
         def parse_sr_ctsl(
             res: requests.Response,
         ) -> pd.DataFrame:
-            def get_vertical_lines_from_header(page: pdfplumber.page.Page, column_count: int = 13) -> list[float]:
+            def get_vertical_lines_from_header(page: pdfplumber.page.Page, column_count: int = 13) -> list[int | float]:
                 # Adapted from: https://github.com/jsvine/pdfplumber/discussions/972#discussioncomment-6998179
-                tables = page.find_tables(table_settings={
+                table = page.find_table(table_settings={
                     "vertical_strategy": "lines", 
-                    "horizontal_strategy": "lines"
+                    "horizontal_strategy": "lines",
                 })
 
-                if len(tables) == 0:
+                if not table:
                     return []
 
-                cells = None 
+                for row in table.rows:
+                    if any(cell is None for cell in row.cells) or len(row.cells) != column_count:
+                        continue
 
-                for table in tables:
-                    for row in table.rows:
-                        if any(cell is None for cell in row.cells) or len(row.cells) != column_count:
-                            continue
-
-                        return [cell[0] for cell in row.cells] + [row.cells[-1][2]]
-
-                    if cells is not None:
-                        break
-
+                    return [cell[0] for cell in row.cells] + [row.cells[-1][2]]
+                    
                 return []
             
 
