@@ -2833,12 +2833,124 @@ class MISOReports:
         def parse_sr_gfm(
             res: requests.Response,
         ) -> pd.DataFrame:
-            df = pd.read_excel(
+            MarketHourColumn = pd.read_excel(
                 io=io.BytesIO(res.content),
-                skiprows=3,
+                skiprows=4,
+                usecols="A",
             )[:-1]
+
+            MarketHourColumn["Market Hour Ending"] = MarketHourColumn["Market Hour Ending"].astype(pandas.core.arrays.string_.StringDtype())
+
+            df1 = pd.read_excel(
+                io=io.BytesIO(res.content),
+                skiprows=4,
+                usecols="B:J",
+                sheet_name="RT Generation Fuel Mix",
+            )[:-1]
+            shared_column_names = list(df1.columns)[:-2]
+
+            df1[["Coal", "Gas", "Nuclear", "Hydro", "Wind", "Solar", "Other", "Storage", "Total MW"]] = df1[["Coal", "Gas", "Nuclear", "Hydro", "Wind", "Solar", "Other", "Storage", "Total MW"]].astype(numpy.dtypes.Float64DType())
             
-            raise NotImplementedError("Parsing of this report is not yet implemented.")
+            df2 = pd.read_excel(
+                io=io.BytesIO(res.content),
+                skiprows=4,
+                usecols="L:T",
+                sheet_name="RT Generation Fuel Mix",
+                names=shared_column_names + ["Storage", "Total MW"],
+            )[:-1]
+
+            df2[["Coal", "Gas", "Nuclear", "Hydro", "Wind", "Solar", "Other", "Storage", "Total MW"]] = df2[["Coal", "Gas", "Nuclear", "Hydro", "Wind", "Solar", "Other", "Storage", "Total MW"]].astype(numpy.dtypes.Float64DType())
+
+            df3 = pd.read_excel(
+                io=io.BytesIO(res.content),
+                skiprows=4,
+                usecols="V:AC",
+                sheet_name="RT Generation Fuel Mix",
+                names=shared_column_names + ["Total MW"],
+            )[:-1]
+
+            df3[["Coal", "Gas", "Nuclear", "Hydro", "Wind", "Solar", "Other", "Total MW"]] = df3[["Coal", "Gas", "Nuclear", "Hydro", "Wind", "Solar", "Other", "Total MW"]].astype(numpy.dtypes.Float64DType())
+
+            df4 = pd.read_excel(
+                io=io.BytesIO(res.content),
+                skiprows=4,
+                usecols="AG:AO",
+                sheet_name="RT Generation Fuel Mix",
+                names=shared_column_names + ["Storage", "MISO"],
+            )[:-1]
+
+            df4[["Coal", "Gas", "Nuclear", "Hydro", "Wind", "Solar", "Other", "Storage", "MISO"]] = df4[["Coal", "Gas", "Nuclear", "Hydro", "Wind", "Solar", "Other", "Storage", "MISO"]].astype(numpy.dtypes.Float64DType())
+
+            df5 = pd.read_excel(
+                io=io.BytesIO(res.content),
+                skiprows=4,
+                sheet_name="DA Cleared Generation Fuel Mix",
+                names=shared_column_names + ["Storage", "Total MW"],
+            )[:-1]
+
+            df5[["Coal", "Gas", "Nuclear", "Hydro", "Wind", "Solar", "Other", "Storage", "Total MW"]] = df5[["Coal", "Gas", "Nuclear", "Hydro", "Wind", "Solar", "Other", "Storage", "Total MW"]].astype(numpy.dtypes.Float64DType())
+
+            df6 = pd.read_excel(
+                io=io.BytesIO(res.content),
+                skiprows=4,
+                sheet_name="DA Cleared Generation Fuel Mix",
+                names=shared_column_names + ["Storage", "Total MW"],
+            )[:-1]
+
+            df6[["Coal", "Gas", "Nuclear", "Hydro", "Wind", "Solar", "Other", "Storage", "Total MW"]] = df6[["Coal", "Gas", "Nuclear", "Hydro", "Wind", "Solar", "Other", "Storage", "Total MW"]].astype(numpy.dtypes.Float64DType())
+
+            df7 = pd.read_excel(
+                io=io.BytesIO(res.content),
+                skiprows=4,
+                sheet_name="DA Cleared Generation Fuel Mix",
+                names=shared_column_names + ["Total MW"],
+            )[:-1]
+
+            df7[["Coal", "Gas", "Nuclear", "Hydro", "Wind", "Solar", "Other", "Total MW"]] = df7[["Coal", "Gas", "Nuclear", "Hydro", "Wind", "Solar", "Other", "Total MW"]].astype(numpy.dtypes.Float64DType())
+
+            df8 = pd.read_excel(
+                io=io.BytesIO(res.content),
+                skiprows=4,
+                sheet_name="DA Cleared Generation Fuel Mix",
+                names=shared_column_names + ["Storage", "MISO"],
+            )[:-1]
+
+            df8[["Coal", "Gas", "Nuclear", "Hydro", "Wind", "Solar", "Other", "Storage", "MISO"]] = df8[["Coal", "Gas", "Nuclear", "Hydro", "Wind", "Solar", "Other", "Storage", "MISO"]].astype(numpy.dtypes.Float64DType())
+
+
+            df_list = [df1, df2, df3, df4, df5, df6, df7, df8]
+
+            for df in df_list:
+                df.insert(
+                    loc=0,
+                    column="Market Hour Ending",
+                    value=MarketHourColumn["Market Hour Ending"],
+                )
+
+            df = pd.DataFrame({
+                MULTI_DF_NAMES_COLUMN: [
+                       "RT Generation Fuel Mix Central",
+                       "RT Generation Fuel Mix North",
+                       "RT Generation Fuel Mix South",
+                       "RT Generation Fuel Mix Totals",
+                       "DA Cleared Generation Fuel Mix Central",
+                       "DA Cleared Generation Fuel Mix North",
+                       "DA Cleared Generation Fuel Mix South",
+                       "DA Cleared Generation Fuel Mix Totals",
+                ], 
+                MULTI_DF_DFS_COLUMN: [
+                        df1, 
+                        df2,
+                        df3,
+                        df4,
+                        df5,
+                        df6,
+                        df7,
+                        df8,
+                ],
+            })
+
+            return df
 
         @staticmethod
         def parse_dfal_HIST(
