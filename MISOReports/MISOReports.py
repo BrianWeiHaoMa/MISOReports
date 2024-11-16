@@ -2884,6 +2884,7 @@ class MISOReports:
             df5 = pd.read_excel(
                 io=io.BytesIO(res.content),
                 skiprows=4,
+                usecols="B:J",
                 sheet_name="DA Cleared Generation Fuel Mix",
                 names=shared_column_names + ["Storage", "Total MW"],
             )[:-1]
@@ -2893,6 +2894,7 @@ class MISOReports:
             df6 = pd.read_excel(
                 io=io.BytesIO(res.content),
                 skiprows=4,
+                usecols="L:T",
                 sheet_name="DA Cleared Generation Fuel Mix",
                 names=shared_column_names + ["Storage", "Total MW"],
             )[:-1]
@@ -2902,6 +2904,7 @@ class MISOReports:
             df7 = pd.read_excel(
                 io=io.BytesIO(res.content),
                 skiprows=4,
+                usecols="V:AC",
                 sheet_name="DA Cleared Generation Fuel Mix",
                 names=shared_column_names + ["Total MW"],
             )[:-1]
@@ -2911,6 +2914,7 @@ class MISOReports:
             df8 = pd.read_excel(
                 io=io.BytesIO(res.content),
                 skiprows=4,
+                usecols="AG:AO",
                 sheet_name="DA Cleared Generation Fuel Mix",
                 names=shared_column_names + ["Storage", "MISO"],
             )[:-1]
