@@ -2648,16 +2648,23 @@ class MISOReports:
                 bounding_box = (0, pg.height / 8, pg.width, (pg.height * 3) / 4)
                 pg = pg.crop(bounding_box, relative=True)
 
-                tables = pg.extract_table(table_settings={
+                tables = pg.extract_tables(table_settings={
                     "vertical_strategy": "explicit",
                     "horizontal_strategy": "text",
                     "snap_tolerance": 4,
                     "explicit_vertical_lines": get_vertical_lines_from_header(pg),
                     "intersection_x_tolerance": 10,
                 })
+            
+            if not tables:
+                raise ValueError("Unexpected: no tables file found in PDF.")
 
-            divider = tables.index(["" for i in range(13)])
-            tables = [tables[:divider], tables[divider + 1:]]
+            try:
+                divider = tables[0].index(["" for i in range(13)])
+            except ValueError:
+                raise ValueError("Unexpected: no table delimiter found in PDF.")
+            
+            tables = [tables[0][:divider], tables[0][divider + 1:]]
 
             df_names = []
             dfs = []
