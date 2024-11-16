@@ -12,7 +12,7 @@ import pandas as pd, pandas
 import numpy as np, numpy
 from dateutil.relativedelta import relativedelta
 from collections import defaultdict
-
+import pdfplumber
 
 MULTI_DF_NAMES_COLUMN = "names"
 MULTI_DF_DFS_COLUMN = "dfs"
@@ -2658,7 +2658,54 @@ class MISOReports:
         def parse_sr_ctsl(
             res: requests.Response,
         ) -> pd.DataFrame:
-            raise NotImplementedError("Data in pdf format.")
+            with pdfplumber.open(io.BytesIO(res.content)) as pdf:
+                pg = pdf.pages[0]
+
+                bounding_box = (0, pg.height / 8, pg.width, (pg.height * 3) / 4)
+                pg = pg.crop(bounding_box, relative=True)
+
+                tables = pg.extract_tables(table_settings={
+                    "vertical_strategy": "explicit",
+                    "horizontal_strategy": "text",
+                    "snap_tolerance": 4,
+                    "explicit_vertical_lines": [18.9, 299.71666666666664, 355.80000000000007, 411.80000000000007, 467.80000000000007, 523.8000000000001, 579.8000000000001, 635.8000000000001, 691.8000000000001, 747.8000000000001, 803.8000000000001, 859.8000000000001, 915.8000000000001, 973.7833333333333],
+                    "intersection_x_tolerance": 10,
+                })
+            
+            if not tables:
+                raise ValueError("Unexpected: no tables file found in PDF.")
+
+            try:
+                divider = tables[0].index(["" for i in range(13)])
+            except ValueError:
+                raise ValueError("Unexpected: no table delimiter found in PDF.")
+            
+            tables = [tables[0][:divider], tables[0][divider + 1:]]
+
+            df_names = []
+            dfs = []
+
+            for table in tables:
+                df = pd.DataFrame(
+                    data=table[1:], 
+                    columns=table[0],
+                )
+                
+                year = df.columns[-1].split()[-1]
+
+                df[["Cost Paid by Load (Hourly Avg per Month)"]] = df[["Cost Paid by Load (Hourly Avg per Month)"]].astype(pandas.core.arrays.string_.StringDtype())
+                df[[f"Jan {year}", f"Feb {year}", f"Mar {year}", f"Apr {year}", f"May {year}", f"Jun {year}", f"Jul {year}", f"Aug {year}", f"Sep {year}", f"Oct {year}", f"Nov {year}", f"Dec {year}"]] = df[[f"Jan {year}", f"Feb {year}", f"Mar {year}", f"Apr {year}", f"May {year}", f"Jun {year}", f"Jul {year}", f"Aug {year}", f"Sep {year}", f"Oct {year}", f"Nov {year}", f"Dec {year}"]].replace(r'[\$,()]', '', regex=True).replace(r'^\s*$', np.nan, regex=True).astype(numpy.dtypes.Float64DType())
+
+                dfs.append(df)
+                df_names.append(f"Cost Paid by Load - {year}")
+
+
+            df = pd.DataFrame(data={
+                MULTI_DF_NAMES_COLUMN: df_names, 
+                MULTI_DF_DFS_COLUMN: dfs,
+            })
+            
+            return df
 
         @staticmethod
         def parse_df_al(
@@ -2706,6 +2753,7 @@ class MISOReports:
 
             df = pd.read_csv(
                 filepath_or_buffer=io.StringIO(csv_data),
+                low_memory=False,
             )
 
             df["Shadow Price"] = df["Shadow Price"].replace(r'[\$,()]', '', regex=True)
