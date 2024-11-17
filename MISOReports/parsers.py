@@ -15,8 +15,8 @@ import numpy as np, numpy
 """
 
 
-MULTI_DF_NAMES_COLUMN = "names"
-MULTI_DF_DFS_COLUMN = "dfs"
+MULTI_DF_NAMES_COLUMN = "table_names"
+MULTI_DF_DFS_COLUMN = "dataframes"
 
 
 def parse_currentinterval(

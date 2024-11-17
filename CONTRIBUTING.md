@@ -17,7 +17,7 @@ There are several ways you can get involved:
 
 We’re always open to new ideas! If you have a feature in mind that would improve the project, please suggest it by:
 
-1. [Opening a feature request issue](https://github.com/BrianWeiHaoMa/MISOReports/issues/new?template=feature_request.md)
+1. [Opening a feature request issue](https://github.com/BrianWeiHaoMa/MISOReports/issues/new)
 2. Describing the feature clearly, including why it would be beneficial
 3. Sharing any examples or references that can help us understand your idea
 
@@ -25,7 +25,7 @@ We’re always open to new ideas! If you have a feature in mind that would impro
 
 ### Opening Issues
 
-Issues are a great way to discuss ideas, report bugs, or request features. Before opening a new issue, please search to see if one already exists. If not, feel free to [open a new issue](https://github.com/[username]/[repository]/issues) and provide as much detail as possible.
+Issues are a great way to discuss ideas, report bugs, or request features. Before opening a new issue, please search to see if one already exists. If not, feel free to [open a new issue](https://github.com/BrianWeiHaoMa/MISOReports/issues/new) and provide as much detail as possible.
 
 If you encounter any bugs, please let us know! To make your bug report as effective as possible, please include:
 
