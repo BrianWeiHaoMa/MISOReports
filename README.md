@@ -6,21 +6,18 @@ and [MISO Market Reports](https://www.misoenergy.org/markets-and-operations/real
 With MISOReports, you can skip all of the intermediate URL generation/parsing/typing steps and get any supported report's data
 in a dataframe with just a few lines of code. You can also choose to retrieve the get request data directly and use that instead. 
 
----
-
-## Installation
-TODO
-
----
-
 ## Features
-MISOReports supports and but is not limited to the below features:
+MISOReports supports but is not limited to the below features:
 - Downloading reports by date for reports that offer a date option
 - Downloading live reports for reports without a date option
 - Downloading raw report content in any of their supported formats (csv, xml, json, xls, xlsx, etc.)
 - Well annotated and documented functions and classes (passing mypy --strict test)
 
----
+## Installation
+To install, use
+```
+pip install MISOReports
+```
 
 ## Examples
 
@@ -159,7 +156,7 @@ FiveMinTotalLoad
 ```
 
 ### Example 3:
-Download a single-table report with datetime option from from [MISO Market Reports](https://www.misoenergy.org/markets-and-operations/real-time--market-data/market-reports/).
+Download a single-table report with datetime option from [MISO Market Reports](https://www.misoenergy.org/markets-and-operations/real-time--market-data/market-reports/).
 
 #### Input:
 ```python
@@ -208,7 +205,7 @@ print(df)
 ```
 
 ### Example 4:
-Download the raw, unparsed data of a single-table report from [MISO Market Reports](https://www.misoenergy.org/markets-and-operations/real-time--market-data/market-reports/).
+Download the raw, unparsed data of a report from [MISO Market Reports](https://www.misoenergy.org/markets-and-operations/real-time--market-data/market-reports/).
 
 #### Input:
 ```python
@@ -218,6 +215,7 @@ from MISOReports.MISOReports import MISOReports
 # https://api.misoenergy.org/MISORTWDDataBroker/DataBrokerServices.asmx?messageType=getNAI&returnType=csv.
 res = MISOReports.get_response(
     report_name="NAI",
+    file_extension="csv",
 )
 
 print(res.text)
@@ -232,7 +230,7 @@ MISO,-2494.86
 ```
 
 ### Example 5:
-Download a single-table report with datetime option from from [MISO Market Reports](https://www.misoenergy.org/markets-and-operations/real-time--market-data/market-reports/).
+Download a single-table report with datetime option from [MISO Market Reports](https://www.misoenergy.org/markets-and-operations/real-time--market-data/market-reports/).
 
 #### Input:
 ```python
@@ -269,8 +267,6 @@ print(df)
 
 [624 rows x 7 columns]
 ```
-
----
 
 ## Contributing
 Please take a look at our [CONTRIBUTING.md](CONTRIBUTING.md) for details on how to contribute.
