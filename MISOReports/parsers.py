@@ -2460,7 +2460,11 @@ def parse_da_bc_HIST(
         low_memory=False,
     )
 
-    df["Shadow Price"] = df["Shadow Price"].replace(r'[\$,()]', '', regex=True)
+    df["Shadow Price"] = df["Shadow Price"].replace({
+        r"\(\$": "-",
+        r"\$": "",
+        r"\)": "",
+    }, regex=True)
 
     df[["Shadow Price", "BP1", "PC1", "BP2", "PC2"]] = df[["Shadow Price", "BP1", "PC1", "BP2", "PC2"]].astype(numpy.dtypes.Float64DType())
     df[["Hour of Occurrence", "Override"]] = df[["Hour of Occurrence", "Override"]].astype(pandas.core.arrays.integer.Int64Dtype())
