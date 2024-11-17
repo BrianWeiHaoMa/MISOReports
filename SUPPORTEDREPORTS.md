@@ -43,7 +43,7 @@ currentinterval https://api.misoenergy.org/MISORTWDBIReporter/Reporter.asmx?mess
 
 ## MISO Market Reports
 These can be found at [MISO Market Reports](https://www.misoenergy.org/markets-and-operations/real-time--market-data/market-reports/)
-under each reports respective section.
+under each report's respective section.
 
 ```
 DA_Load_EPNodes            https://docs.misoenergy.org/marketreports/DA_Load_EPNodes_20241021.zip

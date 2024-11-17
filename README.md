@@ -1,10 +1,12 @@
 # MISOReports
 A library for downloading Midcontinent Independent System Operator (MISO) public reports. As of 2024-11-17, MISOReports supports
 reports from [MISORTWDDataBroker](https://api.misoenergy.org/MISORTWDDataBroker/), [MISORTWDBIReporter](https://api.misoenergy.org/MISORTWDBIReporter/),
-and [MISO Market Reports](https://www.misoenergy.org/markets-and-operations/real-time--market-data/market-reports/), totalling to well over 100 reports.
+and [MISO Market Reports](https://www.misoenergy.org/markets-and-operations/real-time--market-data/market-reports/), totalling to well over 120 different reports.
 
 With MISOReports, you can skip all of the intermediate URL generation/parsing/typing steps and get any supported report's data
 in a dataframe with just a few lines of code. You can also choose to retrieve the get request data directly and use that instead. 
+
+To see the currently supported reports, please check out [SUPPORTEDREPORTS.md](SUPPORTEDREPORTS.md).
 
 ## Features
 MISOReports supports but is not limited to the below features:
