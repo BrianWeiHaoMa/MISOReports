@@ -1,6 +1,7 @@
 # Supported Reports
 Here are the callable report names and a corresponding example URL. If the report offers multiple formats,
-the supported extensions are listed on the right.
+the supported extensions are listed on the right. In the rare case that a report was looked at, but left unimplemented,
+it will be indented and an explanation will be provided on the right.
 
 ## MISORTWDDataBroker Reports
 These can be found at [MISORTWDDataBroker](https://api.misoenergy.org/MISORTWDDataBroker/)
@@ -127,7 +128,7 @@ Total_Uplift_by_Resource           https://docs.misoenergy.org/marketreports/202
 Allocation_on_MISO_Flowgates https://docs.misoenergy.org/marketreports/Allocation_on_MISO_Flowgates_2024_10_29.csv
 M2M_FFE                      https://docs.misoenergy.org/marketreports/M2M_FFE_2024_10_29.CSV
 M2M_Flowgates_as_of          https://docs.misoenergy.org/marketreports/M2M_Flowgates_as_of_20241030.CSV
-da_M2M_Settlement_srw        https://docs.misoenergy.org/marketreports/da_M2M_Settlement_srw_2024.csv
+    da_M2M_Settlement_srw        https://docs.misoenergy.org/marketreports/da_M2M_Settlement_srw_2024.csv (this one does not have a single non-empty report as of 2024-11-19)
 M2M_Settlement_srw           https://docs.misoenergy.org/marketreports/M2M_Settlement_srw_2024.csv
 ```
 

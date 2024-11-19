@@ -2226,7 +2226,7 @@ def parse_M2M_Flowgates_as_of(
 def parse_da_M2M_Settlement_srw(
     res: requests.Response,
 ) -> pd.DataFrame:
-    raise NotImplementedError("Data not typically provided.")
+    raise NotImplementedError("As of 2024-11-19, not a single non-empty report was published yet.")
 
 
 def parse_M2M_Settlement_srw(
@@ -2816,7 +2816,40 @@ def parse_sr_nd_is(
 def parse_PeakHourOverview(
     res: requests.Response,
 ) -> pd.DataFrame:
-    raise NotImplementedError("Parsing of this report is not yet implemented.")
+    def handle_table(
+        data_lines: list[str],
+    ) -> pd.DataFrame:
+        clean_data_lines = [line.lstrip("(+)").lstrip() for line in data_lines]
+        
+        data = {}
+        for line in clean_data_lines:
+            key, value = line.split(",")
+            data[key] = [value]
+        
+        df = pd.DataFrame(data, dtype=pandas.core.arrays.integer.Int64Dtype())
+
+        return df
+
+    text = res.text
+
+    data_lines_1 = text.splitlines()[4:8]
+    data_lines_2 = text.splitlines()[9:13]
+
+    df1 = handle_table(data_lines_1)
+    df2 = handle_table(data_lines_2)
+
+    df = pd.DataFrame({
+        MULTI_DF_NAMES_COLUMN: [
+                "SYSTEM RESOURCE CAPACITY",
+                "SYSTEM OBLIGATION",
+        ], 
+        MULTI_DF_DFS_COLUMN: [
+                df1, 
+                df2, 
+        ],
+    })
+
+    return df
 
 
 def parse_sr_tcdc_group2(

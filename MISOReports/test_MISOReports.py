@@ -1058,6 +1058,17 @@ def test_get_df_single_df_correct_columns(report_name, columns_mapping, datetime
 
 multiple_dfs_test_list = [
     (
+        "PeakHourOverview",
+        {
+            "SYSTEM RESOURCE CAPACITY": {
+                ("Committed + Available Short-Lead Generation", "NSI", "Behind-Meter Generation", "Total Resources",): pandas.core.arrays.integer.Int64Dtype,
+            },
+            "SYSTEM OBLIGATION": {
+               	("Forecasted Load", "Operating Reserve Requirement", "Total Obligation", "FORECASTED CAPACITY MARGIN",): pandas.core.arrays.integer.Int64Dtype,
+            }
+        },
+    ),
+    (
         "ftr_allocation_stage_1B",
         {
             "Fall": {
