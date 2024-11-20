@@ -2276,7 +2276,49 @@ def parse_M2M_Settlement_srw(
 def parse_MM_Annual_Report(
     res: requests.Response,
 ) -> pd.DataFrame:
-    raise NotImplementedError("Result contains 5 .xlsx files.")
+        with zipfile.ZipFile(file=io.BytesIO(res.content)) as z:
+            annual_files = z.namelist()[:-1]
+            transparency_file = z.namelist()[-1]
+
+            annual_content = [z.read(content) for content in annual_files]
+            transparency_content = z.read(transparency_file)
+
+        df_names = []
+        dfs = []
+
+        for xlsx, name in zip(annual_content, annual_files):
+            df = pd.read_excel(
+                io=io.BytesIO(xlsx),
+                skiprows=3,
+                skipfooter=1,
+            )
+
+            region = name.split('_')[-1][:-5]
+
+            df[[f"{region} Available Margin (MW)"]] = df[[f"{region} Available Margin (MW)"]].astype(numpy.dtypes.Float64DType())
+            df[["Date"]] = df[["Date"]].apply(pd.to_datetime, format="%m/%d/%Y")
+
+            dfs.append(df)
+            df_names.append(name.split('/')[-1][:-5])
+
+        df_transparency = pd.read_excel(
+            io=io.BytesIO(transparency_content),
+            skiprows=3,
+            skipfooter=1,
+        )
+
+        df_transparency[["Central Region (MW)", "North Region (MW)", "South Region (MW)"]] = df_transparency[["Central Region (MW)", "North Region (MW)", "South Region (MW)"]].astype(numpy.dtypes.Float64DType())
+        df_transparency[["Date"]] = df_transparency[["Date"]].apply(pd.to_datetime, format="%m/%d/%Y %I:%M:%S %p")
+
+        dfs.append(df_transparency)
+        df_names.append("Transparency")
+
+        df = pd.DataFrame(data={
+            MULTI_DF_NAMES_COLUMN: df_names, 
+            MULTI_DF_DFS_COLUMN: dfs,
+        })
+
+        return df
 
 
 def parse_asm_da_co(

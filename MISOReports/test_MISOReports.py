@@ -1734,6 +1734,31 @@ multiple_dfs_test_list = [
             },
         }
     ),
+    (
+        "MM_Annual_Report",
+        {
+            "Annual_MM_MISO": {
+                ("MISO Available Margin (MW)",): numpy.dtypes.Float64DType,
+                ("Date",): numpy.dtypes.DateTime64DType,
+            },
+            "Annual_MM_Central": {
+                ("Central Available Margin (MW)",): numpy.dtypes.Float64DType,
+                ("Date",): numpy.dtypes.DateTime64DType,
+            },
+            "Annual_MM_South": {
+                ("South Available Margin (MW)",): numpy.dtypes.Float64DType,
+                ("Date",): numpy.dtypes.DateTime64DType,
+            },
+            "Annual_MM_North": {
+                ("North Available Margin (MW)",): numpy.dtypes.Float64DType,
+                ("Date",): numpy.dtypes.DateTime64DType,
+            },
+            "Transparency": {
+                ("Central Region (MW)", "North Region (MW)", "South Region (MW)",): numpy.dtypes.Float64DType,
+                ("Date",): numpy.dtypes.DateTime64DType,
+            },
+        },
+    ),
 ]
 
 
