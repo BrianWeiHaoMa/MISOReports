@@ -1650,6 +1650,64 @@ multiple_dfs_test_list = [
            },
         }
     ),
+    (
+        "mom",
+        {
+           "6 DAYS AHEAD DATES": {
+	            ("Day 1", "Day 2", "Day 3", "Day 4", "Day 5", "Day 6",): pandas.core.arrays.string_.StringDtype,
+           },
+           "MISO": {
+                ("Day 1", "Day 2", "Day 3", "Day 4", "Day 5", "Day 6",): numpy.dtypes.Float64DType,
+	            ("Resources",): pandas.core.arrays.string_.StringDtype,
+           },
+           "NORTH": {
+            	("Day 1", "Day 2", "Day 3", "Day 4", "Day 5", "Day 6",): numpy.dtypes.Float64DType,
+	            ("Resources",): pandas.core.arrays.string_.StringDtype,
+           },
+           "CENTRAL": {
+            	("Day 1", "Day 2", "Day 3", "Day 4", "Day 5", "Day 6",): numpy.dtypes.Float64DType,
+	            ("Resources",): pandas.core.arrays.string_.StringDtype,
+           },
+           "NORTH+CENTRAL": {
+                ("Day 1", "Day 2", "Day 3", "Day 4", "Day 5", "Day 6",): numpy.dtypes.Float64DType,
+                ("Resources",): pandas.core.arrays.string_.StringDtype,
+           },
+           "SOUTH": {
+            	("Day 1", "Day 2", "Day 3", "Day 4", "Day 5", "Day 6",): numpy.dtypes.Float64DType,
+	            ("Resources",): pandas.core.arrays.string_.StringDtype,
+           },
+           "SOLAR HOURLY": {
+                ("North", "Central", "South", "MISO",): numpy.dtypes.Float64DType,
+                ("DAY HE",): pandas.core.arrays.string_.StringDtype,
+           },
+           "WIND HOURLY": {
+                ("North", "Central", "South", "MISO",): numpy.dtypes.Float64DType,
+                ("DAY HE",): pandas.core.arrays.string_.StringDtype,
+           },
+           "WIND UNCERTAINTY": {
+                ("Day 1", "Day 2", "Day 3", "Day 4", "Day 5", "Day 6",): numpy.dtypes.Float64DType,
+                ("Wind Uncertainty",): pandas.core.arrays.string_.StringDtype,
+           },
+           "LOAD UNCERTAINTY": {
+                ("Day 1", "Day 2", "Day 3", "Day 4", "Day 5", "Day 6",): numpy.dtypes.Float64DType,
+                ("Load Uncertainty",): pandas.core.arrays.string_.StringDtype,
+           },
+           "7 DAYS AHEAD DATES": {
+	            ("Day 1", "Day 2", "Day 3", "Day 4", "Day 5", "Day 6", "Day 7",): pandas.core.arrays.string_.StringDtype,
+           },
+           "OUTAGE 7-DAY LOOK-AHEAD": {
+                ("Day 1", "Day 2", "Day 3", "Day 4", "Day 5", "Day 6", "Day 7",): numpy.dtypes.Float64DType,
+                ("Location", "Type",): pandas.core.arrays.string_.StringDtype,
+           },
+           "30 DAYS BACK DATES": {
+	            ("Day 1", "Day 2", "Day 3", "Day 4", "Day 5", "Day 6", "Day 7", "Day 8", "Day 9", "Day 10", "Day 11", "Day 12", "Day 13", "Day 14", "Day 15", "Day 16", "Day 17", "Day 18", "Day 19", "Day 20", "Day 21", "Day 22", "Day 23", "Day 24", "Day 25", "Day 26", "Day 27", "Day 28", "Day 29", "Day 30",): pandas.core.arrays.string_.StringDtype,
+           },
+           "OUTAGE 30-DAY LOOK-BACK": {
+                ("Day 1", "Day 2", "Day 3", "Day 4", "Day 5", "Day 6", "Day 7", "Day 8", "Day 9", "Day 10", "Day 11", "Day 12", "Day 13", "Day 14", "Day 15", "Day 16", "Day 17", "Day 18", "Day 19", "Day 20", "Day 21", "Day 22", "Day 23", "Day 24", "Day 25", "Day 26", "Day 27", "Day 28", "Day 29", "Day 30",): numpy.dtypes.Float64DType,
+                ("Location", "Type",): pandas.core.arrays.string_.StringDtype,
+           },
+        }
+    ),
 ]
 
 

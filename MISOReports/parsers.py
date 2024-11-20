@@ -2787,7 +2787,196 @@ def parse_sr_la_rg(
 def parse_mom(
     res: requests.Response,
 ) -> pd.DataFrame:
-    raise NotImplementedError("Parsing of this report is not yet implemented. **WARNING** PROCEED WITH CAUTION")
+    time_6 = [f"Day {i}" for i in range(1, 7)]
+    time_7 = [f"Day {i}" for i in range(1, 8)]
+    time_30 = [f"Day {i}" for i in range(1, 31)]
+    df_time_6 = pd.read_excel(
+        io=io.BytesIO(res.content),
+        skiprows=4,
+        nrows=1,
+        sheet_name="MISO",
+        usecols="B:G",
+        names=time_6,
+    )
+
+    df_time_6[time_6] = df_time_6[time_6].astype(pandas.core.arrays.string_.StringDtype())
+
+    df_time_7 = pd.read_excel(
+        io=io.BytesIO(res.content),
+        skiprows=5,
+        nrows=1,
+        sheet_name="OUTAGE",
+        usecols="C:I",
+        names=time_7,
+    )
+
+    df_time_7[time_7] = df_time_7[time_7].astype(pandas.core.arrays.string_.StringDtype())
+
+    df_time_30 = pd.read_excel(
+        io=io.BytesIO(res.content),
+        skiprows=25,
+        nrows=1,
+        sheet_name="OUTAGE",
+        usecols="C:AF",
+        names=time_30,
+    )
+
+    df_time_30[time_30] = df_time_30[time_30].astype(pandas.core.arrays.string_.StringDtype())
+
+    df1 = pd.read_excel(
+        io=io.BytesIO(res.content),
+        skiprows=5,
+        sheet_name="MISO",
+        names= ["Resources"] + time_6,
+    )[:-4]
+    
+    df1 = df1.dropna(how="all").reset_index(drop=True)
+    df1[time_6] = df1[time_6].astype(numpy.dtypes.Float64DType())
+    df1[["Resources"]] = df1[["Resources"]].astype(pandas.core.arrays.string_.StringDtype())
+
+    df2 = pd.read_excel(
+        io=io.BytesIO(res.content),
+        skiprows=4,
+        sheet_name="NORTH",
+        names= ["Resources"] + time_6,
+    )[:-4]
+    
+    df2 = df2.dropna(how="all").reset_index(drop=True)
+    df2[time_6] = df2[time_6].astype(numpy.dtypes.Float64DType())
+    df2[["Resources"]] = df2[["Resources"]].astype(pandas.core.arrays.string_.StringDtype())
+
+    df3 = pd.read_excel(
+        io=io.BytesIO(res.content),
+        skiprows=4,
+        sheet_name="CENTRAL",
+        names= ["Resources"] + time_6,
+    )[:-4]
+    
+    df3 = df3.dropna(how="all").reset_index(drop=True)
+    df3[time_6] = df3[time_6].astype(numpy.dtypes.Float64DType())
+    df3[["Resources"]] = df3[["Resources"]].astype(pandas.core.arrays.string_.StringDtype())
+
+    df4 = pd.read_excel(
+        io=io.BytesIO(res.content),
+        skiprows=4,
+        sheet_name="NORTH+CENTRAL",
+        names= ["Resources"] + time_6,
+    )[:-4]
+    
+    df4 = df4.dropna(how="all").reset_index(drop=True)
+    df4[time_6] = df4[time_6].replace(',','', regex=True).astype(numpy.dtypes.Float64DType())
+    df4[["Resources"]] = df4[["Resources"]].astype(pandas.core.arrays.string_.StringDtype())
+
+    df5 = pd.read_excel(
+        io=io.BytesIO(res.content),
+        skiprows=4,
+        sheet_name="SOUTH",
+        names= ["Resources"] + time_6,
+    )[:-4]
+    
+    df5 = df5.dropna(how="all").reset_index(drop=True)
+    df5[time_6] = df5[time_6].replace(',','', regex=True).astype(numpy.dtypes.Float64DType())
+    df5[["Resources"]] = df5[["Resources"]].astype(pandas.core.arrays.string_.StringDtype())
+
+    df6 = pd.read_excel(
+        io=io.BytesIO(res.content),
+        skiprows=4,
+        sheet_name="SOLAR HOURLY",
+    )[:-2]
+
+    df6[["North", "Central", "South", "MISO"]] = df6[["North", "Central", "South", "MISO"]].astype(numpy.dtypes.Float64DType())
+    df6[["DAY HE"]] = df6[["DAY HE"]].astype(pandas.core.arrays.string_.StringDtype())
+
+    df7 = pd.read_excel(
+        io=io.BytesIO(res.content),
+        skiprows=4,
+        sheet_name="WIND HOURLY",
+    )[:-2]
+
+    df7[["North", "Central", "South", "MISO"]] = df7[["North", "Central", "South", "MISO"]].astype(numpy.dtypes.Float64DType())
+    df7[["DAY HE"]] = df7[["DAY HE"]].astype(pandas.core.arrays.string_.StringDtype())
+
+    df8 = pd.read_excel(
+        io=io.BytesIO(res.content),
+        skiprows=4,
+        sheet_name="WIND UNCERTAINTY",
+        names=["Wind Uncertainty"] + time_6
+    )[:-3]
+
+    df8[time_6] = df8[time_6].astype(numpy.dtypes.Float64DType())
+    df8.loc[4,"Wind Uncertainty"] = "Standard Deviation Percentage"
+    df8.loc[5,"Wind Uncertainty"] = "Standard Deviation in MW"
+    df8[["Wind Uncertainty"]] = df8[["Wind Uncertainty"]].astype(pandas.core.arrays.string_.StringDtype())
+
+    df9 = pd.read_excel(
+        io=io.BytesIO(res.content),
+        skiprows=4,
+        sheet_name="LOAD UNCERTAINTY",
+        names=["Load Uncertainty"] + time_6
+    )[:-3]
+
+    df9[time_6] = df9[time_6].astype(numpy.dtypes.Float64DType())
+    df9.loc[3,"Load Uncertainty"] = "Standard Deviation Percentage"
+    df9.loc[4,"Load Uncertainty"] = "Standard Deviation in MW"
+    df9[["Load Uncertainty"]] = df9[["Load Uncertainty"]].astype(pandas.core.arrays.string_.StringDtype())
+
+    df10 = pd.read_excel(
+        io=io.BytesIO(res.content),
+        skiprows=6,
+        nrows=17,
+        sheet_name="OUTAGE",
+        names= ["Location", "Type"] + time_7,
+    )
+    
+    df10[time_7] = df10[time_7].astype(numpy.dtypes.Float64DType())
+    df10[["Location", "Type"]] = df10[["Location", "Type"]].astype(pandas.core.arrays.string_.StringDtype())
+
+    df11 = pd.read_excel(
+        io=io.BytesIO(res.content),
+        skiprows=26,
+        sheet_name="OUTAGE",
+        names= ["Location", "Type"] + time_30,
+    )[:-3]
+    
+    df11[time_30] = df11[time_30].astype(numpy.dtypes.Float64DType())
+    df11[["Location", "Type"]] = df11[["Location", "Type"]].astype(pandas.core.arrays.string_.StringDtype())
+
+    df = pd.DataFrame({
+        MULTI_DF_NAMES_COLUMN: [
+                "6 DAYS AHEAD DATES",
+                "MISO",
+                "NORTH",
+                "CENTRAL",
+                "NORTH+CENTRAL",
+                "SOUTH",
+                "SOLAR HOURLY",
+                "WIND HOURLY",
+                "WIND UNCERTAINTY",
+                "LOAD UNCERTAINTY",
+                "7 DAYS AHEAD DATES",
+                "OUTAGE 7-DAY LOOK-AHEAD",
+                "30 DAYS BACK DATES",
+                "OUTAGE 30-DAY LOOK-BACK",
+        ], 
+        MULTI_DF_DFS_COLUMN: [
+                df_time_6,
+                df1, 
+                df2,
+                df3,
+                df4,
+                df5,
+                df6,
+                df7,
+                df8,
+                df9,
+                df_time_7,
+                df10,
+                df_time_30,
+                df11,
+        ],
+    })
+
+    return df
 
 
 def parse_sr_nd_is(
