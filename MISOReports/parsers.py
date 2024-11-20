@@ -1545,7 +1545,33 @@ def parse_ftr_allocation_stage_1B(
 def parse_ftr_allocation_summary(
     res: requests.Response,
 ) -> pd.DataFrame:
-    raise NotImplementedError("Result contains 2 csv tables.")
+    with zipfile.ZipFile(file=io.BytesIO(res.content)) as z:
+        residule_file, allocation_file = z.namelist()
+
+        residule_content, allocation_content = z.read(residule_file), z.read(allocation_file)
+
+    df_residule = pd.read_excel(
+        io=io.BytesIO(residule_content),
+    ).iloc[:-4]
+
+    df_residule[["STAGE2MW", "STAGE2PAYMENT"]] = df_residule[["STAGE2MW", "STAGE2PAYMENT"]].astype(numpy.dtypes.Float64DType())
+    df_residule[["ID_TOU"]] = df_residule[["ID_TOU"]].astype(pandas.core.arrays.string_.StringDtype())
+    df_residule[["START_DATE"]] = df_residule[["START_DATE"]].apply(pd.to_datetime, format="%Y-%m-%d %H:%M:%S")
+
+    df_allocation = pd.read_excel(
+        io=io.BytesIO(allocation_content),
+    )
+
+    df_allocation[["MW"]] = df_allocation[["MW"]].astype(numpy.dtypes.Float64DType())
+    df_allocation[["DATE_START", "DATE_END"]] = df_allocation[["DATE_START", "DATE_END"]].apply(pd.to_datetime, format="%m/%d/%Y %I:%M:%S %p")
+    df_allocation[["MARKET_NAME", "ID_TOU", "SOURCE_NAME", "SINK_NAME", "STAGE", "TYPE"]] = df_allocation[["MARKET_NAME", "ID_TOU", "SOURCE_NAME", "SINK_NAME", "STAGE", "TYPE"]].astype(pandas.core.arrays.string_.StringDtype())
+
+    df = pd.DataFrame(data={
+        MULTI_DF_NAMES_COLUMN: [residule_file.split('/')[-1][:-5], allocation_file.split('/')[-1][:-5]], 
+        MULTI_DF_DFS_COLUMN: [df_residule, df_allocation],
+    })
+
+    return df
 
 
 def parse_ftr_annual_results_round_1(
@@ -2250,7 +2276,49 @@ def parse_M2M_Settlement_srw(
 def parse_MM_Annual_Report(
     res: requests.Response,
 ) -> pd.DataFrame:
-    raise NotImplementedError("Result contains 5 .xlsx files.")
+        with zipfile.ZipFile(file=io.BytesIO(res.content)) as z:
+            annual_files = z.namelist()[:-1]
+            transparency_file = z.namelist()[-1]
+
+            annual_content = [z.read(content) for content in annual_files]
+            transparency_content = z.read(transparency_file)
+
+        df_names = []
+        dfs = []
+
+        for xlsx, name in zip(annual_content, annual_files):
+            df = pd.read_excel(
+                io=io.BytesIO(xlsx),
+                skiprows=3,
+                skipfooter=1,
+            )
+
+            region = name.split('_')[-1][:-5]
+
+            df[[f"{region} Available Margin (MW)"]] = df[[f"{region} Available Margin (MW)"]].astype(numpy.dtypes.Float64DType())
+            df[["Date"]] = df[["Date"]].apply(pd.to_datetime, format="%m/%d/%Y")
+
+            dfs.append(df)
+            df_names.append(name.split('/')[-1][:-5])
+
+        df_transparency = pd.read_excel(
+            io=io.BytesIO(transparency_content),
+            skiprows=3,
+            skipfooter=1,
+        )
+
+        df_transparency[["Central Region (MW)", "North Region (MW)", "South Region (MW)"]] = df_transparency[["Central Region (MW)", "North Region (MW)", "South Region (MW)"]].astype(numpy.dtypes.Float64DType())
+        df_transparency[["Date"]] = df_transparency[["Date"]].apply(pd.to_datetime, format="%m/%d/%Y %I:%M:%S %p")
+
+        dfs.append(df_transparency)
+        df_names.append("Transparency")
+
+        df = pd.DataFrame(data={
+            MULTI_DF_NAMES_COLUMN: df_names, 
+            MULTI_DF_DFS_COLUMN: dfs,
+        })
+
+        return df
 
 
 def parse_asm_da_co(

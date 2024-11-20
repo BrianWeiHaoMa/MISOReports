@@ -1719,6 +1719,46 @@ multiple_dfs_test_list = [
            },
         }
     ),
+    (
+        "ftr_allocation_summary",
+        {
+            "2024 Stage 2 Residual": {
+                ("STAGE2MW", "STAGE2PAYMENT",): numpy.dtypes.Float64DType,
+                ("ID_TOU",): pandas.core.arrays.string_.StringDtype,
+                ("START_DATE",): numpy.dtypes.DateTime64DType,
+            },
+            "2024-2025 ARR Annual Allocation Summary by Path": {
+                ("MW",): numpy.dtypes.Float64DType,
+                ("MARKET_NAME", "ID_TOU", "SOURCE_NAME", "SINK_NAME", "STAGE", "TYPE",): pandas.core.arrays.string_.StringDtype,
+                ("DATE_START", "DATE_END",): numpy.dtypes.DateTime64DType,
+            },
+        }
+    ),
+    (
+        "MM_Annual_Report",
+        {
+            "Annual_MM_MISO": {
+                ("MISO Available Margin (MW)",): numpy.dtypes.Float64DType,
+                ("Date",): numpy.dtypes.DateTime64DType,
+            },
+            "Annual_MM_Central": {
+                ("Central Available Margin (MW)",): numpy.dtypes.Float64DType,
+                ("Date",): numpy.dtypes.DateTime64DType,
+            },
+            "Annual_MM_South": {
+                ("South Available Margin (MW)",): numpy.dtypes.Float64DType,
+                ("Date",): numpy.dtypes.DateTime64DType,
+            },
+            "Annual_MM_North": {
+                ("North Available Margin (MW)",): numpy.dtypes.Float64DType,
+                ("Date",): numpy.dtypes.DateTime64DType,
+            },
+            "Transparency": {
+                ("Central Region (MW)", "North Region (MW)", "South Region (MW)",): numpy.dtypes.Float64DType,
+                ("Date",): numpy.dtypes.DateTime64DType,
+            },
+        },
+    ),
 ]
 
 
