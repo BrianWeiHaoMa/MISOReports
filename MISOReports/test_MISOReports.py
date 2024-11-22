@@ -1134,9 +1134,6 @@ multiple_dfs_test_list = [
     (
         "AncillaryServicesMCP",
         {
-            "Interval": {
-                ("RefId",): pandas.core.arrays.string_.StringDtype,
-            },
             "RealTimeMCP": {
                 ("number",): pandas.core.arrays.integer.Int64Dtype,
                 ("GenRegMCP", "GenSpinMCP", "GenSuppMCP", "StrMcp", "DemandRegMcp", "DemandSpinMcp", "DemandSuppMCP", "RcpUpMcp", "RcpDownMcp",): numpy.dtypes.Float64DType,
