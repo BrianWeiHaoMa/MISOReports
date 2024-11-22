@@ -8,7 +8,7 @@ and [MISO Market Reports](https://www.misoenergy.org/markets-and-operations/real
 With MISOReports, you can skip all of the intermediate URL generation/parsing/typing steps and get any supported report's data
 as a dataframe with just a few lines of code. You can also choose to retrieve the raw data directly and use that instead. 
 
-To see the currently supported reports, please check out [SUPPORTEDREPORTS.md](SUPPORTEDREPORTS.md).
+For documentation and information on currently supported reports, please check out [DOCUMENTATION.md](DOCUMENTATION.md).
 
 ## Features
 MISOReports supports these features and more:

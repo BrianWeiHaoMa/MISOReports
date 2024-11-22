@@ -1,6 +1,7 @@
-# Development guidelines
+# Development
+Here you can find the general guidelines for the development of MISOReports.
 
-## Github workflow
+## Github Workflow
 Before commiting or pushing to github, remember to run these in the terminal and make sure everything passes:
 
 For running all tests:
@@ -18,13 +19,13 @@ For checking type annotations:
 mypy --strict .\MISOReports\MISOReports.py 
 ```
 
-## Coding style
+## Coding Style
 * We are using the vscode extension, autoDocstring's, one-line-sphinx documentation template.
 * Try to keep the style the same as the code that was previously there in all respects (naming schemes, character length per line, etc.) 
 * Try too keep the line length to PEP8 standards. Exceptions where it makes sense is fine.
 * When adding support for a new report, if it is on the TODO list, mark it off as done. If not, make a new entry for it.
 
-## Reports to pandas dataframe mapping logic
+## Reports to Pandas Dataframe Mapping Logic
 Remember to make a parsing function in ReportParsers and make a new Report entry in report_mappings.
 As well, make sure to add the report's test in report_columns_type_mappings in test_MISOReports.py.
 Continue to use the same naming scheme as the previous code.
@@ -45,7 +46,7 @@ When looking at the report, use this checklist:
 * Otherwise if the numbers in the column are all integers, the column type should be **pandas.core.arrays.integer.Int64Dtype()**.
 * Otherwise make note of the new case here.
 
-## Report parser reference
+## Report Parser Reference
 csv
 ```python
 @staticmethod
@@ -160,7 +161,7 @@ types_df = pd.DataFrame(
 print(types_df.to_string())
 ```
 
-## Using checker.py
+## Using Checker.py
 To see the options available:
 ```
 python -m MISOReports.checker -h
