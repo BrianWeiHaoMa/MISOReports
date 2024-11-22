@@ -1661,6 +1661,104 @@ multiple_dfs_test_list = [
            },
         }
     ),
+    (
+        "mom",
+        {
+           "6 DAYS AHEAD DATES": {
+	            ("Day 1", "Day 2", "Day 3", "Day 4", "Day 5", "Day 6",): pandas.core.arrays.string_.StringDtype,
+           },
+           "MISO": {
+                ("Day 1", "Day 2", "Day 3", "Day 4", "Day 5", "Day 6",): numpy.dtypes.Float64DType,
+	            ("Resources",): pandas.core.arrays.string_.StringDtype,
+           },
+           "NORTH": {
+            	("Day 1", "Day 2", "Day 3", "Day 4", "Day 5", "Day 6",): numpy.dtypes.Float64DType,
+	            ("Resources",): pandas.core.arrays.string_.StringDtype,
+           },
+           "CENTRAL": {
+            	("Day 1", "Day 2", "Day 3", "Day 4", "Day 5", "Day 6",): numpy.dtypes.Float64DType,
+	            ("Resources",): pandas.core.arrays.string_.StringDtype,
+           },
+           "NORTH+CENTRAL": {
+                ("Day 1", "Day 2", "Day 3", "Day 4", "Day 5", "Day 6",): numpy.dtypes.Float64DType,
+                ("Resources",): pandas.core.arrays.string_.StringDtype,
+           },
+           "SOUTH": {
+            	("Day 1", "Day 2", "Day 3", "Day 4", "Day 5", "Day 6",): numpy.dtypes.Float64DType,
+	            ("Resources",): pandas.core.arrays.string_.StringDtype,
+           },
+           "SOLAR HOURLY": {
+                ("North", "Central", "South", "MISO",): numpy.dtypes.Float64DType,
+                ("DAY HE",): pandas.core.arrays.string_.StringDtype,
+           },
+           "WIND HOURLY": {
+                ("North", "Central", "South", "MISO",): numpy.dtypes.Float64DType,
+                ("DAY HE",): pandas.core.arrays.string_.StringDtype,
+           },
+           "WIND UNCERTAINTY": {
+                ("Day 1", "Day 2", "Day 3", "Day 4", "Day 5", "Day 6",): numpy.dtypes.Float64DType,
+                ("Wind Uncertainty",): pandas.core.arrays.string_.StringDtype,
+           },
+           "LOAD UNCERTAINTY": {
+                ("Day 1", "Day 2", "Day 3", "Day 4", "Day 5", "Day 6",): numpy.dtypes.Float64DType,
+                ("Load Uncertainty",): pandas.core.arrays.string_.StringDtype,
+           },
+           "7 DAYS AHEAD DATES": {
+	            ("Day 1", "Day 2", "Day 3", "Day 4", "Day 5", "Day 6", "Day 7",): pandas.core.arrays.string_.StringDtype,
+           },
+           "OUTAGE 7-DAY LOOK-AHEAD": {
+                ("Day 1", "Day 2", "Day 3", "Day 4", "Day 5", "Day 6", "Day 7",): numpy.dtypes.Float64DType,
+                ("Location", "Type",): pandas.core.arrays.string_.StringDtype,
+           },
+           "30 DAYS BACK DATES": {
+	            ("Day 1", "Day 2", "Day 3", "Day 4", "Day 5", "Day 6", "Day 7", "Day 8", "Day 9", "Day 10", "Day 11", "Day 12", "Day 13", "Day 14", "Day 15", "Day 16", "Day 17", "Day 18", "Day 19", "Day 20", "Day 21", "Day 22", "Day 23", "Day 24", "Day 25", "Day 26", "Day 27", "Day 28", "Day 29", "Day 30",): pandas.core.arrays.string_.StringDtype,
+           },
+           "OUTAGE 30-DAY LOOK-BACK": {
+                ("Day 1", "Day 2", "Day 3", "Day 4", "Day 5", "Day 6", "Day 7", "Day 8", "Day 9", "Day 10", "Day 11", "Day 12", "Day 13", "Day 14", "Day 15", "Day 16", "Day 17", "Day 18", "Day 19", "Day 20", "Day 21", "Day 22", "Day 23", "Day 24", "Day 25", "Day 26", "Day 27", "Day 28", "Day 29", "Day 30",): numpy.dtypes.Float64DType,
+                ("Location", "Type",): pandas.core.arrays.string_.StringDtype,
+           },
+        }
+    ),
+    (
+        "ftr_allocation_summary",
+        {
+            "2024 Stage 2 Residual": {
+                ("STAGE2MW", "STAGE2PAYMENT",): numpy.dtypes.Float64DType,
+                ("ID_TOU",): pandas.core.arrays.string_.StringDtype,
+                ("START_DATE",): numpy.dtypes.DateTime64DType,
+            },
+            "2024-2025 ARR Annual Allocation Summary by Path": {
+                ("MW",): numpy.dtypes.Float64DType,
+                ("MARKET_NAME", "ID_TOU", "SOURCE_NAME", "SINK_NAME", "STAGE", "TYPE",): pandas.core.arrays.string_.StringDtype,
+                ("DATE_START", "DATE_END",): numpy.dtypes.DateTime64DType,
+            },
+        }
+    ),
+    (
+        "MM_Annual_Report",
+        {
+            "Annual_MM_MISO": {
+                ("MISO Available Margin (MW)",): numpy.dtypes.Float64DType,
+                ("Date",): numpy.dtypes.DateTime64DType,
+            },
+            "Annual_MM_Central": {
+                ("Central Available Margin (MW)",): numpy.dtypes.Float64DType,
+                ("Date",): numpy.dtypes.DateTime64DType,
+            },
+            "Annual_MM_South": {
+                ("South Available Margin (MW)",): numpy.dtypes.Float64DType,
+                ("Date",): numpy.dtypes.DateTime64DType,
+            },
+            "Annual_MM_North": {
+                ("North Available Margin (MW)",): numpy.dtypes.Float64DType,
+                ("Date",): numpy.dtypes.DateTime64DType,
+            },
+            "Transparency": {
+                ("Central Region (MW)", "North Region (MW)", "South Region (MW)",): numpy.dtypes.Float64DType,
+                ("Date",): numpy.dtypes.DateTime64DType,
+            },
+        },
+    ),
 ]
 
 
