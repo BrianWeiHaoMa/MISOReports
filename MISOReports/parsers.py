@@ -799,44 +799,36 @@ def parse_AncillaryServicesMCP(
     res: requests.Response,
 ) -> pd.DataFrame:
     text = res.text
-    csv1, csv2, csv3 = text.split("\n\n")
+    _, csv1, csv2 = text.split("\n\n")
 
+    csv1_lines = csv1.splitlines()
+    
     df1 = pd.read_csv(
-        filepath_or_buffer=io.StringIO("\n".join(csv1.split(","))),
+        filepath_or_buffer=io.StringIO("\n".join(csv1_lines[1:])),
     )
 
-    df1[["RefId"]] = df1[["RefId"]].astype(pandas.core.arrays.string_.StringDtype())
+    df1.rename(columns={" GenRegMCP": "GenRegMCP"}, inplace=True)
+
+    df1[["number"]] = df1[["number"]].astype(pandas.core.arrays.integer.Int64Dtype())
+    df1[["GenRegMCP", "GenSpinMCP", "GenSuppMCP", "StrMcp", "DemandRegMcp", "DemandSpinMcp", "DemandSuppMCP", "RcpUpMcp", "RcpDownMcp"]] = df1[["GenRegMCP", "GenSpinMCP", "GenSuppMCP", "StrMcp", "DemandRegMcp", "DemandSpinMcp", "DemandSuppMCP", "RcpUpMcp", "RcpDownMcp"]].astype(numpy.dtypes.Float64DType())
 
     csv2_lines = csv2.splitlines()
-    
+
     df2 = pd.read_csv(
         filepath_or_buffer=io.StringIO("\n".join(csv2_lines[1:])),
     )
 
-    df2.rename(columns={" GenRegMCP": "GenRegMCP"}, inplace=True)
-
     df2[["number"]] = df2[["number"]].astype(pandas.core.arrays.integer.Int64Dtype())
     df2[["GenRegMCP", "GenSpinMCP", "GenSuppMCP", "StrMcp", "DemandRegMcp", "DemandSpinMcp", "DemandSuppMCP", "RcpUpMcp", "RcpDownMcp"]] = df2[["GenRegMCP", "GenSpinMCP", "GenSuppMCP", "StrMcp", "DemandRegMcp", "DemandSpinMcp", "DemandSuppMCP", "RcpUpMcp", "RcpDownMcp"]].astype(numpy.dtypes.Float64DType())
-
-    csv3_lines = csv3.splitlines()
-
-    df3 = pd.read_csv(
-        filepath_or_buffer=io.StringIO("\n".join(csv3_lines[1:])),
-    )
-
-    df3[["number"]] = df3[["number"]].astype(pandas.core.arrays.integer.Int64Dtype())
-    df3[["GenRegMCP", "GenSpinMCP", "GenSuppMCP", "StrMcp", "DemandRegMcp", "DemandSpinMcp", "DemandSuppMCP", "RcpUpMcp", "RcpDownMcp"]] = df3[["GenRegMCP", "GenSpinMCP", "GenSuppMCP", "StrMcp", "DemandRegMcp", "DemandSpinMcp", "DemandSuppMCP", "RcpUpMcp", "RcpDownMcp"]].astype(numpy.dtypes.Float64DType())
     
     df = pd.DataFrame({
         MULTI_DF_NAMES_COLUMN: [
-                "Interval", 
-                f"{csv2_lines[0]}", 
-                f"{csv3_lines[0]}"
+                f"{csv1_lines[0]}", 
+                f"{csv2_lines[0]}"
         ], 
         MULTI_DF_DFS_COLUMN: [
                 df1, 
                 df2, 
-                df3
         ],
     })
     
