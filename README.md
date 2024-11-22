@@ -1,19 +1,22 @@
 # MISOReports
-A library for downloading Midcontinent Independent System Operator (MISO) public reports. As of 2024-11-17, MISOReports supports
-reports from [MISORTWDDataBroker](https://api.misoenergy.org/MISORTWDDataBroker/), [MISORTWDBIReporter](https://api.misoenergy.org/MISORTWDBIReporter/),
+A comprehensive Python library for downloading Midcontinent Independent System Operator (MISO) public reports into pandas dataframes. 
+
+As of 2024-11-21, MISOReports supports reports from 
+[MISORTWDDataBroker](https://api.misoenergy.org/MISORTWDDataBroker/), [MISORTWDBIReporter](https://api.misoenergy.org/MISORTWDBIReporter/),
 and [MISO Market Reports](https://www.misoenergy.org/markets-and-operations/real-time--market-data/market-reports/), totalling to well over 120 different reports.
 
 With MISOReports, you can skip all of the intermediate URL generation/parsing/typing steps and get any supported report's data
-in a dataframe with just a few lines of code. You can also choose to retrieve the get request data directly and use that instead. 
+as a dataframe with just a few lines of code. You can also choose to retrieve the raw data directly and use that instead. 
 
 To see the currently supported reports, please check out [SUPPORTEDREPORTS.md](SUPPORTEDREPORTS.md).
 
 ## Features
-MISOReports supports but is not limited to the below features:
+MISOReports supports these features and more:
 - Downloading reports by date for reports that offer a date option
 - Downloading live reports for reports without a date option
 - Downloading raw report content in any of their supported formats (csv, xml, json, xls, xlsx, etc.)
-- Well annotated and documented functions and classes (passing mypy --strict test)
+- Generating target URLs for the report of your choice
+- A thoroughly tested and well annotated API with >= 98% test coverage and a pass with mypy --strict 
 
 ## Installation
 To install, use
@@ -77,7 +80,7 @@ df = MISOReports.get_df(
 # to iterate across the tables.
 for i, table_name in enumerate(df["table_names"]):
     print(table_name)
-    print(df["dataframes"].iloc[i])
+    print(df["dataframes"].iloc[i].head(3))
     print()
     print()
 ```
@@ -85,76 +88,24 @@ for i, table_name in enumerate(df["table_names"]):
 #### Output:
 ```
 ClearedMW
-    Load_Hour  Load_Value
-0           1     57306.0
-1           2     56564.0
-2           3     55085.0
-3           4     55189.0
-4           5     54450.0
-5           6     55161.0
-6           7     56981.0
-7           8     59703.0
-8           9     59882.0
-9          10     60419.0
-10         11     62572.0
-11         12     62215.0
-12         13     62212.0
-13         14     62423.0
-14         15     62019.0
-15         16     62861.0
-16         17     67282.0
-17         18     71489.0
-18         19     71420.0
-19         20     70631.0
-20         21     68146.0
-21         22     66190.0
-22         23     63428.0
-23         24     60859.0
+   Load_Hour  Load_Value
+0          1     65871.0
+1          2     65521.0
+2          3     64474.0
 
 
 MediumTermLoadForecast
-    Hour_End  Load_Forecast
-0          1        61570.0
-1          2        59957.0
-2          3        59707.0
-3          4        59008.0
-4          5        58701.0
-5          6        58634.0
-6          7        59941.0
-7          8        61064.0
-8          9        62505.0
-9         10        63714.0
-10        11        64406.0
-11        12        64917.0
-12        13        65523.0
-13        14        66128.0
-14        15        66466.0
-15        16        66811.0
-16        17        67815.0
-17        18        70013.0
-18        19        71686.0
-19        20        71145.0
-20        21        69849.0
-21        22        67944.0
-22        23        65504.0
-23        24        62802.0
+   Hour_End  Load_Forecast
+0         1        68614.0
+1         2        66566.0
+2         3        66620.0
 
 
 FiveMinTotalLoad
-              Load_Time  Load_Value
-0   1900-01-01 00:00:00     62534.0
-1   1900-01-01 00:05:00     62437.0
-2   1900-01-01 00:10:00     62234.0
-3   1900-01-01 00:15:00     62102.0
-4   1900-01-01 00:20:00     61948.0
-..                  ...         ...
-153 1900-01-01 12:45:00     65481.0
-154 1900-01-01 12:50:00     65576.0
-155 1900-01-01 12:55:00     65430.0
-156 1900-01-01 13:00:00     65722.0
-157 1900-01-01 13:05:00     65874.0
-
-[158 rows x 2 columns]
+            Load_Time  Load_Value
+0 1900-01-01 00:00:00     68899.0
+1 1900-01-01 00:05:00     68690.0
+2 1900-01-01 00:10:00     68327.0
 ```
 
 ### Example 3:
@@ -272,3 +223,6 @@ print(df)
 
 ## Contributing
 Please take a look at our [CONTRIBUTING.md](CONTRIBUTING.md) for details on how to contribute.
+
+## License
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
