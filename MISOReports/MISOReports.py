@@ -513,7 +513,7 @@ class MISOReports:
     
 
     report_mappings: dict[str, Report] = {
-        "rt_bc_HIST": Report(
+        "rt_bc_HIST": Report( # Checked 2024-11-24.
             url_builder=MISOMarketReportsURLBuilder(
                 target="rt_bc_HIST",
                 supported_extensions=["csv"],
@@ -526,7 +526,7 @@ class MISOReports:
             example_datetime=datetime.datetime(year=2024, month=1, day=1),
         ),
 
-        "RT_UDS_Approved_Case_Percentage": Report(
+        "RT_UDS_Approved_Case_Percentage": Report( # Checked 2024-11-24.
             url_builder=MISOMarketReportsURLBuilder(
                 target="RT_UDS_Approved_Case_Percentage",
                 supported_extensions=["csv"],
@@ -539,7 +539,7 @@ class MISOReports:
             example_datetime=datetime.datetime(year=2024, month=10, day=23),
         ),
 
-        "Resource_Uplift_by_Commitment_Reason": Report(
+        "Resource_Uplift_by_Commitment_Reason": Report( # Checked 2024-11-24.
             url_builder=MISOMarketReportsURLBuilder(
                 target="Resource_Uplift_by_Commitment_Reason",
                 supported_extensions=["xlsx"],
@@ -552,7 +552,7 @@ class MISOReports:
             example_datetime=datetime.datetime(year=2024, month=10, day=9),
         ),
 
-        "rt_rpe": Report(
+        "rt_rpe": Report( # Checked 2024-11-24.
             url_builder=MISOMarketReportsURLBuilder(
                 target="rt_rpe",
                 supported_extensions=["xls"],
@@ -565,7 +565,7 @@ class MISOReports:
             example_datetime=datetime.datetime(year=2024, month=11, day=1),
         ),
 
-        "Historical_RT_RSG_Commitment": Report(
+        "Historical_RT_RSG_Commitment": Report( # Checked 2024-11-24.
             url_builder=MISOMarketReportsURLBuilder(
                 target="Historical_RT_RSG_Commitment",
                 supported_extensions=["csv"],
@@ -578,7 +578,7 @@ class MISOReports:
             example_datetime=datetime.datetime(year=2024, month=1, day=1),
         ),
 
-        "da_pr": Report(
+        "da_pr": Report( # Checked 2024-11-24.
             url_builder=MISOMarketReportsURLBuilder(
                 target="da_pr",
                 supported_extensions=["xls"],
@@ -591,7 +591,7 @@ class MISOReports:
             example_datetime=datetime.datetime(year=2024, month=10, day=30),
         ),
 
-        "da_pbc": Report(
+        "da_pbc": Report( # Checked 2024-11-24.
             url_builder=MISOMarketReportsURLBuilder(
                 target="da_pbc",
                 supported_extensions=["csv"],
@@ -604,7 +604,7 @@ class MISOReports:
             example_datetime=datetime.datetime(year=2022, month=1, day=7),
         ),
 
-        "da_bc": Report(
+        "da_bc": Report( # Checked 2024-11-24.
             url_builder=MISOMarketReportsURLBuilder(
                 target="da_bc",
                 supported_extensions=["xls"],
@@ -617,7 +617,7 @@ class MISOReports:
             example_datetime=datetime.datetime(year=2024, month=10, day=29),
         ),
 
-        "da_bcsf": Report(
+        "da_bcsf": Report( # Checked 2024-11-24.
             url_builder=MISOMarketReportsURLBuilder(
                 target="da_bcsf",
                 supported_extensions=["xls"],
@@ -630,7 +630,7 @@ class MISOReports:
             example_datetime=datetime.datetime(year=2024, month=10, day=29),
         ),
 
-        "rt_pr": Report(
+        "rt_pr": Report( # Checked 2024-11-24.
             url_builder=MISOMarketReportsURLBuilder(
                 target="rt_pr",
                 supported_extensions=["xls"],
@@ -643,7 +643,7 @@ class MISOReports:
             example_datetime=datetime.datetime(year=2024, month=10, day=26),
         ),
 
-        "rt_irsf": Report(
+        "rt_irsf": Report( # Checked 2024-11-24.
             url_builder=MISOMarketReportsURLBuilder(
                 target="rt_irsf",
                 supported_extensions=["csv"],
@@ -656,7 +656,7 @@ class MISOReports:
             example_datetime=datetime.datetime(year=2024, month=10, day=30),
         ),
 
-        "rt_mf": Report(
+        "rt_mf": Report( # Checked 2024-11-24.
             url_builder=MISOMarketReportsURLBuilder(
                 target="rt_mf",
                 supported_extensions=["xlsx"],
@@ -669,7 +669,7 @@ class MISOReports:
             example_datetime=datetime.datetime(year=2024, month=10, day=30),
         ),
 
-        "rt_ex": Report(
+        "rt_ex": Report( # Checked 2024-11-24.
             url_builder=MISOMarketReportsURLBuilder(
                 target="rt_ex",
                 supported_extensions=["xls"],
@@ -682,7 +682,7 @@ class MISOReports:
             example_datetime=datetime.datetime(year=2024, month=10, day=30),
         ),
 
-        "rt_pbc": Report(
+        "rt_pbc": Report( # Checked 2024-11-24.
             url_builder=MISOMarketReportsURLBuilder(
                 target="rt_pbc",
                 supported_extensions=["csv"],
@@ -695,7 +695,7 @@ class MISOReports:
             example_datetime=datetime.datetime(year=2024, month=10, day=1),
         ),
 
-        "rt_bc": Report(
+        "rt_bc": Report( # Checked 2024-11-24.
             url_builder=MISOMarketReportsURLBuilder(
                 target="rt_bc",
                 supported_extensions=["xls"],
@@ -708,7 +708,7 @@ class MISOReports:
             example_datetime=datetime.datetime(year=2024, month=10, day=30),
         ),
 
-        "rt_or": Report(
+        "rt_or": Report( # Checked 2024-11-24.
             url_builder=MISOMarketReportsURLBuilder(
                 target="rt_or",
                 supported_extensions=["xls"],
@@ -721,7 +721,7 @@ class MISOReports:
             example_datetime=datetime.datetime(year=2024, month=9, day=10),
         ),
 
-        "rt_fuel_on_margin": Report(
+        "rt_fuel_on_margin": Report( # Checked 2024-11-24.
             url_builder=MISOMarketReportsURLBuilder(
                 target="rt_fuel_on_margin",
                 supported_extensions=["zip"],
@@ -734,7 +734,7 @@ class MISOReports:
             example_datetime=datetime.datetime(year=2023, month=1, day=1),
         ),
 
-        "Total_Uplift_by_Resource": Report(
+        "Total_Uplift_by_Resource": Report( # Checked 2024-11-24.
             url_builder=MISOMarketReportsURLBuilder(
                 target="Total_Uplift_by_Resource",
                 supported_extensions=["xlsx"],
@@ -747,7 +747,7 @@ class MISOReports:
             example_datetime=datetime.datetime(year=2024, month=10, day=1),
         ),
 
-        "ms_vlr_srw": Report(
+        "ms_vlr_srw": Report( # Checked 2024-11-24.
             url_builder=MISOMarketReportsURLBuilder(
                 target="ms_vlr_srw",
                 supported_extensions=["xlsx"],

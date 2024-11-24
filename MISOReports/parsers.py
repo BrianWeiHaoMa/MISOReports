@@ -52,7 +52,12 @@ def parse_rt_bc_HIST(
         low_memory=False,
     )
 
-    df[["Preliminary Shadow Price"]] = df[["Preliminary Shadow Price"]].replace(r'[\$,()]', '', regex=True)
+    df["Preliminary Shadow Price"] = df["Preliminary Shadow Price"].replace({
+        r"\(\$": "-",
+        r"\$": "",
+        r"\)": "",
+    }, regex=True)
+    
     df[["BP1", "PC1", "BP2", "PC2", "Preliminary Shadow Price"]] = df[["BP1", "PC1", "BP2", "PC2", "Preliminary Shadow Price"]].astype(numpy.dtypes.Float64DType())
     df[["Override"]] = df[["Override"]].astype(pandas.core.arrays.integer.Int64Dtype())
     df[["Market Date"]] = df[["Market Date"]].apply(pd.to_datetime, format="%m/%d/%Y")
@@ -251,10 +256,21 @@ def parse_da_bc(
 def parse_da_bcsf(
     res: requests.Response,
 ) -> pd.DataFrame:
-    df = pd.read_excel(
+    sheet1 = pd.read_excel(
         io=io.BytesIO(res.content),
         skiprows=3,
+        sheet_name="Sheet1",
     )
+
+    sheet2 = pd.read_excel(
+        io=io.BytesIO(res.content),
+        sheet_name="Sheet2",
+        header=None,
+        names=sheet1.columns,
+        skipfooter=1,
+    )
+
+    df = pd.concat(objs=[sheet1, sheet2]).reset_index(drop=True)
 
     df[["From KV", "To KV", "Direction"]] = df[["From KV", "To KV", "Direction"]].round().astype(pandas.core.arrays.integer.Int64Dtype())
     df[["Constraint ID", "Constraint Name", "Contingency Name", "Constraint Type", "Flowgate Name", "Device Type", "Key1", "Key2", "Key3", "From Area", "To Area", "From Station", "To Station"]] = df[["Constraint ID", "Constraint Name", "Contingency Name", "Constraint Type", "Flowgate Name", "Device Type", "Key1", "Key2", "Key3", "From Area", "To Area", "From Station", "To Station"]].astype(pandas.core.arrays.string_.StringDtype())
@@ -272,9 +288,7 @@ def parse_rt_pr(
     )
     df1.rename(columns={df1.columns[0]: "Type"}, inplace=True)
     df1.drop(labels=df1.columns[4:], axis=1, inplace=True)
-    df1[["Type"]] = df1[["Type"]].astype(pandas.core.arrays.string_.StringDtype())
-    df1[["Demand", "Supply", "Total"]] = df1[["Demand", "Supply", "Total"]].astype(numpy.dtypes.Float64DType())
-
+   
     df2 = pd.read_excel(
         io=io.BytesIO(res.content),
         skiprows=8,
@@ -282,8 +296,11 @@ def parse_rt_pr(
     )
     df2.rename(columns={df2.columns[0]: "Type"}, inplace=True)
     df2.drop(labels=df2.columns[4:], axis=1, inplace=True)
-    df2[["Type"]] = df2[["Type"]].astype(pandas.core.arrays.string_.StringDtype())
-    df2[["Demand", "Supply", "Total"]] = df2[["Demand", "Supply", "Total"]].astype(numpy.dtypes.Float64DType())
+    
+    df1_and_df2 = pd.concat(objs=[df1, df2]).reset_index(drop=True)
+
+    df1_and_df2[["Type"]] = df1_and_df2[["Type"]].astype(pandas.core.arrays.string_.StringDtype())
+    df1_and_df2[["Demand", "Supply", "Total"]] = df1_and_df2[["Demand", "Supply", "Total"]].astype(numpy.dtypes.Float64DType())
 
     df3 = pd.read_excel(
         io=io.BytesIO(res.content),
@@ -326,11 +343,10 @@ def parse_rt_pr(
     # No names written for any of the tables in the report.
     df = pd.DataFrame({
         MULTI_DF_NAMES_COLUMN: [
-                f"Table {i}" for i in range(1, 7)
+                f"Table {i}" for i in range(1, 6)
         ], 
         MULTI_DF_DFS_COLUMN: [
-                df1, 
-                df2, 
+                df1_and_df2, 
                 df3,
         ] + bottom_dfs,
     })
@@ -545,7 +561,8 @@ def parse_ms_vlr_srw(
 
     df = pd.DataFrame({
         MULTI_DF_NAMES_COLUMN: [
-                f"Table {i}" for i in range(1, 3)
+                "Central",
+                "South",
         ], 
         MULTI_DF_DFS_COLUMN: [
                 df1, 
