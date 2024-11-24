@@ -660,7 +660,8 @@ def parse_ms_vlr_HIST_SRW(
     ).iloc[:-2]
 
     df[["OPERATING DATE"]] = df[["OPERATING DATE"]].apply(pd.to_datetime, format="%m/%d/%Y")
-    df[["SETTLEMENT RUN", "DA_VLR_MWP", "RT_VLR_MWP", "DA+RT Total"]] = df[["SETTLEMENT RUN", "DA_VLR_MWP", "RT_VLR_MWP", "DA+RT Total"]].astype(numpy.dtypes.Float64DType())
+    df[["DA_VLR_MWP", "RT_VLR_MWP", "DA+RT Total"]] = df[["DA_VLR_MWP", "RT_VLR_MWP", "DA+RT Total"]].astype(numpy.dtypes.Float64DType())
+    df[["SETTLEMENT RUN"]] = df[["SETTLEMENT RUN"]].astype(pandas.core.arrays.integer.Int64Dtype())
     df[["REGION", "CONSTRAINT"]] = df[["REGION", "CONSTRAINT"]].astype(pandas.core.arrays.string_.StringDtype())
 
     return df
@@ -744,11 +745,14 @@ def parse_Daily_Uplift_by_Local_Resource_Zone(
             skiprows=skiprows,
             nrows=n_rows,
         )
-        df.rename(columns={df.columns[1]: "Date"}, inplace=True)
+        df.rename(columns={
+            df.columns[1]: "Date",
+            "Price Volatility Make Whole Payments\n": "Price Volatility Make Whole Payments",
+        }, inplace=True)
         df.drop(labels=df.columns[0], axis=1, inplace=True)
 
         df[["Date"]] = df[["Date"]].astype(pandas.core.arrays.string_.StringDtype())
-        df[["Day Ahead Capacity", "Day Ahead VLR", "Real Time Capacity", "Real Time VLR", "Real Time Transmission Reliability", "Price Volatility Make Whole Payments\n"]] = df[["Day Ahead Capacity", "Day Ahead VLR", "Real Time Capacity", "Real Time VLR", "Real Time Transmission Reliability", "Price Volatility Make Whole Payments\n"]].astype(numpy.dtypes.Float64DType())
+        df[["Day Ahead Capacity", "Day Ahead VLR", "Real Time Capacity", "Real Time VLR", "Real Time Transmission Reliability", "Price Volatility Make Whole Payments"]] = df[["Day Ahead Capacity", "Day Ahead VLR", "Real Time Capacity", "Real Time VLR", "Real Time Transmission Reliability", "Price Volatility Make Whole Payments"]].astype(numpy.dtypes.Float64DType())
 
         return df
 

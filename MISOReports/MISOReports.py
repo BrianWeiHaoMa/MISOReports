@@ -760,7 +760,7 @@ class MISOReports:
             example_datetime=datetime.datetime(year=2024, month=9, day=1),
         ),
 
-        "ms_rsg_srw": Report(
+        "ms_rsg_srw": Report( # TODO handle the four other sheets.
             url_builder=MISOMarketReportsURLBuilder(
                 target="ms_rsg_srw",
                 supported_extensions=["xlsx"],
@@ -769,11 +769,11 @@ class MISOReports:
             ),
             type_to_parse="xlsx",
             parser=parsers.parse_ms_rsg_srw,
-            example_url="https://docs.misoenergy.org/marketreports/20241104_ms_rsg_srw.xlsx",
-            example_datetime=datetime.datetime(year=2024, month=11, day=4),
+            example_url="https://docs.misoenergy.org/marketreports/20241124_ms_rsg_srw.xlsx",
+            example_datetime=datetime.datetime(year=2024, month=11, day=24),
         ),
 
-        "ms_rnu_srw": Report(
+        "ms_rnu_srw": Report( # TODO handle the two other sheets.
             url_builder=MISOMarketReportsURLBuilder(
                 target="ms_rnu_srw",
                 supported_extensions=["xlsx"],
@@ -786,7 +786,7 @@ class MISOReports:
             example_datetime=datetime.datetime(year=2024, month=10, day=29),
         ),
 
-        "ms_ri_srw": Report(
+        "ms_ri_srw": Report( # TODO handle the one other sheet.
             url_builder=MISOMarketReportsURLBuilder(
                 target="ms_ri_srw",
                 supported_extensions=["xlsx"],
@@ -799,7 +799,7 @@ class MISOReports:
             example_datetime=datetime.datetime(year=2024, month=10, day=29),
         ),
 
-        "MARKET_SETTLEMENT_DATA_SRW": Report(
+        "MARKET_SETTLEMENT_DATA_SRW": Report( # Checked 2024-11-24.
             url_builder=MISOMarketReportsURLBuilder(
                 target="MARKET_SETTLEMENT_DATA_SRW",
                 supported_extensions=["zip"],
@@ -811,7 +811,7 @@ class MISOReports:
             example_url="https://docs.misoenergy.org/marketreports/MARKET_SETTLEMENT_DATA_SRW.zip",
         ),
 
-        "ms_vlr_HIST_SRW": Report(
+        "ms_vlr_HIST_SRW": Report( # Checked 2024-11-24.
             url_builder=MISOMarketReportsURLBuilder(
                 target="ms_vlr_HIST_SRW",
                 supported_extensions=["xlsx"],
@@ -824,7 +824,7 @@ class MISOReports:
             example_datetime=datetime.datetime(year=2024, month=1, day=1),
         ),
 
-        "ms_ecf_srw": Report(
+        "ms_ecf_srw": Report( # TODO handle the three other sheets. Rename "Unnamed: 0" column.
             url_builder=MISOMarketReportsURLBuilder(
                 target="ms_ecf_srw",
                 supported_extensions=["xlsx"],
@@ -833,12 +833,11 @@ class MISOReports:
             ),
             type_to_parse="xlsx",
             parser=parsers.parse_ms_ecf_srw,
-            example_url="https://docs.misoenergy.org/marketreports/20241107_ms_ecf_srw.xlsx",
-            example_datetime=datetime.datetime(year=2024, month=11, day=7),
+            example_url="https://docs.misoenergy.org/marketreports/20241124_ms_ecf_srw.xlsx",
+            example_datetime=datetime.datetime(year=2024, month=11, day=24),
         ),
 
-
-        "ccf_co": Report(
+        "ccf_co": Report( # Checked 2024-11-24.
             url_builder=MISOMarketReportsURLBuilder(
                 target="ccf_co",
                 supported_extensions=["csv"],
@@ -851,11 +850,11 @@ class MISOReports:
             example_datetime=datetime.datetime(year=2024, month=10, day=20),
         ),
 
-        "ms_vlr_HIST": Report(
+        "ms_vlr_HIST": Report( # Checked 2024-11-24.
             url_builder=MISOMarketReportsURLBuilder(
                 target="ms_vlr_HIST",
                 supported_extensions=["csv"],
-                url_generator=MISOMarketReportsURLBuilder.url_generator_YYYY_first,\
+                url_generator=MISOMarketReportsURLBuilder.url_generator_YYYY_first,
                 default_extension="csv",
             ),
             type_to_parse="csv",
@@ -864,7 +863,7 @@ class MISOReports:
             example_datetime=datetime.datetime(year=2022, month=1, day=1),
         ),
 
-        "Daily_Uplift_by_Local_Resource_Zone": Report(
+        "Daily_Uplift_by_Local_Resource_Zone": Report( # Checked 2024-11-24.
             url_builder=MISOMarketReportsURLBuilder(
                 target="Daily_Uplift_by_Local_Resource_Zone",
                 supported_extensions=["xlsx"],
@@ -873,11 +872,11 @@ class MISOReports:
             ),
             type_to_parse="xlsx",
             parser=parsers.parse_Daily_Uplift_by_Local_Resource_Zone,
-            example_url="https://docs.misoenergy.org/marketreports/20241020_Daily_Uplift_by_Local_Resource_Zone.xlsx",
-            example_datetime=datetime.datetime(year=2024, month=10, day=20),
+            example_url="https://docs.misoenergy.org/marketreports/20240320_Daily_Uplift_by_Local_Resource_Zone.xlsx",
+            example_datetime=datetime.datetime(year=2024, month=3, day=20),
         ),
 
-        "fuelmix": Report(
+        "fuelmix": Report( # Checked 2024-11-24.
             url_builder=MISORTWDDataBrokerURLBuilder(
                 target="getfuelmix",
                 supported_extensions=["csv", "xml", "json"],
@@ -888,7 +887,7 @@ class MISOReports:
             example_url="https://api.misoenergy.org/MISORTWDDataBroker/DataBrokerServices.asmx?messageType=getfuelmix&returnType=csv",
         ),
 
-        "ace": Report(
+        "ace": Report( # Checked 2024-11-24.
             url_builder=MISORTWDDataBrokerURLBuilder(
                 target="getace",
                 supported_extensions=["csv", "xml", "json"],
@@ -899,7 +898,7 @@ class MISOReports:
             example_url="https://api.misoenergy.org/MISORTWDDataBroker/DataBrokerServices.asmx?messageType=getace&returnType=csv",
         ),
 
-        "AncillaryServicesMCP": Report(
+        "AncillaryServicesMCP": Report( # Checked 2024-11-24.
             url_builder=MISORTWDDataBrokerURLBuilder(
                 target="getAncillaryServicesMCP",
                 supported_extensions=["csv", "xml", "json"],
@@ -910,7 +909,7 @@ class MISOReports:
             example_url="https://api.misoenergy.org/MISORTWDDataBroker/DataBrokerServices.asmx?messageType=getAncillaryServicesMCP&returnType=csv",
         ),
 
-        "cts": Report(
+        "cts": Report( # Checked 2024-11-24.
             url_builder=MISORTWDDataBrokerURLBuilder(
                 target="getcts",
                 supported_extensions=["csv", "xml", "json"],
@@ -921,7 +920,7 @@ class MISOReports:
             example_url="https://api.misoenergy.org/MISORTWDDataBroker/DataBrokerServices.asmx?messageType=getcts&returnType=csv",
         ),
 
-        "combinedwindsolar": Report(
+        "combinedwindsolar": Report( # Checked 2024-11-24.
             url_builder=MISORTWDDataBrokerURLBuilder(
                 target="getcombinedwindsolar",
                 supported_extensions=["csv", "xml", "json"],
@@ -932,7 +931,7 @@ class MISOReports:
             example_url="https://api.misoenergy.org/MISORTWDDataBroker/DataBrokerServices.asmx?messageType=getcombinedwindsolar&returnType=csv",
         ),
 
-        "WindForecast": Report(
+        "WindForecast": Report( # Checked 2024-11-24.
             url_builder=MISORTWDDataBrokerURLBuilder(
                 target="getWindForecast",
                 supported_extensions=["xml", "json"],
@@ -943,7 +942,7 @@ class MISOReports:
             example_url="https://api.misoenergy.org/MISORTWDDataBroker/DataBrokerServices.asmx?messageType=getWindForecast&returnType=json",
         ),
 
-        "Wind": Report(
+        "Wind": Report( # Checked 2024-11-24.
             url_builder=MISORTWDDataBrokerURLBuilder(
                 target="getWind",
                 supported_extensions=["csv", "xml", "json"],

@@ -356,7 +356,8 @@ single_df_test_list = [
         "ms_vlr_HIST_SRW", 
         {
             ("OPERATING DATE",): numpy.dtypes.DateTime64DType,
-            ("SETTLEMENT RUN", "DA_VLR_MWP", "RT_VLR_MWP", "DA+RT Total",): numpy.dtypes.Float64DType,
+            ("DA_VLR_MWP", "RT_VLR_MWP", "DA+RT Total",): numpy.dtypes.Float64DType,
+            ("SETTLEMENT RUN",): pandas.core.arrays.integer.Int64Dtype,
             ("REGION", "CONSTRAINT",): pandas.core.arrays.string_.StringDtype,
         }
     ),
@@ -1546,43 +1547,43 @@ multiple_dfs_test_list = [
         "Daily_Uplift_by_Local_Resource_Zone",
         {
             "LRZ 1": {
-                ("Day Ahead Capacity", "Day Ahead VLR", "Real Time Capacity", "Real Time VLR", "Real Time Transmission Reliability", "Price Volatility Make Whole Payments\n",): numpy.dtypes.Float64DType,
+                ("Day Ahead Capacity", "Day Ahead VLR", "Real Time Capacity", "Real Time VLR", "Real Time Transmission Reliability", "Price Volatility Make Whole Payments",): numpy.dtypes.Float64DType,
                 ("Date",): pandas.core.arrays.string_.StringDtype,
             },
             "LRZ 10": {
-                ("Day Ahead Capacity", "Day Ahead VLR", "Real Time Capacity", "Real Time VLR", "Real Time Transmission Reliability", "Price Volatility Make Whole Payments\n",): numpy.dtypes.Float64DType,
+                ("Day Ahead Capacity", "Day Ahead VLR", "Real Time Capacity", "Real Time VLR", "Real Time Transmission Reliability", "Price Volatility Make Whole Payments",): numpy.dtypes.Float64DType,
                 ("Date",): pandas.core.arrays.string_.StringDtype,
             },
             "LRZ 2": {
-                ("Day Ahead Capacity", "Day Ahead VLR", "Real Time Capacity", "Real Time VLR", "Real Time Transmission Reliability", "Price Volatility Make Whole Payments\n",): numpy.dtypes.Float64DType,
+                ("Day Ahead Capacity", "Day Ahead VLR", "Real Time Capacity", "Real Time VLR", "Real Time Transmission Reliability", "Price Volatility Make Whole Payments",): numpy.dtypes.Float64DType,
                 ("Date",): pandas.core.arrays.string_.StringDtype,
             },
             "LRZ 3": {
-                ("Day Ahead Capacity", "Day Ahead VLR", "Real Time Capacity", "Real Time VLR", "Real Time Transmission Reliability", "Price Volatility Make Whole Payments\n",): numpy.dtypes.Float64DType,
+                ("Day Ahead Capacity", "Day Ahead VLR", "Real Time Capacity", "Real Time VLR", "Real Time Transmission Reliability", "Price Volatility Make Whole Payments",): numpy.dtypes.Float64DType,
                 ("Date",): pandas.core.arrays.string_.StringDtype,
             },
             "LRZ 4": {
-                ("Day Ahead Capacity", "Day Ahead VLR", "Real Time Capacity", "Real Time VLR", "Real Time Transmission Reliability", "Price Volatility Make Whole Payments\n",): numpy.dtypes.Float64DType,
+                ("Day Ahead Capacity", "Day Ahead VLR", "Real Time Capacity", "Real Time VLR", "Real Time Transmission Reliability", "Price Volatility Make Whole Payments",): numpy.dtypes.Float64DType,
                 ("Date",): pandas.core.arrays.string_.StringDtype,
             },
             "LRZ 5": {
-                ("Day Ahead Capacity", "Day Ahead VLR", "Real Time Capacity", "Real Time VLR", "Real Time Transmission Reliability", "Price Volatility Make Whole Payments\n",): numpy.dtypes.Float64DType,
+                ("Day Ahead Capacity", "Day Ahead VLR", "Real Time Capacity", "Real Time VLR", "Real Time Transmission Reliability", "Price Volatility Make Whole Payments",): numpy.dtypes.Float64DType,
                 ("Date",): pandas.core.arrays.string_.StringDtype,
             },
             "LRZ 6": {
-                ("Day Ahead Capacity", "Day Ahead VLR", "Real Time Capacity", "Real Time VLR", "Real Time Transmission Reliability", "Price Volatility Make Whole Payments\n",): numpy.dtypes.Float64DType,
+                ("Day Ahead Capacity", "Day Ahead VLR", "Real Time Capacity", "Real Time VLR", "Real Time Transmission Reliability", "Price Volatility Make Whole Payments",): numpy.dtypes.Float64DType,
                 ("Date",): pandas.core.arrays.string_.StringDtype,
             },
             "LRZ 7": {
-                ("Day Ahead Capacity", "Day Ahead VLR", "Real Time Capacity", "Real Time VLR", "Real Time Transmission Reliability", "Price Volatility Make Whole Payments\n",): numpy.dtypes.Float64DType,
+                ("Day Ahead Capacity", "Day Ahead VLR", "Real Time Capacity", "Real Time VLR", "Real Time Transmission Reliability", "Price Volatility Make Whole Payments",): numpy.dtypes.Float64DType,
                 ("Date",): pandas.core.arrays.string_.StringDtype,
             },
             "LRZ 8": {
-                ("Day Ahead Capacity", "Day Ahead VLR", "Real Time Capacity", "Real Time VLR", "Real Time Transmission Reliability", "Price Volatility Make Whole Payments\n",): numpy.dtypes.Float64DType,
+                ("Day Ahead Capacity", "Day Ahead VLR", "Real Time Capacity", "Real Time VLR", "Real Time Transmission Reliability", "Price Volatility Make Whole Payments",): numpy.dtypes.Float64DType,
                 ("Date",): pandas.core.arrays.string_.StringDtype,
             },
             "LRZ 9": {
-                ("Day Ahead Capacity", "Day Ahead VLR", "Real Time Capacity", "Real Time VLR", "Real Time Transmission Reliability", "Price Volatility Make Whole Payments\n",): numpy.dtypes.Float64DType,
+                ("Day Ahead Capacity", "Day Ahead VLR", "Real Time Capacity", "Real Time VLR", "Real Time Transmission Reliability", "Price Volatility Make Whole Payments",): numpy.dtypes.Float64DType,
                 ("Date",): pandas.core.arrays.string_.StringDtype,
             },
         },
