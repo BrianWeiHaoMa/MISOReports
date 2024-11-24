@@ -218,7 +218,7 @@ Here are some coding patterns that might be of help to you.
 
 ### Datetime Extraction for MISORTWDDataBroker Reports
 Many of the reports offered by MISORTWDDataBroker come with datetime data at the top of the
-raw data which can be easily parsed by using the below function.
+raw data which can be easily parsed by using the function below.
 
 ```python
 from MISOReports.MISOReports import MISOReports

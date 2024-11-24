@@ -16,7 +16,7 @@ MISOReports supports these features and more:
 - Downloading live reports for reports without a date option
 - Downloading raw report content in any of their supported formats (csv, xml, json, xls, xlsx, etc.)
 - Generating target URLs for the report of your choice
-- A thoroughly tested and well annotated API with >= 98% test coverage and a pass with mypy --strict 
+- Thoroughly tested and well annotated functions and classes with >= 98% test coverage and a pass with mypy --strict 
 
 ## Installation
 To install, use

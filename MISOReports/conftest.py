@@ -3,6 +3,6 @@ def pytest_addoption(parser):
         "--datetime-increments-limit",
         action="store",              
         type=int,
-        default=30,      
+        default=300,      
         help="The maximum amount of increments to datetime while downloading from URLs",
     )

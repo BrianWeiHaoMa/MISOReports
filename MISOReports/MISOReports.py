@@ -10,6 +10,23 @@ from dateutil.relativedelta import relativedelta
 from MISOReports import parsers
 
 
+class Data:
+    """A class to hold relevant download data.
+    """
+    def __init__(
+        self,
+        df: pd.DataFrame,
+        response: requests.Response,
+    ):
+        """Constructor for Data class.
+
+        :param pd.DataFrame df: The tabular data from the report.
+        :param requests.Response response: The response from the download.
+        """
+        self.df = df
+        self.response = response
+
+
 class URLBuilder(ABC):
     """A class to build URLs for MISO reports.
     """
@@ -26,10 +43,10 @@ class URLBuilder(ABC):
 
         :param str target: A string to be used in the URL to identify the report.
         :param list[str] supported_extensions: The different file types available for download.
+        :param str | None default_extension: The default file type to download, defaults to None
         """
         self.target = target
         self.supported_extensions = supported_extensions
-
         self.default_extension = default_extension
 
     @abstractmethod
@@ -41,7 +58,7 @@ class URLBuilder(ABC):
         """Builds the URL to download from.
 
         :param str | None file_extension: The file type to download. If None, the default extension is used.
-        :param datetime.datetime | None ddatetime: The date/datetime to download the report for.
+        :param datetime.datetime | None ddatetime: The datetime to download the report for.
         :return str: A URL to download the report from.
         """
         pass
@@ -50,6 +67,11 @@ class URLBuilder(ABC):
         self,
         file_extension: str | None,
     ) -> str:
+        """Checks the file extension and returns it if it is supported.
+
+        :param str | None file_extension: The file extension to check. If None, the default extension is used.
+        :return str: The file extension if it is supported.
+        """
         if file_extension is None:
             if self.default_extension is None:
                 raise ValueError("No file extension provided and no default extension set.")
@@ -136,6 +158,13 @@ class MISOMarketReportsURLBuilder(URLBuilder):
         url_generator: Callable[[datetime.datetime | None, str], str],
         default_extension: str | None = None,
     ):
+        """Constructor for MISOMarketReportsURLBuilder class.
+
+        :param str target: The target of the URL.
+        :param list[str] supported_extensions: The supported extensions for the URL.
+        :param Callable[[datetime.datetime  |  None, str], str] url_generator: The function to generate the URL.
+        :param str | None default_extension: The default file type to download, defaults to None
+        """
         super().__init__(
             target=target, 
             supported_extensions=supported_extensions,
@@ -143,6 +172,7 @@ class MISOMarketReportsURLBuilder(URLBuilder):
         )
 
         self.url_generator = url_generator
+        self.increment_mappings: dict[Callable[[datetime.datetime | None, str], str], relativedelta] = {}
 
     def build_url(
         self,
@@ -167,7 +197,7 @@ class MISOMarketReportsURLBuilder(URLBuilder):
         :param int direction: The multiple for the increment (negative for backwards increment).
         :return datetime.datetime: The new datetime.
         """
-        increment_mappings: dict[Callable[[datetime.datetime | None, str], str], relativedelta] = {
+        default_increment_mappings: dict[Callable[[datetime.datetime | None, str], str], relativedelta] = {
             MISOMarketReportsURLBuilder.url_generator_YYYY_current_month_name_to_two_months_later_name_first: relativedelta(months=3),
             MISOMarketReportsURLBuilder.url_generator_YYYY_underscore_current_month_name_to_two_months_later_name_first: relativedelta(months=3),
             MISOMarketReportsURLBuilder.url_generator_YYYYmmdd_first: relativedelta(days=1),
@@ -181,13 +211,15 @@ class MISOMarketReportsURLBuilder(URLBuilder):
             MISOMarketReportsURLBuilder.url_generator_dddYYYY_last_but_as_nth_day_in_year_and_no_underscore: relativedelta(days=1),
         }
 
-        if self.url_generator not in increment_mappings.keys():
+        self.increment_mappings.update(default_increment_mappings)
+
+        if self.url_generator not in self.increment_mappings.keys():
             raise ValueError("This URL generator has no mapped increment.")    
 
         if ddatetime is None:
             return None
         else:
-            return ddatetime + direction * increment_mappings[self.url_generator]
+            return ddatetime + direction * self.increment_mappings[self.url_generator]
 
     @staticmethod    
     def _url_generator_datetime_first(
@@ -315,34 +347,170 @@ class MISOMarketReportsURLBuilder(URLBuilder):
         return res
 
 
+class Report:
+    """A representation of a report for download.
+    """
+    def __init__(
+        self,
+        url_builder: URLBuilder,
+        type_to_parse: str,
+        parser: Callable[[requests.Response], pd.DataFrame],
+        example_url: str,
+        example_datetime: datetime.datetime | None = None,
+    ):
+        """Constructor for Report class.
+
+        :param URLBuilder url_builder: The URL builder to be used for the report.
+        :param str type_to_parse: The type of the file to pass as input into the parser.
+        :param Callable[[requests.Response], pd.DataFrame] parser: The parser for the report.
+        :param str example_url: An example URL for the report.
+        :param datetime.datetime | None example_datetime: An example datetime for the report (this should match the example_url).
+        """
+        self.url_builder = url_builder
+        self.type_to_parse = type_to_parse
+        self.report_parser = parser
+        self.example_url = example_url
+        self.example_datetime = example_datetime
+
+
 class MISOReports:
     """A class for downloading MISO reports.
     """
-    class Report:
-        """A representation of a report for download.
-        """
-        def __init__(
-            self,
-            url_builder: URLBuilder,
-            type_to_parse: str,
-            parser: Callable[[requests.Response], pd.DataFrame],
-            example_url: str,
-            example_datetime: datetime.datetime | None = None,
-        ):
-            """Constructor for Report class.
+    @staticmethod
+    def get_url(
+        report_name: str,
+        file_extension: str | None = None,
+        ddatetime: datetime.datetime | None = None,
+    ) -> str:
+        """Get the URL for the report.
 
-            :param URLBuilder url_builder: The URL builder to be used for the report.
-            :param str type_to_parse: The type of the file to pass as input into the parser.
-            :param Callable[[requests.Response], pd.DataFrame] parser: The parser for the report.
-            :param str example_url: A working URL example for the report.
-            :param datetime.datetime | None example_datetime: An example datetime for the report.
-            """
-            self.url_builder = url_builder
-            self.type_to_parse = type_to_parse
-            self.report_parser = parser
-            self.example_url = example_url
-            self.example_datetime = example_datetime
+        :param str report_name: The name of the report.
+        :param str file_extension: The type of file to download.
+        :param datetime.datetime | None ddatetime: The date of the report, defaults to None
+        :return str: The URL to download the report from.
+        """
+        if report_name not in MISOReports.report_mappings:
+            raise ValueError(f"Unsupported report: {report_name}")
         
+        report = MISOReports.report_mappings[report_name]
+        
+        res = report.url_builder.build_url(
+            file_extension=file_extension, 
+            ddatetime=ddatetime,
+        )
+
+        return res
+    
+    @staticmethod
+    def get_response(
+        report_name: str,
+        file_extension: str | None = None, 
+        ddatetime: datetime.datetime | None = None,
+        timeout: int | None = None,
+    ) -> requests.Response:
+        """Get the response for the report download.
+
+        :param str report_name: The name of the report.
+        :param str file_extension: The type of file to download.
+        :param datetime.datetime | None ddatetime: The date of the report, defaults to None
+        :param int | None timeout: The timeout for the request, defaults to None
+        """
+        url = MISOReports.get_url(
+            report_name=report_name, 
+            file_extension=file_extension, 
+            ddatetime=ddatetime,
+        )
+
+        res = MISOReports._get_response_helper(
+            url=url,
+            timeout=timeout,
+        )
+
+        return res
+    
+    @staticmethod
+    def _get_response_helper(
+        url: str,
+        timeout: int | None = None,
+    ) -> requests.Response:
+        """Helper function to get the response in the report download.
+
+        :param str url: The URL to download the report from.
+        :param int | None timeout: The timeout limit for the request, defaults to None
+        :return requests.Response: The response object for the request.
+        """
+        res = requests.get(
+            url=url,
+            timeout=timeout,
+        )
+
+        res.raise_for_status()
+        
+        return res
+    
+    @staticmethod
+    def get_df(
+        report_name: str,
+        url: str | None = None,
+        ddatetime: datetime.datetime | None = None,
+        timeout: int | None = None,
+    ) -> pd.DataFrame:
+        """Get a parsed DataFrame for the report.
+
+        :param str report_name: The name of the report.
+        :param str | None url: A url to download directly from, defaults to None
+        :param datetime.datetime | None ddatetime: The date of the report, defaults to None
+        :param int | None timeout: The timeout for the request, defaults to None
+        :return pd.DataFrame: A DataFrame containing the data of the report.
+        """
+        data = MISOReports.get_data(
+            report_name=report_name,
+            url=url,
+            ddatetime=ddatetime,
+            timeout=timeout,
+        )
+        
+        return data.df
+
+    @staticmethod
+    def get_data(
+        report_name: str,
+        url: str | None = None,
+        ddatetime: datetime.datetime | None = None,
+        timeout: int | None = None,
+    ) -> Data:
+        """Gets the relevant data for the report.
+
+        :param str report_name: The name of the report.
+        :param str | None url: The url to download from, defaults to None
+        :param datetime.datetime | None ddatetime: The target datetime to download the report for, defaults to None
+        :param int | None timeout: The timeout for the request, defaults to None
+        :return Data: An object containing the DataFrame and the response.
+        """
+        report = MISOReports.report_mappings[report_name]
+
+        if url is not None:
+            response = MISOReports._get_response_helper(
+                url=url, 
+                timeout=timeout,
+            )
+        else:
+            response = MISOReports.get_response(
+                report_name=report_name, 
+                file_extension=report.type_to_parse, 
+                ddatetime=ddatetime,
+                timeout=timeout,
+            )
+
+        df = report.report_parser(response)
+
+        res = Data(
+            df=df,
+            response=response,
+        )
+
+        return res
+    
 
     report_mappings: dict[str, Report] = {
         "rt_bc_HIST": Report(
@@ -1137,7 +1305,7 @@ class MISOReports:
         ),
         
         "asm_exante_damcp": Report(
-             url_builder=MISOMarketReportsURLBuilder(
+                url_builder=MISOMarketReportsURLBuilder(
                 target="asm_exante_damcp",
                 supported_extensions=["csv"],
                 url_generator=MISOMarketReportsURLBuilder.url_generator_YYYYmmdd_first,
@@ -1280,7 +1448,7 @@ class MISOReports:
         ),
 
         "asm_expost_damcp": Report(
-             url_builder=MISOMarketReportsURLBuilder(
+                url_builder=MISOMarketReportsURLBuilder(
                 target="asm_expost_damcp",
                 supported_extensions=["csv"],
                 url_generator=MISOMarketReportsURLBuilder.url_generator_YYYYmmdd_first,
@@ -1293,7 +1461,7 @@ class MISOReports:
         ),
 
         "asm_rtmcp_final": Report(
-             url_builder=MISOMarketReportsURLBuilder(
+                url_builder=MISOMarketReportsURLBuilder(
                 target="asm_rtmcp_final",
                 supported_extensions=["csv"],
                 url_generator=MISOMarketReportsURLBuilder.url_generator_YYYYmmdd_first,
@@ -1306,7 +1474,7 @@ class MISOReports:
         ),
 
         "asm_rtmcp_prelim": Report(
-             url_builder=MISOMarketReportsURLBuilder(
+                url_builder=MISOMarketReportsURLBuilder(
                 target="asm_rtmcp_prelim",
                 supported_extensions=["csv"],
                 url_generator=MISOMarketReportsURLBuilder.url_generator_YYYYmmdd_first,
@@ -1449,7 +1617,7 @@ class MISOReports:
         ),
 
         "Allocation_on_MISO_Flowgates": Report(
-             url_builder=MISOMarketReportsURLBuilder(
+                url_builder=MISOMarketReportsURLBuilder(
                 target="Allocation_on_MISO_Flowgates",
                 supported_extensions=["csv"],
                 url_generator=MISOMarketReportsURLBuilder.url_generator_YYYY_mm_dd_last,
@@ -1462,7 +1630,7 @@ class MISOReports:
         ),
 
         "M2M_FFE": Report(
-             url_builder=MISOMarketReportsURLBuilder(
+                url_builder=MISOMarketReportsURLBuilder(
                 target="M2M_FFE",
                 supported_extensions=["CSV"],
                 url_generator=MISOMarketReportsURLBuilder.url_generator_YYYY_mm_dd_last,
@@ -1475,7 +1643,7 @@ class MISOReports:
         ),
 
         "M2M_Flowgates_as_of": Report(
-             url_builder=MISOMarketReportsURLBuilder(
+                url_builder=MISOMarketReportsURLBuilder(
                 target="M2M_Flowgates_as_of",
                 supported_extensions=["CSV"],
                 url_generator=MISOMarketReportsURLBuilder.url_generator_YYYYmmdd_last,
@@ -1489,7 +1657,7 @@ class MISOReports:
 
         # Every download URL as of 2024-11-02 offered for this report was empty.
         "da_M2M_Settlement_srw": Report( 
-             url_builder=MISOMarketReportsURLBuilder(
+                url_builder=MISOMarketReportsURLBuilder(
                 target="da_M2M_Settlement_srw",
                 supported_extensions=["csv"],
                 url_generator=MISOMarketReportsURLBuilder.url_generator_YYYY_last,
@@ -1502,7 +1670,7 @@ class MISOReports:
         ),
 
         "M2M_Settlement_srw": Report(
-             url_builder=MISOMarketReportsURLBuilder(
+                url_builder=MISOMarketReportsURLBuilder(
                 target="M2M_Settlement_srw",
                 supported_extensions=["csv"],
                 url_generator=MISOMarketReportsURLBuilder.url_generator_YYYY_last,
@@ -1515,7 +1683,7 @@ class MISOReports:
         ),
 
         "MM_Annual_Report": Report(
-             url_builder=MISOMarketReportsURLBuilder(
+                url_builder=MISOMarketReportsURLBuilder(
                 target="MM_Annual_Report",
                 supported_extensions=["zip"],
                 url_generator=MISOMarketReportsURLBuilder.url_generator_YYYYmmdd_first,
@@ -1528,7 +1696,7 @@ class MISOReports:
         ),
 
         "asm_da_co": Report(
-             url_builder=MISOMarketReportsURLBuilder(
+                url_builder=MISOMarketReportsURLBuilder(
                 target="asm_da_co",
                 supported_extensions=["zip"],
                 url_generator=MISOMarketReportsURLBuilder.url_generator_YYYYmmdd_first,
@@ -1541,7 +1709,7 @@ class MISOReports:
         ),
 
         "asm_rt_co": Report(
-             url_builder=MISOMarketReportsURLBuilder(
+                url_builder=MISOMarketReportsURLBuilder(
                 target="asm_rt_co",
                 supported_extensions=["zip"],
                 url_generator=MISOMarketReportsURLBuilder.url_generator_YYYYmmdd_first,
@@ -1554,7 +1722,7 @@ class MISOReports:
         ),
 
         "Dead_Node_Report": Report(
-             url_builder=MISOMarketReportsURLBuilder(
+                url_builder=MISOMarketReportsURLBuilder(
                 target="Dead_Node_Report",
                 supported_extensions=["xls"],
                 url_generator=MISOMarketReportsURLBuilder.url_generator_YYYYmmdd_last,
@@ -1567,7 +1735,7 @@ class MISOReports:
         ),
 
         "rt_co": Report(
-             url_builder=MISOMarketReportsURLBuilder(
+                url_builder=MISOMarketReportsURLBuilder(
                 target="rt_co",
                 supported_extensions=["zip"],
                 url_generator=MISOMarketReportsURLBuilder.url_generator_YYYYmmdd_first,
@@ -1580,7 +1748,7 @@ class MISOReports:
         ),
 
         "da_co": Report(
-             url_builder=MISOMarketReportsURLBuilder(
+                url_builder=MISOMarketReportsURLBuilder(
                 target="da_co",
                 supported_extensions=["zip"],
                 url_generator=MISOMarketReportsURLBuilder.url_generator_YYYYmmdd_first,
@@ -1593,7 +1761,7 @@ class MISOReports:
         ),
 
         "cpnode_reszone": Report(
-             url_builder=MISOMarketReportsURLBuilder(
+                url_builder=MISOMarketReportsURLBuilder(
                 target="cpnode_reszone",
                 supported_extensions=["xlsx"],
                 url_generator=MISOMarketReportsURLBuilder.url_generator_YYYYmmdd_first,
@@ -1606,7 +1774,7 @@ class MISOReports:
         ),
         
         "sr_ctsl": Report(
-             url_builder=MISOMarketReportsURLBuilder(
+                url_builder=MISOMarketReportsURLBuilder(
                 target="sr_ctsl",
                 supported_extensions=["pdf"],
                 url_generator=MISOMarketReportsURLBuilder.url_generator_YYYYmmdd_first,
@@ -1619,7 +1787,7 @@ class MISOReports:
         ),
 
         "df_al": Report(
-             url_builder=MISOMarketReportsURLBuilder(
+                url_builder=MISOMarketReportsURLBuilder(
                 target="df_al",
                 supported_extensions=["xls"],
                 url_generator=MISOMarketReportsURLBuilder.url_generator_YYYYmmdd_first,
@@ -1632,7 +1800,7 @@ class MISOReports:
         ),
 
         "rf_al": Report(
-             url_builder=MISOMarketReportsURLBuilder(
+                url_builder=MISOMarketReportsURLBuilder(
                 target="rf_al",
                 supported_extensions=["xls"],
                 url_generator=MISOMarketReportsURLBuilder.url_generator_YYYYmmdd_first,
@@ -1645,7 +1813,7 @@ class MISOReports:
         ),
 
         "da_bc_HIST": Report(
-             url_builder=MISOMarketReportsURLBuilder(
+                url_builder=MISOMarketReportsURLBuilder(
                 target="da_bc_HIST",
                 supported_extensions=["csv"],
                 url_generator=MISOMarketReportsURLBuilder.url_generator_YYYY_first,
@@ -1877,6 +2045,7 @@ class MISOReports:
             example_url="https://docs.misoenergy.org/marketreports/MISOdaily3042024.xml",
             example_datetime=datetime.datetime(year=2024, month=10, day=30),
         ),
+        
         "MISOsamedaydemand": Report(
             url_builder=MISOMarketReportsURLBuilder(
                 target="MISOsamedaydemand",
@@ -1889,6 +2058,7 @@ class MISOReports:
             example_url="https://docs.misoenergy.org/marketreports/MISOsamedaydemand.xml",
             example_datetime=datetime.datetime(year=2024, month=10, day=30),
         ),
+
         "currentinterval": Report(
             url_builder=MISORTWDBIReporterURLBuilder(
                 target="currentinterval",
@@ -1901,97 +2071,3 @@ class MISOReports:
             example_datetime=datetime.datetime(year=2024, month=10, day=30),
         ),
     }
-
-    @staticmethod
-    def get_url(
-        report_name: str,
-        file_extension: str | None = None,
-        ddatetime: datetime.datetime | None = None,
-    ) -> str:
-        """Get the URL for the report.
-
-        :param str report_name: The name of the report.
-        :param str file_extension: The type of file to download.
-        :param datetime.datetime | None ddatetime: The date of the report, defaults to None
-        :return str: The URL to download the report from.
-        """
-        if report_name not in MISOReports.report_mappings:
-            raise ValueError(f"Unsupported report: {report_name}")
-        
-        report = MISOReports.report_mappings[report_name]
-        res = report.url_builder.build_url(
-            file_extension=file_extension, 
-            ddatetime=ddatetime,
-        )
-
-        return res
-    
-    @staticmethod
-    def get_response(
-        report_name: str,
-        file_extension: str | None = None, 
-        ddatetime: datetime.datetime | None = None,
-        timeout: int | None = None,
-    ) -> requests.Response:
-        """Get the response for the report download.
-
-        :param str report_name: The name of the report.
-        :param str file_extension: The type of file to download.
-        :param datetime.datetime | None ddatetime: The date of the report, defaults to None
-        :param int | None timeout: The timeout for the request, defaults to None
-        """
-        url = MISOReports.get_url(
-            report_name=report_name, 
-            file_extension=file_extension, 
-            ddatetime=ddatetime,
-        )
-
-        return MISOReports._get_response_helper(url)
-    
-    @staticmethod
-    def _get_response_helper(
-        url: str,
-        timeout: int | None = None,
-    ) -> requests.Response:
-        res = requests.get(
-            url=url,
-            timeout=timeout,
-        )
-
-        res.raise_for_status()
-        
-        return res
-    
-    @staticmethod
-    def get_df(
-        report_name: str,
-        url: str | None = None,
-        ddatetime: datetime.datetime | None = None,
-        timeout: int | None = None,
-    ) -> pd.DataFrame:
-        """Get a parsed DataFrame for the report.
-
-        :param str report_name: The name of the report.
-        :param str | None url: A url to download directly from, defaults to None
-        :param datetime.datetime | None ddatetime: The date of the report, defaults to None
-        :param int | None timeout: The timeout for the request, defaults to None
-        :return pd.DataFrame: A DataFrame containing the data of the report.
-        """
-        report = MISOReports.report_mappings[report_name]
-
-        if url is not None:
-            response = MISOReports._get_response_helper(
-                url=url, 
-                timeout=timeout,
-            )
-        else:
-            response = MISOReports.get_response(
-                report_name=report_name, 
-                file_extension=report.type_to_parse, 
-                ddatetime=ddatetime,
-                timeout=timeout,
-            )
-
-        df = report.report_parser(response)
-        
-        return df
