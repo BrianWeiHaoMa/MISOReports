@@ -738,14 +738,6 @@ single_df_test_list = [
         }
     ),
     (
-        "ms_rsg_srw", 
-        {
-            ("MISO_RT_RSG_DIST2", "RT_RSG_DIST1", "RT_RSG_MWP", "DA_RSG_MWP", "DA_RSG_DIST",): numpy.dtypes.Float64DType,
-            ("previous 36 months",): pandas.core.arrays.string_.StringDtype,
-            ("START", "STOP",): numpy.dtypes.DateTime64DType,
-        }
-    ),
-    (
         "ms_rnu_srw", 
         {
             ("JOA_MISO_UPLIFT", "MISO_RT_GFACO_DIST", "MISO_RT_GFAOB_DIST", "MISO_RT_RSG_DIST2", "RT_CC", "DA_RI", "RT_RI", "ASM_RI", "STRDFC_UPLIFT", "CRDFC_UPLIFT", "MISO_PV_MWP_UPLIFT", "MISO_DRR_COMP_UPL", "MISO_TOT_MIL_UPL", "RC_DIST", "TOTAL RNU",): numpy.dtypes.Float64DType,
@@ -1255,7 +1247,7 @@ multiple_dfs_test_list = [
                 ("Zone",): pandas.core.arrays.integer.Int64Dtype,
                 ("Pnode", "MCP Type",): pandas.core.arrays.string_.StringDtype,
             },
-        }
+        },
     ),
     (
         "asm_rtmcp_final",
@@ -1269,7 +1261,7 @@ multiple_dfs_test_list = [
                 ("Zone",): pandas.core.arrays.integer.Int64Dtype,
                 ("Pnode", "MCP Type",): pandas.core.arrays.string_.StringDtype,
             },
-        }
+        },
     ),
     (
         "asm_expost_damcp",
@@ -1283,7 +1275,7 @@ multiple_dfs_test_list = [
                 ("Zone",): pandas.core.arrays.integer.Int64Dtype,
                 ("Pnode", "MCP Type",): pandas.core.arrays.string_.StringDtype,
             },
-        }
+        },
     ),
     (
         "ftr_annual_results_round_1",
@@ -1503,7 +1495,7 @@ multiple_dfs_test_list = [
                 ("Jan 2023", "Feb 2023", "Mar 2023", "Apr 2023", "May 2023", "Jun 2023", "Jul 2023", "Aug 2023", "Sep 2023", "Oct 2023", "Nov 2023", "Dec 2023",): numpy.dtypes.Float64DType,    
                 ("Cost Paid by Load (Hourly Avg per Month)",): pandas.core.arrays.string_.StringDtype,
             },
-        }
+        },
     ),
     (
         "rt_pr",
@@ -1603,7 +1595,7 @@ multiple_dfs_test_list = [
                	("Load_Value",): numpy.dtypes.Float64DType,
                 ("Load_Time",): numpy.dtypes.DateTime64DType,
            }
-        }
+        },
     ),
     (
         "asm_exante_damcp",
@@ -1616,7 +1608,7 @@ multiple_dfs_test_list = [
                 (" HE 1", "HE 2", "HE 3", "HE 4", "HE 5", "HE 6", "HE 7", "HE 8", "HE 9", "HE 10", "HE 11", "HE 12", "HE 13", "HE 14", "HE 15", "HE 16", "HE 17", "HE 18", "HE 19", "HE 20", "HE 21", "HE 22", "HE 23", "HE 24",): numpy.dtypes.Float64DType,
                 ("Pnode", "Zone", "MCP Type",): pandas.core.arrays.string_.StringDtype,
            },
-        }
+        },
     ),
     (
         "sr_gfm",
@@ -1653,7 +1645,7 @@ multiple_dfs_test_list = [
                 ("Coal", "Gas", "Nuclear", "Hydro", "Wind", "Solar", "Other", "Storage", "MISO",): numpy.dtypes.Float64DType,
 	            ("Market Hour Ending",): pandas.core.arrays.string_.StringDtype,
            },
-        }
+        },
     ),
     (
         "mom",
@@ -1711,7 +1703,7 @@ multiple_dfs_test_list = [
                 ("Day 1", "Day 2", "Day 3", "Day 4", "Day 5", "Day 6", "Day 7", "Day 8", "Day 9", "Day 10", "Day 11", "Day 12", "Day 13", "Day 14", "Day 15", "Day 16", "Day 17", "Day 18", "Day 19", "Day 20", "Day 21", "Day 22", "Day 23", "Day 24", "Day 25", "Day 26", "Day 27", "Day 28", "Day 29", "Day 30",): numpy.dtypes.Float64DType,
                 ("Location", "Type",): pandas.core.arrays.string_.StringDtype,
            },
-        }
+        },
     ),
     (
         "ftr_allocation_summary",
@@ -1726,7 +1718,7 @@ multiple_dfs_test_list = [
                 ("MARKET_NAME", "ID_TOU", "SOURCE_NAME", "SINK_NAME", "STAGE", "TYPE",): pandas.core.arrays.string_.StringDtype,
                 ("DATE_START", "DATE_END",): numpy.dtypes.DateTime64DType,
             },
-        }
+        },
     ),
     (
         "MM_Annual_Report",
@@ -1750,6 +1742,38 @@ multiple_dfs_test_list = [
             "Transparency": {
                 ("Central Region (MW)", "North Region (MW)", "South Region (MW)",): numpy.dtypes.Float64DType,
                 ("Date",): numpy.dtypes.DateTime64DType,
+            },
+        },
+    ),
+    (
+        "ms_rsg_srw", 
+        {
+            "MKT TOT": {
+                ("MISO_RT_RSG_DIST2", "RT_RSG_DIST1", "RT_RSG_MWP", "DA_RSG_MWP", "DA_RSG_DIST",): numpy.dtypes.Float64DType,
+                ("previous 36 months",): pandas.core.arrays.string_.StringDtype,
+                ("START", "STOP",): numpy.dtypes.DateTime64DType,
+            },
+            "ATC CMC rate": {
+                ("HE1", "HE2", "HE3", "HE4", "HE5", "HE6", "HE7", "HE8", "HE9", "HE10", "HE11", "HE12", "HE13", "HE14", "HE15", "HE16", "HE17", "HE18", "HE19", "HE20", "HE21", "HE22", "HE23", "HE24",): numpy.dtypes.Float64DType,
+                ("CHNL NBR",): pandas.core.arrays.integer.Int64Dtype,
+                ("BILL_DETERMINANT", "CONSTRAINT NAME",): pandas.core.arrays.string_.StringDtype,
+                ("OPERATING DATE",): numpy.dtypes.DateTime64DType,
+            },
+            "MISO DDC rate": {
+                ("HE1", "HE2", "HE3", "HE4", "HE5", "HE6", "HE7", "HE8", "HE9", "HE10", "HE11", "HE12", "HE13", "HE14", "HE15", "HE16", "HE17", "HE18", "HE19", "HE20", "HE21", "HE22", "HE23", "HE24",): numpy.dtypes.Float64DType,
+                ("CHNL NBR",): pandas.core.arrays.integer.Int64Dtype,
+                ("BILL_DETERMINANT",): pandas.core.arrays.string_.StringDtype,
+                ("OPERATING DATE",): numpy.dtypes.DateTime64DType,
+            },
+            "VLR DIST": {
+                ("HE1", "HE2", "HE3", "HE4", "HE5", "HE6", "HE7", "HE8", "HE9", "HE10", "HE11", "HE12", "HE13", "HE14", "HE15", "HE16", "HE17", "HE18", "HE19", "HE20", "HE21", "HE22", "HE23", "HE24",): numpy.dtypes.Float64DType,
+                ("CHNL NBR",): pandas.core.arrays.integer.Int64Dtype,
+                ("BILL_DETERMINANT",): pandas.core.arrays.string_.StringDtype,
+                ("OPERATING DATE",): numpy.dtypes.DateTime64DType,
+            },
+            "RSG MONTHLY": {
+                ("DA NVLR DIST", "DA VLR DIST", "RT VLR DIST", "MISO CMC DIST", "MISO DDC DIST", "MISO RT RSG DIST2",): numpy.dtypes.Float64DType,
+                ("OPERATING MONTH",): numpy.dtypes.DateTime64DType,
             },
         },
     ),
