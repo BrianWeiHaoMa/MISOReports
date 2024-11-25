@@ -266,7 +266,7 @@ def parse_da_bcsf(
         io=io.BytesIO(res.content),
         sheet_name="Sheet2",
         header=None,
-        names=sheet1.columns,
+        names=list(sheet1.columns),
         skipfooter=1,
     )
 
