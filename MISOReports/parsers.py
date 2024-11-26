@@ -726,7 +726,7 @@ def parse_ms_ri_srw(
 
     df2[["Total RI hourly", "Total RI cumulative", "DA_RI hourly", "DA_RI cumulative", "RT_RI hourly", "RT_RI cumulative"]] = df2[["Total RI hourly", "Total RI cumulative", "DA_RI hourly", "DA_RI cumulative", "RT_RI hourly", "RT_RI cumulative"]].astype(numpy.dtypes.Float64DType())
     df2[["hrend"]] = df2[["hrend"]].astype(pandas.core.arrays.integer.Int64Dtype())
-    df2[["date"]] = df2[["date"]].apply(pd.to_datetime, format="%m/%d/%Y")
+    df2[["date"]] = df2[["date"]].apply(pd.to_datetime, format="%m/%d/%Y %H:%M:%S")
 
     df = pd.DataFrame({
         MULTI_DF_NAMES_COLUMN: [

@@ -760,7 +760,7 @@ class MISOReports:
             example_datetime=datetime.datetime(year=2024, month=9, day=1),
         ),
 
-        "ms_rsg_srw": Report( # TODO review
+        "ms_rsg_srw": Report( # Checked 2024-11-26.
             url_builder=MISOMarketReportsURLBuilder(
                 target="ms_rsg_srw",
                 supported_extensions=["xlsx"],
@@ -769,11 +769,11 @@ class MISOReports:
             ),
             type_to_parse="xlsx",
             parser=parsers.parse_ms_rsg_srw,
-            example_url="https://docs.misoenergy.org/marketreports/20241124_ms_rsg_srw.xlsx",
-            example_datetime=datetime.datetime(year=2024, month=11, day=24),
+            example_url="https://docs.misoenergy.org/marketreports/20241126_ms_rsg_srw.xlsx",
+            example_datetime=datetime.datetime(year=2024, month=11, day=26),
         ),
 
-        "ms_rnu_srw": Report( # TODO review.
+        "ms_rnu_srw": Report( # Checked 2024-11-26.
             url_builder=MISOMarketReportsURLBuilder(
                 target="ms_rnu_srw",
                 supported_extensions=["xlsx"],
@@ -786,7 +786,7 @@ class MISOReports:
             example_datetime=datetime.datetime(year=2024, month=10, day=29),
         ),
 
-        "ms_ri_srw": Report( # TODO review.
+        "ms_ri_srw": Report( # Checked 2024-11-26.
             url_builder=MISOMarketReportsURLBuilder(
                 target="ms_ri_srw",
                 supported_extensions=["xlsx"],
@@ -824,7 +824,7 @@ class MISOReports:
             example_datetime=datetime.datetime(year=2024, month=1, day=1),
         ),
 
-        "ms_ecf_srw": Report( # TODO review.
+        "ms_ecf_srw": Report( # Checked 2024-11-26.
             url_builder=MISOMarketReportsURLBuilder(
                 target="ms_ecf_srw",
                 supported_extensions=["xlsx"],
@@ -833,8 +833,8 @@ class MISOReports:
             ),
             type_to_parse="xlsx",
             parser=parsers.parse_ms_ecf_srw,
-            example_url="https://docs.misoenergy.org/marketreports/20241124_ms_ecf_srw.xlsx",
-            example_datetime=datetime.datetime(year=2024, month=11, day=24),
+            example_url="https://docs.misoenergy.org/marketreports/20241126_ms_ecf_srw.xlsx",
+            example_datetime=datetime.datetime(year=2024, month=11, day=26),
         ),
 
         "ccf_co": Report( # Checked 2024-11-24.
