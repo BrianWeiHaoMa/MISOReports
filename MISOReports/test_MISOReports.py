@@ -746,22 +746,6 @@ single_df_test_list = [
         }
     ),
     (
-        "ms_rnu_srw", 
-        {
-            ("JOA_MISO_UPLIFT", "MISO_RT_GFACO_DIST", "MISO_RT_GFAOB_DIST", "MISO_RT_RSG_DIST2", "RT_CC", "DA_RI", "RT_RI", "ASM_RI", "STRDFC_UPLIFT", "CRDFC_UPLIFT", "MISO_PV_MWP_UPLIFT", "MISO_DRR_COMP_UPL", "MISO_TOT_MIL_UPL", "RC_DIST", "TOTAL RNU",): numpy.dtypes.Float64DType,
-            ("previous 36 months",): pandas.core.arrays.string_.StringDtype,
-            ("START", "STOP",): numpy.dtypes.DateTime64DType,
-        }
-    ),
-    (
-        "ms_ri_srw", 
-        {
-            ("DA RI", "RT RI", "TOTAL RI",): numpy.dtypes.Float64DType,
-            ("Previous Months",): pandas.core.arrays.string_.StringDtype,
-            ("START", "STOP",): numpy.dtypes.DateTime64DType,
-        }
-    ),
-    (
         "ms_ecf_srw", 
         {
             ("Da Xs Cg Fnd", "Rt Cc", "Rt Xs Cg Fnd", "Ftr Auc Res", "Ao Ftr Mn Alc", "Ftr Yr Alc *", "Tbs Access", "Net Ecf", "Ftr Shrtfll", "Net Ftr Sf", "Ftr Trg Cr Alc", "Ftr Hr Alc", "Hr Mf", "Hourly Ftr Allocation", "Monthly Ftr Allocation",): numpy.dtypes.Float64DType,
@@ -1058,6 +1042,26 @@ def test_get_df_single_df_correct_columns(report_name, columns_mapping, datetime
 
 
 multiple_dfs_test_list = [
+    (
+        "ms_rnu_srw",
+        {
+            "MKT TOT": {
+                ("JOA_MISO_UPLIFT", "MISO_RT_GFACO_DIST", "MISO_RT_GFAOB_DIST", "MISO_RT_RSG_DIST2", "RT_CC", "DA_RI", "RT_RI", "ASM_RI", "STRDFC_UPLIFT", "CRDFC_UPLIFT", "MISO_PV_MWP_UPLIFT", "MISO_DRR_COMP_UPL", "MISO_TOT_MIL_UPL", "RC_DIST", "TOTAL RNU",): numpy.dtypes.Float64DType,
+                ("previous 36 months",): pandas.core.arrays.string_.StringDtype,
+                ("START", "STOP",): numpy.dtypes.DateTime64DType,
+            },
+            "hourly miso_rt_bill_mtr": {
+                ("HE1", "HE2", "HE3", "HE4", "HE5", "HE6", "HE7", "HE8", "HE9", "HE10", "HE11", "HE12", "HE13", "HE14", "HE15", "HE16", "HE17", "HE18", "HE19", "HE20", "HE21", "HE22", "HE23", "HE24",): numpy.dtypes.Float64DType,
+                ("CHANNEL",): pandas.core.arrays.integer.Int64Dtype,
+                ("BILL_DETERMINANT",): pandas.core.arrays.string_.StringDtype,
+                ("STARTTIME",): numpy.dtypes.DateTime64DType,
+            },
+            "RT CC JOA column": {
+                ("RT CC", "RT JOA", "NET",): numpy.dtypes.Float64DType,
+                ("HRBEG",): numpy.dtypes.DateTime64DType,
+            },
+        },
+    ),
     (
         "PeakHourOverview",
         {
@@ -1750,6 +1754,44 @@ multiple_dfs_test_list = [
             "Transparency": {
                 ("Central Region (MW)", "North Region (MW)", "South Region (MW)",): numpy.dtypes.Float64DType,
                 ("Date",): numpy.dtypes.DateTime64DType,
+            },
+        },
+    ),
+    (
+        "ms_ri_srw",
+        {
+            "MKT TOT": {
+                ("DA RI", "RT RI", "TOTAL RI",): numpy.dtypes.Float64DType,
+                ("Previous Months",): pandas.core.arrays.string_.StringDtype,
+                ("START", "STOP",): numpy.dtypes.DateTime64DType,
+            },
+            "hourly column Worksheet": {
+                ("Total RI hourly", "Total RI cumulative", "DA_RI hourly", "DA_RI cumulative", "RT_RI hourly", "RT_RI cumulative",): numpy.dtypes.Float64DType,
+                ("hrend",): pandas.core.arrays.integer.Int64Dtype,
+                ("date",): numpy.dtypes.DateTime64DType,
+            },
+        },
+    ),
+    (
+        "ms_ecf_srw",
+        {
+            "MKT TOT": {
+                ("Da Xs Cg Fnd", "Rt Cc", "Rt Xs Cg Fnd", "Ftr Auc Res", "Ao Ftr Mn Alc", "Ftr Yr Alc *", "Tbs Access", "Net Ecf", "Ftr Shrtfll", "Net Ftr Sf", "Ftr Trg Cr Alc", "Ftr Hr Alc", "Hr Mf", "Hourly Ftr Allocation", "Monthly Ftr Allocation",): numpy.dtypes.Float64DType,
+                ("Type",): pandas.core.arrays.string_.StringDtype,
+                ("Start", "Stop",): numpy.dtypes.DateTime64DType,
+            },
+            "JOA Hourly Totals": {
+                ("DA_JOA", "RT_JOA",): numpy.dtypes.Float64DType,
+                ("CNTR_RTO",): pandas.core.arrays.string_.StringDtype,
+                ("HRBEG",): numpy.dtypes.DateTime64DType,
+            },
+            "RT CC JOA column": {
+                ("RT CC", "RT JOA", "NET",): numpy.dtypes.Float64DType,
+                ("HRBEG",): numpy.dtypes.DateTime64DType,
+            },
+            "ECF": {
+                ("DA_ECF", "RT_ECF", "DART_ECF", "DART_monthly",): numpy.dtypes.Float64DType,
+                ("OD",): numpy.dtypes.DateTime64DType,
             },
         },
     ),

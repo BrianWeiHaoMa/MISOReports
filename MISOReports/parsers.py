@@ -592,14 +592,51 @@ def parse_ms_rsg_srw(
 def parse_ms_rnu_srw(
     res: requests.Response,
 ) -> pd.DataFrame:
-    df = pd.read_excel(
+    SHEET1 = "MKT TOT"
+    SHEET2 = "hourly miso_rt_bill_mtr"
+    SHEET3 = "RT CC JOA column"
+
+    df1 = pd.read_excel(
         io=io.BytesIO(res.content),
         skiprows=8,
+        sheet_name=SHEET1,
     ).iloc[:-2]
 
-    df[["JOA_MISO_UPLIFT", "MISO_RT_GFACO_DIST", "MISO_RT_GFAOB_DIST", "MISO_RT_RSG_DIST2", "RT_CC", "DA_RI", "RT_RI", "ASM_RI", "STRDFC_UPLIFT", "CRDFC_UPLIFT", "MISO_PV_MWP_UPLIFT", "MISO_DRR_COMP_UPL", "MISO_TOT_MIL_UPL", "RC_DIST", "TOTAL RNU"]] = df[["JOA_MISO_UPLIFT", "MISO_RT_GFACO_DIST", "MISO_RT_GFAOB_DIST", "MISO_RT_RSG_DIST2", "RT_CC", "DA_RI", "RT_RI", "ASM_RI", "STRDFC_UPLIFT", "CRDFC_UPLIFT", "MISO_PV_MWP_UPLIFT", "MISO_DRR_COMP_UPL", "MISO_TOT_MIL_UPL", "RC_DIST", "TOTAL RNU"]].astype(numpy.dtypes.Float64DType())
-    df[["previous 36 months"]] = df[["previous 36 months"]].astype(pandas.core.arrays.string_.StringDtype())
-    df[["START", "STOP"]] = df[["START", "STOP"]].apply(pd.to_datetime, format="$m/$d/Y")
+    df1[["JOA_MISO_UPLIFT", "MISO_RT_GFACO_DIST", "MISO_RT_GFAOB_DIST", "MISO_RT_RSG_DIST2", "RT_CC", "DA_RI", "RT_RI", "ASM_RI", "STRDFC_UPLIFT", "CRDFC_UPLIFT", "MISO_PV_MWP_UPLIFT", "MISO_DRR_COMP_UPL", "MISO_TOT_MIL_UPL", "RC_DIST", "TOTAL RNU"]] = df1[["JOA_MISO_UPLIFT", "MISO_RT_GFACO_DIST", "MISO_RT_GFAOB_DIST", "MISO_RT_RSG_DIST2", "RT_CC", "DA_RI", "RT_RI", "ASM_RI", "STRDFC_UPLIFT", "CRDFC_UPLIFT", "MISO_PV_MWP_UPLIFT", "MISO_DRR_COMP_UPL", "MISO_TOT_MIL_UPL", "RC_DIST", "TOTAL RNU"]].astype(numpy.dtypes.Float64DType())
+    df1[["previous 36 months"]] = df1[["previous 36 months"]].astype(pandas.core.arrays.string_.StringDtype())
+    df1[["START", "STOP"]] = df1[["START", "STOP"]].apply(pd.to_datetime, format="$m/$d/Y")
+
+    df2 = pd.read_excel(
+        io=io.BytesIO(res.content),
+        skiprows=1,
+        sheet_name=SHEET2,
+    )
+
+    df2[["HE1", "HE2", "HE3", "HE4", "HE5", "HE6", "HE7", "HE8", "HE9", "HE10", "HE11", "HE12", "HE13", "HE14", "HE15", "HE16", "HE17", "HE18", "HE19", "HE20", "HE21", "HE22", "HE23", "HE24"]] = df2[["HE1", "HE2", "HE3", "HE4", "HE5", "HE6", "HE7", "HE8", "HE9", "HE10", "HE11", "HE12", "HE13", "HE14", "HE15", "HE16", "HE17", "HE18", "HE19", "HE20", "HE21", "HE22", "HE23", "HE24"]].astype(numpy.dtypes.Float64DType())
+    df2[["CHANNEL"]] = df2[["CHANNEL"]].astype(pandas.core.arrays.integer.Int64Dtype())
+    df2[["STARTTIME"]] = df2[["STARTTIME"]].apply(pd.to_datetime, format="%m/%d/%Y")
+    df2[["BILL_DETERMINANT"]] = df2[["BILL_DETERMINANT"]].astype(pandas.core.arrays.string_.StringDtype())
+
+    df3 = pd.read_excel(
+        io=io.BytesIO(res.content),
+        sheet_name=SHEET3,
+    )
+
+    df3[["RT CC", "RT JOA", "NET"]] = df3[["RT CC", "RT JOA", "NET"]].astype(numpy.dtypes.Float64DType())
+    df3[["HRBEG"]] = df3[["HRBEG"]].apply(pd.to_datetime, format="%m/%d/%Y %H:%M:%S")
+
+    df = pd.DataFrame({
+        MULTI_DF_NAMES_COLUMN: [
+                SHEET1,
+                SHEET2,
+                SHEET3,
+        ], 
+        MULTI_DF_DFS_COLUMN: [
+                df1, 
+                df2, 
+                df3,
+        ],
+    })
     
     return df
 
@@ -607,18 +644,57 @@ def parse_ms_rnu_srw(
 def parse_ms_ri_srw(
     res: requests.Response,
 ) -> pd.DataFrame:
-    df = pd.read_excel(
+    SHEET1 = "MKT TOT"
+    SHEET2 = "hourly column Worksheet"
+
+    df1 = pd.read_excel(
         io=io.BytesIO(res.content),
         skiprows=7,
         dtype={
             "Previous Months": pd.StringDtype(),
-        }
+        },
+        sheet_name=SHEET1,
     ).iloc[:-2]
 
-    df[["DA RI", "RT RI", "TOTAL RI"]] = df[["DA RI", "RT RI", "TOTAL RI"]].astype(numpy.dtypes.Float64DType())
-    df[["Previous Months"]] = df[["Previous Months"]].astype(pandas.core.arrays.string_.StringDtype())
-    df[["START", "STOP"]] = df[["START", "STOP"]].apply(pd.to_datetime, format="%m/%d/%Y")
-    df = df.drop(columns=["Unnamed: 5"])
+    df1[["DA RI", "RT RI", "TOTAL RI"]] = df1[["DA RI", "RT RI", "TOTAL RI"]].astype(numpy.dtypes.Float64DType())
+    df1[["Previous Months"]] = df1[["Previous Months"]].astype(pandas.core.arrays.string_.StringDtype())
+    df1[["START", "STOP"]] = df1[["START", "STOP"]].apply(pd.to_datetime, format="%m/%d/%Y")
+    df1 = df1.drop(columns=["Unnamed: 5"])
+
+    df2 = pd.read_excel(
+        io=io.BytesIO(res.content),
+        skiprows=1,
+        sheet_name=SHEET2,
+        usecols=[0, 1, 2, 3, 5, 6, 8, 9]
+    )
+
+    df2.columns = pd.Index(
+        data=[
+            "date", 
+            "hrend", 
+            "Total RI hourly", 
+            "Total RI cumulative",
+            "DA_RI hourly", 
+            "DA_RI cumulative",
+            "RT_RI hourly", 
+            "RT_RI cumulative",
+        ],
+    )
+
+    df2[["Total RI hourly", "Total RI cumulative", "DA_RI hourly", "DA_RI cumulative", "RT_RI hourly", "RT_RI cumulative"]] = df2[["Total RI hourly", "Total RI cumulative", "DA_RI hourly", "DA_RI cumulative", "RT_RI hourly", "RT_RI cumulative"]].astype(numpy.dtypes.Float64DType())
+    df2[["hrend"]] = df2[["hrend"]].astype(pandas.core.arrays.integer.Int64Dtype())
+    df2[["date"]] = df2[["date"]].apply(pd.to_datetime, format="%m/%d/%Y")
+
+    df = pd.DataFrame({
+        MULTI_DF_NAMES_COLUMN: [
+                SHEET1,
+                SHEET2,
+        ], 
+        MULTI_DF_DFS_COLUMN: [
+                df1, 
+                df2, 
+        ],
+    })
 
     return df
 
@@ -670,15 +746,82 @@ def parse_ms_vlr_HIST_SRW(
 def parse_ms_ecf_srw(
     res: requests.Response,
 ) -> pd.DataFrame:
-    df = pd.read_excel(
+    SHEET1 = "MKT TOT"
+    SHEET2 = "JOA Hourly Totals"
+    SHEET3 = "RT CC JOA column"
+    SHEET4 = "ECF"
+
+    df1 = pd.read_excel(
         io=io.BytesIO(res.content),
         skiprows=6,
+        sheet_name=SHEET1,
     ).iloc[:-3]
 
-    df[["Da Xs Cg Fnd", "Rt Cc", "Rt Xs Cg Fnd", "Ftr Auc Res", "Ao Ftr Mn Alc", "Ftr Yr Alc *", "Tbs Access", "Net Ecf", "Ftr Shrtfll", "Net Ftr Sf", "Ftr Trg Cr Alc", "Ftr Hr Alc", "Hr Mf", "Hourly Ftr Allocation", "Monthly Ftr Allocation"]] = df[["Da Xs Cg Fnd", "Rt Cc", "Rt Xs Cg Fnd", "Ftr Auc Res", "Ao Ftr Mn Alc", "Ftr Yr Alc *", "Tbs Access", "Net Ecf", "Ftr Shrtfll", "Net Ftr Sf", "Ftr Trg Cr Alc", "Ftr Hr Alc", "Hr Mf", "Hourly Ftr Allocation", "Monthly Ftr Allocation"]].replace(',','', regex=True).astype(numpy.dtypes.Float64DType())
-    df[["Unnamed: 0"]] = df[["Unnamed: 0"]].astype(pandas.core.arrays.string_.StringDtype())
-    df[["Start", "Stop"]] = df[["Start", "Stop"]].apply(pd.to_datetime, format="%m/%d/%Y")
-    df = df.drop(columns=["Unnamed: 11"])
+    df1.rename(columns={"Unnamed: 0": "Type"}, inplace=True)
+    df1.drop(columns=["Unnamed: 11"], inplace=True)
+
+    df1[["Da Xs Cg Fnd", "Rt Cc", "Rt Xs Cg Fnd", "Ftr Auc Res", "Ao Ftr Mn Alc", "Ftr Yr Alc *", "Tbs Access", "Net Ecf", "Ftr Shrtfll", "Net Ftr Sf", "Ftr Trg Cr Alc", "Ftr Hr Alc", "Hr Mf", "Hourly Ftr Allocation", "Monthly Ftr Allocation"]] = df1[["Da Xs Cg Fnd", "Rt Cc", "Rt Xs Cg Fnd", "Ftr Auc Res", "Ao Ftr Mn Alc", "Ftr Yr Alc *", "Tbs Access", "Net Ecf", "Ftr Shrtfll", "Net Ftr Sf", "Ftr Trg Cr Alc", "Ftr Hr Alc", "Hr Mf", "Hourly Ftr Allocation", "Monthly Ftr Allocation"]].replace(',','', regex=True).astype(numpy.dtypes.Float64DType())
+    df1[["Type"]] = df1[["Type"]].astype(pandas.core.arrays.string_.StringDtype())
+    df1[["Start", "Stop"]] = df1[["Start", "Stop"]].apply(pd.to_datetime, format="%m/%d/%Y")
+
+    df2 = pd.read_excel(
+        io=io.BytesIO(res.content),
+        sheet_name=SHEET2,
+    )
+    df2.drop(columns=["Unnamed: 0"], inplace=True)
+
+    df2.columns = pd.Index(
+        data=[
+            "HRBEG",
+            "CNTR_RTO",
+            "DA_JOA",
+            "RT_JOA",
+        ],
+    )
+    
+    df2[["DA_JOA", "RT_JOA"]] = df2[["DA_JOA", "RT_JOA"]].astype(numpy.dtypes.Float64DType())
+    df2[["HRBEG"]] = df2[["HRBEG"]].apply(pd.to_datetime, format="%m/%d/%Y %H:%M:%S")
+    df2[["CNTR_RTO"]] = df2[["CNTR_RTO"]].astype(pandas.core.arrays.string_.StringDtype())
+
+    df3 = pd.read_excel(
+        io=io.BytesIO(res.content),
+        sheet_name=SHEET3,
+        skiprows=1,
+    )
+    df3.columns = pd.Index(
+        data=[
+            "HRBEG",
+            "RT CC",
+            "RT JOA",
+            "NET",
+        ],
+    )
+    df3[["RT CC", "RT JOA", "NET"]] = df3[["RT CC", "RT JOA", "NET"]].astype(numpy.dtypes.Float64DType())
+    df3[["HRBEG"]] = df3[["HRBEG"]].apply(pd.to_datetime, format="%m/%d/%Y %H:%M:%S")
+
+    df4 = pd.read_excel(
+        io=io.BytesIO(res.content),
+        sheet_name=SHEET4,
+    )
+    df4.rename(columns={"OD\n": "OD"}, inplace=True)
+
+    df4[["DA_ECF", "RT_ECF", "DART_ECF", "DART_monthly"]] = df4[["DA_ECF", "RT_ECF", "DART_ECF", "DART_monthly"]].astype(numpy.dtypes.Float64DType())
+    df4[["OD"]] = df4[["OD"]].apply(pd.to_datetime, format="%m/%d/%Y")
+
+    df = pd.DataFrame({
+        MULTI_DF_NAMES_COLUMN: [
+                SHEET1,
+                SHEET2,
+                SHEET3,
+                SHEET4,
+        ], 
+        MULTI_DF_DFS_COLUMN: [
+                df1, 
+                df2, 
+                df3,
+                df4,
+        ],
+    })
 
     return df
 
