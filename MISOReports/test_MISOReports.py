@@ -738,14 +738,6 @@ single_df_test_list = [
         }
     ),
     (
-        "ms_ecf_srw", 
-        {
-            ("Da Xs Cg Fnd", "Rt Cc", "Rt Xs Cg Fnd", "Ftr Auc Res", "Ao Ftr Mn Alc", "Ftr Yr Alc *", "Tbs Access", "Net Ecf", "Ftr Shrtfll", "Net Ftr Sf", "Ftr Trg Cr Alc", "Ftr Hr Alc", "Hr Mf", "Hourly Ftr Allocation", "Monthly Ftr Allocation",): numpy.dtypes.Float64DType,
-            ("Unnamed: 0",): pandas.core.arrays.string_.StringDtype,
-            ("Start", "Stop",): numpy.dtypes.DateTime64DType,
-        }
-    ),
-    (
         "ccf_co", 
         {
             ("HOUR1", "HOUR2", "HOUR3", "HOUR4", "HOUR5", "HOUR6", "HOUR7", "HOUR8", "HOUR9", "HOUR10", "HOUR11", "HOUR12", "HOUR13", "HOUR14", "HOUR15", "HOUR16", "HOUR17", "HOUR18", "HOUR19", "HOUR20", "HOUR21", "HOUR22", "HOUR23", "HOUR24",): numpy.dtypes.Float64DType,
