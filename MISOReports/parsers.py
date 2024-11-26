@@ -576,15 +576,58 @@ def parse_ms_vlr_srw(
 def parse_ms_rsg_srw(
     res: requests.Response,
 ) -> pd.DataFrame:
-    df = pd.read_excel(
-        io=io.BytesIO(res.content),
-        skiprows=7,
-    ).iloc[:-2]
+    dfs = []
+    sheets = ["MKT TOT", "ATC CMC rate", "MISO DDC rate", "VLR DIST", "RSG MONTHLY"]
 
-    df[["MISO_RT_RSG_DIST2", "RT_RSG_DIST1", "RT_RSG_MWP", "DA_RSG_MWP", "DA_RSG_DIST"]] = df[["MISO_RT_RSG_DIST2", "RT_RSG_DIST1", "RT_RSG_MWP", "DA_RSG_MWP", "DA_RSG_DIST"]].astype(numpy.dtypes.Float64DType())
-    df[["previous 36 months"]] = df[["previous 36 months"]].astype(pandas.core.arrays.string_.StringDtype())
-    df[["START", "STOP"]] = df[["START", "STOP"]].apply(pd.to_datetime, format="%m/%d/%Y")
-    df = df.drop(columns=["Unnamed: 6"])
+    df1 = pd.read_excel(
+        io=io.BytesIO(res.content),
+        sheet_name=sheets[0],
+        skiprows=7,
+        skipfooter=2,
+    )
+
+    df1[["MISO_RT_RSG_DIST2", "RT_RSG_DIST1", "RT_RSG_MWP", "DA_RSG_MWP", "DA_RSG_DIST"]] = df1[["MISO_RT_RSG_DIST2", "RT_RSG_DIST1", "RT_RSG_MWP", "DA_RSG_MWP", "DA_RSG_DIST"]].astype(numpy.dtypes.Float64DType())
+    df1[["previous 36 months"]] = df1[["previous 36 months"]].astype(pandas.core.arrays.string_.StringDtype())
+    df1[["START", "STOP"]] = df1[["START", "STOP"]].apply(pd.to_datetime, format="%m/%d/%Y")
+    df1 = df1.drop(columns=["Unnamed: 6"])
+
+    dfs.append(df1)
+
+    for idx in range(1, 4):
+        df_middle = pd.read_excel(
+            io=io.BytesIO(res.content),
+            sheet_name=sheets[idx],
+            skiprows=1,
+        )
+
+        df_middle[["HE1", "HE2", "HE3", "HE4", "HE5", "HE6", "HE7", "HE8", "HE9", "HE10", "HE11", "HE12", "HE13", "HE14", "HE15", "HE16", "HE17", "HE18", "HE19", "HE20", "HE21", "HE22", "HE23", "HE24"]] = df_middle[["HE1", "HE2", "HE3", "HE4", "HE5", "HE6", "HE7", "HE8", "HE9", "HE10", "HE11", "HE12", "HE13", "HE14", "HE15", "HE16", "HE17", "HE18", "HE19", "HE20", "HE21", "HE22", "HE23", "HE24"]].astype(numpy.dtypes.Float64DType())
+        df_middle[["CHNL NBR"]] = df_middle[["CHNL NBR"]].astype(pandas.core.arrays.integer.Int64Dtype())
+        df_middle[["OPERATING DATE"]] = df_middle[["OPERATING DATE"]].apply(pd.to_datetime, format="%Y-%m-%d")
+        df_middle[["BILL_DETERMINANT"]] = df_middle[["BILL_DETERMINANT"]].astype(pandas.core.arrays.string_.StringDtype())
+
+
+        if idx == 1:
+            df_middle[["CONSTRAINT NAME"]] = df_middle[["CONSTRAINT NAME"]].astype(pandas.core.arrays.string_.StringDtype())
+
+        dfs.append(df_middle)
+
+    df5 = pd.read_excel(
+        io=io.BytesIO(res.content),
+        sheet_name=sheets[4],
+        skiprows=1,
+    )
+
+    df5.drop(columns=["Unnamed: 0"], inplace=True)
+    
+    df5[["DA NVLR DIST", "DA VLR DIST", "RT VLR DIST", "MISO CMC DIST", "MISO DDC DIST", "MISO RT RSG DIST2"]] = df5[["DA NVLR DIST", "DA VLR DIST", "RT VLR DIST", "MISO CMC DIST", "MISO DDC DIST", "MISO RT RSG DIST2"]].astype(numpy.dtypes.Float64DType())
+    df5[["OPERATING MONTH"]] = df5[["OPERATING MONTH"]].apply(pd.to_datetime, format="%Y-%m-%d")
+
+    dfs.append(df5)
+
+    df = pd.DataFrame({
+        MULTI_DF_NAMES_COLUMN: sheets,
+        MULTI_DF_DFS_COLUMN: dfs,
+    })
 
     return df
 
