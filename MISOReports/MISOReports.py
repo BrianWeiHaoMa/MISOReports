@@ -1088,7 +1088,7 @@ class MISOReports:
             example_url="https://api.misoenergy.org/MISORTWDDataBroker/DataBrokerServices.asmx?messageType=getnsi1&returnType=csv",
         ),
 
-        "nsi5": Report(
+        "nsi5": Report( # Checked 2024-11-26.
             url_builder=MISORTWDDataBrokerURLBuilder(
                 target="getnsi5",
                 supported_extensions=["csv", "xml", "json"],
@@ -1099,7 +1099,7 @@ class MISOReports:
             example_url="https://api.misoenergy.org/MISORTWDDataBroker/DataBrokerServices.asmx?messageType=getnsi5&returnType=csv",
         ),
 
-        "nsi1miso": Report(
+        "nsi1miso": Report( # Checked 2024-11-26.
             url_builder=MISORTWDDataBrokerURLBuilder(
                 target="getnsi1miso",
                 supported_extensions=["csv", "xml", "json"],
@@ -1110,7 +1110,7 @@ class MISOReports:
             example_url="https://api.misoenergy.org/MISORTWDDataBroker/DataBrokerServices.asmx?messageType=getnsi1miso&returnType=csv",
         ),
 
-        "nsi5miso": Report(
+        "nsi5miso": Report( # Checked 2024-11-26.
             url_builder=MISORTWDDataBrokerURLBuilder(
                 target="getnsi5miso",
                 supported_extensions=["csv", "xml", "json"],
@@ -1121,7 +1121,7 @@ class MISOReports:
             example_url="https://api.misoenergy.org/MISORTWDDataBroker/DataBrokerServices.asmx?messageType=getnsi5miso&returnType=csv",
         ),
 
-        "importtotal5": Report(
+        "importtotal5": Report( # Checked 2024-11-26.
             url_builder=MISORTWDDataBrokerURLBuilder(
                 target="getimporttotal5",
                 supported_extensions=["csv", "xml", "json"],
@@ -1132,7 +1132,7 @@ class MISOReports:
             example_url="https://api.misoenergy.org/MISORTWDDataBroker/DataBrokerServices.asmx?messageType=getimporttotal5&returnType=json",
         ),
 
-        "reservebindingconstraints": Report(
+        "reservebindingconstraints": Report( # Checked 2024-11-26.
             url_builder=MISORTWDDataBrokerURLBuilder(
                 target="getreservebindingconstraints",
                 supported_extensions=["csv", "xml", "json"],
@@ -1143,7 +1143,7 @@ class MISOReports:
             example_url="https://api.misoenergy.org/MISORTWDDataBroker/DataBrokerServices.asmx?messageType=getreservebindingconstraints&returnType=csv",
         ),
 
-        "RSG": Report(
+        "RSG": Report( # Checked 2024-11-26.
             url_builder=MISORTWDDataBrokerURLBuilder(
                 target="getRSG",
                 supported_extensions=["csv", "xml", "json"],
@@ -1154,7 +1154,7 @@ class MISOReports:
             example_url="https://api.misoenergy.org/MISORTWDDataBroker/DataBrokerServices.asmx?messageType=getRSG&returnType=csv",
         ),
 
-        "totalload": Report(
+        "totalload": Report( # Checked 2024-11-26.
             url_builder=MISORTWDDataBrokerURLBuilder(
                 target="gettotalload",
                 supported_extensions=["csv", "xml", "json"],
@@ -1165,7 +1165,7 @@ class MISOReports:
             example_url="https://api.misoenergy.org/MISORTWDDataBroker/DataBrokerServices.asmx?messageType=gettotalload&returnType=csv",
         ),
 
-        "WindActual": Report(
+        "WindActual": Report( # Checked 2024-11-26.
             url_builder=MISORTWDDataBrokerURLBuilder(
                 target="getWindActual",
                 supported_extensions=["xml", "json"],
@@ -1176,7 +1176,7 @@ class MISOReports:
             example_url="https://api.misoenergy.org/MISORTWDDataBroker/DataBrokerServices.asmx?messageType=getWindActual&returnType=json",
         ),
 
-        "SolarActual": Report(
+        "SolarActual": Report( # Checked 2024-11-26.
             url_builder=MISORTWDDataBrokerURLBuilder(
                 target="getSolarActual",
                 supported_extensions=["xml", "json"],
@@ -1187,7 +1187,7 @@ class MISOReports:
             example_url="https://api.misoenergy.org/MISORTWDDataBroker/DataBrokerServices.asmx?messageType=getSolarActual&returnType=json",
         ),
 
-        "NAI": Report(
+        "NAI": Report( # Checked 2024-11-26.
             url_builder=MISORTWDDataBrokerURLBuilder(
                 target="getNAI",
                 supported_extensions=["csv", "xml", "json"],
@@ -1198,7 +1198,7 @@ class MISOReports:
             example_url="https://api.misoenergy.org/MISORTWDDataBroker/DataBrokerServices.asmx?messageType=getNAI&returnType=csv",
         ),
 
-        "regionaldirectionaltransfer": Report(
+        "regionaldirectionaltransfer": Report( # Checked 2024-11-26.
             url_builder=MISORTWDDataBrokerURLBuilder(
                 target="getregionaldirectionaltransfer",
                 supported_extensions=["csv", "xml", "json"],
@@ -1209,7 +1209,7 @@ class MISOReports:
             example_url="https://api.misoenergy.org/MISORTWDDataBroker/DataBrokerServices.asmx?messageType=getregionaldirectionaltransfer&returnType=csv",
         ),
 
-        "generationoutagesplusminusfivedays": Report(
+        "generationoutagesplusminusfivedays": Report( # Checked 2024-11-26.
             url_builder=MISORTWDDataBrokerURLBuilder(
                 target="getgenerationoutagesplusminusfivedays",
                 supported_extensions=["csv", "xml", "json"],
@@ -1220,7 +1220,7 @@ class MISOReports:
             example_url="https://api.misoenergy.org/MISORTWDDataBroker/DataBrokerServices.asmx?messageType=getgenerationoutagesplusminusfivedays&returnType=csv",
         ),
 
-        "apiversion": Report(
+        "apiversion": Report( # Checked 2024-11-26.
             url_builder=MISORTWDDataBrokerURLBuilder(
                 target="getapiversion",
                 supported_extensions=["json"],
@@ -1231,7 +1231,7 @@ class MISOReports:
             example_url="https://api.misoenergy.org/MISORTWDDataBroker/DataBrokerServices.asmx?messageType=getapiversion&returnType=json",
         ),
 
-        "lmpconsolidatedtable": Report(
+        "lmpconsolidatedtable": Report( # TODO re-evaluate column parsing. Potential of abnormal sideways formatting.
             url_builder=MISORTWDDataBrokerURLBuilder(
                 target="getlmpconsolidatedtable",
                 supported_extensions=["csv", "xml", "json"],
@@ -1242,7 +1242,7 @@ class MISOReports:
             example_url="https://api.misoenergy.org/MISORTWDDataBroker/DataBrokerServices.asmx?messageType=getlmpconsolidatedtable&returnType=csv",
         ),
 
-        "realtimebindingconstraints": Report(
+        "realtimebindingconstraints": Report( # Checked 2024-11-26.
             url_builder=MISORTWDDataBrokerURLBuilder(
                 target="getrealtimebindingconstraints",
                 supported_extensions=["csv", "xml", "json"],
@@ -1253,7 +1253,7 @@ class MISOReports:
             example_url="https://api.misoenergy.org/MISORTWDDataBroker/DataBrokerServices.asmx?messageType=getrealtimebindingconstraints&returnType=csv",
         ),
 
-        "realtimebindingsrpbconstraints": Report(
+        "realtimebindingsrpbconstraints": Report( # Checked 2024-11-26.
             url_builder=MISORTWDDataBrokerURLBuilder(
                 target="getrealtimebindingsrpbconstraints",
                 supported_extensions=["csv", "xml", "json"],
@@ -1264,7 +1264,7 @@ class MISOReports:
             example_url="https://api.misoenergy.org/MISORTWDDataBroker/DataBrokerServices.asmx?messageType=getrealtimebindingsrpbconstraints&returnType=csv",
         ),
 
-        "RT_Load_EPNodes": Report(
+        "RT_Load_EPNodes": Report( # Checked 2024-11-26.
             url_builder=MISOMarketReportsURLBuilder(
                 target="RT_Load_EPNodes",
                 supported_extensions=["zip"],
@@ -1277,7 +1277,7 @@ class MISOReports:
             example_datetime=datetime.datetime(year=2024, month=10, day=18),
         ),
 
-        "5MIN_LMP": Report(
+        "5MIN_LMP": Report( # Checked 2024-11-26.
             url_builder=MISOMarketReportsURLBuilder(
                 target="5MIN_LMP",
                 supported_extensions=["zip"],
@@ -1290,7 +1290,7 @@ class MISOReports:
             example_datetime=datetime.datetime(year=2024, month=10, day=21),
         ),
 
-        "bids_cb": Report(
+        "bids_cb": Report( # Checked 2024-11-26.
             url_builder=MISOMarketReportsURLBuilder(
                 target="bids_cb",
                 supported_extensions=["zip"],
