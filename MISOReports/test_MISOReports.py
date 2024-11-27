@@ -596,8 +596,7 @@ single_df_test_list = [
         "bids_cb", 
         {
             ("MW", "LMP", "PRICE1", "MW1", "PRICE2", "MW2", "PRICE3", "MW3", "PRICE4", "MW4", "PRICE5", "MW5", "PRICE6", "MW6", "PRICE7", "MW7", "PRICE8", "MW8", "PRICE9", "MW9",): numpy.dtypes.Float64DType,
-            ("Market Participant Code",): pandas.core.arrays.integer.Int64Dtype,
-            ("Region", "Type of Bid", "Bid ID",): pandas.core.arrays.string_.StringDtype,
+            ("Market Participant Code", "Region", "Type of Bid", "Bid ID",): pandas.core.arrays.string_.StringDtype,
             ("Date/Time Beginning (EST)", "Date/Time End (EST)",): numpy.dtypes.DateTime64DType,
         }
     ),
@@ -620,8 +619,8 @@ single_df_test_list = [
         "realtimebindingsrpbconstraints", 
         {
             ("Price",): numpy.dtypes.Float64DType,
-            ("BP1", "PC1", "BP2", "PC2", "BP3", "PC3", "BP4", "PC4",): pandas.core.arrays.integer.Int64Dtype,
-            ("Name", "OVERRIDE", "REASON", "CURVETYPE",): pandas.core.arrays.string_.StringDtype,
+            ("OVERRIDE", "BP1", "PC1", "BP2", "PC2", "BP3", "PC3", "BP4", "PC4",): pandas.core.arrays.integer.Int64Dtype,
+            ("Name", "REASON", "CURVETYPE",): pandas.core.arrays.string_.StringDtype,
             ("Period",): numpy.dtypes.DateTime64DType,
         }
     ),
@@ -629,8 +628,8 @@ single_df_test_list = [
         "realtimebindingconstraints", 
         {
             ("Price",): numpy.dtypes.Float64DType,
-            ("BP1", "PC1", "BP2", "PC2",): pandas.core.arrays.integer.Int64Dtype,
-            ("Name", "OVERRIDE", "CURVETYPE",): pandas.core.arrays.string_.StringDtype,
+            ("OVERRIDE", "BP1", "PC1", "BP2", "PC2",): pandas.core.arrays.integer.Int64Dtype,
+            ("Name", "CURVETYPE",): pandas.core.arrays.string_.StringDtype,
             ("Period",): numpy.dtypes.DateTime64DType,
         }
     ),

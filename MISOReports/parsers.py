@@ -726,7 +726,7 @@ def parse_ms_ri_srw(
 
     df2[["Total RI hourly", "Total RI cumulative", "DA_RI hourly", "DA_RI cumulative", "RT_RI hourly", "RT_RI cumulative"]] = df2[["Total RI hourly", "Total RI cumulative", "DA_RI hourly", "DA_RI cumulative", "RT_RI hourly", "RT_RI cumulative"]].astype(numpy.dtypes.Float64DType())
     df2[["hrend"]] = df2[["hrend"]].astype(pandas.core.arrays.integer.Int64Dtype())
-    df2[["date"]] = df2[["date"]].apply(pd.to_datetime, format="%m/%d/%Y")
+    df2[["date"]] = df2[["date"]].apply(pd.to_datetime, format="%m/%d/%Y %H:%M:%S")
 
     df = pd.DataFrame({
         MULTI_DF_NAMES_COLUMN: [
@@ -1229,7 +1229,7 @@ def parse_DA_Load_EPNodes(
     with zipfile.ZipFile(file=io.BytesIO(res.content)) as z:
         text = z.read(z.namelist()[0]).decode("utf-8")
 
-    csv_data = "\n".join(text.splitlines()[4:])
+    csv_data = "\n".join(text.splitlines()[4:-1])
 
     df = pd.read_csv(
         filepath_or_buffer=io.StringIO(csv_data),
@@ -1562,9 +1562,9 @@ def parse_realtimebindingconstraints(
     )
 
     df[["Price"]] = df[["Price"]].astype(numpy.dtypes.Float64DType())
-    df[["BP1", "PC1", "BP2", "PC2"]] = df[["BP1", "PC1", "BP2", "PC2"]].astype(pandas.core.arrays.integer.Int64Dtype())
+    df[["OVERRIDE", "BP1", "PC1", "BP2", "PC2"]] = df[["OVERRIDE", "BP1", "PC1", "BP2", "PC2"]].astype(pandas.core.arrays.integer.Int64Dtype())
     df[["Period"]] = df[["Period"]].apply(pd.to_datetime, format="%Y-%m-%dT%H:%M:%S")
-    df[["Name", "OVERRIDE", "CURVETYPE"]] = df[["Name", "OVERRIDE", "CURVETYPE"]].astype(pandas.core.arrays.string_.StringDtype())
+    df[["Name", "CURVETYPE"]] = df[["Name", "CURVETYPE"]].astype(pandas.core.arrays.string_.StringDtype())
     
     return df
 
@@ -1580,9 +1580,9 @@ def parse_realtimebindingsrpbconstraints(
     )
 
     df[["Price"]] = df[["Price"]].astype(numpy.dtypes.Float64DType())
-    df[["BP1", "PC1", "BP2", "PC2", "BP3", "PC3", "BP4", "PC4"]] = df[["BP1", "PC1", "BP2", "PC2", "BP3", "PC3", "BP4", "PC4"]].astype(pandas.core.arrays.integer.Int64Dtype())
+    df[["OVERRIDE", "BP1", "PC1", "BP2", "PC2", "BP3", "PC3", "BP4", "PC4"]] = df[["OVERRIDE", "BP1", "PC1", "BP2", "PC2", "BP3", "PC3", "BP4", "PC4"]].astype(pandas.core.arrays.integer.Int64Dtype())
     df[["Period"]] = df[["Period"]].apply(pd.to_datetime, format="%Y-%m-%dT%H:%M:%S")
-    df[["Name", "OVERRIDE", "REASON", "CURVETYPE"]] = df[["Name", "OVERRIDE", "REASON", "CURVETYPE"]].astype(pandas.core.arrays.string_.StringDtype())
+    df[["Name", "REASON", "CURVETYPE"]] = df[["Name", "REASON", "CURVETYPE"]].astype(pandas.core.arrays.string_.StringDtype())
 
     return df
 
@@ -1597,7 +1597,7 @@ def parse_RT_Load_EPNodes(
 
     df = pd.read_csv(
         filepath_or_buffer=io.StringIO(csv_data),
-    )[:-3]
+    )[:-1]
 
     df[["HE1", "HE2", "HE3", "HE4", "HE5", "HE6", "HE7", "HE8", "HE9", "HE10", "HE11", "HE12", "HE13", "HE14", "HE15", "HE16", "HE17", "HE18", "HE19", "HE20", "HE21", "HE22", "HE23", "HE24"]] = df[["HE1", "HE2", "HE3", "HE4", "HE5", "HE6", "HE7", "HE8", "HE9", "HE10", "HE11", "HE12", "HE13", "HE14", "HE15", "HE16", "HE17", "HE18", "HE19", "HE20", "HE21", "HE22", "HE23", "HE24"]].astype(numpy.dtypes.Float64DType())
     df[["EPNode", "Value"]] = df[["EPNode", "Value"]].astype(pandas.core.arrays.string_.StringDtype())
@@ -1635,9 +1635,8 @@ def parse_bids_cb(
     )
 
     df[["MW", "LMP", "PRICE1", "MW1", "PRICE2", "MW2", "PRICE3", "MW3", "PRICE4", "MW4", "PRICE5", "MW5", "PRICE6", "MW6", "PRICE7", "MW7", "PRICE8", "MW8", "PRICE9", "MW9"]] = df[["MW", "LMP", "PRICE1", "MW1", "PRICE2", "MW2", "PRICE3", "MW3", "PRICE4", "MW4", "PRICE5", "MW5", "PRICE6", "MW6", "PRICE7", "MW7", "PRICE8", "MW8", "PRICE9", "MW9"]].astype(numpy.dtypes.Float64DType())
-    df[["Market Participant Code"]] = df[["Market Participant Code"]].astype(pandas.core.arrays.integer.Int64Dtype())
     df[["Date/Time Beginning (EST)", "Date/Time End (EST)"]] = df[["Date/Time Beginning (EST)", "Date/Time End (EST)"]].apply(pd.to_datetime, format="%m/%d/%Y %H:%M:%S")
-    df[["Region", "Type of Bid", "Bid ID"]] = df[["Region", "Type of Bid", "Bid ID"]].astype(pandas.core.arrays.string_.StringDtype())
+    df[["Market Participant Code", "Region", "Type of Bid", "Bid ID"]] = df[["Market Participant Code", "Region", "Type of Bid", "Bid ID"]].astype(pandas.core.arrays.string_.StringDtype())
 
     return df
 
