@@ -1229,7 +1229,7 @@ def parse_DA_Load_EPNodes(
     with zipfile.ZipFile(file=io.BytesIO(res.content)) as z:
         text = z.read(z.namelist()[0]).decode("utf-8")
 
-    csv_data = "\n".join(text.splitlines()[4:])
+    csv_data = "\n".join(text.splitlines()[4:-1])
 
     df = pd.read_csv(
         filepath_or_buffer=io.StringIO(csv_data),
