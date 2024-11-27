@@ -1035,7 +1035,7 @@ class MISOReports:
             type_to_parse="csv",
             parser=parsers.parse_rt_lmp_prelim,
             example_url="https://docs.misoenergy.org/marketreports/20241125_rt_lmp_prelim.csv",
-            example_datetime=datetime.datetime(year=2024, month=11, day=26),
+            example_datetime=datetime.datetime(year=2024, month=11, day=25),
         ),
 
         "DA_Load_EPNodes": Report( # Checked 2024-11-26.
