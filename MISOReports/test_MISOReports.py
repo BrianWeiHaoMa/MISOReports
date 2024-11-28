@@ -580,16 +580,18 @@ single_df_test_list = [
         "ftr_mpma_bids_offers", 
         {
             ("MW1", "PRICE1", "MW2", "PRICE2", "MW3", "PRICE3", "MW4", "PRICE4", "MW5", "PRICE5", "MW6", "PRICE6", "MW7", "PRICE7", "MW8", "PRICE8", "MW9", "PRICE9", "MW10", "PRICE10",): numpy.dtypes.Float64DType,
-            ("Market Name", "Source", "Sink", "Hedge Type", "Class", "Type", "Round", "Asset Owner ID",): pandas.core.arrays.string_.StringDtype,
+            ("Market Name", "Source", "Sink", "Hedge Type", "Class", "Type", "Asset Owner ID",): pandas.core.arrays.string_.StringDtype,
             ("Start Date", "End Date",): numpy.dtypes.DateTime64DType,
+            ("Round",): pandas.core.arrays.integer.Int64Dtype,
         }
     ),
     (
         "ftr_annual_bids_offers", 
         {
             ("MW1", "PRICE1", "MW2", "PRICE2", "MW3", "PRICE3", "MW4", "PRICE4", "MW5", "PRICE5", "MW6", "PRICE6", "MW7", "PRICE7", "MW8", "PRICE8", "MW9", "PRICE9", "MW10", "PRICE10",): numpy.dtypes.Float64DType,
-            ("Market Name", "Source", "Sink", "Hedge Type", "Class", "Type", "Round", "Asset Owner ID",): pandas.core.arrays.string_.StringDtype,
+            ("Market Name", "Source", "Sink", "Hedge Type", "Class", "Type", "Asset Owner ID",): pandas.core.arrays.string_.StringDtype,
             ("Start Date", "End Date",): numpy.dtypes.DateTime64DType,
+            ("Round",): pandas.core.arrays.integer.Int64Dtype,
         }
     ),
     (
@@ -1161,23 +1163,27 @@ multiple_dfs_test_list = [
             },
             "MarketResults_Dec24_AUCTION_Nov24Auc_Round_1": {
                 ("MW", "ClearingPrice",): numpy.dtypes.Float64DType,
-                ("FTRID", "Category", "MarketParticipant", "Source", "Sink", "HedgeType", "Type", "Class", "Round",): pandas.core.arrays.string_.StringDtype,
+                ("FTRID", "Category", "MarketParticipant", "Source", "Sink", "HedgeType", "Type", "Class",): pandas.core.arrays.string_.StringDtype,
                 ("StartDate", "EndDate",): numpy.dtypes.DateTime64DType,
+                ("Round",): pandas.core.arrays.integer.Int64Dtype,
             },
             "MarketResults_Feb25_AUCTION_Nov24Auc_Round_1": {
                 ("MW", "ClearingPrice",): numpy.dtypes.Float64DType,
-                ("FTRID", "Category", "MarketParticipant", "Source", "Sink", "HedgeType", "Type", "Class", "Round",): pandas.core.arrays.string_.StringDtype,
+                ("FTRID", "Category", "MarketParticipant", "Source", "Sink", "HedgeType", "Type", "Class",): pandas.core.arrays.string_.StringDtype,
                 ("StartDate", "EndDate",): numpy.dtypes.DateTime64DType,
+                ("Round",): pandas.core.arrays.integer.Int64Dtype,
             },
             "MarketResults_Jan25_AUCTION_Nov24Auc_Round_1": {
                 ("MW", "ClearingPrice",): numpy.dtypes.Float64DType,
-                ("FTRID", "Category", "MarketParticipant", "Source", "Sink", "HedgeType", "Type", "Class", "Round",): pandas.core.arrays.string_.StringDtype,
+                ("FTRID", "Category", "MarketParticipant", "Source", "Sink", "HedgeType", "Type", "Class",): pandas.core.arrays.string_.StringDtype,
                 ("StartDate", "EndDate",): numpy.dtypes.DateTime64DType,
+                ("Round",): pandas.core.arrays.integer.Int64Dtype,
             },
             "MarketResults_Nov24_AUCTION_Nov24Auc_Round_1": {
                 ("MW", "ClearingPrice",): numpy.dtypes.Float64DType,
-                ("FTRID", "Category", "MarketParticipant", "Source", "Sink", "HedgeType", "Type", "Class", "Round",): pandas.core.arrays.string_.StringDtype,
+                ("FTRID", "Category", "MarketParticipant", "Source", "Sink", "HedgeType", "Type", "Class",): pandas.core.arrays.string_.StringDtype,
                 ("StartDate", "EndDate",): numpy.dtypes.DateTime64DType,
+                ("Round",): pandas.core.arrays.integer.Int64Dtype,
             },
             "SourceSinkShadowPrices_Dec24_AUCTION_Nov24Auc_Round_1": {
                 ("ShadowPrice",): numpy.dtypes.Float64DType,
@@ -1263,7 +1269,7 @@ multiple_dfs_test_list = [
         {
             "Table 1": {
                 ("HE 1", "HE 2", "HE 3", "HE 4", "HE 5", "HE 6", "HE 7", "HE 8", "HE 9", "HE 10", "HE 11", "HE 12", "HE 13", "HE 14", "HE 15", "HE 16", "HE 17", "HE 18", "HE 19", "HE 20", "HE 21", "HE 22", "HE 23", "HE 24",): numpy.dtypes.Float64DType,
-                ("Label", "MCP Type",): pandas.core.arrays.string_.StringDtype,
+                ("MCP Type",): pandas.core.arrays.string_.StringDtype,
             },
             "Table 2": {
                 ("HE 1", "HE 2", "HE 3", "HE 4", "HE 5", "HE 6", "HE 7", "HE 8", "HE 9", "HE 10", "HE 11", "HE 12", "HE 13", "HE 14", "HE 15", "HE 16", "HE 17", "HE 18", "HE 19", "HE 20", "HE 21", "HE 22", "HE 23", "HE 24",): numpy.dtypes.Float64DType,
@@ -1279,45 +1285,45 @@ multiple_dfs_test_list = [
                 ("Limit", "Flow", "Violation", "MarginalCost",): numpy.dtypes.Float64DType,
                 ("DeviceName", "DeviceType", "ControlArea", "Direction", "Description", "Contingency", "Class",): pandas.core.arrays.string_.StringDtype,
                 ("Round",): pandas.core.arrays.integer.Int64Dtype,
-
             },
             "BindingConstraint_Spr25_AUCTION_Annual24Auc_Round_1": {
                 ("Limit", "Flow", "Violation", "MarginalCost",): numpy.dtypes.Float64DType,
                 ("DeviceName", "DeviceType", "ControlArea", "Direction", "Description", "Contingency", "Class",): pandas.core.arrays.string_.StringDtype,
                 ("Round",): pandas.core.arrays.integer.Int64Dtype,
-
             },
             "BindingConstraint_Sum24_AUCTION_Annual24Auc_Round_1": {
                 ("Limit", "Flow", "Violation", "MarginalCost",): numpy.dtypes.Float64DType,
                 ("DeviceName", "DeviceType", "ControlArea", "Direction", "Description", "Contingency", "Class",): pandas.core.arrays.string_.StringDtype,
                 ("Round",): pandas.core.arrays.integer.Int64Dtype,
-
             },
             "BindingConstraint_Win24_AUCTION_Annual24Auc_Round_1": {
                 ("Limit", "Flow", "Violation", "MarginalCost",): numpy.dtypes.Float64DType,
                 ("DeviceName", "DeviceType", "ControlArea", "Direction", "Description", "Contingency", "Class",): pandas.core.arrays.string_.StringDtype,
                 ("Round",): pandas.core.arrays.integer.Int64Dtype,
-
             },
             "MarketResults_Fal24_AUCTION_Annual24Auc_Round_1": {
                 ("MW", "ClearingPrice",): numpy.dtypes.Float64DType,
-                ("FTRID", "Category", "MarketParticipant", "Source", "Sink", "HedgeType", "Type", "Class", "Round",): pandas.core.arrays.string_.StringDtype,
+                ("FTRID", "Category", "MarketParticipant", "Source", "Sink", "HedgeType", "Type", "Class",): pandas.core.arrays.string_.StringDtype,
                 ("StartDate", "EndDate",): numpy.dtypes.DateTime64DType,
+                ("Round",): pandas.core.arrays.integer.Int64Dtype,
             },
             "MarketResults_Spr25_AUCTION_Annual24Auc_Round_1": {
                 ("MW", "ClearingPrice",): numpy.dtypes.Float64DType,
-                ("FTRID", "Category", "MarketParticipant", "Source", "Sink", "HedgeType", "Type", "Class", "Round",): pandas.core.arrays.string_.StringDtype,
+                ("FTRID", "Category", "MarketParticipant", "Source", "Sink", "HedgeType", "Type", "Class",): pandas.core.arrays.string_.StringDtype,
                 ("StartDate", "EndDate",): numpy.dtypes.DateTime64DType,
+                ("Round",): pandas.core.arrays.integer.Int64Dtype,
             },
             "MarketResults_Sum24_AUCTION_Annual24Auc_Round_1": {
                 ("MW", "ClearingPrice",): numpy.dtypes.Float64DType,
-                ("FTRID", "Category", "MarketParticipant", "Source", "Sink", "HedgeType", "Type", "Class", "Round",): pandas.core.arrays.string_.StringDtype,
+                ("FTRID", "Category", "MarketParticipant", "Source", "Sink", "HedgeType", "Type", "Class",): pandas.core.arrays.string_.StringDtype,
                 ("StartDate", "EndDate",): numpy.dtypes.DateTime64DType,
+                ("Round",): pandas.core.arrays.integer.Int64Dtype,
             },
             "MarketResults_Win24_AUCTION_Annual24Auc_Round_1": {
                 ("MW", "ClearingPrice",): numpy.dtypes.Float64DType,
-                ("FTRID", "Category", "MarketParticipant", "Source", "Sink", "HedgeType", "Type", "Class", "Round",): pandas.core.arrays.string_.StringDtype,
+                ("FTRID", "Category", "MarketParticipant", "Source", "Sink", "HedgeType", "Type", "Class",): pandas.core.arrays.string_.StringDtype,
                 ("StartDate", "EndDate",): numpy.dtypes.DateTime64DType,
+                ("Round",): pandas.core.arrays.integer.Int64Dtype,
             },
             "SourceSinkShadowPrices_Fal24_AUCTION_Annual24Auc_Round_1": {
                 ("ShadowPrice",): numpy.dtypes.Float64DType,
@@ -1370,23 +1376,27 @@ multiple_dfs_test_list = [
             },
             "MarketResults_Fal24_AUCTION_Annual24Auc_Round_2": {
                 ("MW", "ClearingPrice",): numpy.dtypes.Float64DType,
-                ("FTRID", "Category", "MarketParticipant", "Source", "Sink", "HedgeType", "Type", "Class", "Round",): pandas.core.arrays.string_.StringDtype,
+                ("FTRID", "Category", "MarketParticipant", "Source", "Sink", "HedgeType", "Type", "Class",): pandas.core.arrays.string_.StringDtype,
                 ("StartDate", "EndDate",): numpy.dtypes.DateTime64DType,
+                ("Round",): pandas.core.arrays.integer.Int64Dtype,
             },
             "MarketResults_Spr25_AUCTION_Annual24Auc_Round_2": {
                 ("MW", "ClearingPrice",): numpy.dtypes.Float64DType,
-                ("FTRID", "Category", "MarketParticipant", "Source", "Sink", "HedgeType", "Type", "Class", "Round",): pandas.core.arrays.string_.StringDtype,
+                ("FTRID", "Category", "MarketParticipant", "Source", "Sink", "HedgeType", "Type", "Class",): pandas.core.arrays.string_.StringDtype,
                 ("StartDate", "EndDate",): numpy.dtypes.DateTime64DType,
+                ("Round",): pandas.core.arrays.integer.Int64Dtype,
             },
             "MarketResults_Sum24_AUCTION_Annual24Auc_Round_2": {
                 ("MW", "ClearingPrice",): numpy.dtypes.Float64DType,
-                ("FTRID", "Category", "MarketParticipant", "Source", "Sink", "HedgeType", "Type", "Class", "Round",): pandas.core.arrays.string_.StringDtype,
+                ("FTRID", "Category", "MarketParticipant", "Source", "Sink", "HedgeType", "Type", "Class",): pandas.core.arrays.string_.StringDtype,
                 ("StartDate", "EndDate",): numpy.dtypes.DateTime64DType,
+                ("Round",): pandas.core.arrays.integer.Int64Dtype,
             },
             "MarketResults_Win24_AUCTION_Annual24Auc_Round_2": {
                 ("MW", "ClearingPrice",): numpy.dtypes.Float64DType,
-                ("FTRID", "Category", "MarketParticipant", "Source", "Sink", "HedgeType", "Type", "Class", "Round",): pandas.core.arrays.string_.StringDtype,
+                ("FTRID", "Category", "MarketParticipant", "Source", "Sink", "HedgeType", "Type", "Class",): pandas.core.arrays.string_.StringDtype,
                 ("StartDate", "EndDate",): numpy.dtypes.DateTime64DType,
+                ("Round",): pandas.core.arrays.integer.Int64Dtype,
             },
             "SourceSinkShadowPrices_Spr25_AUCTION_Annual24Auc_Round_2": {
                 ("ShadowPrice",): numpy.dtypes.Float64DType,
@@ -1439,23 +1449,27 @@ multiple_dfs_test_list = [
             },
             "MarketResults_Fal24_AUCTION_Annual24Auc_Round_3": {
                 ("MW", "ClearingPrice",): numpy.dtypes.Float64DType,
-                ("FTRID", "Category", "MarketParticipant", "Source", "Sink", "HedgeType", "Type", "Class", "Round",): pandas.core.arrays.string_.StringDtype,
+                ("FTRID", "Category", "MarketParticipant", "Source", "Sink", "HedgeType", "Type", "Class",): pandas.core.arrays.string_.StringDtype,
                 ("StartDate", "EndDate",): numpy.dtypes.DateTime64DType,
+                ("Round",): pandas.core.arrays.integer.Int64Dtype,
             },
             "MarketResults_Spr25_AUCTION_Annual24Auc_Round_3": {
                 ("MW", "ClearingPrice",): numpy.dtypes.Float64DType,
-                ("FTRID", "Category", "MarketParticipant", "Source", "Sink", "HedgeType", "Type", "Class", "Round",): pandas.core.arrays.string_.StringDtype,
+                ("FTRID", "Category", "MarketParticipant", "Source", "Sink", "HedgeType", "Type", "Class",): pandas.core.arrays.string_.StringDtype,
                 ("StartDate", "EndDate",): numpy.dtypes.DateTime64DType,
+                ("Round",): pandas.core.arrays.integer.Int64Dtype,
             },
             "MarketResults_Sum24_AUCTION_Annual24Auc_Round_3": {
                 ("MW", "ClearingPrice",): numpy.dtypes.Float64DType,
-                ("FTRID", "Category", "MarketParticipant", "Source", "Sink", "HedgeType", "Type", "Class", "Round",): pandas.core.arrays.string_.StringDtype,
+                ("FTRID", "Category", "MarketParticipant", "Source", "Sink", "HedgeType", "Type", "Class",): pandas.core.arrays.string_.StringDtype,
                 ("StartDate", "EndDate",): numpy.dtypes.DateTime64DType,
+                ("Round",): pandas.core.arrays.integer.Int64Dtype,
             },
             "MarketResults_Win24_AUCTION_Annual24Auc_Round_3": {
                 ("MW", "ClearingPrice",): numpy.dtypes.Float64DType,
-                ("FTRID", "Category", "MarketParticipant", "Source", "Sink", "HedgeType", "Type", "Class", "Round",): pandas.core.arrays.string_.StringDtype,
+                ("FTRID", "Category", "MarketParticipant", "Source", "Sink", "HedgeType", "Type", "Class",): pandas.core.arrays.string_.StringDtype,
                 ("StartDate", "EndDate",): numpy.dtypes.DateTime64DType,
+                ("Round",): pandas.core.arrays.integer.Int64Dtype,
             },
             "SourceSinkShadowPrices_Spr25_AUCTION_Annual24Auc_Round_3": {
                 ("ShadowPrice",): numpy.dtypes.Float64DType,
@@ -1596,11 +1610,11 @@ multiple_dfs_test_list = [
         "asm_exante_damcp",
         {
            "Table 1": {
-                (" HE 1", "HE 2", "HE 3", "HE 4", "HE 5", "HE 6", "HE 7", "HE 8", "HE 9", "HE 10", "HE 11", "HE 12", "HE 13", "HE 14", "HE 15", "HE 16", "HE 17", "HE 18", "HE 19", "HE 20", "HE 21", "HE 22", "HE 23", "HE 24",): numpy.dtypes.Float64DType,
-                ("Unnamed: 0", "Unnamed: 1", "MCP Type",): pandas.core.arrays.string_.StringDtype,
+                ("HE 1", "HE 2", "HE 3", "HE 4", "HE 5", "HE 6", "HE 7", "HE 8", "HE 9", "HE 10", "HE 11", "HE 12", "HE 13", "HE 14", "HE 15", "HE 16", "HE 17", "HE 18", "HE 19", "HE 20", "HE 21", "HE 22", "HE 23", "HE 24",): numpy.dtypes.Float64DType,
+                ("MCP Type",): pandas.core.arrays.string_.StringDtype,
            },
            "Table 2": {
-                (" HE 1", "HE 2", "HE 3", "HE 4", "HE 5", "HE 6", "HE 7", "HE 8", "HE 9", "HE 10", "HE 11", "HE 12", "HE 13", "HE 14", "HE 15", "HE 16", "HE 17", "HE 18", "HE 19", "HE 20", "HE 21", "HE 22", "HE 23", "HE 24",): numpy.dtypes.Float64DType,
+                ("HE 1", "HE 2", "HE 3", "HE 4", "HE 5", "HE 6", "HE 7", "HE 8", "HE 9", "HE 10", "HE 11", "HE 12", "HE 13", "HE 14", "HE 15", "HE 16", "HE 17", "HE 18", "HE 19", "HE 20", "HE 21", "HE 22", "HE 23", "HE 24",): numpy.dtypes.Float64DType,
                 ("Pnode", "Zone", "MCP Type",): pandas.core.arrays.string_.StringDtype,
            },
         },
