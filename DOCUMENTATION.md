@@ -7,10 +7,11 @@ This is the documentation for MISOReports.
     - [MISORTWDDataBroker Reports](#misortwddatabroker-reports)
     - [MISORTWDBIReporter Reports](#misortwdbireporter-reports)
     - [MISO Market Reports](#miso-market-reports)
-        - [Historical LMP](#historical-lmp)
         - [Bids](#bids)
         - [Day-Ahead](#day-ahead)
-        - [ETA](#eta)
+        - [EIA](#eia)
+        - [FTR](#ftr)
+        - [Historical LMP](#historical-lmp)
         - [Historical MCP](#historical-mcp)
         - [Market Settlements](#market-settlements)
         - [Market to Market](#market-to-market)
@@ -75,20 +76,6 @@ currentinterval https://api.misoenergy.org/MISORTWDBIReporter/Reporter.asmx?mess
 These can be found at [MISO Market Reports](https://www.misoenergy.org/markets-and-operations/real-time--market-data/market-reports/)
 under each report's corresponding section.
 
-#### Historical LMP
-```
-DA_Load_EPNodes            https://docs.misoenergy.org/marketreports/DA_Load_EPNodes_20241021.zip
-da_exante_lmp              https://docs.misoenergy.org/marketreports/20241026_da_exante_lmp.csv
-da_expost_lmp              https://docs.misoenergy.org/marketreports/20241026_da_expost_lmp.csv
-2024-Jul-Sep_DA_LMPs       https://docs.misoenergy.org/marketreports/2024-Jul-Sep_DA_LMPs.zip
-2024_Jul-Sep_RT_LMPs       https://docs.misoenergy.org/marketreports/2024_Jul-Sep_RT_LMPs.zip
-5min_exante_lmp            https://docs.misoenergy.org/marketreports/20241025_5min_exante_lmp.xlsx
-RT_Load_EPNodes            https://docs.misoenergy.org/marketreports/RT_Load_EPNodes_20241018.zip
-rt_lmp_final               https://docs.misoenergy.org/marketreports/20241021_rt_lmp_final.csv
-rt_lmp_prelim              https://docs.misoenergy.org/marketreports/20241024_rt_lmp_prelim.csv
-5MIN_LMP                   https://docs.misoenergy.org/marketreports/20241021_5MIN_LMP.zip
-```
-
 #### Bids
 ```
 bids_cb https://docs.misoenergy.org/marketreports/20240801_bids_cb.zip
@@ -106,7 +93,14 @@ da_ex_rg     https://docs.misoenergy.org/marketreports/20241030_da_ex_rg.xlsx
 da_bc_HIST   https://docs.misoenergy.org/marketreports/2024_da_bc_HIST.csv
 ```
 
-#### ETA
+#### EIA
+```
+MISOdaily           https://docs.misoenergy.org/marketreports/MISOdaily3312024.xml
+MISOsamedaydemand   https://docs.misoenergy.org/marketreports/MISOsamedaydemand.xml
+
+```
+
+#### FTR
 ```
 ftr_allocation_restoration     https://docs.misoenergy.org/marketreports/20240401_ftr_allocation_restoration.zip
 ftr_allocation_stage_1A        https://docs.misoenergy.org/marketreports/20240401_ftr_allocation_stage_1A.zip
@@ -118,6 +112,20 @@ ftr_annual_results_round_3     https://docs.misoenergy.org/marketreports/2024010
 ftr_annual_bids_offers         https://docs.misoenergy.org/marketreports/2023_ftr_annual_bids_offers.zip
 ftr_mpma_results               https://docs.misoenergy.org/marketreports/20241101_ftr_mpma_results.zip
 ftr_mpma_bids_offers           https://docs.misoenergy.org/marketreports/20240801_ftr_mpma_bids_offers.zip
+```
+
+#### Historical LMP
+```
+DA_Load_EPNodes            https://docs.misoenergy.org/marketreports/DA_Load_EPNodes_20241021.zip
+da_exante_lmp              https://docs.misoenergy.org/marketreports/20241026_da_exante_lmp.csv
+da_expost_lmp              https://docs.misoenergy.org/marketreports/20241026_da_expost_lmp.csv
+2024-Jul-Sep_DA_LMPs       https://docs.misoenergy.org/marketreports/2024-Jul-Sep_DA_LMPs.zip
+2024_Jul-Sep_RT_LMPs       https://docs.misoenergy.org/marketreports/2024_Jul-Sep_RT_LMPs.zip
+5min_exante_lmp            https://docs.misoenergy.org/marketreports/20241025_5min_exante_lmp.xlsx
+RT_Load_EPNodes            https://docs.misoenergy.org/marketreports/RT_Load_EPNodes_20241018.zip
+rt_lmp_final               https://docs.misoenergy.org/marketreports/20241021_rt_lmp_final.csv
+rt_lmp_prelim              https://docs.misoenergy.org/marketreports/20241024_rt_lmp_prelim.csv
+5MIN_LMP                   https://docs.misoenergy.org/marketreports/20241021_5MIN_LMP.zip
 ```
 
 #### Historical MCP
