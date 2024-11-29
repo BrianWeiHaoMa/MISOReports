@@ -1302,8 +1302,8 @@ class MISOReports:
             example_url="https://docs.misoenergy.org/marketreports/20240801_bids_cb.zip",
             example_datetime=datetime.datetime(year=2024, month=8, day=1),
         ),
-        
-        "asm_exante_damcp": Report(
+
+        "asm_exante_damcp": Report( # Checked 2024-11-27.
                 url_builder=MISOMarketReportsURLBuilder(
                 target="asm_exante_damcp",
                 supported_extensions=["csv"],
@@ -1316,7 +1316,7 @@ class MISOReports:
             example_datetime=datetime.datetime(year=2024, month=10, day=30),
         ),
 
-        "ftr_allocation_restoration": Report(
+        "ftr_allocation_restoration": Report( # Checked 2024-11-27.
             url_builder=MISOMarketReportsURLBuilder(
                 target="ftr_allocation_restoration",
                 supported_extensions=["zip"],
@@ -1329,7 +1329,7 @@ class MISOReports:
             example_datetime=datetime.datetime(year=2024, month=4, day=1),
         ),
 
-        "ftr_allocation_stage_1A": Report(
+        "ftr_allocation_stage_1A": Report( # Checked 2024-11-27.
             url_builder=MISOMarketReportsURLBuilder(
                 target="ftr_allocation_stage_1A",
                 supported_extensions=["zip"],
@@ -1342,7 +1342,7 @@ class MISOReports:
             example_datetime=datetime.datetime(year=2024, month=4, day=1),
         ),
 
-        "ftr_allocation_stage_1B": Report(
+        "ftr_allocation_stage_1B": Report( # Checked 2024-11-27.
             url_builder=MISOMarketReportsURLBuilder(
                 target="ftr_allocation_stage_1B",
                 supported_extensions=["zip"],
@@ -1355,7 +1355,7 @@ class MISOReports:
             example_datetime=datetime.datetime(year=2024, month=4, day=1),
         ),
 
-        "ftr_allocation_summary": Report(
+        "ftr_allocation_summary": Report( # Checked 2024-11-27.
             url_builder=MISOMarketReportsURLBuilder(
                 target="ftr_allocation_summary",
                 supported_extensions=["zip"],
@@ -1368,7 +1368,7 @@ class MISOReports:
             example_datetime=datetime.datetime(year=2024, month=4, day=1),
         ),
 
-        "ftr_annual_results_round_1": Report(
+        "ftr_annual_results_round_1": Report( # Checked 2024-11-27.
             url_builder=MISOMarketReportsURLBuilder(
                 target="ftr_annual_results_round_1",
                 supported_extensions=["zip"],
@@ -1381,7 +1381,7 @@ class MISOReports:
             example_datetime=datetime.datetime(year=2024, month=4, day=1),
         ),
 
-        "ftr_annual_results_round_2": Report(
+        "ftr_annual_results_round_2": Report( # Checked 2024-11-27.
             url_builder=MISOMarketReportsURLBuilder(
                 target="ftr_annual_results_round_2",
                 supported_extensions=["zip"],
@@ -1394,7 +1394,7 @@ class MISOReports:
             example_datetime=datetime.datetime(year=2024, month=5, day=1),
         ),
 
-        "ftr_annual_results_round_3": Report(
+        "ftr_annual_results_round_3": Report( # Checked 2024-11-27.
             url_builder=MISOMarketReportsURLBuilder(
                 target="ftr_annual_results_round_3",
                 supported_extensions=["zip"],
@@ -1407,7 +1407,7 @@ class MISOReports:
             example_datetime=datetime.datetime(year=2024, month=1, day=1),
         ),
 
-        "ftr_annual_bids_offers": Report(
+        "ftr_annual_bids_offers": Report( # Checked 2024-11-27.
             url_builder=MISOMarketReportsURLBuilder(
                 target="ftr_annual_bids_offers",
                 supported_extensions=["zip"],
@@ -1420,7 +1420,7 @@ class MISOReports:
             example_datetime=datetime.datetime(year=2023, month=1, day=1),
         ),
 
-        "ftr_mpma_results": Report(
+        "ftr_mpma_results": Report( # Checked 2024-11-27.
             url_builder=MISOMarketReportsURLBuilder(
                 target="ftr_mpma_results",
                 supported_extensions=["zip"],
@@ -1433,7 +1433,7 @@ class MISOReports:
             example_datetime=datetime.datetime(year=2024, month=11, day=1),
         ),
 
-        "ftr_mpma_bids_offers": Report(
+        "ftr_mpma_bids_offers": Report( # Checked 2024-11-27.
             url_builder=MISOMarketReportsURLBuilder(
                 target="ftr_mpma_bids_offers",
                 supported_extensions=["zip"],
@@ -1446,7 +1446,7 @@ class MISOReports:
             example_datetime=datetime.datetime(year=2024, month=8, day=1),
         ),
 
-        "asm_expost_damcp": Report(
+        "asm_expost_damcp": Report( # Checked 2024-11-27.
                 url_builder=MISOMarketReportsURLBuilder(
                 target="asm_expost_damcp",
                 supported_extensions=["csv"],
@@ -1771,6 +1771,7 @@ class MISOReports:
             example_url="https://docs.misoenergy.org/marketreports/20241002_cpnode_reszone.xlsx",
             example_datetime=datetime.datetime(year=2024, month=10, day=2),
         ),
+
         
         "sr_ctsl": Report(
                 url_builder=MISOMarketReportsURLBuilder(
@@ -2044,6 +2045,7 @@ class MISOReports:
             example_url="https://docs.misoenergy.org/marketreports/MISOdaily3042024.xml",
             example_datetime=datetime.datetime(year=2024, month=10, day=30),
         ),
+
         
         "MISOsamedaydemand": Report( # Checked 2024-11-29.
             url_builder=MISOMarketReportsURLBuilder(
@@ -2069,4 +2071,5 @@ class MISOReports:
             example_url="https://api.misoenergy.org/MISORTWDBIReporter/Reporter.asmx?messageType=currentinterval&returnType=csv",
             example_datetime=datetime.datetime(year=2024, month=10, day=30),
         ),
+
     }
