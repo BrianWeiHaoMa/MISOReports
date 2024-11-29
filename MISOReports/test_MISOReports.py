@@ -924,7 +924,7 @@ single_df_test_list = [
             ("HE1", "HE2", "HE3", "HE4", "HE5", "HE6", "HE7", "HE8", "HE9", "HE10", "HE11", "HE12", "HE13", "HE14", "HE15", "HE16", "HE17", "HE18", "HE19", "HE20", "HE21", "HE22", "HE23", "HE24",): numpy.dtypes.Float64DType,
             ("NODE", "TYPE", "VALUE",): pandas.core.arrays.string_.StringDtype,
             ("MARKET_DAY",): numpy.dtypes.DateTime64DType,
-        },
+        }
     ),
     (
         "dfal_HIST",
@@ -933,7 +933,7 @@ single_df_test_list = [
             ("HourEnding",): pandas.core.arrays.integer.Int64Dtype,
             ("LoadResource Zone",): pandas.core.arrays.string_.StringDtype,
             ("MarketDay",): numpy.dtypes.DateTime64DType,
-        },
+        }
     ),
     (
         "historical_gen_fuel_mix", 
@@ -942,7 +942,7 @@ single_df_test_list = [
             ("HourEnding",): pandas.core.arrays.integer.Int64Dtype,
             ("Region", "Fuel Type",): pandas.core.arrays.string_.StringDtype,
             ("Market Date",): numpy.dtypes.DateTime64DType,
-        },
+        }
     ),
     (
         "hwd_HIST", 
@@ -950,7 +950,7 @@ single_df_test_list = [
             ("MWh",): numpy.dtypes.Float64DType,
             ("Hour Ending",): pandas.core.arrays.integer.Int64Dtype,
             ("Market Day	",): numpy.dtypes.DateTime64DType,
-        },
+        }
     ),
     (
         "sr_hist_is",
@@ -958,7 +958,7 @@ single_df_test_list = [
             ("HE1", "HE2", "HE3", "HE4", "HE5", "HE6", "HE7", "HE8", "HE9", "HE10", "HE11", "HE12", "HE13", "HE14", "HE15", "HE16", "HE17", "HE18", "HE19", "HE20", "HE21", "HE22", "HE23", "HE24",): pandas.core.arrays.integer.Int64Dtype,
             ("INTERFACE",): pandas.core.arrays.string_.StringDtype,
             ("MKTDAY",): numpy.dtypes.DateTime64DType,
-        },
+        }
     ),
     (
         "rfal_HIST", 
@@ -967,27 +967,27 @@ single_df_test_list = [
             ("HourEnding",): pandas.core.arrays.integer.Int64Dtype,
             ("Region", "Footnote",): pandas.core.arrays.string_.StringDtype,
             ("Market Day",): numpy.dtypes.DateTime64DType,
-        },
+        }
     ),
     (
         "sr_lt",
          {
             ("Minimum (GW)", "Average (GW)", "Maximum (GW)",): numpy.dtypes.Float64DType,
             ("Week Starting",): numpy.dtypes.DateTime64DType,
-        },
+        }
     ),
     (
         "sr_la_rg",
         {
             ("10/24/2024 Thursday Peak Hour: HE  19 MTLF (GW)", "10/24/2024 Thursday Peak Hour: HE  19 Capacity on Outage (GW)", "10/25/2024 Friday   Peak Hour: HE  16 MTLF (GW)", "10/25/2024 Friday   Peak Hour: HE  16 Capacity on Outage (GW)", "10/26/2024 Saturday Peak Hour: HE  19 MTLF (GW)", "10/26/2024 Saturday Peak Hour: HE  19 Capacity on Outage (GW)", "10/27/2024 Sunday   Peak Hour: HE  19 MTLF (GW)", "10/27/2024 Sunday   Peak Hour: HE  19 Capacity on Outage (GW)", "10/28/2024 Monday   Peak Hour: HE  19 MTLF (GW)", "10/28/2024 Monday   Peak Hour: HE  19Capacity on Outage (GW)", "10/29/2024 Tuesday  Peak Hour: HE  19 MTLF (GW)", "10/29/2024 Tuesday  Peak Hour: HE  19 Capacity on Outage (GW)", "10/30/2024 WednesdayPeak Hour: HE  24 MTLF (GW)", "10/30/2024 WednesdayPeak Hour: HE  24 Capacity on Outage (GW)",): numpy.dtypes.Float64DType,
             ("Hourend_EST", "Region",): pandas.core.arrays.string_.StringDtype,
-        },
+        }
     ),
     (
         "sr_nd_is",
         {
             ("Hour", "GLHB", "IESO", "MHEB", "PJM", "SOCO", "SWPP", "TVA", "AECI", "LGEE", "Other", "Total",): pandas.core.arrays.integer.Int64Dtype,
-        },
+        }
     ),
     (
         "sr_tcdc_group2",
@@ -995,7 +995,7 @@ single_df_test_list = [
             ("BP1", "PC1", "BP2", "PC2",): numpy.dtypes.Float64DType,
             ("ContingencyName", "ContingencyDescription", "BranchName", "CurveName", "Reason",): pandas.core.arrays.string_.StringDtype,
             ("EffectiveTime", "TerminationTime",): numpy.dtypes.DateTime64DType,
-        },
+        }
     ),
 ]
 
@@ -1055,7 +1055,7 @@ multiple_dfs_test_list = [
             },
             "SYSTEM OBLIGATION": {
                	("Forecasted Load", "Operating Reserve Requirement", "Total Obligation", "FORECASTED CAPACITY MARGIN",): pandas.core.arrays.integer.Int64Dtype,
-            }
+            },
         },
     ),
     (
@@ -1076,7 +1076,7 @@ multiple_dfs_test_list = [
             "Winter": {
                 ("Limit", "Flow", "Violation",): numpy.dtypes.Float64DType,
                 ("DeviceName", "DeviceType", "ControlArea", "Direction", "Description", "Contingency", "Class", "Stage",): pandas.core.arrays.string_.StringDtype,
-            }
+            },
         },
     ),
     (
@@ -1097,7 +1097,7 @@ multiple_dfs_test_list = [
             "Winter": {
                 ("Limit", "Flow", "Violation",): numpy.dtypes.Float64DType,
                 ("DeviceName", "DeviceType", "ControlArea", "Direction", "Description", "Contingency", "Class", "Stage",): pandas.core.arrays.string_.StringDtype,
-            }
+            },
         },
     ),
     (
@@ -1118,7 +1118,7 @@ multiple_dfs_test_list = [
             "Winter": {
                 ("Limit", "Flow", "Violation",): numpy.dtypes.Float64DType,
                 ("DeviceName", "DeviceType", "ControlArea", "Direction", "Description", "Contingency", "Class", "Stage",): pandas.core.arrays.string_.StringDtype,
-            }
+            },
         },
     ),
     (
@@ -1131,7 +1131,7 @@ multiple_dfs_test_list = [
             "DayAheadMCP": {
                 ("number",): pandas.core.arrays.integer.Int64Dtype,
                 ("GenRegMCP", "GenSpinMCP", "GenSuppMCP", "StrMcp", "DemandRegMcp", "DemandSpinMcp", "DemandSuppMCP", "RcpUpMcp", "RcpDownMcp",): numpy.dtypes.Float64DType,
-            }
+            },
         },
     ),
     (
@@ -1204,7 +1204,7 @@ multiple_dfs_test_list = [
                 ("ShadowPrice",): numpy.dtypes.Float64DType,
                 ("Round",): pandas.core.arrays.integer.Int64Dtype,
                 ("SourceSink", "Class",): pandas.core.arrays.string_.StringDtype,
-            }
+            },
         },
     ),
     (
@@ -1233,7 +1233,7 @@ multiple_dfs_test_list = [
             "Table 6": {
                 ("MISO System", "Illinois Hub", "Michigan Hub", "Minnesota Hub", "Indiana Hub", "Arkansas Hub", "Louisiana Hub", "Texas Hub", "MS.HUB",): numpy.dtypes.Float64DType,
                 ("Off-Peak",): pandas.core.arrays.string_.StringDtype, 
-            }
+            },
         },
     ),
     (
@@ -1528,7 +1528,7 @@ multiple_dfs_test_list = [
             "Table 5": {
                 ("MISO System", "Illinois Hub", "Michigan Hub", "Minnesota Hub", "Indiana Hub", "Arkansas Hub", "Louisiana Hub", "Texas Hub", "MS.HUB",): numpy.dtypes.Float64DType,
                 ("Off-Peak",): pandas.core.arrays.string_.StringDtype, 
-            }
+            },
         },
     ),
     (
@@ -1541,7 +1541,7 @@ multiple_dfs_test_list = [
             "South": {
                 ("DA VLR RSG MWP", "RT VLR RSG MWP", "DA+RT Total",): numpy.dtypes.Float64DType,
                 ("Constraint",): pandas.core.arrays.string_.StringDtype,
-            }
+            },
         },
     ),
     (
@@ -1603,7 +1603,7 @@ multiple_dfs_test_list = [
            "FiveMinTotalLoad": {
                	("Load_Value",): numpy.dtypes.Float64DType,
                 ("Load_Time",): numpy.dtypes.DateTime64DType,
-           }
+           },
         },
     ),
     (

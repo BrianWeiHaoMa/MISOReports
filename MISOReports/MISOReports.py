@@ -1302,7 +1302,7 @@ class MISOReports:
             example_url="https://docs.misoenergy.org/marketreports/20240801_bids_cb.zip",
             example_datetime=datetime.datetime(year=2024, month=8, day=1),
         ),
-        
+
         "asm_exante_damcp": Report( # Checked 2024-11-27.
                 url_builder=MISOMarketReportsURLBuilder(
                 target="asm_exante_damcp",
@@ -1771,6 +1771,7 @@ class MISOReports:
             example_url="https://docs.misoenergy.org/marketreports/20241002_cpnode_reszone.xlsx",
             example_datetime=datetime.datetime(year=2024, month=10, day=2),
         ),
+
         
         "sr_ctsl": Report(
                 url_builder=MISOMarketReportsURLBuilder(
@@ -2044,6 +2045,7 @@ class MISOReports:
             example_url="https://docs.misoenergy.org/marketreports/MISOdaily3042024.xml",
             example_datetime=datetime.datetime(year=2024, month=10, day=30),
         ),
+
         
         "MISOsamedaydemand": Report(
             url_builder=MISOMarketReportsURLBuilder(
@@ -2069,4 +2071,5 @@ class MISOReports:
             example_url="https://api.misoenergy.org/MISORTWDBIReporter/Reporter.asmx?messageType=currentinterval&returnType=csv",
             example_datetime=datetime.datetime(year=2024, month=10, day=30),
         ),
+
     }
