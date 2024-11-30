@@ -1681,7 +1681,7 @@ class MISOReports:
             example_datetime=datetime.datetime(year=2024, month=11, day=2),
         ),
 
-        "MM_Annual_Report": Report( # TODO implement 13 additional sheets.
+        "MM_Annual_Report": Report(
                 url_builder=MISOMarketReportsURLBuilder(
                 target="MM_Annual_Report",
                 supported_extensions=["zip"],
