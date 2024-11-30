@@ -1968,7 +1968,7 @@ class MISOReports:
             example_datetime=datetime.datetime(year=2024, month=10, day=28),
         ),
 
-        "sr_la_rg": Report(
+        "sr_la_rg": Report( # Checked 2024-11-29.
             url_builder=MISOMarketReportsURLBuilder(
                 target="sr_la_rg",
                 supported_extensions=["csv"],
@@ -1994,7 +1994,7 @@ class MISOReports:
             example_datetime=datetime.datetime(year=2024, month=10, day=20),
         ),
 
-        "sr_nd_is": Report(
+        "sr_nd_is": Report( # Checked 2024-11-29.
             url_builder=MISOMarketReportsURLBuilder(
                 target="sr_nd_is",
                 supported_extensions=["xls"],
@@ -2007,7 +2007,7 @@ class MISOReports:
             example_datetime=datetime.datetime(year=2024, month=10, day=20),
         ),
 
-        "PeakHourOverview": Report(
+        "PeakHourOverview": Report( # Checked 2024-11-29.
             url_builder=MISOMarketReportsURLBuilder(
                 target="PeakHourOverview",
                 supported_extensions=["csv"],
@@ -2020,7 +2020,7 @@ class MISOReports:
             example_datetime=datetime.datetime(year=2022, month=3, day=5),
         ),
 
-        "sr_tcdc_group2": Report(
+        "sr_tcdc_group2": Report( # Checked 2024-11-29.
             url_builder=MISOMarketReportsURLBuilder(
                 target="sr_tcdc_group2",
                 supported_extensions=["csv"],
@@ -2033,7 +2033,7 @@ class MISOReports:
             example_datetime=datetime.datetime(year=2024, month=1, day=1),
         ),
 
-        "MISOdaily": Report(
+        "MISOdaily": Report( # Checked 2024-11-29.
             url_builder=MISOMarketReportsURLBuilder(
                 target="MISOdaily",
                 supported_extensions=["xml"],
@@ -2047,7 +2047,7 @@ class MISOReports:
         ),
 
         
-        "MISOsamedaydemand": Report(
+        "MISOsamedaydemand": Report( # Checked 2024-11-29.
             url_builder=MISOMarketReportsURLBuilder(
                 target="MISOsamedaydemand",
                 supported_extensions=["xml"],
@@ -2060,7 +2060,7 @@ class MISOReports:
             example_datetime=datetime.datetime(year=2024, month=10, day=30),
         ),
 
-        "currentinterval": Report(
+        "currentinterval": Report( # Checked 2024-11-29.
             url_builder=MISORTWDBIReporterURLBuilder(
                 target="currentinterval",
                 supported_extensions=["csv"],
