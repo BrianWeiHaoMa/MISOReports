@@ -1967,7 +1967,7 @@ class MISOReports:
             example_datetime=datetime.datetime(year=2024, month=10, day=28),
         ),
 
-        "sr_la_rg": Report( # Checked 2024-11-29.
+        "sr_la_rg": Report( # TODO figure out how to handle the dates in the column names.
             url_builder=MISOMarketReportsURLBuilder(
                 target="sr_la_rg",
                 supported_extensions=["csv"],
