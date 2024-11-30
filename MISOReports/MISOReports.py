@@ -1485,7 +1485,7 @@ class MISOReports:
             example_datetime=datetime.datetime(year=2024, month=11, day=28),
         ),
 
-        "5min_exante_mcp": Report(
+        "5min_exante_mcp": Report( # Checked 2024-11-29.
             url_builder=MISOMarketReportsURLBuilder(
                 target="5min_exante_mcp",
                 supported_extensions=["xlsx"],
@@ -1498,7 +1498,7 @@ class MISOReports:
             example_datetime=datetime.datetime(year=2024, month=10, day=30),
         ),
 
-        "5min_expost_mcp": Report(
+        "5min_expost_mcp": Report( # Checked 2024-11-29.
             url_builder=MISOMarketReportsURLBuilder(
                 target="5min_expost_mcp",
                 supported_extensions=["xlsx"],
@@ -1511,7 +1511,7 @@ class MISOReports:
             example_datetime=datetime.datetime(year=2024, month=10, day=28),
         ),
 
-        "da_exante_ramp_mcp": Report(
+        "da_exante_ramp_mcp": Report( # Checked 2024-11-29.
             url_builder=MISOMarketReportsURLBuilder(
                 target="da_exante_ramp_mcp",
                 supported_extensions=["xlsx"],
@@ -1524,7 +1524,7 @@ class MISOReports:
             example_datetime=datetime.datetime(year=2024, month=10, day=30),
         ),
 
-        "da_exante_str_mcp": Report(
+        "da_exante_str_mcp": Report( # Checked 2024-11-29.
             url_builder=MISOMarketReportsURLBuilder(
                 target="da_exante_str_mcp",
                 supported_extensions=["xlsx"],
@@ -1537,7 +1537,7 @@ class MISOReports:
             example_datetime=datetime.datetime(year=2024, month=10, day=29),
         ),
 
-        "da_expost_ramp_mcp": Report(
+        "da_expost_ramp_mcp": Report( # Checked 2024-11-29.
             url_builder=MISOMarketReportsURLBuilder(
                 target="da_expost_ramp_mcp",
                 supported_extensions=["xlsx"],
@@ -1550,7 +1550,7 @@ class MISOReports:
             example_datetime=datetime.datetime(year=2024, month=10, day=30),
         ),
 
-        "da_expost_str_mcp": Report(
+        "da_expost_str_mcp": Report( # Checked 2024-11-29.
             url_builder=MISOMarketReportsURLBuilder(
                 target="da_expost_str_mcp",
                 supported_extensions=["xlsx"],
@@ -1563,7 +1563,7 @@ class MISOReports:
             example_datetime=datetime.datetime(year=2024, month=10, day=30),
         ),
 
-        "rt_expost_ramp_5min_mcp": Report(
+        "rt_expost_ramp_5min_mcp": Report( # Checked 2024-11-29.
             url_builder=MISOMarketReportsURLBuilder(
                 target="rt_expost_ramp_5min_mcp",
                 supported_extensions=["xlsx"],
@@ -1576,7 +1576,7 @@ class MISOReports:
             example_datetime=datetime.datetime(year=2024, month=10, day=1),
         ),
 
-        "rt_expost_ramp_mcp": Report(
+        "rt_expost_ramp_mcp": Report( # Checked 2024-11-29.
             url_builder=MISOMarketReportsURLBuilder(
                 target="rt_expost_ramp_mcp",
                 supported_extensions=["xlsx"],
@@ -1589,7 +1589,7 @@ class MISOReports:
             example_datetime=datetime.datetime(year=2024, month=10, day=1),
         ),
 
-        "rt_expost_str_5min_mcp": Report(
+        "rt_expost_str_5min_mcp": Report( # Checked 2024-11-29.
             url_builder=MISOMarketReportsURLBuilder(
                 target="rt_expost_str_5min_mcp",
                 supported_extensions=["xlsx"],
@@ -1602,7 +1602,7 @@ class MISOReports:
             example_datetime=datetime.datetime(year=2024, month=9, day=1),
         ),
 
-        "rt_expost_str_mcp": Report(
+        "rt_expost_str_mcp": Report( # Checked 2024-11-29.
             url_builder=MISOMarketReportsURLBuilder(
                 target="rt_expost_str_mcp",
                 supported_extensions=["xlsx"],

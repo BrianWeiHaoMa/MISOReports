@@ -1987,10 +1987,10 @@ def parse_5min_exante_mcp(
     df = pd.read_excel(
         io=io.BytesIO(res.content),
         skiprows=3,
-    ).iloc[:-3]
+    ).iloc[:-1]
 
     df[["RT Ex-Ante MCP Regulation", "RT Ex-Ante MCP Spin", "RT Ex-Ante MCP Supp"]] = df[["RT Ex-Ante MCP Regulation", "RT Ex-Ante MCP Spin", "RT Ex-Ante MCP Supp"]].astype(numpy.dtypes.Float64DType())
-    df[["Zone"]] = df[["Zone"]].astype(pandas.core.arrays.string_.StringDtype())
+    df[["Zone"]] = df[["Zone"]].replace('[^\\d]+', '', regex=True).astype(pandas.core.arrays.integer.Int64Dtype())
     df[["Time (EST)"]] = df[["Time (EST)"]].apply(pd.to_datetime, format="%Y-%m-%d %I:%M:%S %p")
 
     return df
@@ -2002,10 +2002,10 @@ def parse_5min_expost_mcp(
     df = pd.read_excel(
         io=io.BytesIO(res.content),
         skiprows=3,
-    ).iloc[:-3]
+    ).iloc[:-1]
 
     df[["RT MCP Regulation", "RT MCP Spin", "RT MCP Supp"]] = df[["RT MCP Regulation", "RT MCP Spin", "RT MCP Supp"]].astype(numpy.dtypes.Float64DType())
-    df[["Zone"]] = df[["Zone"]].astype(pandas.core.arrays.string_.StringDtype())
+    df[["Zone"]] = df[["Zone"]].replace('[^\\d]+', '', regex=True).astype(pandas.core.arrays.integer.Int64Dtype())
     df[["Time (EST)"]] = df[["Time (EST)"]].apply(pd.to_datetime, format="%Y-%m-%d %I:%M:%S %p")
 
     return df
@@ -2165,9 +2165,10 @@ def parse_rt_expost_str_mcp(
         
     df = df.rename(columns={idx: f"RESERVE ZONE {idx}" for idx in range(1, 9)})
 
-    df[["Hour Ending", "RESERVE ZONE 1", "RESERVE ZONE 2", "RESERVE ZONE 3", "RESERVE ZONE 4", "RESERVE ZONE 5", "RESERVE ZONE 6", "RESERVE ZONE 7", "RESERVE ZONE 8"]] = df[["Hour Ending", "RESERVE ZONE 1", "RESERVE ZONE 2", "RESERVE ZONE 3", "RESERVE ZONE 4", "RESERVE ZONE 5", "RESERVE ZONE 6", "RESERVE ZONE 7", "RESERVE ZONE 8"]].astype(numpy.dtypes.Float64DType())
+    df[["RESERVE ZONE 1", "RESERVE ZONE 2", "RESERVE ZONE 3", "RESERVE ZONE 4", "RESERVE ZONE 5", "RESERVE ZONE 6", "RESERVE ZONE 7", "RESERVE ZONE 8"]] = df[["RESERVE ZONE 1", "RESERVE ZONE 2", "RESERVE ZONE 3", "RESERVE ZONE 4", "RESERVE ZONE 5", "RESERVE ZONE 6", "RESERVE ZONE 7", "RESERVE ZONE 8"]].astype(numpy.dtypes.Float64DType())
     df[["MARKET DATE"]] = df[["MARKET DATE"]].apply(pd.to_datetime, format="%m/%d/%Y")
     df[["Preliminary/ Final"]] = df[["Preliminary/ Final"]].astype(pandas.core.arrays.string_.StringDtype())
+    df[["Hour Ending"]] = df[["Hour Ending"]].astype(pandas.core.arrays.integer.Int64Dtype())
 
     return df
 

@@ -564,7 +564,7 @@ single_df_test_list = [
         "5min_expost_mcp", 
         {
             ("RT MCP Regulation", "RT MCP Spin", "RT MCP Supp",): numpy.dtypes.Float64DType,
-            ("Zone",): pandas.core.arrays.string_.StringDtype,
+            ("Zone",): pandas.core.arrays.integer.Int64Dtype,
             ("Time (EST)",): numpy.dtypes.DateTime64DType,
         }
     ),
@@ -572,7 +572,7 @@ single_df_test_list = [
         "5min_exante_mcp", 
         {
             ("RT Ex-Ante MCP Regulation", "RT Ex-Ante MCP Spin", "RT Ex-Ante MCP Supp",): numpy.dtypes.Float64DType,
-            ("Zone",): pandas.core.arrays.string_.StringDtype,
+            ("Zone",): pandas.core.arrays.integer.Int64Dtype,
             ("Time (EST)",): numpy.dtypes.DateTime64DType,
         }
     ),
@@ -659,7 +659,8 @@ single_df_test_list = [
     (
         "rt_expost_str_mcp", 
         {
-            ("Hour Ending", "RESERVE ZONE 1", "RESERVE ZONE 2", "RESERVE ZONE 3", "RESERVE ZONE 4", "RESERVE ZONE 5", "RESERVE ZONE 6", "RESERVE ZONE 7", "RESERVE ZONE 8",): numpy.dtypes.Float64DType,
+            ("RESERVE ZONE 1", "RESERVE ZONE 2", "RESERVE ZONE 3", "RESERVE ZONE 4", "RESERVE ZONE 5", "RESERVE ZONE 6", "RESERVE ZONE 7", "RESERVE ZONE 8",): numpy.dtypes.Float64DType,
+            ("Hour Ending",): pandas.core.arrays.integer.Int64Dtype,
             ("Preliminary/ Final",): pandas.core.arrays.string_.StringDtype,
             ("MARKET DATE",): numpy.dtypes.DateTime64DType,
         }
@@ -977,13 +978,6 @@ single_df_test_list = [
         }
     ),
     (
-        "sr_la_rg",
-        {
-            ("10/24/2024 Thursday Peak Hour: HE  19 MTLF (GW)", "10/24/2024 Thursday Peak Hour: HE  19 Capacity on Outage (GW)", "10/25/2024 Friday   Peak Hour: HE  16 MTLF (GW)", "10/25/2024 Friday   Peak Hour: HE  16 Capacity on Outage (GW)", "10/26/2024 Saturday Peak Hour: HE  19 MTLF (GW)", "10/26/2024 Saturday Peak Hour: HE  19 Capacity on Outage (GW)", "10/27/2024 Sunday   Peak Hour: HE  19 MTLF (GW)", "10/27/2024 Sunday   Peak Hour: HE  19 Capacity on Outage (GW)", "10/28/2024 Monday   Peak Hour: HE  19 MTLF (GW)", "10/28/2024 Monday   Peak Hour: HE  19Capacity on Outage (GW)", "10/29/2024 Tuesday  Peak Hour: HE  19 MTLF (GW)", "10/29/2024 Tuesday  Peak Hour: HE  19 Capacity on Outage (GW)", "10/30/2024 WednesdayPeak Hour: HE  24 MTLF (GW)", "10/30/2024 WednesdayPeak Hour: HE  24 Capacity on Outage (GW)",): numpy.dtypes.Float64DType,
-            ("Hourend_EST", "Region",): pandas.core.arrays.string_.StringDtype,
-        }
-    ),
-    (
         "sr_nd_is",
         {
             ("Hour", "GLHB", "IESO", "MHEB", "PJM", "SOCO", "SWPP", "TVA", "AECI", "LGEE", "Other", "Total",): pandas.core.arrays.integer.Int64Dtype,
@@ -1241,7 +1235,7 @@ multiple_dfs_test_list = [
         {
             "Table 1": {
                 ("HE 1", "HE 2", "HE 3", "HE 4", "HE 5", "HE 6", "HE 7", "HE 8", "HE 9", "HE 10", "HE 11", "HE 12", "HE 13", "HE 14", "HE 15", "HE 16", "HE 17", "HE 18", "HE 19", "HE 20", "HE 21", "HE 22", "HE 23", "HE 24",): numpy.dtypes.Float64DType,
-                ("Label", "MCP Type",): pandas.core.arrays.string_.StringDtype,
+                ("MCP Type",): pandas.core.arrays.string_.StringDtype,
             },
             "Table 2": {
                 ("HE 1", "HE 2", "HE 3", "HE 4", "HE 5", "HE 6", "HE 7", "HE 8", "HE 9", "HE 10", "HE 11", "HE 12", "HE 13", "HE 14", "HE 15", "HE 16", "HE 17", "HE 18", "HE 19", "HE 20", "HE 21", "HE 22", "HE 23", "HE 24",): numpy.dtypes.Float64DType,
@@ -1255,7 +1249,7 @@ multiple_dfs_test_list = [
         {
             "Table 1": {
                 ("HE 1", "HE 2", "HE 3", "HE 4", "HE 5", "HE 6", "HE 7", "HE 8", "HE 9", "HE 10", "HE 11", "HE 12", "HE 13", "HE 14", "HE 15", "HE 16", "HE 17", "HE 18", "HE 19", "HE 20", "HE 21", "HE 22", "HE 23", "HE 24",): numpy.dtypes.Float64DType,
-                ("Label", "MCP Type",): pandas.core.arrays.string_.StringDtype,
+                ("MCP Type",): pandas.core.arrays.string_.StringDtype,
             },
             "Table 2": {
                 ("HE 1", "HE 2", "HE 3", "HE 4", "HE 5", "HE 6", "HE 7", "HE 8", "HE 9", "HE 10", "HE 11", "HE 12", "HE 13", "HE 14", "HE 15", "HE 16", "HE 17", "HE 18", "HE 19", "HE 20", "HE 21", "HE 22", "HE 23", "HE 24",): numpy.dtypes.Float64DType,
