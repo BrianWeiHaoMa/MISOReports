@@ -2195,7 +2195,7 @@ def parse_M2M_FFE(
     res: requests.Response,
 ) -> pd.DataFrame:
     text = res.text
-    csv_data = "\n".join(text.splitlines()[:-2])
+    csv_data = "\n".join(text.splitlines()[:-1])
 
     df = pd.read_csv(
         filepath_or_buffer=io.StringIO(csv_data),
@@ -2240,8 +2240,9 @@ def parse_M2M_Settlement_srw(
 
     df["HOUR_ENDING"] = [(datetime.datetime.strptime(dtime.replace(" 24:00:00", " 00:00:00"), "%Y-%m-%d %H:%M:%S") + datetime.timedelta(days=1)).strftime("%Y-%m-%d %H:%M:%S") if dtime.endswith("24:00:00") else dtime for dtime in df["HOUR_ENDING"]]
     
-    df[["MISO_SHADOW_PRICE", "MISO_MKT_FLOW", "MISO_FFE", "CP_SHADOW_PRICE", "CP_MKT_FLOW", "CP_FFE", "MISO_CREDIT", "CP_CREDIT"]] = df[["MISO_SHADOW_PRICE", "MISO_MKT_FLOW", "MISO_FFE", "CP_SHADOW_PRICE", "CP_MKT_FLOW", "CP_FFE", "MISO_CREDIT", "CP_CREDIT"]].astype(numpy.dtypes.Float64DType())
+    df[["MISO_SHADOW_PRICE", "CP_SHADOW_PRICE", "MISO_CREDIT", "CP_CREDIT"]] = df[["MISO_SHADOW_PRICE", "CP_SHADOW_PRICE", "MISO_CREDIT", "CP_CREDIT"]].astype(numpy.dtypes.Float64DType())
     df[["FLOWGATE_ID", "MONITORING_RTO", "CP_RTO", "FLOWGATE_NAME"]] = df[["FLOWGATE_ID", "MONITORING_RTO", "CP_RTO", "FLOWGATE_NAME"]].astype(pandas.core.arrays.string_.StringDtype())
+    df[["MISO_MKT_FLOW", "MISO_FFE", "CP_MKT_FLOW", "CP_FFE"]] = df[["MISO_MKT_FLOW", "MISO_FFE", "CP_MKT_FLOW", "CP_FFE"]].astype(pandas.core.arrays.integer.Int64Dtype())
     df[["HOUR_ENDING"]] = df[["HOUR_ENDING"]].apply(pd.to_datetime, format="%Y-%m-%d %H:%M:%S")
 
     return df

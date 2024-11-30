@@ -498,8 +498,9 @@ single_df_test_list = [
     (
         "M2M_Settlement_srw", 
         {
-            ("MISO_SHADOW_PRICE", "MISO_MKT_FLOW", "MISO_FFE", "CP_SHADOW_PRICE", "CP_MKT_FLOW", "CP_FFE", "MISO_CREDIT", "CP_CREDIT",): numpy.dtypes.Float64DType,
+            ("MISO_SHADOW_PRICE", "CP_SHADOW_PRICE", "MISO_CREDIT", "CP_CREDIT",): numpy.dtypes.Float64DType,
             ("FLOWGATE_ID", "MONITORING_RTO", "CP_RTO", "FLOWGATE_NAME",): pandas.core.arrays.string_.StringDtype,
+            ("MISO_MKT_FLOW", "MISO_FFE", "CP_MKT_FLOW", "CP_FFE",): pandas.core.arrays.integer.Int64Dtype,
             ("HOUR_ENDING",): numpy.dtypes.DateTime64DType,
         }
     ),

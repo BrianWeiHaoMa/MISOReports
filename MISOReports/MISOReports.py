@@ -1615,7 +1615,7 @@ class MISOReports:
             example_datetime=datetime.datetime(year=2024, month=10, day=1),
         ),
 
-        "Allocation_on_MISO_Flowgates": Report(
+        "Allocation_on_MISO_Flowgates": Report( # Checked 2024-11-29.
                 url_builder=MISOMarketReportsURLBuilder(
                 target="Allocation_on_MISO_Flowgates",
                 supported_extensions=["csv"],
@@ -1628,7 +1628,7 @@ class MISOReports:
             example_datetime=datetime.datetime(year=2024, month=10, day=29),
         ),
 
-        "M2M_FFE": Report(
+        "M2M_FFE": Report( # Checked 2024-11-29.
                 url_builder=MISOMarketReportsURLBuilder(
                 target="M2M_FFE",
                 supported_extensions=["CSV"],
@@ -1641,7 +1641,7 @@ class MISOReports:
             example_datetime=datetime.datetime(year=2024, month=10, day=29),
         ),
 
-        "M2M_Flowgates_as_of": Report(
+        "M2M_Flowgates_as_of": Report( # Checked 2024-11-29.
                 url_builder=MISOMarketReportsURLBuilder(
                 target="M2M_Flowgates_as_of",
                 supported_extensions=["CSV"],
@@ -1654,7 +1654,7 @@ class MISOReports:
             example_datetime=datetime.datetime(year=2024, month=10, day=30),
         ),
 
-        # Every download URL as of 2024-11-02 offered for this report was empty.
+        # Every download URL as of 2024-11-29 offered for this report was empty.
         "da_M2M_Settlement_srw": Report( 
                 url_builder=MISOMarketReportsURLBuilder(
                 target="da_M2M_Settlement_srw",
@@ -1665,10 +1665,10 @@ class MISOReports:
             type_to_parse="csv",
             parser=parsers.parse_da_M2M_Settlement_srw,
             example_url="https://docs.misoenergy.org/marketreports/da_M2M_Settlement_srw_2024.csv",
-            example_datetime=datetime.datetime(year=2024, month=11, day=2),
+            example_datetime=datetime.datetime(year=2024, month=11, day=29),
         ),
 
-        "M2M_Settlement_srw": Report(
+        "M2M_Settlement_srw": Report( # Checked 2024-11-29.
                 url_builder=MISOMarketReportsURLBuilder(
                 target="M2M_Settlement_srw",
                 supported_extensions=["csv"],
@@ -1681,7 +1681,7 @@ class MISOReports:
             example_datetime=datetime.datetime(year=2024, month=11, day=2),
         ),
 
-        "MM_Annual_Report": Report(
+        "MM_Annual_Report": Report( # TODO implement 13 additional sheets.
                 url_builder=MISOMarketReportsURLBuilder(
                 target="MM_Annual_Report",
                 supported_extensions=["zip"],
@@ -1772,7 +1772,6 @@ class MISOReports:
             example_datetime=datetime.datetime(year=2024, month=10, day=2),
         ),
 
-        
         "sr_ctsl": Report(
                 url_builder=MISOMarketReportsURLBuilder(
                 target="sr_ctsl",
@@ -1825,7 +1824,7 @@ class MISOReports:
             example_datetime=datetime.datetime(year=2024, month=1, day=1),
         ),
 
-        "da_ex_rg": Report(
+        "da_ex_rg": Report( # TODO implement 1 additional sheet.
             url_builder=MISOMarketReportsURLBuilder(
                 target="da_ex_rg",
                 supported_extensions=["xlsx"],
@@ -1899,8 +1898,8 @@ class MISOReports:
             ),
             type_to_parse="xls",
             parser=parsers.parse_dfal_HIST,
-            example_url="https://docs.misoenergy.org/marketreports/20241111_dfal_HIST.xls",
-            example_datetime=datetime.datetime(year=2024, month=11, day=11),
+            example_url="https://docs.misoenergy.org/marketreports/20241129_dfal_HIST.xls",
+            example_datetime=datetime.datetime(year=2024, month=11, day=29),
         ),
 
         "historical_gen_fuel_mix": Report(
