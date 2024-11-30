@@ -1615,7 +1615,8 @@ multiple_dfs_test_list = [
            },
            "Table 2": {
                 ("HE 1", "HE 2", "HE 3", "HE 4", "HE 5", "HE 6", "HE 7", "HE 8", "HE 9", "HE 10", "HE 11", "HE 12", "HE 13", "HE 14", "HE 15", "HE 16", "HE 17", "HE 18", "HE 19", "HE 20", "HE 21", "HE 22", "HE 23", "HE 24",): numpy.dtypes.Float64DType,
-                ("Pnode", "Zone", "MCP Type",): pandas.core.arrays.string_.StringDtype,
+                ("Pnode", "MCP Type",): pandas.core.arrays.string_.StringDtype,
+                ("Zone",): pandas.core.arrays.integer.Int64Dtype,
            },
         },
     ),

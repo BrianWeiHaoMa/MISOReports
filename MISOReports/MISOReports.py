@@ -1303,7 +1303,7 @@ class MISOReports:
             example_datetime=datetime.datetime(year=2024, month=8, day=1),
         ),
 
-        "asm_exante_damcp": Report( # Checked 2024-11-27.
+        "asm_exante_damcp": Report( # Checked 2024-11-29.
                 url_builder=MISOMarketReportsURLBuilder(
                 target="asm_exante_damcp",
                 supported_extensions=["csv"],
@@ -1446,7 +1446,7 @@ class MISOReports:
             example_datetime=datetime.datetime(year=2024, month=8, day=1),
         ),
 
-        "asm_expost_damcp": Report( # Checked 2024-11-27.
+        "asm_expost_damcp": Report( # Checked 2024-11-29.
                 url_builder=MISOMarketReportsURLBuilder(
                 target="asm_expost_damcp",
                 supported_extensions=["csv"],
@@ -1459,7 +1459,7 @@ class MISOReports:
             example_datetime=datetime.datetime(year=2024, month=10, day=30),
         ),
 
-        "asm_rtmcp_final": Report(
+        "asm_rtmcp_final": Report( # Checked 2024-11-29.
                 url_builder=MISOMarketReportsURLBuilder(
                 target="asm_rtmcp_final",
                 supported_extensions=["csv"],
@@ -1472,7 +1472,7 @@ class MISOReports:
             example_datetime=datetime.datetime(year=2024, month=10, day=26),
         ),
 
-        "asm_rtmcp_prelim": Report(
+        "asm_rtmcp_prelim": Report( # Checked 2024-11-29.
                 url_builder=MISOMarketReportsURLBuilder(
                 target="asm_rtmcp_prelim",
                 supported_extensions=["csv"],
@@ -1481,8 +1481,8 @@ class MISOReports:
             ),
             type_to_parse="csv",
             parser=parsers.parse_asm_rtmcp_prelim,
-            example_url="https://docs.misoenergy.org/marketreports/20241110_asm_rtmcp_prelim.csv",
-            example_datetime=datetime.datetime(year=2024, month=11, day=5),
+            example_url="https://docs.misoenergy.org/marketreports/20241128_asm_rtmcp_prelim.csv",
+            example_datetime=datetime.datetime(year=2024, month=11, day=28),
         ),
 
         "5min_exante_mcp": Report(

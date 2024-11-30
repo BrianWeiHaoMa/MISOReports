@@ -1641,36 +1641,32 @@ def parse_bids_cb(
     return df
 
 
-def parse_asm_exante_damcp(
-    res: requests.Response,
+def helper_parse_asm(
+        csv1_lines: str,
+        csv2_lines: str,
 ) -> pd.DataFrame:
-    text = res.text
-
-    second_table_start_idx = text.index("Pnode,Zone,MCP Type")
-
     table_1 = "Table 1"
     df1 = pd.read_csv(
-        filepath_or_buffer=io.StringIO(text[:second_table_start_idx]),
-        skiprows=4,
-        nrows=24,
+        filepath_or_buffer=io.StringIO(csv1_lines),
+        skipinitialspace=True,
     )
 
     df1.drop(columns=["Unnamed: 0", "Unnamed: 1"], inplace=True)
-    df1.rename(columns={" HE 1": "HE 1"}, inplace=True)
 
     hours = [f"HE {i}" for i in range(1, 25)]
     df1[hours] = df1[hours].astype(numpy.dtypes.Float64DType())
     df1[["MCP Type"]] = df1[["MCP Type"]].astype(pandas.core.arrays.string_.StringDtype())
 
     table_2 = "Table 2"
+
     df2 = pd.read_csv(
-        filepath_or_buffer=io.StringIO(text[second_table_start_idx:]),
+        filepath_or_buffer=io.StringIO(csv2_lines),
+        skipinitialspace=True,
     )
 
-    df2.rename(columns={" HE 1": "HE 1"}, inplace=True)
-
     df2[hours] = df2[hours].astype(numpy.dtypes.Float64DType())
-    df2[["Pnode", "Zone", "MCP Type"]] = df2[["Pnode", "Zone", "MCP Type"]].astype(pandas.core.arrays.string_.StringDtype())
+    df2[["Zone"]] = df2[["Zone"]].replace('[^\\d]+', '', regex=True).astype(pandas.core.arrays.integer.Int64Dtype())
+    df2[["Pnode", "MCP Type"]] = df2[["Pnode", "MCP Type"]].astype(pandas.core.arrays.string_.StringDtype())
 
     df = pd.DataFrame({
         MULTI_DF_NAMES_COLUMN: [
@@ -1684,6 +1680,19 @@ def parse_asm_exante_damcp(
     })
 
     return df
+
+
+def parse_asm_exante_damcp(
+    res: requests.Response,
+) -> pd.DataFrame:
+    text = res.text
+
+    second_table_start_idx = text.index("Pnode,Zone,MCP Type")
+
+    return helper_parse_asm(
+        csv1_lines="\n".join(text[:second_table_start_idx].splitlines()[4:]), 
+        csv2_lines=text[second_table_start_idx:],
+    )
 
 
 def helper_parse_ftr_allocation(
@@ -1947,41 +1956,11 @@ def parse_asm_expost_damcp(
     csv1, csv2 = text.split("\n\n\n")
 
     csv1_lines = csv1.splitlines()
-    
-    df1 = pd.read_csv(
-        filepath_or_buffer=io.StringIO("\n".join(csv1_lines[4:])),
+
+    return helper_parse_asm(
+        csv1_lines="\n".join(csv1_lines[4:]), 
+        csv2_lines=csv2,
     )
-
-    df1.rename(columns={" HE 1": "HE 1"}, inplace=True)
-    df1.drop(columns=["Unnamed: 0", "Unnamed: 1"], inplace=True)
-
-    df1[["HE 1", "HE 2", "HE 3", "HE 4", "HE 5", "HE 6", "HE 7", "HE 8", "HE 9", "HE 10", "HE 11", "HE 12", "HE 13", "HE 14", "HE 15", "HE 16", "HE 17", "HE 18", "HE 19", "HE 20", "HE 21", "HE 22", "HE 23", "HE 24"]] = df1[["HE 1", "HE 2", "HE 3", "HE 4", "HE 5", "HE 6", "HE 7", "HE 8", "HE 9", "HE 10", "HE 11", "HE 12", "HE 13", "HE 14", "HE 15", "HE 16", "HE 17", "HE 18", "HE 19", "HE 20", "HE 21", "HE 22", "HE 23", "HE 24"]].astype(numpy.dtypes.Float64DType())
-    df1[["MCP Type"]] = df1[["MCP Type"]].astype(pandas.core.arrays.string_.StringDtype())
-
-    csv2_lines = csv2.splitlines()
-
-    df2 = pd.read_csv(
-        filepath_or_buffer=io.StringIO("\n".join(csv2_lines)),
-    )
-
-    df2.rename(columns={" HE 1": "HE 1"}, inplace=True)
-
-    df2[["Zone"]] = df2[["Zone"]].replace('[^\\d]+', '', regex=True).astype(pandas.core.arrays.integer.Int64Dtype())
-    df2[["HE 1", "HE 2", "HE 3", "HE 4", "HE 5", "HE 6", "HE 7", "HE 8", "HE 9", "HE 10", "HE 11", "HE 12", "HE 13", "HE 14", "HE 15", "HE 16", "HE 17", "HE 18", "HE 19", "HE 20", "HE 21", "HE 22", "HE 23", "HE 24"]] = df2[["HE 1", "HE 2", "HE 3", "HE 4", "HE 5", "HE 6", "HE 7", "HE 8", "HE 9", "HE 10", "HE 11", "HE 12", "HE 13", "HE 14", "HE 15", "HE 16", "HE 17", "HE 18", "HE 19", "HE 20", "HE 21", "HE 22", "HE 23", "HE 24"]].astype(numpy.dtypes.Float64DType())
-    df2[["Pnode", "MCP Type"]] = df2[["Pnode", "MCP Type"]].astype(pandas.core.arrays.string_.StringDtype())
-    
-    df = pd.DataFrame({
-        MULTI_DF_NAMES_COLUMN: [
-                "Table 1",
-                "Table 2",
-        ], 
-        MULTI_DF_DFS_COLUMN: [
-                df1, 
-                df2,
-        ],
-    })
-    
-    return df
 
 
 def parse_asm_rtmcp_final(
@@ -1990,48 +1969,7 @@ def parse_asm_rtmcp_final(
     text = res.text
     _, _, csv1, csv2 = text.split("\r\n\r\n")
 
-    csv1_lines = csv1.splitlines()
-    
-    df1 = pd.read_csv(
-        filepath_or_buffer=io.StringIO("\n".join(csv1_lines)),
-    )
-
-    df1.rename(columns={"Unnamed: 0": "Label"}, inplace=True)
-    df1.drop(columns=["Unnamed: 1"], inplace=True)
-
-    df1[["HE 1", "HE 2", "HE 3", "HE 4", "HE 5", "HE 6", "HE 7", "HE 8", "HE 9", "HE 10", "HE 11", "HE 12", "HE 13", "HE 14", "HE 15", "HE 16", "HE 17", "HE 18", "HE 19", "HE 20", "HE 21", "HE 22", "HE 23", "HE 24"]] = df1[["HE 1", "HE 2", "HE 3", "HE 4", "HE 5", "HE 6", "HE 7", "HE 8", "HE 9", "HE 10", "HE 11", "HE 12", "HE 13", "HE 14", "HE 15", "HE 16", "HE 17", "HE 18", "HE 19", "HE 20", "HE 21", "HE 22", "HE 23", "HE 24"]].astype(numpy.dtypes.Float64DType())
-    df1[["Label", "MCP Type"]] = df1[["Label", "MCP Type"]].astype(pandas.core.arrays.string_.StringDtype())
-
-    csv2_lines = csv2.splitlines()
-
-    df2 = pd.read_csv(
-        filepath_or_buffer=io.StringIO("\n".join(csv2_lines)),
-    )
-
-    df2.rename(columns={
-            " HE 1": "HE 1",
-            " Zone": "Zone",
-            " MCP Type": "MCP Type",
-        }, 
-        inplace=True,
-    )
-
-    df2[["Zone"]] = df2[["Zone"]].replace('[^\\d]+', '', regex=True).astype(pandas.core.arrays.integer.Int64Dtype())
-    df2[["HE 1", "HE 2", "HE 3", "HE 4", "HE 5", "HE 6", "HE 7", "HE 8", "HE 9", "HE 10", "HE 11", "HE 12", "HE 13", "HE 14", "HE 15", "HE 16", "HE 17", "HE 18", "HE 19", "HE 20", "HE 21", "HE 22", "HE 23", "HE 24"]] = df2[["HE 1", "HE 2", "HE 3", "HE 4", "HE 5", "HE 6", "HE 7", "HE 8", "HE 9", "HE 10", "HE 11", "HE 12", "HE 13", "HE 14", "HE 15", "HE 16", "HE 17", "HE 18", "HE 19", "HE 20", "HE 21", "HE 22", "HE 23", "HE 24"]].astype(numpy.dtypes.Float64DType())
-    df2[["Pnode", "MCP Type"]] = df2[["Pnode", "MCP Type"]].astype(pandas.core.arrays.string_.StringDtype())
-    
-    df = pd.DataFrame({
-        MULTI_DF_NAMES_COLUMN: [
-                "Table 1",
-                "Table 2",
-        ], 
-        MULTI_DF_DFS_COLUMN: [
-                df1, 
-                df2,
-        ],
-    })
-    
-    return df
+    return helper_parse_asm(csv1_lines=csv1, csv2_lines=csv2)
 
 
 def parse_asm_rtmcp_prelim(
@@ -2040,48 +1978,7 @@ def parse_asm_rtmcp_prelim(
     text = res.text
     _, _, csv1, csv2 = text.split("\r\n\r\n")
 
-    csv1_lines = csv1.splitlines()
-    
-    df1 = pd.read_csv(
-        filepath_or_buffer=io.StringIO("\n".join(csv1_lines)),
-    )
-
-    df1.rename(columns={"Unnamed: 0": "Label"}, inplace=True)
-    df1.drop(columns=["Unnamed: 1"], inplace=True)
-
-    df1[["HE 1", "HE 2", "HE 3", "HE 4", "HE 5", "HE 6", "HE 7", "HE 8", "HE 9", "HE 10", "HE 11", "HE 12", "HE 13", "HE 14", "HE 15", "HE 16", "HE 17", "HE 18", "HE 19", "HE 20", "HE 21", "HE 22", "HE 23", "HE 24"]] = df1[["HE 1", "HE 2", "HE 3", "HE 4", "HE 5", "HE 6", "HE 7", "HE 8", "HE 9", "HE 10", "HE 11", "HE 12", "HE 13", "HE 14", "HE 15", "HE 16", "HE 17", "HE 18", "HE 19", "HE 20", "HE 21", "HE 22", "HE 23", "HE 24"]].astype(numpy.dtypes.Float64DType())
-    df1[["Label", "MCP Type"]] = df1[["Label", "MCP Type"]].astype(pandas.core.arrays.string_.StringDtype())
-
-    csv2_lines = csv2.splitlines()
-
-    df2 = pd.read_csv(
-        filepath_or_buffer=io.StringIO("\n".join(csv2_lines)),
-    )
-
-    df2.rename(columns={
-            " HE 1": "HE 1",
-            " Zone": "Zone",
-            " MCP Type": "MCP Type",
-        }, 
-        inplace=True,
-    )
-
-    df2[["Zone"]] = df2[["Zone"]].replace('[^\\d]+', '', regex=True).astype(pandas.core.arrays.integer.Int64Dtype())
-    df2[["HE 1", "HE 2", "HE 3", "HE 4", "HE 5", "HE 6", "HE 7", "HE 8", "HE 9", "HE 10", "HE 11", "HE 12", "HE 13", "HE 14", "HE 15", "HE 16", "HE 17", "HE 18", "HE 19", "HE 20", "HE 21", "HE 22", "HE 23", "HE 24"]] = df2[["HE 1", "HE 2", "HE 3", "HE 4", "HE 5", "HE 6", "HE 7", "HE 8", "HE 9", "HE 10", "HE 11", "HE 12", "HE 13", "HE 14", "HE 15", "HE 16", "HE 17", "HE 18", "HE 19", "HE 20", "HE 21", "HE 22", "HE 23", "HE 24"]].astype(numpy.dtypes.Float64DType())
-    df2[["Pnode", "MCP Type"]] = df2[["Pnode", "MCP Type"]].astype(pandas.core.arrays.string_.StringDtype())
-    
-    df = pd.DataFrame({
-        MULTI_DF_NAMES_COLUMN: [
-                "Table 1",
-                "Table 2",
-        ], 
-        MULTI_DF_DFS_COLUMN: [
-                df1, 
-                df2,
-        ],
-    })
-    
-    return df
+    return helper_parse_asm(csv1_lines=csv1, csv2_lines=csv2)
 
 
 def parse_5min_exante_mcp(
