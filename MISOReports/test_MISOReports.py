@@ -1728,23 +1728,93 @@ multiple_dfs_test_list = [
     (
         "MM_Annual_Report",
         {
-            "Annual_MM_MISO": {
+            "MISO Year 1":
+            {
                 ("MISO Available Margin (MW)",): numpy.dtypes.Float64DType,
                 ("Date",): numpy.dtypes.DateTime64DType,
             },
-            "Annual_MM_Central": {
+            "MISO Year 2":
+            {
+                ("MISO Available Margin (MW)",): numpy.dtypes.Float64DType,
+                ("Date",): numpy.dtypes.DateTime64DType,
+            },
+            "MISO Year 3":
+            {
+                ("MISO Available Margin (MW)",): numpy.dtypes.Float64DType,
+                ("Date",): numpy.dtypes.DateTime64DType,
+            },
+            "MISO Year 4":
+            {
+                ("MISO Available Margin (MW)",): numpy.dtypes.Float64DType,
+                ("Date",): numpy.dtypes.DateTime64DType,
+            },
+            "Central Year 1":
+            {
                 ("Central Available Margin (MW)",): numpy.dtypes.Float64DType,
                 ("Date",): numpy.dtypes.DateTime64DType,
             },
-            "Annual_MM_South": {
-                ("South Available Margin (MW)",): numpy.dtypes.Float64DType,
+            "Central Year 2":
+            {
+                ("Central Available Margin (MW)",): numpy.dtypes.Float64DType,
                 ("Date",): numpy.dtypes.DateTime64DType,
             },
-            "Annual_MM_North": {
+            "Central Year 3":
+            {
+                ("Central Available Margin (MW)",): numpy.dtypes.Float64DType,
+                ("Date",): numpy.dtypes.DateTime64DType,
+            },
+            "Central Year 4":
+            {
+                ("Central Available Margin (MW)",): numpy.dtypes.Float64DType,
+                ("Date",): numpy.dtypes.DateTime64DType,
+            },
+            "North Year 1":
+            {
                 ("North Available Margin (MW)",): numpy.dtypes.Float64DType,
                 ("Date",): numpy.dtypes.DateTime64DType,
             },
-            "Transparency": {
+            "North Year 2":
+            {
+                ("North Available Margin (MW)",): numpy.dtypes.Float64DType,
+                ("Date",): numpy.dtypes.DateTime64DType,
+            },
+            "North Year 3":
+            {
+                ("North Available Margin (MW)",): numpy.dtypes.Float64DType,
+                ("Date",): numpy.dtypes.DateTime64DType,
+            },
+            "North Year 4":
+            {
+                ("North Available Margin (MW)",): numpy.dtypes.Float64DType,
+                ("Date",): numpy.dtypes.DateTime64DType,
+            },
+            "South Year 1":
+            {
+                ("South Available Margin (MW)",): numpy.dtypes.Float64DType,
+                ("Date",): numpy.dtypes.DateTime64DType,
+            },
+            "South Year 2":
+            {
+                ("South Available Margin (MW)",): numpy.dtypes.Float64DType,
+                ("Date",): numpy.dtypes.DateTime64DType,
+            },
+            "South Year 3":
+            {
+                ("South Available Margin (MW)",): numpy.dtypes.Float64DType,
+                ("Date",): numpy.dtypes.DateTime64DType,
+            },
+            "South Year 4":
+            {
+                ("South Available Margin (MW)",): numpy.dtypes.Float64DType,
+                ("Date",): numpy.dtypes.DateTime64DType,
+            },
+            "Transparency Future":
+            {
+                ("Central Region (MW)", "North Region (MW)", "South Region (MW)",): numpy.dtypes.Float64DType,
+                ("Date",): numpy.dtypes.DateTime64DType,
+            },
+            "Transparency History":
+            {
                 ("Central Region (MW)", "North Region (MW)", "South Region (MW)",): numpy.dtypes.Float64DType,
                 ("Date",): numpy.dtypes.DateTime64DType,
             },

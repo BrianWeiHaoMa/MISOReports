@@ -2256,38 +2256,45 @@ def parse_MM_Annual_Report(
             transparency_file = z.namelist()[-1]
 
             annual_content = [z.read(content) for content in annual_files]
+
+            cur_year = int(transparency_file.rsplit("_")[-1][:4])
             transparency_content = z.read(transparency_file)
 
         df_names = []
         dfs = []
 
         for xlsx, name in zip(annual_content, annual_files):
-            df = pd.read_excel(
-                io=io.BytesIO(xlsx),
-                skiprows=3,
-                skipfooter=1,
-            )
-
             region = name.split('_')[-1][:-5]
 
-            df[[f"{region} Available Margin (MW)"]] = df[[f"{region} Available Margin (MW)"]].astype(numpy.dtypes.Float64DType())
-            df[["Date"]] = df[["Date"]].apply(pd.to_datetime, format="%m/%d/%Y")
+            for idx, sheet  in enumerate(f"GraphDataAnnual{region}_{year}" for year in range(cur_year, cur_year + 4)):
+                df = pd.read_excel(
+                    io=io.BytesIO(xlsx),
+                    skiprows=3,
+                    skipfooter=1,
+                    sheet_name=sheet,
+                )
 
-            dfs.append(df)
-            df_names.append(name.split('/')[-1][:-5])
+                df[[f"{region} Available Margin (MW)"]] = df[[f"{region} Available Margin (MW)"]].astype(numpy.dtypes.Float64DType())
+                df[["Date"]] = df[["Date"]].apply(pd.to_datetime, format="%m/%d/%Y")
 
-        df_transparency = pd.read_excel(
-            io=io.BytesIO(transparency_content),
-            skiprows=3,
-            skipfooter=1,
-        )
+                dfs.append(df)
+                df_names.append(f"{region} Year {idx + 1}")
 
-        df_transparency[["Central Region (MW)", "North Region (MW)", "South Region (MW)"]] = df_transparency[["Central Region (MW)", "North Region (MW)", "South Region (MW)"]].astype(numpy.dtypes.Float64DType())
-        df_transparency[["Date"]] = df_transparency[["Date"]].apply(pd.to_datetime, format="%m/%d/%Y %I:%M:%S %p")
+        for sheet in ("Future", "History"):
 
-        dfs.append(df_transparency)
-        df_names.append("Transparency")
+            df_transparency = pd.read_excel(
+                io=io.BytesIO(transparency_content),
+                skiprows=3,
+                skipfooter=1,
+                sheet_name=sheet,
+            )
 
+            df_transparency[["Central Region (MW)", "North Region (MW)", "South Region (MW)"]] = df_transparency[["Central Region (MW)", "North Region (MW)", "South Region (MW)"]].astype(numpy.dtypes.Float64DType())
+            df_transparency[["Date"]] = df_transparency[["Date"]].apply(pd.to_datetime, format="%m/%d/%Y %I:%M:%S %p")
+
+            dfs.append(df_transparency)
+            df_names.append(f"Transparency {sheet}")
+        
         df = pd.DataFrame(data={
             MULTI_DF_NAMES_COLUMN: df_names, 
             MULTI_DF_DFS_COLUMN: dfs,
