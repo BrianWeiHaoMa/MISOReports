@@ -432,13 +432,6 @@ single_df_test_list = [
         }
     ),
     (
-        "da_ex_rg", 
-        {
-            ("Demand Cleared (GWh) - Physical - Fixed", "Demand Cleared (GWh) - Physical - Price Sen.", "Demand Cleared (GWh) - Virtual", "Demand Cleared (GWh) - Total", "Supply Cleared (GWh) - Physical", "Supply Cleared (GWh) - Virtual", "Supply Cleared (GWh) - Total", "Net Scheduled Imports (GWh)", "Generation Resources Offered (GW at Econ. Max) - Must Run", "Generation Resources Offered (GW at Econ. Max) - Economic", "Generation Resources Offered (GW at Econ. Max) - Emergency", "Generation Resources Offered (GW at Econ. Max) - Total", "Generation Resources Offered (GW at Econ. Min) - Must Run", "Generation Resources Offered (GW at Econ. Min) - Economic", "Generation Resources Offered (GW at Econ. Min) - Emergency", "Generation Resources Offered (GW at Econ. Min) - Total",): numpy.dtypes.Float64DType,
-            ("Hour Ending",): pandas.core.arrays.integer.Int64Dtype,
-        }
-    ),
-    (
         "da_bc_HIST", 
         {
             ("Shadow Price", "BP1", "PC1", "BP2", "PC2",): numpy.dtypes.Float64DType,
@@ -1901,6 +1894,20 @@ multiple_dfs_test_list = [
             "Table 2": {
                 ("10/24/2024 Thursday Peak Hour: HE  19 MTLF (GW)", "10/24/2024 Thursday Peak Hour: HE  19 Capacity on Outage (GW)", "10/25/2024 Friday   Peak Hour: HE  16 MTLF (GW)", "10/25/2024 Friday   Peak Hour: HE  16 Capacity on Outage (GW)", "10/26/2024 Saturday Peak Hour: HE  19 MTLF (GW)", "10/26/2024 Saturday Peak Hour: HE  19 Capacity on Outage (GW)", "10/27/2024 Sunday   Peak Hour: HE  19 MTLF (GW)", "10/27/2024 Sunday   Peak Hour: HE  19 Capacity on Outage (GW)", "10/28/2024 Monday   Peak Hour: HE  19 MTLF (GW)", "10/28/2024 Monday   Peak Hour: HE  19Capacity on Outage (GW)", "10/29/2024 Tuesday  Peak Hour: HE  19 MTLF (GW)", "10/29/2024 Tuesday  Peak Hour: HE  19 Capacity on Outage (GW)", "10/30/2024 WednesdayPeak Hour: HE  24 MTLF (GW)", "10/30/2024 WednesdayPeak Hour: HE  24 Capacity on Outage (GW)",): numpy.dtypes.Float64DType,
                 ("Type", "Region",): pandas.core.arrays.string_.StringDtype,
+            },
+        },
+    ),
+    (
+        "da_ex_rg", 
+        {
+            "Summary": {
+                ("Demand Cleared (GWh) - Physical - Fixed", "Demand Cleared (GWh) - Physical - Price Sen.", "Demand Cleared (GWh) - Virtual", "Demand Cleared (GWh) - Total", "Supply Cleared (GWh) - Physical", "Supply Cleared (GWh) - Virtual", "Supply Cleared (GWh) - Total", "Net Scheduled Imports (GWh)", "Generation Resources Offered (GW at Econ. Max) - Must Run", "Generation Resources Offered (GW at Econ. Max) - Economic", "Generation Resources Offered (GW at Econ. Max) - Emergency", "Generation Resources Offered (GW at Econ. Max) - Total", "Generation Resources Offered (GW at Econ. Min) - Must Run", "Generation Resources Offered (GW at Econ. Min) - Economic", "Generation Resources Offered (GW at Econ. Min) - Emergency", "Generation Resources Offered (GW at Econ. Min) - Total",): numpy.dtypes.Float64DType,
+                ("Hour Ending",): pandas.core.arrays.integer.Int64Dtype,
+            },
+            "Regional Level": {
+                ("Demand Cleared (GWh) - Physical - Fixed", "Demand Cleared (GWh) - Physical - Price Sen.", "Demand Cleared (GWh) - Virtual", "Demand Cleared (GWh) - Total", "Supply Cleared (GWh) - Physical", "Supply Cleared (GWh) - Virtual", "Supply Cleared (GWh) - Total", "Net Scheduled Imports (GWh)", "Generation Resources Offered (GW at Econ. Max) - Must Run", "Generation Resources Offered (GW at Econ. Max) - Economic", "Generation Resources Offered (GW at Econ. Max) - Emergency", "Generation Resources Offered (GW at Econ. Max) - Total", "Generation Resources Offered (GW at Econ. Min) - Must Run", "Generation Resources Offered (GW at Econ. Min) - Economic", "Generation Resources Offered (GW at Econ. Min) - Emergency", "Generation Resources Offered (GW at Econ. Min) - Total",): numpy.dtypes.Float64DType,
+                ("Hour Ending",): pandas.core.arrays.integer.Int64Dtype,
+                ("Region",): pandas.core.arrays.string_.StringDtype,
             },
         },
     ),

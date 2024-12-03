@@ -1824,7 +1824,7 @@ class MISOReports:
             example_datetime=datetime.datetime(year=2024, month=1, day=1),
         ),
 
-        "da_ex_rg": Report( # TODO implement 1 additional sheet.
+        "da_ex_rg": Report(
             url_builder=MISOMarketReportsURLBuilder(
                 target="da_ex_rg",
                 supported_extensions=["xlsx"],
