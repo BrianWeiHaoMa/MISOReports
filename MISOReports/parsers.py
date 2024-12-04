@@ -1792,7 +1792,7 @@ def helper_parse_ftr(
     res: requests.Response,
     files_by_type: defaultdict[str, list[dict[str, str]]],
 ) -> pd.DataFrame:
-    def get_date_key(file_path):
+    def get_date_key(file_path: str) -> tuple[int, int]:
         parts = file_path.split("/")[-1].split("_")[1:]
 
         date_part = parts[0]
