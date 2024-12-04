@@ -1792,10 +1792,31 @@ def helper_parse_ftr(
     res: requests.Response,
     files_by_type: defaultdict[str, list[dict[str, str]]],
 ) -> pd.DataFrame:
+    def get_date_key(file_path):
+        parts = file_path.split("/")[-1].split("_")[1:]
+
+        date_part = parts[0]
+        month_str = date_part[:3]
+        year_str = date_part[3:] 
+        months = {"Jan": 1, "Feb": 2, "Mar": 3, "Apr": 4, "May": 5, "Jun": 6, "Jul": 7, "Aug": 8, "Sep": 9, "Oct": 10, "Nov": 11, "Dec": 12}
+        month = months.get(month_str, 0) 
+        year = int("20" + year_str) 
+        
+        return (year, month)
+
     df_names = []
     dfs = []
 
-    for csv_file in files_by_type["BindingConstraint"]:
+    files_by_name = {
+        file["name"]: file for file in files_by_type["BindingConstraint"]
+    }
+
+    sorted_files = [files_by_name[name] for name in sorted(files_by_name.keys(), key=get_date_key)]
+
+    file_counter = 0
+    file_names = []
+
+    for csv_file in sorted_files:
         df = pd.read_csv(
             filepath_or_buffer=io.StringIO(csv_file["data"]),
         )
@@ -1803,11 +1824,21 @@ def helper_parse_ftr(
         df[["Round"]] = df[["Round"]].replace('[^\\d]+', '', regex=True).astype(pandas.core.arrays.integer.Int64Dtype())
         df[["Flow", "Limit", "MarginalCost", "Violation"]] = df[["Flow", "Limit", "MarginalCost", "Violation"]].astype(numpy.dtypes.Float64DType())
         df[["DeviceName", "DeviceType", "ControlArea", "Direction", "Contingency", "Class", "Description"]] = df[["DeviceName", "DeviceType", "ControlArea", "Direction", "Contingency", "Class", "Description"]].astype(pandas.core.arrays.string_.StringDtype())
+        
+        file_counter += 1
+        df_names.append(f"File {file_counter}")
+        
+        file_names.append(csv_file["name"].split("/")[-1].split(".")[0])
 
-        df_names.append(csv_file["name"].split('/')[-1].split('.')[0])
         dfs.append(df)
 
-    for csv_file in files_by_type["MarketResults"]:
+    files_by_name = {
+        file["name"]: file for file in files_by_type["MarketResults"]
+    }
+
+    sorted_files = [files_by_name[name] for name in sorted(files_by_name.keys(), key=get_date_key)]
+
+    for csv_file in sorted_files:
         df = pd.read_csv(
             filepath_or_buffer=io.StringIO(csv_file["data"]),
         )
@@ -1816,11 +1847,21 @@ def helper_parse_ftr(
         df[["MW", "ClearingPrice"]] = df[["MW", "ClearingPrice"]].astype(numpy.dtypes.Float64DType())
         df[["MarketParticipant", "Source", "Sink", "Category", "FTRID", "HedgeType", "Type", "Class"]] = df[["MarketParticipant", "Source", "Sink", "Category", "FTRID", "HedgeType", "Type", "Class"]].astype(pandas.core.arrays.string_.StringDtype())
         df[["StartDate", "EndDate"]] = df[["StartDate", "EndDate"]].apply(pd.to_datetime, format="%m/%d/%Y")
+ 
+        file_counter += 1
+        df_names.append(f"File {file_counter}")
+        
+        file_names.append(csv_file["name"].split("/")[-1].split(".")[0])
 
-        df_names.append(csv_file["name"].split('/')[-1].split('.')[0])
         dfs.append(df)
     
-    for csv_file in files_by_type["SourceSinkShadowPrices"]:
+    files_by_name = {
+        file["name"]: file for file in files_by_type["SourceSinkShadowPrices"]
+    }
+
+    sorted_files = [files_by_name[name] for name in sorted(files_by_name.keys(), key=get_date_key)]
+
+    for csv_file in sorted_files:
         df = pd.read_csv(
             filepath_or_buffer=io.StringIO(csv_file["data"]),
         )
@@ -1829,12 +1870,23 @@ def helper_parse_ftr(
         df[["ShadowPrice"]] = df[["ShadowPrice"]].astype(numpy.dtypes.Float64DType())
         df[["SourceSink", "Class"]] = df[["SourceSink", "Class"]].astype(pandas.core.arrays.string_.StringDtype())
 
-        df_names.append(csv_file["name"].split('/')[-1].split('.')[0])
+        file_counter += 1
+        df_names.append(f"File {file_counter}")
+        
+        file_names.append(csv_file["name"].split("/")[-1].split(".")[0])
+        
         dfs.append(df)
+
+    metadata_df = pd.DataFrame(data={
+        f"File {num + 1}": [name] for num, name in enumerate(file_names)
+    })
+
+    metadata_columns = [f"File {num}" for num in range(1, len(file_names) + 1)]
+    metadata_df[metadata_columns] = metadata_df[metadata_columns].astype(pandas.core.arrays.string_.StringDtype())
         
     df = pd.DataFrame(data={
-        MULTI_DF_NAMES_COLUMN: df_names, 
-        MULTI_DF_DFS_COLUMN: dfs,
+        MULTI_DF_NAMES_COLUMN: ["Metadata"] + df_names, 
+        MULTI_DF_DFS_COLUMN: [metadata_df] + dfs,
     })
     
     return df
