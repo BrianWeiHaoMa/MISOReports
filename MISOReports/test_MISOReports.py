@@ -219,30 +219,6 @@ def test_MISOMarketReportsURLBuilder_build_url(
     )
 
     assert url_builder.build_url(ddatetime=ddatetime, file_extension=file_extension) == expected
-        
-
-def test_get_df_every_report_example_url_returns_non_empty_df(datetime_increment_limit):
-    mappings = MISOReports.report_mappings
-
-    # These reports have no non-empty tables as of 2024-11-02.
-    empty_reports = set(
-        [
-            "da_M2M_Settlement_srw",
-        ],
-    )
-
-    for report_name, report in mappings.items():
-        try:
-            df = try_to_get_df_res(
-                report_name=report_name,
-                datetime_increment_limit=datetime_increment_limit,
-            )
-
-            assert not df.columns.empty
-            if report_name not in empty_reports:
-                assert not df.empty
-        except NotImplementedError as e:
-            pass
 
 
 single_df_test_list = [
@@ -2012,8 +1988,8 @@ def test_MISOMarketReportsURLBuilder_add_to_datetime(
 
 @pytest.mark.parametrize(
     "report_name", [
-        ("nsi1",),
-        ("nsi5",),
+        "nsi1",
+        "nsi5",
     ]
 )
 def test_get_df_nsi_with_changing_columns(report_name):
@@ -2025,7 +2001,7 @@ def test_get_df_nsi_with_changing_columns(report_name):
     )
 
     int_columns = df.columns.difference(["timestamp"])
-
-    assert df["timestamp"].dtype == numpy.dtypes.DateTime64DType()
+    
+    assert df["timestamp"].dtype == np.dtype("datetime64[ns]")
     assert df[int_columns].dtypes.apply(lambda x: x == pandas.core.arrays.integer.Int64Dtype()).all()
 

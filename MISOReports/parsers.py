@@ -1769,7 +1769,7 @@ def parse_ftr_allocation_summary(
         residule_content, allocation_content = z.read(residual_file), z.read(allocation_file)
 
     residual_file = "Stage 2 Residual"
-    allocation_content = "ARR Annual Allocation Summary"
+    allocation_file = "ARR Annual Allocation Summary"
 
     df_residule = pd.read_excel(
         io=io.BytesIO(residule_content),
@@ -1788,7 +1788,7 @@ def parse_ftr_allocation_summary(
     df_allocation[["MARKET_NAME", "ID_TOU", "SOURCE_NAME", "SINK_NAME", "STAGE", "TYPE"]] = df_allocation[["MARKET_NAME", "ID_TOU", "SOURCE_NAME", "SINK_NAME", "STAGE", "TYPE"]].astype(pandas.core.arrays.string_.StringDtype())
 
     df = pd.DataFrame(data={
-        MULTI_DF_NAMES_COLUMN: [residual_file.split('/')[-1][:-5], allocation_file.split('/')[-1][:-5]], 
+        MULTI_DF_NAMES_COLUMN: [residual_file, allocation_file], 
         MULTI_DF_DFS_COLUMN: [df_residule, df_allocation],
     })
 
