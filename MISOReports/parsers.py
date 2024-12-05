@@ -1539,14 +1539,71 @@ def parse_lmpconsolidatedtable(
     res: requests.Response,
 ) -> pd.DataFrame:
     text = res.text
-    csv_data = "\n".join(text.splitlines()[3:])
+    csv_lines = text.splitlines()[2:]
+
+    csv_lines[0] = csv_lines[0].replace("HourlyIntegratedLmp", ",,,,,,,HourlyIntegratedLmp", 1)
+
+    csv_data = "\n".join(csv_lines)
 
     df = pd.read_csv(
         filepath_or_buffer=io.StringIO(csv_data),
     )
 
-    df[["LMP", "MLC", "MCC", "REGMCP", "REGMILEAGEMCP", "SPINMCP", "SUPPMCP", "STRMCP", "RCUPMCP", "RCDOWNMCP", "LMP.1", "MLC.1", "MCC.1", "LMP.2", "MLC.2", "MCC.2", "LMP.3", "MLC.3", "MCC.3"]] = df[["LMP", "MLC", "MCC", "REGMCP", "REGMILEAGEMCP", "SPINMCP", "SUPPMCP", "STRMCP", "RCUPMCP", "RCDOWNMCP", "LMP.1", "MLC.1", "MCC.1", "LMP.2", "MLC.2", "MCC.2", "LMP.3", "MLC.3", "MCC.3"]].astype(numpy.dtypes.Float64DType())
+    row1 = df.columns[:]
+    row2 = df.iloc[0]
+
+    new_column_names = [row2.iloc[0]]
+    last_name = ""
+
+    metadata_names = []
+    metadata_times = []
+
+    for idx, col in enumerate(row1):
+        if not idx:
+            continue
+
+        if "Unnamed: " not in col:
+            name, time = col.split(' at ')
+
+            if time.startswith("HE "):
+                hour = f"{int(time.split()[1])}:00"
+            else:
+                hour = time
+
+            metadata_names.append(name)
+            metadata_times.append(hour)
+
+            last_name = name
+        
+        col = last_name
+
+        new_column_names.append(f"{row2.iloc[idx]} - {col}")
+
+    df.drop(index=df.index[0], axis=0, inplace=True)
+
+    df.columns =  pd.Index(new_column_names)
+
+    df[["LMP - FiveMinLMP", "MLC - FiveMinLMP", "MCC - FiveMinLMP", "REGMCP - FiveMinLMP", "REGMILEAGEMCP - FiveMinLMP", "SPINMCP - FiveMinLMP", "SUPPMCP - FiveMinLMP", "STRMCP - FiveMinLMP", "RCUPMCP - FiveMinLMP", "RCDOWNMCP - FiveMinLMP", "LMP - HourlyIntegratedLmp", "MLC - HourlyIntegratedLmp", "MCC - HourlyIntegratedLmp", "LMP - DayAheadExAnteLmp", "MLC - DayAheadExAnteLmp", "MCC - DayAheadExAnteLmp", "LMP - DayAheadExPostLmp", "MLC - DayAheadExPostLmp", "MCC - DayAheadExPostLmp"]] = df[["LMP - FiveMinLMP", "MLC - FiveMinLMP", "MCC - FiveMinLMP", "REGMCP - FiveMinLMP", "REGMILEAGEMCP - FiveMinLMP", "SPINMCP - FiveMinLMP", "SUPPMCP - FiveMinLMP", "STRMCP - FiveMinLMP", "RCUPMCP - FiveMinLMP", "RCDOWNMCP - FiveMinLMP", "LMP - HourlyIntegratedLmp", "MLC - HourlyIntegratedLmp", "MCC - HourlyIntegratedLmp", "LMP - DayAheadExAnteLmp", "MLC - DayAheadExAnteLmp", "MCC - DayAheadExAnteLmp", "LMP - DayAheadExPostLmp", "MLC - DayAheadExPostLmp", "MCC - DayAheadExPostLmp"]].astype(numpy.dtypes.Float64DType())
     df[["Name"]] = df[["Name"]].astype(pandas.core.arrays.string_.StringDtype())
+
+    metadata_df = pd.DataFrame({
+        "Type": metadata_names,
+        "Timing": metadata_times,
+    })
+
+    metadata_df[["Type"]] = metadata_df[["Type"]].astype(pandas.core.arrays.string_.StringDtype())
+    metadata_df[["Timing"]] = metadata_df[["Timing"]].apply(pd.to_datetime, format="%H:%M")
+
+    df = pd.DataFrame({
+        MULTI_DF_NAMES_COLUMN: [
+           "Metadata",
+           "Data",
+        ],
+        MULTI_DF_DFS_COLUMN: [
+            metadata_df,
+            df,
+        ],
+    })
 
     return df  
 

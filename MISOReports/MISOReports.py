@@ -1231,7 +1231,7 @@ class MISOReports:
             example_url="https://api.misoenergy.org/MISORTWDDataBroker/DataBrokerServices.asmx?messageType=getapiversion&returnType=json",
         ),
 
-        "lmpconsolidatedtable": Report( # TODO re-evaluate column parsing. Potential of abnormal sideways formatting.
+        "lmpconsolidatedtable": Report( # TODO review reworked implementation.
             url_builder=MISORTWDDataBrokerURLBuilder(
                 target="getlmpconsolidatedtable",
                 supported_extensions=["csv", "xml", "json"],
@@ -1368,7 +1368,7 @@ class MISOReports:
             example_datetime=datetime.datetime(year=2024, month=4, day=1),
         ),
 
-        "ftr_annual_results_round_1": Report( # Checked 2024-11-27.
+        "ftr_annual_results_round_1": Report(  # TODO review reworked implementation.
             url_builder=MISOMarketReportsURLBuilder(
                 target="ftr_annual_results_round_1",
                 supported_extensions=["zip"],
@@ -1381,7 +1381,7 @@ class MISOReports:
             example_datetime=datetime.datetime(year=2024, month=4, day=1),
         ),
 
-        "ftr_annual_results_round_2": Report( # Checked 2024-11-27.
+        "ftr_annual_results_round_2": Report(  # TODO review reworked implementation.
             url_builder=MISOMarketReportsURLBuilder(
                 target="ftr_annual_results_round_2",
                 supported_extensions=["zip"],
@@ -1394,7 +1394,7 @@ class MISOReports:
             example_datetime=datetime.datetime(year=2024, month=5, day=1),
         ),
 
-        "ftr_annual_results_round_3": Report( # Checked 2024-11-27.
+        "ftr_annual_results_round_3": Report(  # TODO review reworked implementation.
             url_builder=MISOMarketReportsURLBuilder(
                 target="ftr_annual_results_round_3",
                 supported_extensions=["zip"],
@@ -1420,7 +1420,7 @@ class MISOReports:
             example_datetime=datetime.datetime(year=2023, month=1, day=1),
         ),
 
-        "ftr_mpma_results": Report( # Checked 2024-11-27.
+        "ftr_mpma_results": Report(  # TODO review reworked implementation.
             url_builder=MISOMarketReportsURLBuilder(
                 target="ftr_mpma_results",
                 supported_extensions=["zip"],

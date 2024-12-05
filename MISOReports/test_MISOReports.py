@@ -630,13 +630,6 @@ single_df_test_list = [
         }
     ),
     (
-        "lmpconsolidatedtable", 
-        {
-            ("LMP", "MLC", "MCC", "REGMCP", "REGMILEAGEMCP", "SPINMCP", "SUPPMCP", "STRMCP", "RCUPMCP", "RCDOWNMCP", "LMP.1", "MLC.1", "MCC.1", "LMP.2", "MLC.2", "MCC.2", "LMP.3", "MLC.3", "MCC.3",): numpy.dtypes.Float64DType,
-            ("Name",): pandas.core.arrays.string_.StringDtype,
-        }
-    ),
-    (
         "apiversion", 
         {
             ("Semantic",): pandas.core.arrays.string_.StringDtype,
@@ -1922,6 +1915,19 @@ multiple_dfs_test_list = [
                 ("Region",): pandas.core.arrays.string_.StringDtype,
             },
         },
+    ),
+    (
+        "lmpconsolidatedtable", 
+        {
+            "Metadata": {
+                ("Type",): pandas.core.arrays.string_.StringDtype,
+	            ("Timing",): numpy.dtypes.DateTime64DType,
+            },
+            "Data": {
+                ("LMP - FiveMinLMP", "MLC - FiveMinLMP", "MCC - FiveMinLMP", "REGMCP - FiveMinLMP", "REGMILEAGEMCP - FiveMinLMP", "SPINMCP - FiveMinLMP", "SUPPMCP - FiveMinLMP", "STRMCP - FiveMinLMP", "RCUPMCP - FiveMinLMP", "RCDOWNMCP - FiveMinLMP", "LMP - HourlyIntegratedLmp", "MLC - HourlyIntegratedLmp", "MCC - HourlyIntegratedLmp", "LMP - DayAheadExAnteLmp", "MLC - DayAheadExAnteLmp", "MCC - DayAheadExAnteLmp", "LMP - DayAheadExPostLmp", "MLC - DayAheadExPostLmp", "MCC - DayAheadExPostLmp",): numpy.dtypes.Float64DType,
+	            ("Name",): pandas.core.arrays.string_.StringDtype,
+            },
+        }
     ),
 ]
 
