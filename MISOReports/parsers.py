@@ -2555,19 +2555,29 @@ def parse_sr_ctsl(
     df_names = []
     dfs = []
 
+    year = "Cur Year"
+
     for table in tables:
         df = pd.DataFrame(
             data=table[1:], 
             columns=table[0],
         )
         
-        year = df.columns[-1].split()[-1]
+        year_val = df.columns[-1].split()[-1]
+        df.rename(
+            columns={
+                f"{month} {year_val}": f"{month} {year}" for month in ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+            },
+            inplace=True,
+        )
 
         df[["Cost Paid by Load (Hourly Avg per Month)"]] = df[["Cost Paid by Load (Hourly Avg per Month)"]].astype(pandas.core.arrays.string_.StringDtype())
         df[[f"Jan {year}", f"Feb {year}", f"Mar {year}", f"Apr {year}", f"May {year}", f"Jun {year}", f"Jul {year}", f"Aug {year}", f"Sep {year}", f"Oct {year}", f"Nov {year}", f"Dec {year}"]] = df[[f"Jan {year}", f"Feb {year}", f"Mar {year}", f"Apr {year}", f"May {year}", f"Jun {year}", f"Jul {year}", f"Aug {year}", f"Sep {year}", f"Oct {year}", f"Nov {year}", f"Dec {year}"]].replace(r'[\$,()]', '', regex=True).replace(r'^\s*$', np.nan, regex=True).astype(numpy.dtypes.Float64DType())
 
         dfs.append(df)
         df_names.append(f"Cost Paid by Load - {year}")
+
+        year = "Prior Year"
 
     df = pd.DataFrame(data={
         MULTI_DF_NAMES_COLUMN: df_names, 

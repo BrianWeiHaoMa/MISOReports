@@ -1489,12 +1489,12 @@ multiple_dfs_test_list = [
     (
         "sr_ctsl",
         {
-            "Cost Paid by Load - 2024": {
-                ("Jan 2024", "Feb 2024", "Mar 2024", "Apr 2024", "May 2024", "Jun 2024", "Jul 2024", "Aug 2024", "Sep 2024", "Oct 2024", "Nov 2024", "Dec 2024",): numpy.dtypes.Float64DType,    
+            "Cost Paid by Load - Cur Year": {
+                ("Jan Cur Year", "Feb Cur Year", "Mar Cur Year", "Apr Cur Year", "May Cur Year", "Jun Cur Year", "Jul Cur Year", "Aug Cur Year", "Sep Cur Year", "Oct Cur Year", "Nov Cur Year", "Dec Cur Year",): numpy.dtypes.Float64DType,    
                 ("Cost Paid by Load (Hourly Avg per Month)",): pandas.core.arrays.string_.StringDtype,
             },
-            "Cost Paid by Load - 2023": {
-                ("Jan 2023", "Feb 2023", "Mar 2023", "Apr 2023", "May 2023", "Jun 2023", "Jul 2023", "Aug 2023", "Sep 2023", "Oct 2023", "Nov 2023", "Dec 2023",): numpy.dtypes.Float64DType,    
+            "Cost Paid by Load - Prior Year": {
+                ("Jan Prior Year", "Feb Prior Year", "Mar Prior Year", "Apr Prior Year", "May Prior Year", "Jun Prior Year", "Jul Prior Year", "Aug Prior Year", "Sep Prior Year", "Oct Prior Year", "Nov Prior Year", "Dec Prior Year",): numpy.dtypes.Float64DType,    
                 ("Cost Paid by Load (Hourly Avg per Month)",): pandas.core.arrays.string_.StringDtype,
             },
         },
