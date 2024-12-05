@@ -414,6 +414,7 @@ class MISOReports:
         :param str file_extension: The type of file to download.
         :param datetime.datetime | None ddatetime: The date of the report, defaults to None
         :param int | None timeout: The timeout for the request, defaults to None
+        :return requests.Response: The response object for the request.
         """
         url = MISOReports.get_url(
             report_name=report_name, 
@@ -1077,7 +1078,7 @@ class MISOReports:
             example_datetime=datetime.datetime(year=2024, month=10, day=25),
         ),
 
-        "nsi1": Report( # Checked 2024-11-26.
+        "nsi1": Report( # Checked 2024-11-26. Columns change so assuming all columns other than timestamp is an int.
             url_builder=MISORTWDDataBrokerURLBuilder(
                 target="getnsi1",
                 supported_extensions=["csv", "xml", "json"],
@@ -1088,7 +1089,7 @@ class MISOReports:
             example_url="https://api.misoenergy.org/MISORTWDDataBroker/DataBrokerServices.asmx?messageType=getnsi1&returnType=csv",
         ),
 
-        "nsi5": Report( # Checked 2024-11-26.
+        "nsi5": Report( # Checked 2024-11-26. Columns change so assuming all columns other than timestamp is an int.
             url_builder=MISORTWDDataBrokerURLBuilder(
                 target="getnsi5",
                 supported_extensions=["csv", "xml", "json"],
@@ -1355,7 +1356,7 @@ class MISOReports:
             example_datetime=datetime.datetime(year=2024, month=4, day=1),
         ),
 
-        "ftr_allocation_summary": Report( # Checked 2024-11-27.
+        "ftr_allocation_summary": Report( # TODO review.
             url_builder=MISOMarketReportsURLBuilder(
                 target="ftr_allocation_summary",
                 supported_extensions=["zip"],
