@@ -1285,8 +1285,10 @@ def parse_nsi1(
         filepath_or_buffer=io.StringIO(csv_data),
     )
 
+    int_columns = df.columns.difference(["timestamp"])
+
     df[["timestamp"]] = df[["timestamp"]].apply(pd.to_datetime, format="%Y-%m-%d %H:%M:%S")
-    df[["AEC", "AECI", "CSWS", "GLHB", "LGEE", "MHEB", "MISO", "OKGE", "ONT", "PJM", "SOCO", "SPA", "SWPP", "TVA", "WAUE"]] = df[["AEC", "AECI", "CSWS", "GLHB", "LGEE", "MHEB", "MISO", "OKGE", "ONT", "PJM", "SOCO", "SPA", "SWPP", "TVA", "WAUE"]].astype(pandas.core.arrays.integer.Int64Dtype())
+    df[int_columns] = df[int_columns].astype(pandas.core.arrays.integer.Int64Dtype())
 
     return df
 
@@ -1301,8 +1303,10 @@ def parse_nsi5(
         filepath_or_buffer=io.StringIO(csv_data),
     )
 
+    int_columns = df.columns.difference(["timestamp"])
+
     df[["timestamp"]] = df[["timestamp"]].apply(pd.to_datetime, format="%Y-%m-%d %H:%M:%S")
-    df[["AEC", "AECI", "CSWS", "GLHB", "LGEE", "MHEB", "MISO", "OKGE", "ONT", "PJM", "SOCO", "SPA", "SWPP", "TVA", "WAUE"]] = df[["AEC", "AECI", "CSWS", "GLHB", "LGEE", "MHEB", "MISO", "OKGE", "ONT", "PJM", "SOCO", "SPA", "SWPP", "TVA", "WAUE"]].astype(pandas.core.arrays.integer.Int64Dtype())
+    df[int_columns] = df[int_columns].astype(pandas.core.arrays.integer.Int64Dtype())
 
     return df
     
@@ -1760,9 +1764,12 @@ def parse_ftr_allocation_summary(
     res: requests.Response,
 ) -> pd.DataFrame:
     with zipfile.ZipFile(file=io.BytesIO(res.content)) as z:
-        residule_file, allocation_file = z.namelist()
+        residual_file, allocation_file = sorted(z.namelist())
 
-        residule_content, allocation_content = z.read(residule_file), z.read(allocation_file)
+        residule_content, allocation_content = z.read(residual_file), z.read(allocation_file)
+
+    residual_file = "Stage 2 Residual"
+    allocation_content = "ARR Annual Allocation Summary"
 
     df_residule = pd.read_excel(
         io=io.BytesIO(residule_content),
@@ -1781,7 +1788,7 @@ def parse_ftr_allocation_summary(
     df_allocation[["MARKET_NAME", "ID_TOU", "SOURCE_NAME", "SINK_NAME", "STAGE", "TYPE"]] = df_allocation[["MARKET_NAME", "ID_TOU", "SOURCE_NAME", "SINK_NAME", "STAGE", "TYPE"]].astype(pandas.core.arrays.string_.StringDtype())
 
     df = pd.DataFrame(data={
-        MULTI_DF_NAMES_COLUMN: [residule_file.split('/')[-1][:-5], allocation_file.split('/')[-1][:-5]], 
+        MULTI_DF_NAMES_COLUMN: [residual_file.split('/')[-1][:-5], allocation_file.split('/')[-1][:-5]], 
         MULTI_DF_DFS_COLUMN: [df_residule, df_allocation],
     })
 

@@ -900,20 +900,6 @@ single_df_test_list = [
         }
     ),
     (
-        "nsi5", 
-        {
-            ("timestamp",): numpy.dtypes.DateTime64DType,
-            ("AEC", "AECI", "CSWS", "GLHB", "LGEE", "MHEB", "MISO", "OKGE", "ONT", "PJM", "SOCO", "SPA", "SWPP", "TVA", "WAUE",): pandas.core.arrays.integer.Int64Dtype,
-        }
-    ),
-    (
-        "nsi1", 
-        {
-            ("timestamp",): numpy.dtypes.DateTime64DType,
-            ("AEC", "AECI", "CSWS", "GLHB", "LGEE", "MHEB", "MISO", "OKGE", "ONT", "PJM", "SOCO", "SPA", "SWPP", "TVA", "WAUE",): pandas.core.arrays.integer.Int64Dtype,
-        }
-    ),
-    (
         "RT_LMPs",
         {
             ("HE1", "HE2", "HE3", "HE4", "HE5", "HE6", "HE7", "HE8", "HE9", "HE10", "HE11", "HE12", "HE13", "HE14", "HE15", "HE16", "HE17", "HE18", "HE19", "HE20", "HE21", "HE22", "HE23", "HE24",): numpy.dtypes.Float64DType,
@@ -1718,12 +1704,12 @@ multiple_dfs_test_list = [
     (
         "ftr_allocation_summary",
         {
-            "2024 Stage 2 Residual": {
+            "Stage 2 Residual": {
                 ("STAGE2MW", "STAGE2PAYMENT",): numpy.dtypes.Float64DType,
                 ("ID_TOU",): pandas.core.arrays.string_.StringDtype,
                 ("START_DATE",): numpy.dtypes.DateTime64DType,
             },
-            "2024-2025 ARR Annual Allocation Summary by Path": {
+            "ARR Annual Allocation Summary": {
                 ("MW",): numpy.dtypes.Float64DType,
                 ("MARKET_NAME", "ID_TOU", "SOURCE_NAME", "SINK_NAME", "STAGE", "TYPE",): pandas.core.arrays.string_.StringDtype,
                 ("DATE_START", "DATE_END",): numpy.dtypes.DateTime64DType,
@@ -1980,6 +1966,7 @@ def test_get_df_test_correct_columns_check_for_every_report(get_df_test_names):
     assert correct_column_types_check_reports == reports, \
         "Not all reports are checked for correct columns."
     
+
 @pytest.mark.parametrize(
     "direction, target, supported_extensions, url_generator, ddatetime, file_extension, expected", [
         (4, "DA_Load_EPNodes", ["zip"], MISOMarketReportsURLBuilder.url_generator_YYYYmmdd_last, datetime.datetime(year=2024, month=10, day=21), "zip", "https://docs.misoenergy.org/marketreports/DA_Load_EPNodes_20241025.zip"),
@@ -2021,3 +2008,24 @@ def test_MISOMarketReportsURLBuilder_add_to_datetime(
 
     assert url == expected, f"Expected {expected}, got {url}."
     
+
+
+@pytest.mark.parametrize(
+    "report_name", [
+        ("nsi1",),
+        ("nsi5",),
+    ]
+)
+def test_get_df_nsi_with_changing_columns(report_name):
+    """Edge case tests for nsi reports which have changing columns.
+    The assumption is that aside from timestamp, the columns are all ints.
+    """
+    df = MISOReports.get_df(
+        report_name=report_name,
+    )
+
+    int_columns = df.columns.difference(["timestamp"])
+
+    assert df["timestamp"].dtype == numpy.dtypes.DateTime64DType()
+    assert df[int_columns].dtypes.apply(lambda x: x == pandas.core.arrays.integer.Int64Dtype()).all()
+
