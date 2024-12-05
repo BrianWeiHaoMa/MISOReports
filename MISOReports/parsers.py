@@ -1788,7 +1788,7 @@ def parse_ftr_allocation_summary(
     return df
 
 
-def helper_parse_ftr(
+def helper_parse_ftr_results(
     res: requests.Response,
     files_by_type: defaultdict[str, list[dict[str, str]]],
 ) -> pd.DataFrame:
@@ -1800,7 +1800,13 @@ def helper_parse_ftr(
         year_str = date_part[3:] 
         months = {"Jan": 1, "Feb": 2, "Mar": 3, "Apr": 4, "May": 5, "Jun": 6, "Jul": 7, "Aug": 8, "Sep": 9, "Oct": 10, "Nov": 11, "Dec": 12}
         month = months.get(month_str, 0) 
-        year = int("20" + year_str) 
+
+        year_prefix = "20"
+
+        if year_str == "99": # Not true year prefix, simply for relative positioning.
+            year_prefix = "19"
+
+        year = int(year_prefix + year_str) 
         
         return (year, month)
 
@@ -1906,7 +1912,7 @@ def parse_ftr_annual_results_round_1(
                 "data": z.read(filename).decode("utf-8"),
             })
 
-    return helper_parse_ftr(res=res, files_by_type=files_by_type)
+    return helper_parse_ftr_results(res=res, files_by_type=files_by_type)
 
 
 def parse_ftr_annual_results_round_2(
@@ -1924,7 +1930,7 @@ def parse_ftr_annual_results_round_2(
                 "data": z.read(filename).decode("utf-8"),
             })
 
-    return helper_parse_ftr(res=res, files_by_type=files_by_type)
+    return helper_parse_ftr_results(res=res, files_by_type=files_by_type)
 
 
 def parse_ftr_annual_results_round_3(
@@ -1942,7 +1948,7 @@ def parse_ftr_annual_results_round_3(
                 "data": z.read(filename).decode("utf-8"),
             })
 
-    return helper_parse_ftr(res=res, files_by_type=files_by_type)
+    return helper_parse_ftr_results(res=res, files_by_type=files_by_type)
 
 
 def parse_ftr_annual_bids_offers(
@@ -1979,7 +1985,7 @@ def parse_ftr_mpma_results(
                 "data": z.read(filename).decode("utf-8"),
             })
 
-    return helper_parse_ftr(res=res, files_by_type=files_by_type)
+    return helper_parse_ftr_results(res=res, files_by_type=files_by_type)
 
 
 def parse_ftr_mpma_bids_offers(
