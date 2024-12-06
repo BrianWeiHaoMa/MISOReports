@@ -1,8 +1,8 @@
-import pytest
+from typing import Callable
 import datetime
 
-import pandas as pd, pandas
-import numpy as np, numpy
+import pytest
+import pandas as pd
 import requests
 
 from MISOReports.MISOReports import (
@@ -53,30 +53,24 @@ def try_to_get_df_res(
     return df
 
 
-def get_dtype_frozenset(
+def uses_correct_dtypes(
     df: pd.DataFrame,
     columns: list[str],
-) -> frozenset:
-    """Returns a frozenset of the types of the columns in the DataFrame.
-
-    :param pd.DataFrame df: The DataFrame to get the types of the columns from.
-    :param list[str] columns: The columns to get the types of.
-    :return frozenset: A frozenset of the types of the columns in the DataFrame.
-    """
-    dtypes = df[columns].dtypes
-
-    res = []
-    for k in dtypes.index:
-        res.append(type(dtypes[k]))
-    
-    return frozenset(res)
+    dtype_checker: Callable[[object], bool],
+) -> bool:
+    for column in columns:
+        if not dtype_checker(df[column]):
+            return False
+        
+    return True
 
 
 @pytest.fixture
 def get_df_test_names():
     single_df_tests = [v[0] for v in single_df_test_list]
     multiple_dfs_tests = [v[0] for v in multiple_dfs_test_list]
-    return single_df_tests + multiple_dfs_tests
+    nsi_tests = nsi_test_list
+    return single_df_tests + multiple_dfs_tests + nsi_tests
 
 
 @pytest.fixture
@@ -225,719 +219,719 @@ single_df_test_list = [
     (
         "MISOsamedaydemand", 
         {
-            ("PostedValue", "Hour", "UTCOffset",): pandas.core.arrays.integer.Int64Dtype,
-            ("Data_Code", "Data_Type", "PostingType",): pandas.core.arrays.string_.StringDtype,
-            ("Data_Date",): numpy.dtypes.DateTime64DType,
+            ("PostedValue", "Hour", "UTCOffset",): pd.api.types.is_integer_dtype,
+            ("Data_Code", "Data_Type", "PostingType",): pd.api.types.is_string_dtype,
+            ("Data_Date",): pd.api.types.is_datetime64_ns_dtype,
         }
     ),
     (
         "MISOdaily", 
         {
-            ("PostedValue", "Hour", "UTCOffset",): pandas.core.arrays.integer.Int64Dtype,
-            ("Data_Code", "Data_Type", "PostingType",): pandas.core.arrays.string_.StringDtype,
-            ("Data_Date",): numpy.dtypes.DateTime64DType,
+            ("PostedValue", "Hour", "UTCOffset",): pd.api.types.is_integer_dtype,
+            ("Data_Code", "Data_Type", "PostingType",): pd.api.types.is_string_dtype,
+            ("Data_Date",): pd.api.types.is_datetime64_ns_dtype,
         }
     ),
     (
         "currentinterval", 
         {
-            ("LMP", "MLC", "MCC",): numpy.dtypes.Float64DType,
-            ("CPNODE",): pandas.core.arrays.string_.StringDtype,
-            ("INTERVAL",): numpy.dtypes.DateTime64DType,
+            ("LMP", "MLC", "MCC",): pd.api.types.is_float_dtype,
+            ("CPNODE",): pd.api.types.is_string_dtype,
+            ("INTERVAL",): pd.api.types.is_datetime64_ns_dtype,
         }
     ),
     (
         "rt_bc_HIST", 
         {
-            ("Preliminary Shadow Price", "BP1", "PC1", "BP2", "PC2",): numpy.dtypes.Float64DType,
-            ("Override",): pandas.core.arrays.integer.Int64Dtype,
-            ("Flowgate NERCID", "Constraint_ID", "Constraint Name", "Branch Name ( Branch Type / From CA / To CA )", "Contingency Description", "Constraint Description", "Curve Type",): pandas.core.arrays.string_.StringDtype,
-            ("Market Date", "Hour of Occurrence",): numpy.dtypes.DateTime64DType,
+            ("Preliminary Shadow Price", "BP1", "PC1", "BP2", "PC2",): pd.api.types.is_float_dtype,
+            ("Override",): pd.api.types.is_integer_dtype,
+            ("Flowgate NERCID", "Constraint_ID", "Constraint Name", "Branch Name ( Branch Type / From CA / To CA )", "Contingency Description", "Constraint Description", "Curve Type",): pd.api.types.is_string_dtype,
+            ("Market Date", "Hour of Occurrence",): pd.api.types.is_datetime64_ns_dtype,
         }
     ),
     (
         "RT_UDS_Approved_Case_Percentage", 
         {
-            ("Percentage",): numpy.dtypes.Float64DType,
-            ("UDS Case ID",): pandas.core.arrays.string_.StringDtype,
-            ("Dispatch Interval",): numpy.dtypes.DateTime64DType,
+            ("Percentage",): pd.api.types.is_float_dtype,
+            ("UDS Case ID",): pd.api.types.is_string_dtype,
+            ("Dispatch Interval",): pd.api.types.is_datetime64_ns_dtype,
         }
     ),
     (
         "Resource_Uplift_by_Commitment_Reason", 
         {
-            ("ECONOMIC MAX",): numpy.dtypes.Float64DType,
-            ("LOCAL RESOURCE ZONE",): pandas.core.arrays.integer.Int64Dtype,
-            ("REASON", "REASON ID",): pandas.core.arrays.string_.StringDtype,
-            ("STARTTIME",): numpy.dtypes.DateTime64DType,
+            ("ECONOMIC MAX",): pd.api.types.is_float_dtype,
+            ("LOCAL RESOURCE ZONE",): pd.api.types.is_integer_dtype,
+            ("REASON", "REASON ID",): pd.api.types.is_string_dtype,
+            ("STARTTIME",): pd.api.types.is_datetime64_ns_dtype,
         }
     ),
     (
         "rt_rpe", 
         {
-            ("Shadow Price",): numpy.dtypes.Float64DType,
-            ("Constraint Name", "Constraint Description",): pandas.core.arrays.string_.StringDtype,
-            ("Time of Occurence",): numpy.dtypes.DateTime64DType,
+            ("Shadow Price",): pd.api.types.is_float_dtype,
+            ("Constraint Name", "Constraint Description",): pd.api.types.is_string_dtype,
+            ("Time of Occurence",): pd.api.types.is_datetime64_ns_dtype,
         }
     ),
     (
         "Historical_RT_RSG_Commitment", 
         {
-            ("TOTAL_ECON_MAX",): numpy.dtypes.Float64DType,
-            ("COMMIT_REASON", "NUM_RESOURCES",): pandas.core.arrays.string_.StringDtype,
-            ("MKT_INT_END_EST",): numpy.dtypes.DateTime64DType,
+            ("TOTAL_ECON_MAX",): pd.api.types.is_float_dtype,
+            ("COMMIT_REASON", "NUM_RESOURCES",): pd.api.types.is_string_dtype,
+            ("MKT_INT_END_EST",): pd.api.types.is_datetime64_ns_dtype,
         }
     ),
     (
         "da_pbc", 
         {
-            ("PRELIMINARY_SHADOW_PRICE",): numpy.dtypes.Float64DType,
-            ("BP1", "PC1", "BP2", "PC2", "BP3", "PC3", "BP4", "PC4", "OVERRIDE",): pandas.core.arrays.integer.Int64Dtype,
-            ("CONSTRAINT_NAME", "CURVETYPE", "REASON",): pandas.core.arrays.string_.StringDtype,
-            ("MARKET_HOUR_EST",): numpy.dtypes.DateTime64DType,
+            ("PRELIMINARY_SHADOW_PRICE",): pd.api.types.is_float_dtype,
+            ("BP1", "PC1", "BP2", "PC2", "BP3", "PC3", "BP4", "PC4", "OVERRIDE",): pd.api.types.is_integer_dtype,
+            ("CONSTRAINT_NAME", "CURVETYPE", "REASON",): pd.api.types.is_string_dtype,
+            ("MARKET_HOUR_EST",): pd.api.types.is_datetime64_ns_dtype,
         }
     ),
     (
         "da_bc", 
         {
-            ("Shadow Price", "BP1", "PC1", "BP2", "PC2",): numpy.dtypes.Float64DType,
-            ("Hour of Occurrence", "Override",): pandas.core.arrays.integer.Int64Dtype,
-            ("Flowgate NERC ID", "Constraint_ID", "Constraint Name", "Branch Name ( Branch Type / From CA / To CA )", "Contingency Description", "Constraint Description", "Curve Type", "Reason",): pandas.core.arrays.string_.StringDtype,
+            ("Shadow Price", "BP1", "PC1", "BP2", "PC2",): pd.api.types.is_float_dtype,
+            ("Hour of Occurrence", "Override",): pd.api.types.is_integer_dtype,
+            ("Flowgate NERC ID", "Constraint_ID", "Constraint Name", "Branch Name ( Branch Type / From CA / To CA )", "Contingency Description", "Constraint Description", "Curve Type", "Reason",): pd.api.types.is_string_dtype,
         }
     ),
     (
         "da_bcsf", 
         {
-            ("From KV", "To KV", "Direction",): pandas.core.arrays.integer.Int64Dtype,
-            ("Constraint ID", "Constraint Name", "Contingency Name", "Constraint Type", "Flowgate Name", "Device Type", "Key1", "Key2", "Key3", "From Area", "To Area", "From Station", "To Station",): pandas.core.arrays.string_.StringDtype,
+            ("From KV", "To KV", "Direction",): pd.api.types.is_integer_dtype,
+            ("Constraint ID", "Constraint Name", "Contingency Name", "Constraint Type", "Flowgate Name", "Device Type", "Key1", "Key2", "Key3", "From Area", "To Area", "From Station", "To Station",): pd.api.types.is_string_dtype,
         }
     ),
     (
         "MARKET_SETTLEMENT_DATA_SRW", 
         {
-            ("DATE",): numpy.dtypes.DateTime64DType,
-            ("BILL_DET",): pandas.core.arrays.string_.StringDtype,
-            ("HR01", "HR02", "HR03", "HR04", "HR05", "HR06", "HR07", "HR08", "HR09", "HR10", "HR11", "HR12", "HR13", "HR14", "HR15", "HR16", "HR17", "HR18", "HR19", "HR20", "HR21", "HR22", "HR23", "HR24",): numpy.dtypes.Float64DType,
+            ("DATE",): pd.api.types.is_datetime64_ns_dtype,
+            ("BILL_DET",): pd.api.types.is_string_dtype,
+            ("HR01", "HR02", "HR03", "HR04", "HR05", "HR06", "HR07", "HR08", "HR09", "HR10", "HR11", "HR12", "HR13", "HR14", "HR15", "HR16", "HR17", "HR18", "HR19", "HR20", "HR21", "HR22", "HR23", "HR24",): pd.api.types.is_float_dtype,
         }
     ),
     (
         "combinedwindsolar", 
         {
-            ("ForecastDateTimeEST", "ActualDateTimeEST",): numpy.dtypes.DateTime64DType,
-            ("ForecastHourEndingEST", "ActualHourEndingEST",): pandas.core.arrays.integer.Int64Dtype,
-            ("ForecastWindValue", "ForecastSolarValue", "ActualWindValue", "ActualSolarValue",): numpy.dtypes.Float64DType,
+            ("ForecastDateTimeEST", "ActualDateTimeEST",): pd.api.types.is_datetime64_ns_dtype,
+            ("ForecastHourEndingEST", "ActualHourEndingEST",): pd.api.types.is_integer_dtype,
+            ("ForecastWindValue", "ForecastSolarValue", "ActualWindValue", "ActualSolarValue",): pd.api.types.is_float_dtype,
         }
     ),
     (
         "ms_vlr_HIST_SRW", 
         {
-            ("OPERATING DATE",): numpy.dtypes.DateTime64DType,
-            ("DA_VLR_MWP", "RT_VLR_MWP", "DA+RT Total",): numpy.dtypes.Float64DType,
-            ("SETTLEMENT RUN",): pandas.core.arrays.integer.Int64Dtype,
-            ("REGION", "CONSTRAINT",): pandas.core.arrays.string_.StringDtype,
+            ("OPERATING DATE",): pd.api.types.is_datetime64_ns_dtype,
+            ("DA_VLR_MWP", "RT_VLR_MWP", "DA+RT Total",): pd.api.types.is_float_dtype,
+            ("SETTLEMENT RUN",): pd.api.types.is_integer_dtype,
+            ("REGION", "CONSTRAINT",): pd.api.types.is_string_dtype,
         }
     ),
     (
         "SolarForecast", 
         {
-            ("DateTimeEST",): numpy.dtypes.DateTime64DType,
-            ("HourEndingEST",): pandas.core.arrays.integer.Int64Dtype,
-            ("Value",): numpy.dtypes.Float64DType,
+            ("DateTimeEST",): pd.api.types.is_datetime64_ns_dtype,
+            ("HourEndingEST",): pd.api.types.is_integer_dtype,
+            ("Value",): pd.api.types.is_float_dtype,
         }
     ),
     (
         "DA_LMPs", 
         {
-            ("MARKET_DAY",): numpy.dtypes.DateTime64DType,
-            ("HE1", "HE2", "HE3", "HE4", "HE5", "HE6", "HE7", "HE8", "HE9", "HE10", "HE11", "HE12", "HE13", "HE14", "HE15", "HE16", "HE17", "HE18", "HE19", "HE20", "HE21", "HE22", "HE23", "HE24",): numpy.dtypes.Float64DType,
-            ("NODE", "TYPE", "VALUE",): pandas.core.arrays.string_.StringDtype,
+            ("MARKET_DAY",): pd.api.types.is_datetime64_ns_dtype,
+            ("HE1", "HE2", "HE3", "HE4", "HE5", "HE6", "HE7", "HE8", "HE9", "HE10", "HE11", "HE12", "HE13", "HE14", "HE15", "HE16", "HE17", "HE18", "HE19", "HE20", "HE21", "HE22", "HE23", "HE24",): pd.api.types.is_float_dtype,
+            ("NODE", "TYPE", "VALUE",): pd.api.types.is_string_dtype,
         }
     ),
     (
         "rt_irsf", 
         {
-            ("MKTHOUR_EST",): numpy.dtypes.DateTime64DType,
-            ("INTRAREGIONAL_SCHEDULED_FLOW",): numpy.dtypes.Float64DType,
-            ("CONSTRAINT_NAME",): pandas.core.arrays.string_.StringDtype,
+            ("MKTHOUR_EST",): pd.api.types.is_datetime64_ns_dtype,
+            ("INTRAREGIONAL_SCHEDULED_FLOW",): pd.api.types.is_float_dtype,
+            ("CONSTRAINT_NAME",): pd.api.types.is_string_dtype,
         }
     ),
     (
         "rt_mf", 
         {
-            ("Unit Count", "Hour Ending",): pandas.core.arrays.integer.Int64Dtype,
-            ("Time Interval EST",): numpy.dtypes.DateTime64DType,
-            ("Peak Flag", "Region Name", "Fuel Type",): pandas.core.arrays.string_.StringDtype,
+            ("Unit Count", "Hour Ending",): pd.api.types.is_integer_dtype,
+            ("Time Interval EST",): pd.api.types.is_datetime64_ns_dtype,
+            ("Peak Flag", "Region Name", "Fuel Type",): pd.api.types.is_string_dtype,
         }
     ),
     (
         "rt_ex", 
         {
-            ("Committed (GW at Economic Maximum) - Forward", "Committed (GW at Economic Maximum) - Real-Time", "Committed (GW at Economic Maximum) - Delta", "Load (GW) - Forward", "Load (GW) - Real-Time", "Load (GW) - Delta", "Net Scheduled Imports (GW) - Forward", "Net Scheduled Imports (GW) - Real-Time", "Net Scheduled Imports (GW) - Delta", "Outages (GW at Economic Maximum) - Forward", "Outages (GW at Economic Maximum) - Real-Time", "Outages (GW at Economic Maximum) - Delta", "Offer Changes (GW at Economic Maximum) - Forward", "Offer Changes (GW at Economic Maximum) - Real-Time", "Offer Changes (GW at Economic Maximum) - Delta",): numpy.dtypes.Float64DType,
-            ("Hour", "Real-Time Binding Constraints - (#)",): pandas.core.arrays.integer.Int64Dtype,
+            ("Committed (GW at Economic Maximum) - Forward", "Committed (GW at Economic Maximum) - Real-Time", "Committed (GW at Economic Maximum) - Delta", "Load (GW) - Forward", "Load (GW) - Real-Time", "Load (GW) - Delta", "Net Scheduled Imports (GW) - Forward", "Net Scheduled Imports (GW) - Real-Time", "Net Scheduled Imports (GW) - Delta", "Outages (GW at Economic Maximum) - Forward", "Outages (GW at Economic Maximum) - Real-Time", "Outages (GW at Economic Maximum) - Delta", "Offer Changes (GW at Economic Maximum) - Forward", "Offer Changes (GW at Economic Maximum) - Real-Time", "Offer Changes (GW at Economic Maximum) - Delta",): pd.api.types.is_float_dtype,
+            ("Hour", "Real-Time Binding Constraints - (#)",): pd.api.types.is_integer_dtype,
         }
     ),
     (
         "df_al", 
         {
-            ("LRZ1 MTLF (MWh)", "LRZ1 ActualLoad (MWh)", "LRZ2_7 MTLF (MWh)", "LRZ2_7 ActualLoad (MWh)", "LRZ3_5 MTLF (MWh)", "LRZ3_5 ActualLoad (MWh)", "LRZ4 MTLF (MWh)", "LRZ4 ActualLoad (MWh)", "LRZ6 MTLF (MWh)", "LRZ6 ActualLoad (MWh)", "LRZ8_9_10 MTLF (MWh)", "LRZ8_9_10 ActualLoad (MWh)", "MISO MTLF (MWh)", "MISO ActualLoad (MWh)",): numpy.dtypes.Float64DType,
-            ("HourEnding",): pandas.core.arrays.integer.Int64Dtype,
-            ("Market Day",): numpy.dtypes.DateTime64DType,
+            ("LRZ1 MTLF (MWh)", "LRZ1 ActualLoad (MWh)", "LRZ2_7 MTLF (MWh)", "LRZ2_7 ActualLoad (MWh)", "LRZ3_5 MTLF (MWh)", "LRZ3_5 ActualLoad (MWh)", "LRZ4 MTLF (MWh)", "LRZ4 ActualLoad (MWh)", "LRZ6 MTLF (MWh)", "LRZ6 ActualLoad (MWh)", "LRZ8_9_10 MTLF (MWh)", "LRZ8_9_10 ActualLoad (MWh)", "MISO MTLF (MWh)", "MISO ActualLoad (MWh)",): pd.api.types.is_float_dtype,
+            ("HourEnding",): pd.api.types.is_integer_dtype,
+            ("Market Day",): pd.api.types.is_datetime64_ns_dtype,
         }
     ),
     (
         "rf_al", 
         {
-            ("North MTLF (MWh)", "North ActualLoad (MWh)", "Central MTLF (MWh)", "Central ActualLoad (MWh)", "South MTLF (MWh)", "South ActualLoad (MWh)", "MISO MTLF (MWh)", "MISO ActualLoad (MWh)",): numpy.dtypes.Float64DType,
-            ("HourEnding",): pandas.core.arrays.integer.Int64Dtype,
-            ("Market Day",): numpy.dtypes.DateTime64DType,
+            ("North MTLF (MWh)", "North ActualLoad (MWh)", "Central MTLF (MWh)", "Central ActualLoad (MWh)", "South MTLF (MWh)", "South ActualLoad (MWh)", "MISO MTLF (MWh)", "MISO ActualLoad (MWh)",): pd.api.types.is_float_dtype,
+            ("HourEnding",): pd.api.types.is_integer_dtype,
+            ("Market Day",): pd.api.types.is_datetime64_ns_dtype,
         }
     ),
     (
         "da_rpe", 
         {
-            ("Shadow Price",): numpy.dtypes.Float64DType,
-            ("Hour of Occurence",): pandas.core.arrays.integer.Int64Dtype,
-            ("Constraint Name", "Constraint Description",): pandas.core.arrays.string_.StringDtype,
+            ("Shadow Price",): pd.api.types.is_float_dtype,
+            ("Hour of Occurence",): pd.api.types.is_integer_dtype,
+            ("Constraint Name", "Constraint Description",): pd.api.types.is_string_dtype,
         }
     ),
     (
         "da_ex", 
         {
-            ("Demand Cleared (GWh) - Physical - Fixed", "Demand Cleared (GWh) - Physical - Price Sen.", "Demand Cleared (GWh) - Virtual", "Demand Cleared (GWh) - Total", "Supply Cleared (GWh) - Physical", "Supply Cleared (GWh) - Virtual", "Supply Cleared (GWh) - Total", "Net Scheduled Imports (GWh)", "Generation Resources Offered (GW at Econ. Max) - Must Run", "Generation Resources Offered (GW at Econ. Max) - Economic", "Generation Resources Offered (GW at Econ. Max) - Emergency", "Generation Resources Offered (GW at Econ. Max) - Total", "Generation Resources Offered (GW at Econ. Min) - Must Run", "Generation Resources Offered (GW at Econ. Min) - Economic", "Generation Resources Offered (GW at Econ. Min) - Emergency", "Generation Resources Offered (GW at Econ. Min) - Total",): numpy.dtypes.Float64DType,
-            ("Hour",): pandas.core.arrays.integer.Int64Dtype,
+            ("Demand Cleared (GWh) - Physical - Fixed", "Demand Cleared (GWh) - Physical - Price Sen.", "Demand Cleared (GWh) - Virtual", "Demand Cleared (GWh) - Total", "Supply Cleared (GWh) - Physical", "Supply Cleared (GWh) - Virtual", "Supply Cleared (GWh) - Total", "Net Scheduled Imports (GWh)", "Generation Resources Offered (GW at Econ. Max) - Must Run", "Generation Resources Offered (GW at Econ. Max) - Economic", "Generation Resources Offered (GW at Econ. Max) - Emergency", "Generation Resources Offered (GW at Econ. Max) - Total", "Generation Resources Offered (GW at Econ. Min) - Must Run", "Generation Resources Offered (GW at Econ. Min) - Economic", "Generation Resources Offered (GW at Econ. Min) - Emergency", "Generation Resources Offered (GW at Econ. Min) - Total",): pd.api.types.is_float_dtype,
+            ("Hour",): pd.api.types.is_integer_dtype,
         }
     ),
     (
         "da_bc_HIST", 
         {
-            ("Shadow Price", "BP1", "PC1", "BP2", "PC2",): numpy.dtypes.Float64DType,
-            ("Hour of Occurrence", "Override",): pandas.core.arrays.integer.Int64Dtype,
-            ("Constraint Name", "Constraint_ID", "Branch Name ( Branch Type / From CA / To CA )", "Contingency Description", "Constraint Description", "Curve Type",): pandas.core.arrays.string_.StringDtype,
-            ("Market Date",): numpy.dtypes.DateTime64DType,
+            ("Shadow Price", "BP1", "PC1", "BP2", "PC2",): pd.api.types.is_float_dtype,
+            ("Hour of Occurrence", "Override",): pd.api.types.is_integer_dtype,
+            ("Constraint Name", "Constraint_ID", "Branch Name ( Branch Type / From CA / To CA )", "Contingency Description", "Constraint Description", "Curve Type",): pd.api.types.is_string_dtype,
+            ("Market Date",): pd.api.types.is_datetime64_ns_dtype,
         }
     ),
     (
         "cpnode_reszone", 
         {
-            ("Reserve Zone",): pandas.core.arrays.integer.Int64Dtype,
-            ("CP Node Name",): pandas.core.arrays.string_.StringDtype,
+            ("Reserve Zone",): pd.api.types.is_integer_dtype,
+            ("CP Node Name",): pd.api.types.is_string_dtype,
         }
     ),
     (
         "da_co", 
         {
-            ("Economic Max", "Economic Min", "Emergency Max", "Emergency Min", "Self Scheduled MW", "Target MW Reduction", "MW", "Curtailment Offer Price", "Price1", "MW1", "Price2", "MW2", "Price3", "MW3", "Price4", "MW4", "Price5", "MW5", "Price6", "MW6", "Price7", "MW7", "Price8", "MW8", "Price9", "MW9", "Price10", "MW10", "MinEnergyStorageLevel", "MaxEnergyStorageLevel", "EmerMinEnergyStorageLevel", "EmerMaxEnergyStorageLevel",): numpy.dtypes.Float64DType,
-            ("Economic Flag", "Emergency Flag", "Must Run Flag", "Unit Available Flag", "Slope",): pandas.core.arrays.integer.Int64Dtype,
-            ("Region", "Unit Code",): pandas.core.arrays.string_.StringDtype,
-            ("Date/Time Beginning (EST)", "Date/Time End (EST)",): numpy.dtypes.DateTime64DType,
+            ("Economic Max", "Economic Min", "Emergency Max", "Emergency Min", "Self Scheduled MW", "Target MW Reduction", "MW", "Curtailment Offer Price", "Price1", "MW1", "Price2", "MW2", "Price3", "MW3", "Price4", "MW4", "Price5", "MW5", "Price6", "MW6", "Price7", "MW7", "Price8", "MW8", "Price9", "MW9", "Price10", "MW10", "MinEnergyStorageLevel", "MaxEnergyStorageLevel", "EmerMinEnergyStorageLevel", "EmerMaxEnergyStorageLevel",): pd.api.types.is_float_dtype,
+            ("Economic Flag", "Emergency Flag", "Must Run Flag", "Unit Available Flag", "Slope",): pd.api.types.is_integer_dtype,
+            ("Region", "Unit Code",): pd.api.types.is_string_dtype,
+            ("Date/Time Beginning (EST)", "Date/Time End (EST)",): pd.api.types.is_datetime64_ns_dtype,
         }
     ),
     (
         "rt_co", 
         {
-            ("Cleared MW1", "Cleared MW2", "Cleared MW3", "Cleared MW4", "Cleared MW5", "Cleared MW6", "Cleared MW7", "Cleared MW8", "Cleared MW9", "Cleared MW10", "Cleared MW11", "Cleared MW12", "Economic Max", "Economic Min", "Emergency Max", "Emergency Min", "Self Scheduled MW", "Target MW Reduction", "Curtailment Offer Price", "Price1", "MW1", "Price2", "MW2", "Price3", "MW3", "Price4", "MW4", "Price5", "MW5", "Price6", "MW6", "Price7", "MW7", "Price8", "MW8", "Price9", "MW9", "Price10", "MW10", "MinEnergyStorageLevel", "MaxEnergyStorageLevel", "EmerMinEnergyStorageLevel", "EmerMaxEnergyStorageLevel",): numpy.dtypes.Float64DType,
-            ("Economic Flag", "Emergency Flag", "Must Run Flag", "Unit Available Flag", "Slope",): pandas.core.arrays.integer.Int64Dtype,
-            ("Region", "Unit Code",): pandas.core.arrays.string_.StringDtype,
-            ("Mkthour Begin (EST)",): numpy.dtypes.DateTime64DType,
+            ("Cleared MW1", "Cleared MW2", "Cleared MW3", "Cleared MW4", "Cleared MW5", "Cleared MW6", "Cleared MW7", "Cleared MW8", "Cleared MW9", "Cleared MW10", "Cleared MW11", "Cleared MW12", "Economic Max", "Economic Min", "Emergency Max", "Emergency Min", "Self Scheduled MW", "Target MW Reduction", "Curtailment Offer Price", "Price1", "MW1", "Price2", "MW2", "Price3", "MW3", "Price4", "MW4", "Price5", "MW5", "Price6", "MW6", "Price7", "MW7", "Price8", "MW8", "Price9", "MW9", "Price10", "MW10", "MinEnergyStorageLevel", "MaxEnergyStorageLevel", "EmerMinEnergyStorageLevel", "EmerMaxEnergyStorageLevel",): pd.api.types.is_float_dtype,
+            ("Economic Flag", "Emergency Flag", "Must Run Flag", "Unit Available Flag", "Slope",): pd.api.types.is_integer_dtype,
+            ("Region", "Unit Code",): pd.api.types.is_string_dtype,
+            ("Mkthour Begin (EST)",): pd.api.types.is_datetime64_ns_dtype,
         }
     ),
     (
         "Dead_Node_Report", 
         {
-            ("PNODE Name",): pandas.core.arrays.string_.StringDtype,
-            ("Mkt Hour",): numpy.dtypes.DateTime64DType,
+            ("PNODE Name",): pd.api.types.is_string_dtype,
+            ("Mkt Hour",): pd.api.types.is_datetime64_ns_dtype,
         }
     ),
     (
         "asm_rt_co", 
         {
-            ("RegulationMax", "RegulationMin", "RegulationOffer Price", "RegulationSelfScheduleMW", "SpinningOffer Price", "SpinSelfScheduleMW", "OnlineSupplementalOffer", "OnlineSupplementalSelfScheduleMW", "OfflineSupplementalOffer", "OfflineSupplementalSelfScheduleMW", "RegMCP1", "RegMW1", "RegMCP2", "RegMW2", "RegMCP3", "RegMW3", "RegMCP4", "RegMW4", "RegMCP5", "RegMW5", "RegMCP6", "RegMW6", "RegMCP7", "RegMW7", "RegMCP8", "RegMW8", "RegMCP9", "RegMW9", "RegMCP10", "RegMW10", "RegMCP11", "RegMW11", "RegMCP12", "RegMW12", "SpinMCP1", "SpinMW1", "SpinMCP2", "SpinMW2", "SpinMCP3", "SpinMW3", "SpinMCP4", "SpinMW4", "SpinMCP5", "SpinMW5", "SpinMCP6", "SpinMW6", "SpinMCP7", "SpinMW7", "SpinMCP8", "SpinMW8", "SpinMCP9", "SpinMW9", "SpinMCP10", "SpinMW10", "SpinMCP11", "SpinMW11", "SpinMCP12", "SpinMW12", "SuppMCP1", "SuppMW1", "SuppMCP2", "SuppMW2", "SuppMCP3", "SuppMW3", "SuppMCP4", "SuppMW4", "SuppMCP5", "SuppMW5", "SuppMCP6", "SuppMW6", "SuppMCP7", "SuppMW7", "SuppMCP8", "SuppMW8", "SuppMCP9", "SuppMW9", "SuppMCP10", "SuppMW10", "SuppMCP11", "SuppMW11", "SuppMCP12", "SuppMW12", "StrOfflineOfferRate", "STRMCP1", "STRMW1", "STRMCP2", "STRMW2", "STRMCP3", "STRMW3", "STRMCP4", "STRMW4", "STRMCP5", "STRMW5", "STRMCP6", "STRMW6", "STRMCP7", "STRMW7", "STRMCP8", "STRMW8", "STRMCP9", "STRMW9", "STRMCP10", "STRMW10", "STRMCP11", "STRMW11", "STRMCP12", "STRMW12", "MinEnergyStorageLevel", "MaxEnergyStorageLevel", "EmerMinEnergyStorageLevel", "EmerMaxEnergyStorageLevel",): numpy.dtypes.Float64DType,
-            ("Region", "Unit Code",): pandas.core.arrays.string_.StringDtype,
-            ("Mkthour Begin (EST)",): numpy.dtypes.DateTime64DType,
+            ("RegulationMax", "RegulationMin", "RegulationOffer Price", "RegulationSelfScheduleMW", "SpinningOffer Price", "SpinSelfScheduleMW", "OnlineSupplementalOffer", "OnlineSupplementalSelfScheduleMW", "OfflineSupplementalOffer", "OfflineSupplementalSelfScheduleMW", "RegMCP1", "RegMW1", "RegMCP2", "RegMW2", "RegMCP3", "RegMW3", "RegMCP4", "RegMW4", "RegMCP5", "RegMW5", "RegMCP6", "RegMW6", "RegMCP7", "RegMW7", "RegMCP8", "RegMW8", "RegMCP9", "RegMW9", "RegMCP10", "RegMW10", "RegMCP11", "RegMW11", "RegMCP12", "RegMW12", "SpinMCP1", "SpinMW1", "SpinMCP2", "SpinMW2", "SpinMCP3", "SpinMW3", "SpinMCP4", "SpinMW4", "SpinMCP5", "SpinMW5", "SpinMCP6", "SpinMW6", "SpinMCP7", "SpinMW7", "SpinMCP8", "SpinMW8", "SpinMCP9", "SpinMW9", "SpinMCP10", "SpinMW10", "SpinMCP11", "SpinMW11", "SpinMCP12", "SpinMW12", "SuppMCP1", "SuppMW1", "SuppMCP2", "SuppMW2", "SuppMCP3", "SuppMW3", "SuppMCP4", "SuppMW4", "SuppMCP5", "SuppMW5", "SuppMCP6", "SuppMW6", "SuppMCP7", "SuppMW7", "SuppMCP8", "SuppMW8", "SuppMCP9", "SuppMW9", "SuppMCP10", "SuppMW10", "SuppMCP11", "SuppMW11", "SuppMCP12", "SuppMW12", "StrOfflineOfferRate", "STRMCP1", "STRMW1", "STRMCP2", "STRMW2", "STRMCP3", "STRMW3", "STRMCP4", "STRMW4", "STRMCP5", "STRMW5", "STRMCP6", "STRMW6", "STRMCP7", "STRMW7", "STRMCP8", "STRMW8", "STRMCP9", "STRMW9", "STRMCP10", "STRMW10", "STRMCP11", "STRMW11", "STRMCP12", "STRMW12", "MinEnergyStorageLevel", "MaxEnergyStorageLevel", "EmerMinEnergyStorageLevel", "EmerMaxEnergyStorageLevel",): pd.api.types.is_float_dtype,
+            ("Region", "Unit Code",): pd.api.types.is_string_dtype,
+            ("Mkthour Begin (EST)",): pd.api.types.is_datetime64_ns_dtype,
         }
     ),
     (
         "asm_da_co", 
         {
-            ("RegulationMax", "RegulationMin", "RegulationOffer Price", "RegulationSelfScheduleMW", "SpinningOffer Price", "SpinSelfScheduleMW", "OnlineSupplementalOffer", "OnlineSupplementalSelfScheduleMW", "OfflineSupplementalOffer", "OfflineSupplementalSelfScheduleMW", "RegMCP", "RegMW", "SpinMCP", "SpinMW", "SuppMCP", "SuppMW", "OfflineSTR", "STRMCP", "STRMW", "MinEnergyStorageLevel", "MaxEnergyStorageLevel", "EmerMinEnergyStorageLevel", "EmerMaxEnergyStorageLevel",): numpy.dtypes.Float64DType,
-            ("Region", "Unit Code",): pandas.core.arrays.string_.StringDtype,
-            ("Date/Time Beginning (EST)", "Date/Time End (EST)",): numpy.dtypes.DateTime64DType,
+            ("RegulationMax", "RegulationMin", "RegulationOffer Price", "RegulationSelfScheduleMW", "SpinningOffer Price", "SpinSelfScheduleMW", "OnlineSupplementalOffer", "OnlineSupplementalSelfScheduleMW", "OfflineSupplementalOffer", "OfflineSupplementalSelfScheduleMW", "RegMCP", "RegMW", "SpinMCP", "SpinMW", "SuppMCP", "SuppMW", "OfflineSTR", "STRMCP", "STRMW", "MinEnergyStorageLevel", "MaxEnergyStorageLevel", "EmerMinEnergyStorageLevel", "EmerMaxEnergyStorageLevel",): pd.api.types.is_float_dtype,
+            ("Region", "Unit Code",): pd.api.types.is_string_dtype,
+            ("Date/Time Beginning (EST)", "Date/Time End (EST)",): pd.api.types.is_datetime64_ns_dtype,
         }
     ),
     (
         "M2M_Settlement_srw", 
         {
-            ("MISO_SHADOW_PRICE", "CP_SHADOW_PRICE", "MISO_CREDIT", "CP_CREDIT",): numpy.dtypes.Float64DType,
-            ("FLOWGATE_ID", "MONITORING_RTO", "CP_RTO", "FLOWGATE_NAME",): pandas.core.arrays.string_.StringDtype,
-            ("MISO_MKT_FLOW", "MISO_FFE", "CP_MKT_FLOW", "CP_FFE",): pandas.core.arrays.integer.Int64Dtype,
-            ("HOUR_ENDING",): numpy.dtypes.DateTime64DType,
+            ("MISO_SHADOW_PRICE", "CP_SHADOW_PRICE", "MISO_CREDIT", "CP_CREDIT",): pd.api.types.is_float_dtype,
+            ("FLOWGATE_ID", "MONITORING_RTO", "CP_RTO", "FLOWGATE_NAME",): pd.api.types.is_string_dtype,
+            ("MISO_MKT_FLOW", "MISO_FFE", "CP_MKT_FLOW", "CP_FFE",): pd.api.types.is_integer_dtype,
+            ("HOUR_ENDING",): pd.api.types.is_datetime64_ns_dtype,
         }
     ),
     (
         "M2M_Flowgates_as_of", 
         {
-            ("Flowgate ID", "Monitoring RTO", "Non Monitoring RTO", "Flowgate Description",): pandas.core.arrays.string_.StringDtype,
+            ("Flowgate ID", "Monitoring RTO", "Non Monitoring RTO", "Flowgate Description",): pd.api.types.is_string_dtype,
         }
     ),
     (
         "M2M_FFE", 
         {
-            ("Non Monitoring RTO FFE", "Adjusted FFE",): numpy.dtypes.Float64DType,
-            ("NERC Flowgate ID", "Monitoring RTO", "Non Monitoring RTO", "Flowgate Description",): pandas.core.arrays.string_.StringDtype,
-            ("Hour Ending",): numpy.dtypes.DateTime64DType,
+            ("Non Monitoring RTO FFE", "Adjusted FFE",): pd.api.types.is_float_dtype,
+            ("NERC Flowgate ID", "Monitoring RTO", "Non Monitoring RTO", "Flowgate Description",): pd.api.types.is_string_dtype,
+            ("Hour Ending",): pd.api.types.is_datetime64_ns_dtype,
         }
     ),
     (
         "Allocation_on_MISO_Flowgates", 
         {
-            ("Allocation (MW)",): numpy.dtypes.Float64DType,
-            ("Allocation to Rating Percentage",): pandas.core.arrays.integer.Int64Dtype,
-            ("NERC ID", "Flowgate Owner", "Flowgate Description", "Entity", "Direction", "Reciprocal Status on Flowgate",): pandas.core.arrays.string_.StringDtype,
+            ("Allocation (MW)",): pd.api.types.is_float_dtype,
+            ("Allocation to Rating Percentage",): pd.api.types.is_integer_dtype,
+            ("NERC ID", "Flowgate Owner", "Flowgate Description", "Entity", "Direction", "Reciprocal Status on Flowgate",): pd.api.types.is_string_dtype,
         }
     ),
     (
         "rt_pbc", 
         {
-            ("PRELIMINARY_SHADOW_PRICE",): numpy.dtypes.Float64DType,
-            ("BP1", "PC1", "BP2", "PC2", "BP3", "PC3", "BP4", "PC4", "OVERRIDE",): pandas.core.arrays.integer.Int64Dtype,
-            ("CONSTRAINT_NAME", "CURVETYPE", "REASON",): pandas.core.arrays.string_.StringDtype,
-            ("MARKET_HOUR_EST",): numpy.dtypes.DateTime64DType,
+            ("PRELIMINARY_SHADOW_PRICE",): pd.api.types.is_float_dtype,
+            ("BP1", "PC1", "BP2", "PC2", "BP3", "PC3", "BP4", "PC4", "OVERRIDE",): pd.api.types.is_integer_dtype,
+            ("CONSTRAINT_NAME", "CURVETYPE", "REASON",): pd.api.types.is_string_dtype,
+            ("MARKET_HOUR_EST",): pd.api.types.is_datetime64_ns_dtype,
         }
     ),
     (
         "rt_bc", 
         {
-            ("Preliminary Shadow Price", "BP1", "PC1", "BP2", "PC2",): numpy.dtypes.Float64DType,
-            ("Override",): pandas.core.arrays.integer.Int64Dtype,
-            ("Flowgate NERC ID", "Constraint ID", "Constraint Name", "Branch Name ( Branch Type / From CA / To CA )", "Contingency Description", "Constraint Description", "Curve Type",): pandas.core.arrays.string_.StringDtype,
-            ("Hour of Occurrence",): numpy.dtypes.DateTime64DType,
+            ("Preliminary Shadow Price", "BP1", "PC1", "BP2", "PC2",): pd.api.types.is_float_dtype,
+            ("Override",): pd.api.types.is_integer_dtype,
+            ("Flowgate NERC ID", "Constraint ID", "Constraint Name", "Branch Name ( Branch Type / From CA / To CA )", "Contingency Description", "Constraint Description", "Curve Type",): pd.api.types.is_string_dtype,
+            ("Hour of Occurrence",): pd.api.types.is_datetime64_ns_dtype,
         }
     ),
     (
         "rt_or", 
         {
-            ("Preliminary Shadow Price", "BP1", "PC1", "BP2", "PC2",): numpy.dtypes.Float64DType,
-            ("Override",): pandas.core.arrays.integer.Int64Dtype,
-            ("Flowgate NERC ID", "Constraint Name", "Branch Name ( Branch Type / From CA / To CA )", "Contingency Description", "Constraint Description", "Curve Type", "Reason",): pandas.core.arrays.string_.StringDtype,
-            ("Hour of Occurrence",): numpy.dtypes.DateTime64DType,
+            ("Preliminary Shadow Price", "BP1", "PC1", "BP2", "PC2",): pd.api.types.is_float_dtype,
+            ("Override",): pd.api.types.is_integer_dtype,
+            ("Flowgate NERC ID", "Constraint Name", "Branch Name ( Branch Type / From CA / To CA )", "Contingency Description", "Constraint Description", "Curve Type", "Reason",): pd.api.types.is_string_dtype,
+            ("Hour of Occurrence",): pd.api.types.is_datetime64_ns_dtype,
         }
     ),
     (
         "rt_fuel_on_margin", 
         {
-            ("Hour Ending", "Unit Count",): pandas.core.arrays.integer.Int64Dtype,
-            ("Peak Flag", "Region Name", "Fuel Type",): pandas.core.arrays.string_.StringDtype,
-            ("Time Interval EST",): numpy.dtypes.DateTime64DType,
+            ("Hour Ending", "Unit Count",): pd.api.types.is_integer_dtype,
+            ("Peak Flag", "Region Name", "Fuel Type",): pd.api.types.is_string_dtype,
+            ("Time Interval EST",): pd.api.types.is_datetime64_ns_dtype,
         }
     ),
     (
         "5min_expost_mcp", 
         {
-            ("RT MCP Regulation", "RT MCP Spin", "RT MCP Supp",): numpy.dtypes.Float64DType,
-            ("Zone",): pandas.core.arrays.integer.Int64Dtype,
-            ("Time (EST)",): numpy.dtypes.DateTime64DType,
+            ("RT MCP Regulation", "RT MCP Spin", "RT MCP Supp",): pd.api.types.is_float_dtype,
+            ("Zone",): pd.api.types.is_integer_dtype,
+            ("Time (EST)",): pd.api.types.is_datetime64_ns_dtype,
         }
     ),
     (
         "5min_exante_mcp", 
         {
-            ("RT Ex-Ante MCP Regulation", "RT Ex-Ante MCP Spin", "RT Ex-Ante MCP Supp",): numpy.dtypes.Float64DType,
-            ("Zone",): pandas.core.arrays.integer.Int64Dtype,
-            ("Time (EST)",): numpy.dtypes.DateTime64DType,
+            ("RT Ex-Ante MCP Regulation", "RT Ex-Ante MCP Spin", "RT Ex-Ante MCP Supp",): pd.api.types.is_float_dtype,
+            ("Zone",): pd.api.types.is_integer_dtype,
+            ("Time (EST)",): pd.api.types.is_datetime64_ns_dtype,
         }
     ),
     (
         "ftr_mpma_bids_offers", 
         {
-            ("MW1", "PRICE1", "MW2", "PRICE2", "MW3", "PRICE3", "MW4", "PRICE4", "MW5", "PRICE5", "MW6", "PRICE6", "MW7", "PRICE7", "MW8", "PRICE8", "MW9", "PRICE9", "MW10", "PRICE10",): numpy.dtypes.Float64DType,
-            ("Market Name", "Source", "Sink", "Hedge Type", "Class", "Type", "Asset Owner ID",): pandas.core.arrays.string_.StringDtype,
-            ("Start Date", "End Date",): numpy.dtypes.DateTime64DType,
-            ("Round",): pandas.core.arrays.integer.Int64Dtype,
+            ("MW1", "PRICE1", "MW2", "PRICE2", "MW3", "PRICE3", "MW4", "PRICE4", "MW5", "PRICE5", "MW6", "PRICE6", "MW7", "PRICE7", "MW8", "PRICE8", "MW9", "PRICE9", "MW10", "PRICE10",): pd.api.types.is_float_dtype,
+            ("Market Name", "Source", "Sink", "Hedge Type", "Class", "Type", "Asset Owner ID",): pd.api.types.is_string_dtype,
+            ("Start Date", "End Date",): pd.api.types.is_datetime64_ns_dtype,
+            ("Round",): pd.api.types.is_integer_dtype,
         }
     ),
     (
         "ftr_annual_bids_offers", 
         {
-            ("MW1", "PRICE1", "MW2", "PRICE2", "MW3", "PRICE3", "MW4", "PRICE4", "MW5", "PRICE5", "MW6", "PRICE6", "MW7", "PRICE7", "MW8", "PRICE8", "MW9", "PRICE9", "MW10", "PRICE10",): numpy.dtypes.Float64DType,
-            ("Market Name", "Source", "Sink", "Hedge Type", "Class", "Type", "Asset Owner ID",): pandas.core.arrays.string_.StringDtype,
-            ("Start Date", "End Date",): numpy.dtypes.DateTime64DType,
-            ("Round",): pandas.core.arrays.integer.Int64Dtype,
+            ("MW1", "PRICE1", "MW2", "PRICE2", "MW3", "PRICE3", "MW4", "PRICE4", "MW5", "PRICE5", "MW6", "PRICE6", "MW7", "PRICE7", "MW8", "PRICE8", "MW9", "PRICE9", "MW10", "PRICE10",): pd.api.types.is_float_dtype,
+            ("Market Name", "Source", "Sink", "Hedge Type", "Class", "Type", "Asset Owner ID",): pd.api.types.is_string_dtype,
+            ("Start Date", "End Date",): pd.api.types.is_datetime64_ns_dtype,
+            ("Round",): pd.api.types.is_integer_dtype,
         }
     ),
     (
         "bids_cb", 
         {
-            ("MW", "LMP", "PRICE1", "MW1", "PRICE2", "MW2", "PRICE3", "MW3", "PRICE4", "MW4", "PRICE5", "MW5", "PRICE6", "MW6", "PRICE7", "MW7", "PRICE8", "MW8", "PRICE9", "MW9",): numpy.dtypes.Float64DType,
-            ("Market Participant Code", "Region", "Type of Bid", "Bid ID",): pandas.core.arrays.string_.StringDtype,
-            ("Date/Time Beginning (EST)", "Date/Time End (EST)",): numpy.dtypes.DateTime64DType,
+            ("MW", "LMP", "PRICE1", "MW1", "PRICE2", "MW2", "PRICE3", "MW3", "PRICE4", "MW4", "PRICE5", "MW5", "PRICE6", "MW6", "PRICE7", "MW7", "PRICE8", "MW8", "PRICE9", "MW9",): pd.api.types.is_float_dtype,
+            ("Market Participant Code", "Region", "Type of Bid", "Bid ID",): pd.api.types.is_string_dtype,
+            ("Date/Time Beginning (EST)", "Date/Time End (EST)",): pd.api.types.is_datetime64_ns_dtype,
         }
     ),
     (
         "5MIN_LMP", 
         {
-            ("LMP", "CON_LMP", "LOSS_LMP",): numpy.dtypes.Float64DType,
-            ("PNODENAME",): pandas.core.arrays.string_.StringDtype,
-            ("MKTHOUR_EST",): numpy.dtypes.DateTime64DType,
+            ("LMP", "CON_LMP", "LOSS_LMP",): pd.api.types.is_float_dtype,
+            ("PNODENAME",): pd.api.types.is_string_dtype,
+            ("MKTHOUR_EST",): pd.api.types.is_datetime64_ns_dtype,
         }
     ),
     (
         "RT_Load_EPNodes", 
         {
-            ("HE1", "HE2", "HE3", "HE4", "HE5", "HE6", "HE7", "HE8", "HE9", "HE10", "HE11", "HE12", "HE13", "HE14", "HE15", "HE16", "HE17", "HE18", "HE19", "HE20", "HE21", "HE22", "HE23", "HE24",): numpy.dtypes.Float64DType,
-            ("EPNode", "Value",): pandas.core.arrays.string_.StringDtype,
+            ("HE1", "HE2", "HE3", "HE4", "HE5", "HE6", "HE7", "HE8", "HE9", "HE10", "HE11", "HE12", "HE13", "HE14", "HE15", "HE16", "HE17", "HE18", "HE19", "HE20", "HE21", "HE22", "HE23", "HE24",): pd.api.types.is_float_dtype,
+            ("EPNode", "Value",): pd.api.types.is_string_dtype,
         }
     ),
     (
         "realtimebindingsrpbconstraints", 
         {
-            ("Price",): numpy.dtypes.Float64DType,
-            ("OVERRIDE", "BP1", "PC1", "BP2", "PC2", "BP3", "PC3", "BP4", "PC4",): pandas.core.arrays.integer.Int64Dtype,
-            ("Name", "REASON", "CURVETYPE",): pandas.core.arrays.string_.StringDtype,
-            ("Period",): numpy.dtypes.DateTime64DType,
+            ("Price",): pd.api.types.is_float_dtype,
+            ("OVERRIDE", "BP1", "PC1", "BP2", "PC2", "BP3", "PC3", "BP4", "PC4",): pd.api.types.is_integer_dtype,
+            ("Name", "REASON", "CURVETYPE",): pd.api.types.is_string_dtype,
+            ("Period",): pd.api.types.is_datetime64_ns_dtype,
         }
     ),
     (
         "realtimebindingconstraints", 
         {
-            ("Price",): numpy.dtypes.Float64DType,
-            ("OVERRIDE", "BP1", "PC1", "BP2", "PC2",): pandas.core.arrays.integer.Int64Dtype,
-            ("Name", "CURVETYPE",): pandas.core.arrays.string_.StringDtype,
-            ("Period",): numpy.dtypes.DateTime64DType,
+            ("Price",): pd.api.types.is_float_dtype,
+            ("OVERRIDE", "BP1", "PC1", "BP2", "PC2",): pd.api.types.is_integer_dtype,
+            ("Name", "CURVETYPE",): pd.api.types.is_string_dtype,
+            ("Period",): pd.api.types.is_datetime64_ns_dtype,
         }
     ),
     (
         "apiversion", 
         {
-            ("Semantic",): pandas.core.arrays.string_.StringDtype,
+            ("Semantic",): pd.api.types.is_string_dtype,
         }
     ),
     (
         "generationoutagesplusminusfivedays", 
         {
-            ("Unplanned", "Planned", "Forced", "Derated",): pandas.core.arrays.integer.Int64Dtype,
-            ("OutageMonthDay",): pandas.core.arrays.string_.StringDtype,
-            ("OutageDate",): numpy.dtypes.DateTime64DType,
+            ("Unplanned", "Planned", "Forced", "Derated",): pd.api.types.is_integer_dtype,
+            ("OutageMonthDay",): pd.api.types.is_string_dtype,
+            ("OutageDate",): pd.api.types.is_datetime64_ns_dtype,
         }
     ),
     (
         "rt_expost_str_mcp", 
         {
-            ("RESERVE ZONE 1", "RESERVE ZONE 2", "RESERVE ZONE 3", "RESERVE ZONE 4", "RESERVE ZONE 5", "RESERVE ZONE 6", "RESERVE ZONE 7", "RESERVE ZONE 8",): numpy.dtypes.Float64DType,
-            ("Hour Ending",): pandas.core.arrays.integer.Int64Dtype,
-            ("Preliminary/ Final",): pandas.core.arrays.string_.StringDtype,
-            ("MARKET DATE",): numpy.dtypes.DateTime64DType,
+            ("RESERVE ZONE 1", "RESERVE ZONE 2", "RESERVE ZONE 3", "RESERVE ZONE 4", "RESERVE ZONE 5", "RESERVE ZONE 6", "RESERVE ZONE 7", "RESERVE ZONE 8",): pd.api.types.is_float_dtype,
+            ("Hour Ending",): pd.api.types.is_integer_dtype,
+            ("Preliminary/ Final",): pd.api.types.is_string_dtype,
+            ("MARKET DATE",): pd.api.types.is_datetime64_ns_dtype,
         }
     ),
     (
         "rt_expost_str_5min_mcp", 
         {
-            ("RESERVE ZONE 1", "RESERVE ZONE 2", "RESERVE ZONE 3", "RESERVE ZONE 4", "RESERVE ZONE 5", "RESERVE ZONE 6", "RESERVE ZONE 7", "RESERVE ZONE 8",): numpy.dtypes.Float64DType,
-            ("Preliminary/ Final",): pandas.core.arrays.string_.StringDtype,
-            ("Time(EST)",): numpy.dtypes.DateTime64DType,
+            ("RESERVE ZONE 1", "RESERVE ZONE 2", "RESERVE ZONE 3", "RESERVE ZONE 4", "RESERVE ZONE 5", "RESERVE ZONE 6", "RESERVE ZONE 7", "RESERVE ZONE 8",): pd.api.types.is_float_dtype,
+            ("Preliminary/ Final",): pd.api.types.is_string_dtype,
+            ("Time(EST)",): pd.api.types.is_datetime64_ns_dtype,
         }
     ),
     (
         "rt_expost_ramp_mcp", 
         {
-            ("Reserve Zone 1 - RT MCP Ramp Up Ex-Post Hourly", "Reserve Zone 1 - RT MCP Ramp Down Ex-Post Hourly", "Reserve Zone 2 - RT MCP Ramp Up Ex-Post Hourly", "Reserve Zone 2 - RT MCP Ramp Down Ex-Post Hourly", "Reserve Zone 3 - RT MCP Ramp Up Ex-Post Hourly", "Reserve Zone 3 - RT MCP Ramp Down Ex-Post Hourly", "Reserve Zone 4 - RT MCP Ramp Up Ex-Post Hourly", "Reserve Zone 4 - RT MCP Ramp Down Ex-Post Hourly", "Reserve Zone 5 - RT MCP Ramp Up Ex-Post Hourly", "Reserve Zone 5 - RT MCP Ramp Down Ex-Post Hourly", "Reserve Zone 6 - RT MCP Ramp Up Ex-Post Hourly", "Reserve Zone 6 - RT MCP Ramp Down Ex-Post Hourly", "Reserve Zone 7 - RT MCP Ramp Up Ex-Post Hourly", "Reserve Zone 7 - RT MCP Ramp Down Ex-Post Hourly", "Reserve Zone 8 - RT MCP Ramp Up Ex-Post Hourly", "Reserve Zone 8 - RT MCP Ramp Down Ex-Post Hourly",): numpy.dtypes.Float64DType,
-            ("Hour Ending",): pandas.core.arrays.integer.Int64Dtype,
-            ("Preliminary / Final",): pandas.core.arrays.string_.StringDtype,
-            ("Market Date",): numpy.dtypes.DateTime64DType,
+            ("Reserve Zone 1 - RT MCP Ramp Up Ex-Post Hourly", "Reserve Zone 1 - RT MCP Ramp Down Ex-Post Hourly", "Reserve Zone 2 - RT MCP Ramp Up Ex-Post Hourly", "Reserve Zone 2 - RT MCP Ramp Down Ex-Post Hourly", "Reserve Zone 3 - RT MCP Ramp Up Ex-Post Hourly", "Reserve Zone 3 - RT MCP Ramp Down Ex-Post Hourly", "Reserve Zone 4 - RT MCP Ramp Up Ex-Post Hourly", "Reserve Zone 4 - RT MCP Ramp Down Ex-Post Hourly", "Reserve Zone 5 - RT MCP Ramp Up Ex-Post Hourly", "Reserve Zone 5 - RT MCP Ramp Down Ex-Post Hourly", "Reserve Zone 6 - RT MCP Ramp Up Ex-Post Hourly", "Reserve Zone 6 - RT MCP Ramp Down Ex-Post Hourly", "Reserve Zone 7 - RT MCP Ramp Up Ex-Post Hourly", "Reserve Zone 7 - RT MCP Ramp Down Ex-Post Hourly", "Reserve Zone 8 - RT MCP Ramp Up Ex-Post Hourly", "Reserve Zone 8 - RT MCP Ramp Down Ex-Post Hourly",): pd.api.types.is_float_dtype,
+            ("Hour Ending",): pd.api.types.is_integer_dtype,
+            ("Preliminary / Final",): pd.api.types.is_string_dtype,
+            ("Market Date",): pd.api.types.is_datetime64_ns_dtype,
         }
     ),
     (
         "rt_expost_ramp_5min_mcp", 
         {
-            ("Reserve Zone 1 - RT MCP Ramp Up Ex-Post 5 Min", "Reserve Zone 1 - RT MCP Ramp Down Ex-Post 5 Min", "Reserve Zone 2 - RT MCP Ramp Up Ex-Post 5 Min", "Reserve Zone 2 - RT MCP Ramp Down Ex-Post 5 Min", "Reserve Zone 3 - RT MCP Ramp Up Ex-Post 5 Min", "Reserve Zone 3 - RT MCP Ramp Down Ex-Post 5 Min", "Reserve Zone 4 - RT MCP Ramp Up Ex-Post 5 Min", "Reserve Zone 4 - RT MCP Ramp Down Ex-Post 5 Min", "Reserve Zone 5 - RT MCP Ramp Up Ex-Post 5 Min", "Reserve Zone 5 - RT MCP Ramp Down Ex-Post 5 Min", "Reserve Zone 6 - RT MCP Ramp Up Ex-Post 5 Min", "Reserve Zone 6 - RT MCP Ramp Down Ex-Post 5 Min", "Reserve Zone 7 - RT MCP Ramp Up Ex-Post 5 Min", "Reserve Zone 7 - RT MCP Ramp Down Ex-Post 5 Min", "Reserve Zone 8 - RT MCP Ramp Up Ex-Post 5 Min", "Reserve Zone 8 - RT MCP Ramp Down Ex-Post 5 Min",): numpy.dtypes.Float64DType,
-            ("Preliminary / Final",): pandas.core.arrays.string_.StringDtype,
-            ("Time (EST)",): numpy.dtypes.DateTime64DType,
+            ("Reserve Zone 1 - RT MCP Ramp Up Ex-Post 5 Min", "Reserve Zone 1 - RT MCP Ramp Down Ex-Post 5 Min", "Reserve Zone 2 - RT MCP Ramp Up Ex-Post 5 Min", "Reserve Zone 2 - RT MCP Ramp Down Ex-Post 5 Min", "Reserve Zone 3 - RT MCP Ramp Up Ex-Post 5 Min", "Reserve Zone 3 - RT MCP Ramp Down Ex-Post 5 Min", "Reserve Zone 4 - RT MCP Ramp Up Ex-Post 5 Min", "Reserve Zone 4 - RT MCP Ramp Down Ex-Post 5 Min", "Reserve Zone 5 - RT MCP Ramp Up Ex-Post 5 Min", "Reserve Zone 5 - RT MCP Ramp Down Ex-Post 5 Min", "Reserve Zone 6 - RT MCP Ramp Up Ex-Post 5 Min", "Reserve Zone 6 - RT MCP Ramp Down Ex-Post 5 Min", "Reserve Zone 7 - RT MCP Ramp Up Ex-Post 5 Min", "Reserve Zone 7 - RT MCP Ramp Down Ex-Post 5 Min", "Reserve Zone 8 - RT MCP Ramp Up Ex-Post 5 Min", "Reserve Zone 8 - RT MCP Ramp Down Ex-Post 5 Min",): pd.api.types.is_float_dtype,
+            ("Preliminary / Final",): pd.api.types.is_string_dtype,
+            ("Time (EST)",): pd.api.types.is_datetime64_ns_dtype,
         }
     ),
     (
         "da_expost_str_mcp", 
         {
-            ("Reserve Zone 1", "Reserve Zone 2", "Reserve Zone 3", "Reserve Zone 4", "Reserve Zone 5", "Reserve Zone 6", "Reserve Zone 7", "Reserve Zone 8",): numpy.dtypes.Float64DType,
-            ("Hour Ending",): pandas.core.arrays.integer.Int64Dtype,
+            ("Reserve Zone 1", "Reserve Zone 2", "Reserve Zone 3", "Reserve Zone 4", "Reserve Zone 5", "Reserve Zone 6", "Reserve Zone 7", "Reserve Zone 8",): pd.api.types.is_float_dtype,
+            ("Hour Ending",): pd.api.types.is_integer_dtype,
         }
     ),
     (
         "da_expost_ramp_mcp", 
         {
-            ("Reserve Zone 1 - DA MCP Ramp Up Ex-Post 1 Hour", "Reserve Zone 1 - DA MCP Ramp Down Ex-Post 1 Hour", "Reserve Zone 2 - DA MCP Ramp Up Ex-Post 1 Hour", "Reserve Zone 2 - DA MCP Ramp Down Ex-Post 1 Hour", "Reserve Zone 3 - DA MCP Ramp Up Ex-Post 1 Hour", "Reserve Zone 3 - DA MCP Ramp Down Ex-Post 1 Hour", "Reserve Zone 4 - DA MCP Ramp Up Ex-Post 1 Hour", "Reserve Zone 4 - DA MCP Ramp Down Ex-Post 1 Hour", "Reserve Zone 5 - DA MCP Ramp Up Ex-Post 1 Hour", "Reserve Zone 5 - DA MCP Ramp Down Ex-Post 1 Hour", "Reserve Zone 6 - DA MCP Ramp Up Ex-Post 1 Hour", "Reserve Zone 6 - DA MCP Ramp Down Ex-Post 1 Hour", "Reserve Zone 7 - DA MCP Ramp Up Ex-Post 1 Hour", "Reserve Zone 7 - DA MCP Ramp Down Ex-Post 1 Hour", "Reserve Zone 8 - DA MCP Ramp Up Ex-Post 1 Hour", "Reserve Zone 8 - DA MCP Ramp Down Ex-Post 1 Hour",): numpy.dtypes.Float64DType,
-            ("Hour Ending",): pandas.core.arrays.integer.Int64Dtype,
+            ("Reserve Zone 1 - DA MCP Ramp Up Ex-Post 1 Hour", "Reserve Zone 1 - DA MCP Ramp Down Ex-Post 1 Hour", "Reserve Zone 2 - DA MCP Ramp Up Ex-Post 1 Hour", "Reserve Zone 2 - DA MCP Ramp Down Ex-Post 1 Hour", "Reserve Zone 3 - DA MCP Ramp Up Ex-Post 1 Hour", "Reserve Zone 3 - DA MCP Ramp Down Ex-Post 1 Hour", "Reserve Zone 4 - DA MCP Ramp Up Ex-Post 1 Hour", "Reserve Zone 4 - DA MCP Ramp Down Ex-Post 1 Hour", "Reserve Zone 5 - DA MCP Ramp Up Ex-Post 1 Hour", "Reserve Zone 5 - DA MCP Ramp Down Ex-Post 1 Hour", "Reserve Zone 6 - DA MCP Ramp Up Ex-Post 1 Hour", "Reserve Zone 6 - DA MCP Ramp Down Ex-Post 1 Hour", "Reserve Zone 7 - DA MCP Ramp Up Ex-Post 1 Hour", "Reserve Zone 7 - DA MCP Ramp Down Ex-Post 1 Hour", "Reserve Zone 8 - DA MCP Ramp Up Ex-Post 1 Hour", "Reserve Zone 8 - DA MCP Ramp Down Ex-Post 1 Hour",): pd.api.types.is_float_dtype,
+            ("Hour Ending",): pd.api.types.is_integer_dtype,
         }
     ),
     (
         "da_exante_str_mcp", 
         {
-            ("Reserve Zone 1", "Reserve Zone 2", "Reserve Zone 3", "Reserve Zone 4", "Reserve Zone 5", "Reserve Zone 6", "Reserve Zone 7", "Reserve Zone 8",): numpy.dtypes.Float64DType,
-            ("Hour Ending",): pandas.core.arrays.integer.Int64Dtype,
+            ("Reserve Zone 1", "Reserve Zone 2", "Reserve Zone 3", "Reserve Zone 4", "Reserve Zone 5", "Reserve Zone 6", "Reserve Zone 7", "Reserve Zone 8",): pd.api.types.is_float_dtype,
+            ("Hour Ending",): pd.api.types.is_integer_dtype,
         }
     ),
     (
         "da_exante_ramp_mcp", 
         {
-            ("Reserve Zone 1 - DA MCP Ramp Up Ex-Ante 1 Hour", "Reserve Zone 1 - DA MCP Ramp Down Ex-Ante 1 Hour", "Reserve Zone 2 - DA MCP Ramp Up Ex-Ante 1 Hour", "Reserve Zone 2 - DA MCP Ramp Down Ex-Ante 1 Hour", "Reserve Zone 3 - DA MCP Ramp Up Ex-Ante 1 Hour", "Reserve Zone 3 - DA MCP Ramp Down Ex-Ante 1 Hour", "Reserve Zone 4 - DA MCP Ramp Up Ex-Ante 1 Hour", "Reserve Zone 4 - DA MCP Ramp Down Ex-Ante 1 Hour", "Reserve Zone 5 - DA MCP Ramp Up Ex-Ante 1 Hour", "Reserve Zone 5 - DA MCP Ramp Down Ex-Ante 1 Hour", "Reserve Zone 6 - DA MCP Ramp Up Ex-Ante 1 Hour", "Reserve Zone 6 - DA MCP Ramp Down Ex-Ante 1 Hour", "Reserve Zone 7 - DA MCP Ramp Up Ex-Ante 1 Hour", "Reserve Zone 7 - DA MCP Ramp Down Ex-Ante 1 Hour", "Reserve Zone 8 - DA MCP Ramp Up Ex-Ante 1 Hour", "Reserve Zone 8 - DA MCP Ramp Down Ex-Ante 1 Hour",): numpy.dtypes.Float64DType,
-            ("Hour Ending",): pandas.core.arrays.integer.Int64Dtype,
+            ("Reserve Zone 1 - DA MCP Ramp Up Ex-Ante 1 Hour", "Reserve Zone 1 - DA MCP Ramp Down Ex-Ante 1 Hour", "Reserve Zone 2 - DA MCP Ramp Up Ex-Ante 1 Hour", "Reserve Zone 2 - DA MCP Ramp Down Ex-Ante 1 Hour", "Reserve Zone 3 - DA MCP Ramp Up Ex-Ante 1 Hour", "Reserve Zone 3 - DA MCP Ramp Down Ex-Ante 1 Hour", "Reserve Zone 4 - DA MCP Ramp Up Ex-Ante 1 Hour", "Reserve Zone 4 - DA MCP Ramp Down Ex-Ante 1 Hour", "Reserve Zone 5 - DA MCP Ramp Up Ex-Ante 1 Hour", "Reserve Zone 5 - DA MCP Ramp Down Ex-Ante 1 Hour", "Reserve Zone 6 - DA MCP Ramp Up Ex-Ante 1 Hour", "Reserve Zone 6 - DA MCP Ramp Down Ex-Ante 1 Hour", "Reserve Zone 7 - DA MCP Ramp Up Ex-Ante 1 Hour", "Reserve Zone 7 - DA MCP Ramp Down Ex-Ante 1 Hour", "Reserve Zone 8 - DA MCP Ramp Up Ex-Ante 1 Hour", "Reserve Zone 8 - DA MCP Ramp Down Ex-Ante 1 Hour",): pd.api.types.is_float_dtype,
+            ("Hour Ending",): pd.api.types.is_integer_dtype,
         }
     ),
     (
         "regionaldirectionaltransfer", 
         {
-            ("NORTH_SOUTH_LIMIT", "SOUTH_NORTH_LIMIT", "RAW_MW", " UDSFLOW_MW",): pandas.core.arrays.integer.Int64Dtype,
-            ("INTERVALEST",): numpy.dtypes.DateTime64DType,
+            ("NORTH_SOUTH_LIMIT", "SOUTH_NORTH_LIMIT", "RAW_MW", " UDSFLOW_MW",): pd.api.types.is_integer_dtype,
+            ("INTERVALEST",): pd.api.types.is_datetime64_ns_dtype,
         }
     ),
     (
         "NAI", 
         {
-            ("Value",): numpy.dtypes.Float64DType,
-            ("Name",): pandas.core.arrays.string_.StringDtype,
+            ("Value",): pd.api.types.is_float_dtype,
+            ("Name",): pd.api.types.is_string_dtype,
         }
     ),
     (
         "Total_Uplift_by_Resource", 
         {
-            ("Total Uplift Amount",): numpy.dtypes.Float64DType,
-            ("Resource Name",): pandas.core.arrays.string_.StringDtype,
+            ("Total Uplift Amount",): pd.api.types.is_float_dtype,
+            ("Resource Name",): pd.api.types.is_string_dtype,
         }
     ),
     (
         "ccf_co", 
         {
-            ("HOUR1", "HOUR2", "HOUR3", "HOUR4", "HOUR5", "HOUR6", "HOUR7", "HOUR8", "HOUR9", "HOUR10", "HOUR11", "HOUR12", "HOUR13", "HOUR14", "HOUR15", "HOUR16", "HOUR17", "HOUR18", "HOUR19", "HOUR20", "HOUR21", "HOUR22", "HOUR23", "HOUR24",): numpy.dtypes.Float64DType,
-            ("CONSTRAINT NAME", "NODE NAME",): pandas.core.arrays.string_.StringDtype,
-            ("OPERATING DATE",): numpy.dtypes.DateTime64DType,
+            ("HOUR1", "HOUR2", "HOUR3", "HOUR4", "HOUR5", "HOUR6", "HOUR7", "HOUR8", "HOUR9", "HOUR10", "HOUR11", "HOUR12", "HOUR13", "HOUR14", "HOUR15", "HOUR16", "HOUR17", "HOUR18", "HOUR19", "HOUR20", "HOUR21", "HOUR22", "HOUR23", "HOUR24",): pd.api.types.is_float_dtype,
+            ("CONSTRAINT NAME", "NODE NAME",): pd.api.types.is_string_dtype,
+            ("OPERATING DATE",): pd.api.types.is_datetime64_ns_dtype,
         }
     ),
     (
         "ms_vlr_HIST", 
         {
-            ("DA_VLR_MWP", "RT_VLR_MWP", "DA+RT Total",): numpy.dtypes.Float64DType,
-            ("SETTLEMENT RUN",): pandas.core.arrays.integer.Int64Dtype,
-            ("REGION", "CONSTRAINT",): pandas.core.arrays.string_.StringDtype,
-            ("OPERATING DATE",): numpy.dtypes.DateTime64DType,
+            ("DA_VLR_MWP", "RT_VLR_MWP", "DA+RT Total",): pd.api.types.is_float_dtype,
+            ("SETTLEMENT RUN",): pd.api.types.is_integer_dtype,
+            ("REGION", "CONSTRAINT",): pd.api.types.is_string_dtype,
+            ("OPERATING DATE",): pd.api.types.is_datetime64_ns_dtype,
         }
     ),
     (
         "fuelmix", 
         {
-            ("ACT", "TOTALMW",): pandas.core.arrays.integer.Int64Dtype,
-            ("CATEGORY",): pandas.core.arrays.string_.StringDtype,
-            ("INTERVALEST",): numpy.dtypes.DateTime64DType,
+            ("ACT", "TOTALMW",): pd.api.types.is_integer_dtype,
+            ("CATEGORY",): pd.api.types.is_string_dtype,
+            ("INTERVALEST",): pd.api.types.is_datetime64_ns_dtype,
         }
     ),
     (
         "ace", 
         {
-            ("value",): numpy.dtypes.Float64DType,
-            ("instantEST",): numpy.dtypes.DateTime64DType,
+            ("value",): pd.api.types.is_float_dtype,
+            ("instantEST",): pd.api.types.is_datetime64_ns_dtype,
         }
     ),
     (
         "cts", 
         {
-            ("PJMFORECASTEDLMP",): numpy.dtypes.Float64DType,
-            ("CASEAPPROVALDATE", "SOLUTIONTIME",): numpy.dtypes.DateTime64DType,
+            ("PJMFORECASTEDLMP",): pd.api.types.is_float_dtype,
+            ("CASEAPPROVALDATE", "SOLUTIONTIME",): pd.api.types.is_datetime64_ns_dtype,
         }
     ),
     (
         "WindForecast", 
         {
-            ("Value",): numpy.dtypes.Float64DType,
-            ("HourEndingEST",): pandas.core.arrays.integer.Int64Dtype,
-            ("DateTimeEST",): numpy.dtypes.DateTime64DType,
+            ("Value",): pd.api.types.is_float_dtype,
+            ("HourEndingEST",): pd.api.types.is_integer_dtype,
+            ("DateTimeEST",): pd.api.types.is_datetime64_ns_dtype,
         }
     ),
     (
         "Wind", 
         {
-            ("ForecastValue", "ActualValue",): numpy.dtypes.Float64DType,
-            ("ForecastHourEndingEST", "ActualHourEndingEST",): pandas.core.arrays.integer.Int64Dtype,
-            ("ForecastDateTimeEST", "ActualDateTimeEST",): numpy.dtypes.DateTime64DType,
+            ("ForecastValue", "ActualValue",): pd.api.types.is_float_dtype,
+            ("ForecastHourEndingEST", "ActualHourEndingEST",): pd.api.types.is_integer_dtype,
+            ("ForecastDateTimeEST", "ActualDateTimeEST",): pd.api.types.is_datetime64_ns_dtype,
         }
     ),
     (
         "Solar", 
         {
-            ("ForecastValue", "ActualValue",): numpy.dtypes.Float64DType,
-            ("ForecastHourEndingEST", "ActualHourEndingEST",): pandas.core.arrays.integer.Int64Dtype,
-            ("ForecastDateTimeEST", "ActualDateTimeEST",): numpy.dtypes.DateTime64DType,
+            ("ForecastValue", "ActualValue",): pd.api.types.is_float_dtype,
+            ("ForecastHourEndingEST", "ActualHourEndingEST",): pd.api.types.is_integer_dtype,
+            ("ForecastDateTimeEST", "ActualDateTimeEST",): pd.api.types.is_datetime64_ns_dtype,
         }
     ),
     (
         "exantelmp", 
         {
-            ("LMP", "Loss", "Congestion",): numpy.dtypes.Float64DType,
-            ("Name",): pandas.core.arrays.string_.StringDtype,
+            ("LMP", "Loss", "Congestion",): pd.api.types.is_float_dtype,
+            ("Name",): pd.api.types.is_string_dtype,
         }
     ),
     (
         "da_exante_lmp", 
         {
-            ("HE 1", "HE 2", "HE 3", "HE 4", "HE 5", "HE 6", "HE 7", "HE 8", "HE 9", "HE 10", "HE 11", "HE 12", "HE 13", "HE 14", "HE 15", "HE 16", "HE 17", "HE 18", "HE 19", "HE 20", "HE 21", "HE 22", "HE 23", "HE 24",): numpy.dtypes.Float64DType,
-            ("Node", "Type", "Value",): pandas.core.arrays.string_.StringDtype,
+            ("HE 1", "HE 2", "HE 3", "HE 4", "HE 5", "HE 6", "HE 7", "HE 8", "HE 9", "HE 10", "HE 11", "HE 12", "HE 13", "HE 14", "HE 15", "HE 16", "HE 17", "HE 18", "HE 19", "HE 20", "HE 21", "HE 22", "HE 23", "HE 24",): pd.api.types.is_float_dtype,
+            ("Node", "Type", "Value",): pd.api.types.is_string_dtype,
         }
     ),
     (
         "da_expost_lmp", 
         {
-            ("HE 1", "HE 2", "HE 3", "HE 4", "HE 5", "HE 6", "HE 7", "HE 8", "HE 9", "HE 10", "HE 11", "HE 12", "HE 13", "HE 14", "HE 15", "HE 16", "HE 17", "HE 18", "HE 19", "HE 20", "HE 21", "HE 22", "HE 23", "HE 24",): numpy.dtypes.Float64DType,
-            ("Node", "Type", "Value",): pandas.core.arrays.string_.StringDtype,
+            ("HE 1", "HE 2", "HE 3", "HE 4", "HE 5", "HE 6", "HE 7", "HE 8", "HE 9", "HE 10", "HE 11", "HE 12", "HE 13", "HE 14", "HE 15", "HE 16", "HE 17", "HE 18", "HE 19", "HE 20", "HE 21", "HE 22", "HE 23", "HE 24",): pd.api.types.is_float_dtype,
+            ("Node", "Type", "Value",): pd.api.types.is_string_dtype,
         }
     ),
     (
         "rt_lmp_final", 
         {
-            ("HE 1", "HE 2", "HE 3", "HE 4", "HE 5", "HE 6", "HE 7", "HE 8", "HE 9", "HE 10", "HE 11", "HE 12", "HE 13", "HE 14", "HE 15", "HE 16", "HE 17", "HE 18", "HE 19", "HE 20", "HE 21", "HE 22", "HE 23", "HE 24",): numpy.dtypes.Float64DType,
-            ("Node", "Type", "Value",): pandas.core.arrays.string_.StringDtype,
+            ("HE 1", "HE 2", "HE 3", "HE 4", "HE 5", "HE 6", "HE 7", "HE 8", "HE 9", "HE 10", "HE 11", "HE 12", "HE 13", "HE 14", "HE 15", "HE 16", "HE 17", "HE 18", "HE 19", "HE 20", "HE 21", "HE 22", "HE 23", "HE 24",): pd.api.types.is_float_dtype,
+            ("Node", "Type", "Value",): pd.api.types.is_string_dtype,
         }
     ),
     (
         "rt_lmp_prelim", 
         {
-            ("HE 1", "HE 2", "HE 3", "HE 4", "HE 5", "HE 6", "HE 7", "HE 8", "HE 9", "HE 10", "HE 11", "HE 12", "HE 13", "HE 14", "HE 15", "HE 16", "HE 17", "HE 18", "HE 19", "HE 20", "HE 21", "HE 22", "HE 23", "HE 24",): numpy.dtypes.Float64DType,
-            ("Node", "Type", "Value",): pandas.core.arrays.string_.StringDtype,
+            ("HE 1", "HE 2", "HE 3", "HE 4", "HE 5", "HE 6", "HE 7", "HE 8", "HE 9", "HE 10", "HE 11", "HE 12", "HE 13", "HE 14", "HE 15", "HE 16", "HE 17", "HE 18", "HE 19", "HE 20", "HE 21", "HE 22", "HE 23", "HE 24",): pd.api.types.is_float_dtype,
+            ("Node", "Type", "Value",): pd.api.types.is_string_dtype,
         }
     ),
     (
         "DA_Load_EPNodes", 
         {
-            ("HE1", "HE2", "HE3", "HE4", "HE5", "HE6", "HE7", "HE8", "HE9", "HE10", "HE11", "HE12", "HE13", "HE14", "HE15", "HE16", "HE17", "HE18", "HE19", "HE20", "HE21", "HE22", "HE23", "HE24",): numpy.dtypes.Float64DType,
-            ("EPNode", "Value",): pandas.core.arrays.string_.StringDtype,
+            ("HE1", "HE2", "HE3", "HE4", "HE5", "HE6", "HE7", "HE8", "HE9", "HE10", "HE11", "HE12", "HE13", "HE14", "HE15", "HE16", "HE17", "HE18", "HE19", "HE20", "HE21", "HE22", "HE23", "HE24",): pd.api.types.is_float_dtype,
+            ("EPNode", "Value",): pd.api.types.is_string_dtype,
         }
     ),
     (
         "5min_exante_lmp", 
         {
-            ("RT Ex-Ante LMP", "RT Ex-Ante MEC", "RT Ex-Ante MLC", "RT Ex-Ante MCC",): numpy.dtypes.Float64DType,
-            ("CP Node",): pandas.core.arrays.string_.StringDtype,
-            ("Time (EST)",): numpy.dtypes.DateTime64DType,
+            ("RT Ex-Ante LMP", "RT Ex-Ante MEC", "RT Ex-Ante MLC", "RT Ex-Ante MCC",): pd.api.types.is_float_dtype,
+            ("CP Node",): pd.api.types.is_string_dtype,
+            ("Time (EST)",): pd.api.types.is_datetime64_ns_dtype,
         }
     ),
     (
         "SolarActual", 
         {
-            ("Value",): numpy.dtypes.Float64DType,
-            ("HourEndingEST",): pandas.core.arrays.integer.Int64Dtype,
-            ("DateTimeEST",): numpy.dtypes.DateTime64DType,
+            ("Value",): pd.api.types.is_float_dtype,
+            ("HourEndingEST",): pd.api.types.is_integer_dtype,
+            ("DateTimeEST",): pd.api.types.is_datetime64_ns_dtype,
         }
     ),
     (
         "WindActual", 
         {
-            ("Value",): numpy.dtypes.Float64DType,
-            ("HourEndingEST",): pandas.core.arrays.integer.Int64Dtype,
-            ("DateTimeEST",): numpy.dtypes.DateTime64DType,
+            ("Value",): pd.api.types.is_float_dtype,
+            ("HourEndingEST",): pd.api.types.is_integer_dtype,
+            ("DateTimeEST",): pd.api.types.is_datetime64_ns_dtype,
         }
     ),
     (
         "RSG", 
         {
-            ("TOTAL_ECON_MAX",): numpy.dtypes.Float64DType,
-            ("COMMIT_REASON", "NUM_RESOURCES",): pandas.core.arrays.string_.StringDtype,
-            ("MKT_INT_END_EST",): numpy.dtypes.DateTime64DType,
+            ("TOTAL_ECON_MAX",): pd.api.types.is_float_dtype,
+            ("COMMIT_REASON", "NUM_RESOURCES",): pd.api.types.is_string_dtype,
+            ("MKT_INT_END_EST",): pd.api.types.is_datetime64_ns_dtype,
         }
     ),
     (
         "reservebindingconstraints", 
         {
-            ("Price",): numpy.dtypes.Float64DType,
-            ("Name", "Description",): pandas.core.arrays.string_.StringDtype,
-            ("Period",): numpy.dtypes.DateTime64DType,
+            ("Price",): pd.api.types.is_float_dtype,
+            ("Name", "Description",): pd.api.types.is_string_dtype,
+            ("Period",): pd.api.types.is_datetime64_ns_dtype,
         }
     ),
     (
         "importtotal5", 
         {
-            ("Value",): numpy.dtypes.Float64DType,
-            ("Time",): numpy.dtypes.DateTime64DType,
+            ("Value",): pd.api.types.is_float_dtype,
+            ("Time",): pd.api.types.is_datetime64_ns_dtype,
         }
     ),
     (
         "nsi5miso", 
         {
-            ("timestamp",): numpy.dtypes.DateTime64DType,
-            ("NSI",): pandas.core.arrays.integer.Int64Dtype,
+            ("timestamp",): pd.api.types.is_datetime64_ns_dtype,
+            ("NSI",): pd.api.types.is_integer_dtype,
         }
     ),
     (
         "nsi1miso", 
         {
-            ("NSI",): pandas.core.arrays.integer.Int64Dtype,
-            ("timestamp",): numpy.dtypes.DateTime64DType,
+            ("NSI",): pd.api.types.is_integer_dtype,
+            ("timestamp",): pd.api.types.is_datetime64_ns_dtype,
         }
     ),
     (
         "RT_LMPs",
         {
-            ("HE1", "HE2", "HE3", "HE4", "HE5", "HE6", "HE7", "HE8", "HE9", "HE10", "HE11", "HE12", "HE13", "HE14", "HE15", "HE16", "HE17", "HE18", "HE19", "HE20", "HE21", "HE22", "HE23", "HE24",): numpy.dtypes.Float64DType,
-            ("NODE", "TYPE", "VALUE",): pandas.core.arrays.string_.StringDtype,
-            ("MARKET_DAY",): numpy.dtypes.DateTime64DType,
+            ("HE1", "HE2", "HE3", "HE4", "HE5", "HE6", "HE7", "HE8", "HE9", "HE10", "HE11", "HE12", "HE13", "HE14", "HE15", "HE16", "HE17", "HE18", "HE19", "HE20", "HE21", "HE22", "HE23", "HE24",): pd.api.types.is_float_dtype,
+            ("NODE", "TYPE", "VALUE",): pd.api.types.is_string_dtype,
+            ("MARKET_DAY",): pd.api.types.is_datetime64_ns_dtype,
         }
     ),
     (
         "dfal_HIST",
         {
-            ("MTLF (MWh)", "ActualLoad (MWh)",): numpy.dtypes.Float64DType,
-            ("HourEnding",): pandas.core.arrays.integer.Int64Dtype,
-            ("LoadResource Zone",): pandas.core.arrays.string_.StringDtype,
-            ("MarketDay",): numpy.dtypes.DateTime64DType,
+            ("MTLF (MWh)", "ActualLoad (MWh)",): pd.api.types.is_float_dtype,
+            ("HourEnding",): pd.api.types.is_integer_dtype,
+            ("LoadResource Zone",): pd.api.types.is_string_dtype,
+            ("MarketDay",): pd.api.types.is_datetime64_ns_dtype,
         }
     ),
     (
         "historical_gen_fuel_mix", 
         {
-            ("DA Cleared UDS Generation", "[RT Generation State Estimator",): numpy.dtypes.Float64DType,
-            ("HourEnding",): pandas.core.arrays.integer.Int64Dtype,
-            ("Region", "Fuel Type",): pandas.core.arrays.string_.StringDtype,
-            ("Market Date",): numpy.dtypes.DateTime64DType,
+            ("DA Cleared UDS Generation", "[RT Generation State Estimator",): pd.api.types.is_float_dtype,
+            ("HourEnding",): pd.api.types.is_integer_dtype,
+            ("Region", "Fuel Type",): pd.api.types.is_string_dtype,
+            ("Market Date",): pd.api.types.is_datetime64_ns_dtype,
         }
     ),
     (
         "hwd_HIST", 
         {
-            ("MWh",): numpy.dtypes.Float64DType,
-            ("Hour Ending",): pandas.core.arrays.integer.Int64Dtype,
-            ("Market Day	",): numpy.dtypes.DateTime64DType,
+            ("MWh",): pd.api.types.is_float_dtype,
+            ("Hour Ending",): pd.api.types.is_integer_dtype,
+            ("Market Day	",): pd.api.types.is_datetime64_ns_dtype,
         }
     ),
     (
         "sr_hist_is",
         {
-            ("HE1", "HE2", "HE3", "HE4", "HE5", "HE6", "HE7", "HE8", "HE9", "HE10", "HE11", "HE12", "HE13", "HE14", "HE15", "HE16", "HE17", "HE18", "HE19", "HE20", "HE21", "HE22", "HE23", "HE24",): pandas.core.arrays.integer.Int64Dtype,
-            ("INTERFACE",): pandas.core.arrays.string_.StringDtype,
-            ("MKTDAY",): numpy.dtypes.DateTime64DType,
+            ("HE1", "HE2", "HE3", "HE4", "HE5", "HE6", "HE7", "HE8", "HE9", "HE10", "HE11", "HE12", "HE13", "HE14", "HE15", "HE16", "HE17", "HE18", "HE19", "HE20", "HE21", "HE22", "HE23", "HE24",): pd.api.types.is_integer_dtype,
+            ("INTERFACE",): pd.api.types.is_string_dtype,
+            ("MKTDAY",): pd.api.types.is_datetime64_ns_dtype,
         }
     ),
     (
         "rfal_HIST", 
         {
-            ("MTLF (MWh)", "Actual Load (MWh)",): numpy.dtypes.Float64DType,
-            ("HourEnding",): pandas.core.arrays.integer.Int64Dtype,
-            ("Region", "Footnote",): pandas.core.arrays.string_.StringDtype,
-            ("Market Day",): numpy.dtypes.DateTime64DType,
+            ("MTLF (MWh)", "Actual Load (MWh)",): pd.api.types.is_float_dtype,
+            ("HourEnding",): pd.api.types.is_integer_dtype,
+            ("Region", "Footnote",): pd.api.types.is_string_dtype,
+            ("Market Day",): pd.api.types.is_datetime64_ns_dtype,
         }
     ),
     (
         "sr_lt",
          {
-            ("Minimum (GW)", "Average (GW)", "Maximum (GW)",): numpy.dtypes.Float64DType,
-            ("Week Starting",): numpy.dtypes.DateTime64DType,
+            ("Minimum (GW)", "Average (GW)", "Maximum (GW)",): pd.api.types.is_float_dtype,
+            ("Week Starting",): pd.api.types.is_datetime64_ns_dtype,
         }
     ),
     (
         "sr_nd_is",
         {
-            ("Hour", "GLHB", "IESO", "MHEB", "PJM", "SOCO", "SWPP", "TVA", "AECI", "LGEE", "Other", "Total",): pandas.core.arrays.integer.Int64Dtype,
+            ("Hour", "GLHB", "IESO", "MHEB", "PJM", "SOCO", "SWPP", "TVA", "AECI", "LGEE", "Other", "Total",): pd.api.types.is_integer_dtype,
         }
     ),
     (
         "sr_tcdc_group2",
         {
-            ("BP1", "PC1", "BP2", "PC2",): numpy.dtypes.Float64DType,
-            ("ContingencyName", "ContingencyDescription", "BranchName", "CurveName", "Reason",): pandas.core.arrays.string_.StringDtype,
-            ("EffectiveTime", "TerminationTime",): numpy.dtypes.DateTime64DType,
+            ("BP1", "PC1", "BP2", "PC2",): pd.api.types.is_float_dtype,
+            ("ContingencyName", "ContingencyDescription", "BranchName", "CurveName", "Reason",): pd.api.types.is_string_dtype,
+            ("EffectiveTime", "TerminationTime",): pd.api.types.is_datetime64_ns_dtype,
         }
     ),
 ]
@@ -962,11 +956,11 @@ def test_get_df_single_df_correct_columns(report_name, columns_mapping, datetime
     if columns_mapping_columns_set != df_columns_set:
         raise ValueError(f"Expected columns {columns_mapping_columns_set} do not match df columns {df_columns_set}.")
 
-    for columns_tuple, column_type in columns_mapping.items():
+    for columns_tuple, dtype_checker in columns_mapping.items():
         columns = list(columns_tuple)
         
-        assert frozenset([column_type]) == get_dtype_frozenset(df, columns), \
-            f"For report {report_name}, columns {columns} are not of type {column_type}."
+        assert uses_correct_dtypes(df, columns, dtype_checker), \
+            f"For report {report_name}, columns {columns} are not of type {dtype_checker}."
 
 
 multiple_dfs_test_list = [
@@ -974,19 +968,19 @@ multiple_dfs_test_list = [
         "ms_rnu_srw",
         {
             "MKT TOT": {
-                ("JOA_MISO_UPLIFT", "MISO_RT_GFACO_DIST", "MISO_RT_GFAOB_DIST", "MISO_RT_RSG_DIST2", "RT_CC", "DA_RI", "RT_RI", "ASM_RI", "STRDFC_UPLIFT", "CRDFC_UPLIFT", "MISO_PV_MWP_UPLIFT", "MISO_DRR_COMP_UPL", "MISO_TOT_MIL_UPL", "RC_DIST", "TOTAL RNU",): numpy.dtypes.Float64DType,
-                ("previous 36 months",): pandas.core.arrays.string_.StringDtype,
-                ("START", "STOP",): numpy.dtypes.DateTime64DType,
+                ("JOA_MISO_UPLIFT", "MISO_RT_GFACO_DIST", "MISO_RT_GFAOB_DIST", "MISO_RT_RSG_DIST2", "RT_CC", "DA_RI", "RT_RI", "ASM_RI", "STRDFC_UPLIFT", "CRDFC_UPLIFT", "MISO_PV_MWP_UPLIFT", "MISO_DRR_COMP_UPL", "MISO_TOT_MIL_UPL", "RC_DIST", "TOTAL RNU",): pd.api.types.is_float_dtype,
+                ("previous 36 months",): pd.api.types.is_string_dtype,
+                ("START", "STOP",): pd.api.types.is_datetime64_ns_dtype,
             },
             "hourly miso_rt_bill_mtr": {
-                ("HE1", "HE2", "HE3", "HE4", "HE5", "HE6", "HE7", "HE8", "HE9", "HE10", "HE11", "HE12", "HE13", "HE14", "HE15", "HE16", "HE17", "HE18", "HE19", "HE20", "HE21", "HE22", "HE23", "HE24",): numpy.dtypes.Float64DType,
-                ("CHANNEL",): pandas.core.arrays.integer.Int64Dtype,
-                ("BILL_DETERMINANT",): pandas.core.arrays.string_.StringDtype,
-                ("STARTTIME",): numpy.dtypes.DateTime64DType,
+                ("HE1", "HE2", "HE3", "HE4", "HE5", "HE6", "HE7", "HE8", "HE9", "HE10", "HE11", "HE12", "HE13", "HE14", "HE15", "HE16", "HE17", "HE18", "HE19", "HE20", "HE21", "HE22", "HE23", "HE24",): pd.api.types.is_float_dtype,
+                ("CHANNEL",): pd.api.types.is_integer_dtype,
+                ("BILL_DETERMINANT",): pd.api.types.is_string_dtype,
+                ("STARTTIME",): pd.api.types.is_datetime64_ns_dtype,
             },
             "RT CC JOA column": {
-                ("RT CC", "RT JOA", "NET",): numpy.dtypes.Float64DType,
-                ("HRBEG",): numpy.dtypes.DateTime64DType,
+                ("RT CC", "RT JOA", "NET",): pd.api.types.is_float_dtype,
+                ("HRBEG",): pd.api.types.is_datetime64_ns_dtype,
             },
         },
     ),
@@ -994,10 +988,10 @@ multiple_dfs_test_list = [
         "PeakHourOverview",
         {
             "SYSTEM RESOURCE CAPACITY": {
-                ("Committed + Available Short-Lead Generation", "NSI", "Behind-Meter Generation", "Total Resources",): pandas.core.arrays.integer.Int64Dtype,
+                ("Committed + Available Short-Lead Generation", "NSI", "Behind-Meter Generation", "Total Resources",): pd.api.types.is_integer_dtype,
             },
             "SYSTEM OBLIGATION": {
-               	("Forecasted Load", "Operating Reserve Requirement", "Total Obligation", "FORECASTED CAPACITY MARGIN",): pandas.core.arrays.integer.Int64Dtype,
+               	("Forecasted Load", "Operating Reserve Requirement", "Total Obligation", "FORECASTED CAPACITY MARGIN",): pd.api.types.is_integer_dtype,
             },
         },
     ),
@@ -1005,20 +999,20 @@ multiple_dfs_test_list = [
         "ftr_allocation_stage_1B",
         {
             "Fall": {
-                ("Limit", "Flow", "Violation",): numpy.dtypes.Float64DType,
-                ("DeviceName", "DeviceType", "ControlArea", "Direction", "Description", "Contingency", "Class", "Stage",): pandas.core.arrays.string_.StringDtype,
+                ("Limit", "Flow", "Violation",): pd.api.types.is_float_dtype,
+                ("DeviceName", "DeviceType", "ControlArea", "Direction", "Description", "Contingency", "Class", "Stage",): pd.api.types.is_string_dtype,
             },
             "Spring": {
-                ("Limit", "Flow", "Violation",): numpy.dtypes.Float64DType,
-                ("DeviceName", "DeviceType", "ControlArea", "Direction", "Description", "Contingency", "Class", "Stage",): pandas.core.arrays.string_.StringDtype,
+                ("Limit", "Flow", "Violation",): pd.api.types.is_float_dtype,
+                ("DeviceName", "DeviceType", "ControlArea", "Direction", "Description", "Contingency", "Class", "Stage",): pd.api.types.is_string_dtype,
             },
             "Summer": {
-                ("Limit", "Flow", "Violation",): numpy.dtypes.Float64DType,
-                ("DeviceName", "DeviceType", "ControlArea", "Direction", "Description", "Contingency", "Class", "Stage",): pandas.core.arrays.string_.StringDtype,
+                ("Limit", "Flow", "Violation",): pd.api.types.is_float_dtype,
+                ("DeviceName", "DeviceType", "ControlArea", "Direction", "Description", "Contingency", "Class", "Stage",): pd.api.types.is_string_dtype,
             },
             "Winter": {
-                ("Limit", "Flow", "Violation",): numpy.dtypes.Float64DType,
-                ("DeviceName", "DeviceType", "ControlArea", "Direction", "Description", "Contingency", "Class", "Stage",): pandas.core.arrays.string_.StringDtype,
+                ("Limit", "Flow", "Violation",): pd.api.types.is_float_dtype,
+                ("DeviceName", "DeviceType", "ControlArea", "Direction", "Description", "Contingency", "Class", "Stage",): pd.api.types.is_string_dtype,
             },
         },
     ),
@@ -1026,20 +1020,20 @@ multiple_dfs_test_list = [
         "ftr_allocation_stage_1A",
         {
             "Fall": {
-                ("Limit", "Flow", "Violation",): numpy.dtypes.Float64DType,
-                ("DeviceName", "DeviceType", "ControlArea", "Direction", "Description", "Contingency", "Class", "Stage",): pandas.core.arrays.string_.StringDtype,
+                ("Limit", "Flow", "Violation",): pd.api.types.is_float_dtype,
+                ("DeviceName", "DeviceType", "ControlArea", "Direction", "Description", "Contingency", "Class", "Stage",): pd.api.types.is_string_dtype,
             },
             "Spring": {
-                ("Limit", "Flow", "Violation",): numpy.dtypes.Float64DType,
-                ("DeviceName", "DeviceType", "ControlArea", "Direction", "Description", "Contingency", "Class", "Stage",): pandas.core.arrays.string_.StringDtype,
+                ("Limit", "Flow", "Violation",): pd.api.types.is_float_dtype,
+                ("DeviceName", "DeviceType", "ControlArea", "Direction", "Description", "Contingency", "Class", "Stage",): pd.api.types.is_string_dtype,
             },
             "Summer": {
-                ("Limit", "Flow", "Violation",): numpy.dtypes.Float64DType,
-                ("DeviceName", "DeviceType", "ControlArea", "Direction", "Description", "Contingency", "Class", "Stage",): pandas.core.arrays.string_.StringDtype,
+                ("Limit", "Flow", "Violation",): pd.api.types.is_float_dtype,
+                ("DeviceName", "DeviceType", "ControlArea", "Direction", "Description", "Contingency", "Class", "Stage",): pd.api.types.is_string_dtype,
             },
             "Winter": {
-                ("Limit", "Flow", "Violation",): numpy.dtypes.Float64DType,
-                ("DeviceName", "DeviceType", "ControlArea", "Direction", "Description", "Contingency", "Class", "Stage",): pandas.core.arrays.string_.StringDtype,
+                ("Limit", "Flow", "Violation",): pd.api.types.is_float_dtype,
+                ("DeviceName", "DeviceType", "ControlArea", "Direction", "Description", "Contingency", "Class", "Stage",): pd.api.types.is_string_dtype,
             },
         },
     ),
@@ -1047,20 +1041,20 @@ multiple_dfs_test_list = [
         "ftr_allocation_restoration",
         {
             "Fall": {
-                ("Limit", "Flow", "Violation",): numpy.dtypes.Float64DType,
-                ("DeviceName", "DeviceType", "ControlArea", "Direction", "Description", "Contingency", "Class", "Stage",): pandas.core.arrays.string_.StringDtype,
+                ("Limit", "Flow", "Violation",): pd.api.types.is_float_dtype,
+                ("DeviceName", "DeviceType", "ControlArea", "Direction", "Description", "Contingency", "Class", "Stage",): pd.api.types.is_string_dtype,
             },
             "Spring": {
-                ("Limit", "Flow", "Violation",): numpy.dtypes.Float64DType,
-                ("DeviceName", "DeviceType", "ControlArea", "Direction", "Description", "Contingency", "Class", "Stage",): pandas.core.arrays.string_.StringDtype,
+                ("Limit", "Flow", "Violation",): pd.api.types.is_float_dtype,
+                ("DeviceName", "DeviceType", "ControlArea", "Direction", "Description", "Contingency", "Class", "Stage",): pd.api.types.is_string_dtype,
             },
             "Summer": {
-                ("Limit", "Flow", "Violation",): numpy.dtypes.Float64DType,
-                ("DeviceName", "DeviceType", "ControlArea", "Direction", "Description", "Contingency", "Class", "Stage",): pandas.core.arrays.string_.StringDtype,
+                ("Limit", "Flow", "Violation",): pd.api.types.is_float_dtype,
+                ("DeviceName", "DeviceType", "ControlArea", "Direction", "Description", "Contingency", "Class", "Stage",): pd.api.types.is_string_dtype,
             },
             "Winter": {
-                ("Limit", "Flow", "Violation",): numpy.dtypes.Float64DType,
-                ("DeviceName", "DeviceType", "ControlArea", "Direction", "Description", "Contingency", "Class", "Stage",): pandas.core.arrays.string_.StringDtype,
+                ("Limit", "Flow", "Violation",): pd.api.types.is_float_dtype,
+                ("DeviceName", "DeviceType", "ControlArea", "Direction", "Description", "Contingency", "Class", "Stage",): pd.api.types.is_string_dtype,
             },
         },
     ),
@@ -1068,12 +1062,12 @@ multiple_dfs_test_list = [
         "AncillaryServicesMCP",
         {
             "RealTimeMCP": {
-                ("number",): pandas.core.arrays.integer.Int64Dtype,
-                ("GenRegMCP", "GenSpinMCP", "GenSuppMCP", "StrMcp", "DemandRegMcp", "DemandSpinMcp", "DemandSuppMCP", "RcpUpMcp", "RcpDownMcp",): numpy.dtypes.Float64DType,
+                ("number",): pd.api.types.is_integer_dtype,
+                ("GenRegMCP", "GenSpinMCP", "GenSuppMCP", "StrMcp", "DemandRegMcp", "DemandSpinMcp", "DemandSuppMCP", "RcpUpMcp", "RcpDownMcp",): pd.api.types.is_float_dtype,
             },
             "DayAheadMCP": {
-                ("number",): pandas.core.arrays.integer.Int64Dtype,
-                ("GenRegMCP", "GenSpinMCP", "GenSuppMCP", "StrMcp", "DemandRegMcp", "DemandSpinMcp", "DemandSuppMCP", "RcpUpMcp", "RcpDownMcp",): numpy.dtypes.Float64DType,
+                ("number",): pd.api.types.is_integer_dtype,
+                ("GenRegMCP", "GenSpinMCP", "GenSuppMCP", "StrMcp", "DemandRegMcp", "DemandSpinMcp", "DemandSuppMCP", "RcpUpMcp", "RcpDownMcp",): pd.api.types.is_float_dtype,
             },
         },
     ),
@@ -1081,75 +1075,75 @@ multiple_dfs_test_list = [
         "ftr_mpma_results",
         {
             "Metadata": {
-                ("File 1", "File 2", "File 3", "File 4", "File 5", "File 6", "File 7", "File 8", "File 9", "File 10", "File 11", "File 12",): pandas.core.arrays.string_.StringDtype,
+                ("File 1", "File 2", "File 3", "File 4", "File 5", "File 6", "File 7", "File 8", "File 9", "File 10", "File 11", "File 12",): pd.api.types.is_string_dtype,
             },
             "File 1": {
-                ("Limit", "Flow", "Violation", "MarginalCost",): numpy.dtypes.Float64DType,
-                ("DeviceName", "DeviceType", "ControlArea", "Direction", "Description", "Contingency", "Class",): pandas.core.arrays.string_.StringDtype,
-                ("Round",): pandas.core.arrays.integer.Int64Dtype,
+                ("Limit", "Flow", "Violation", "MarginalCost",): pd.api.types.is_float_dtype,
+                ("DeviceName", "DeviceType", "ControlArea", "Direction", "Description", "Contingency", "Class",): pd.api.types.is_string_dtype,
+                ("Round",): pd.api.types.is_integer_dtype,
 
             },
             "File 2": {
-                ("Limit", "Flow", "Violation", "MarginalCost",): numpy.dtypes.Float64DType,
-                ("DeviceName", "DeviceType", "ControlArea", "Direction", "Description", "Contingency", "Class",): pandas.core.arrays.string_.StringDtype,
-                ("Round",): pandas.core.arrays.integer.Int64Dtype,
+                ("Limit", "Flow", "Violation", "MarginalCost",): pd.api.types.is_float_dtype,
+                ("DeviceName", "DeviceType", "ControlArea", "Direction", "Description", "Contingency", "Class",): pd.api.types.is_string_dtype,
+                ("Round",): pd.api.types.is_integer_dtype,
 
             },
             "File 3": {
-                ("Limit", "Flow", "Violation", "MarginalCost",): numpy.dtypes.Float64DType,
-                ("DeviceName", "DeviceType", "ControlArea", "Direction", "Description", "Contingency", "Class",): pandas.core.arrays.string_.StringDtype,
-                ("Round",): pandas.core.arrays.integer.Int64Dtype,
+                ("Limit", "Flow", "Violation", "MarginalCost",): pd.api.types.is_float_dtype,
+                ("DeviceName", "DeviceType", "ControlArea", "Direction", "Description", "Contingency", "Class",): pd.api.types.is_string_dtype,
+                ("Round",): pd.api.types.is_integer_dtype,
 
             },
             "File 4": {
-                ("Limit", "Flow", "Violation", "MarginalCost",): numpy.dtypes.Float64DType,
-                ("DeviceName", "DeviceType", "ControlArea", "Direction", "Description", "Contingency", "Class",): pandas.core.arrays.string_.StringDtype,
-                ("Round",): pandas.core.arrays.integer.Int64Dtype,
+                ("Limit", "Flow", "Violation", "MarginalCost",): pd.api.types.is_float_dtype,
+                ("DeviceName", "DeviceType", "ControlArea", "Direction", "Description", "Contingency", "Class",): pd.api.types.is_string_dtype,
+                ("Round",): pd.api.types.is_integer_dtype,
 
             },
             "File 5": {
-                ("MW", "ClearingPrice",): numpy.dtypes.Float64DType,
-                ("FTRID", "Category", "MarketParticipant", "Source", "Sink", "HedgeType", "Type", "Class",): pandas.core.arrays.string_.StringDtype,
-                ("StartDate", "EndDate",): numpy.dtypes.DateTime64DType,
-                ("Round",): pandas.core.arrays.integer.Int64Dtype,
+                ("MW", "ClearingPrice",): pd.api.types.is_float_dtype,
+                ("FTRID", "Category", "MarketParticipant", "Source", "Sink", "HedgeType", "Type", "Class",): pd.api.types.is_string_dtype,
+                ("StartDate", "EndDate",): pd.api.types.is_datetime64_ns_dtype,
+                ("Round",): pd.api.types.is_integer_dtype,
             },
             "File 6": {
-                ("MW", "ClearingPrice",): numpy.dtypes.Float64DType,
-                ("FTRID", "Category", "MarketParticipant", "Source", "Sink", "HedgeType", "Type", "Class",): pandas.core.arrays.string_.StringDtype,
-                ("StartDate", "EndDate",): numpy.dtypes.DateTime64DType,
-                ("Round",): pandas.core.arrays.integer.Int64Dtype,
+                ("MW", "ClearingPrice",): pd.api.types.is_float_dtype,
+                ("FTRID", "Category", "MarketParticipant", "Source", "Sink", "HedgeType", "Type", "Class",): pd.api.types.is_string_dtype,
+                ("StartDate", "EndDate",): pd.api.types.is_datetime64_ns_dtype,
+                ("Round",): pd.api.types.is_integer_dtype,
             },
             "File 7": {
-                ("MW", "ClearingPrice",): numpy.dtypes.Float64DType,
-                ("FTRID", "Category", "MarketParticipant", "Source", "Sink", "HedgeType", "Type", "Class",): pandas.core.arrays.string_.StringDtype,
-                ("StartDate", "EndDate",): numpy.dtypes.DateTime64DType,
-                ("Round",): pandas.core.arrays.integer.Int64Dtype,
+                ("MW", "ClearingPrice",): pd.api.types.is_float_dtype,
+                ("FTRID", "Category", "MarketParticipant", "Source", "Sink", "HedgeType", "Type", "Class",): pd.api.types.is_string_dtype,
+                ("StartDate", "EndDate",): pd.api.types.is_datetime64_ns_dtype,
+                ("Round",): pd.api.types.is_integer_dtype,
             },
             "File 8": {
-                ("MW", "ClearingPrice",): numpy.dtypes.Float64DType,
-                ("FTRID", "Category", "MarketParticipant", "Source", "Sink", "HedgeType", "Type", "Class",): pandas.core.arrays.string_.StringDtype,
-                ("StartDate", "EndDate",): numpy.dtypes.DateTime64DType,
-                ("Round",): pandas.core.arrays.integer.Int64Dtype,
+                ("MW", "ClearingPrice",): pd.api.types.is_float_dtype,
+                ("FTRID", "Category", "MarketParticipant", "Source", "Sink", "HedgeType", "Type", "Class",): pd.api.types.is_string_dtype,
+                ("StartDate", "EndDate",): pd.api.types.is_datetime64_ns_dtype,
+                ("Round",): pd.api.types.is_integer_dtype,
             },
             "File 9": {
-                ("ShadowPrice",): numpy.dtypes.Float64DType,
-                ("Round",): pandas.core.arrays.integer.Int64Dtype,
-                ("SourceSink", "Class",): pandas.core.arrays.string_.StringDtype,
+                ("ShadowPrice",): pd.api.types.is_float_dtype,
+                ("Round",): pd.api.types.is_integer_dtype,
+                ("SourceSink", "Class",): pd.api.types.is_string_dtype,
             },
             "File 10": {
-                ("ShadowPrice",): numpy.dtypes.Float64DType,
-                ("Round",): pandas.core.arrays.integer.Int64Dtype,
-                ("SourceSink", "Class",): pandas.core.arrays.string_.StringDtype,
+                ("ShadowPrice",): pd.api.types.is_float_dtype,
+                ("Round",): pd.api.types.is_integer_dtype,
+                ("SourceSink", "Class",): pd.api.types.is_string_dtype,
             },
             "File 11": {
-                ("ShadowPrice",): numpy.dtypes.Float64DType,
-                ("Round",): pandas.core.arrays.integer.Int64Dtype,
-                ("SourceSink", "Class",): pandas.core.arrays.string_.StringDtype,
+                ("ShadowPrice",): pd.api.types.is_float_dtype,
+                ("Round",): pd.api.types.is_integer_dtype,
+                ("SourceSink", "Class",): pd.api.types.is_string_dtype,
             },
             "File 12": {
-                ("ShadowPrice",): numpy.dtypes.Float64DType,
-                ("Round",): pandas.core.arrays.integer.Int64Dtype,
-                ("SourceSink", "Class",): pandas.core.arrays.string_.StringDtype,
+                ("ShadowPrice",): pd.api.types.is_float_dtype,
+                ("Round",): pd.api.types.is_integer_dtype,
+                ("SourceSink", "Class",): pd.api.types.is_string_dtype,
             },
         },
     ),
@@ -1157,28 +1151,28 @@ multiple_dfs_test_list = [
         "da_pr",
         {
             "Table 1": {
-                ("Type",): pandas.core.arrays.string_.StringDtype,
-                ("Demand Fixed", " Demand Price Sensitive", "Demand Virtual", "Demand Total",): numpy.dtypes.Float64DType,
+                ("Type",): pd.api.types.is_string_dtype,
+                ("Demand Fixed", " Demand Price Sensitive", "Demand Virtual", "Demand Total",): pd.api.types.is_float_dtype,
             },
             "Table 2": {
-                ("Type",): pandas.core.arrays.string_.StringDtype,
-                ("Supply Physical", "Supply Virtual", "Supply Total",): numpy.dtypes.Float64DType,
+                ("Type",): pd.api.types.is_string_dtype,
+                ("Supply Physical", "Supply Virtual", "Supply Total",): pd.api.types.is_float_dtype,
             },
             "Table 3": {
-                ("MISO System", "Illinois Hub", "Michigan Hub", "Minnesota Hub", "Indiana Hub", "Arkansas Hub", "Louisiana Hub", "Texas Hub", "MS.HUB",): numpy.dtypes.Float64DType,
-                ("Hour",): pandas.core.arrays.integer.Int64Dtype,
+                ("MISO System", "Illinois Hub", "Michigan Hub", "Minnesota Hub", "Indiana Hub", "Arkansas Hub", "Louisiana Hub", "Texas Hub", "MS.HUB",): pd.api.types.is_float_dtype,
+                ("Hour",): pd.api.types.is_integer_dtype,
             },
             "Table 4": {
-                ("MISO System", "Illinois Hub", "Michigan Hub", "Minnesota Hub", "Indiana Hub", "Arkansas Hub", "Louisiana Hub", "Texas Hub", "MS.HUB",): numpy.dtypes.Float64DType,
-                ("Around the Clock",): pandas.core.arrays.string_.StringDtype,
+                ("MISO System", "Illinois Hub", "Michigan Hub", "Minnesota Hub", "Indiana Hub", "Arkansas Hub", "Louisiana Hub", "Texas Hub", "MS.HUB",): pd.api.types.is_float_dtype,
+                ("Around the Clock",): pd.api.types.is_string_dtype,
             },
             "Table 5": {
-                ("MISO System", "Illinois Hub", "Michigan Hub", "Minnesota Hub", "Indiana Hub", "Arkansas Hub", "Louisiana Hub", "Texas Hub", "MS.HUB",): numpy.dtypes.Float64DType,
-                ("On-Peak",): pandas.core.arrays.string_.StringDtype,  
+                ("MISO System", "Illinois Hub", "Michigan Hub", "Minnesota Hub", "Indiana Hub", "Arkansas Hub", "Louisiana Hub", "Texas Hub", "MS.HUB",): pd.api.types.is_float_dtype,
+                ("On-Peak",): pd.api.types.is_string_dtype,  
             },
             "Table 6": {
-                ("MISO System", "Illinois Hub", "Michigan Hub", "Minnesota Hub", "Indiana Hub", "Arkansas Hub", "Louisiana Hub", "Texas Hub", "MS.HUB",): numpy.dtypes.Float64DType,
-                ("Off-Peak",): pandas.core.arrays.string_.StringDtype, 
+                ("MISO System", "Illinois Hub", "Michigan Hub", "Minnesota Hub", "Indiana Hub", "Arkansas Hub", "Louisiana Hub", "Texas Hub", "MS.HUB",): pd.api.types.is_float_dtype,
+                ("Off-Peak",): pd.api.types.is_string_dtype, 
             },
         },
     ),
@@ -1186,13 +1180,13 @@ multiple_dfs_test_list = [
         "asm_rtmcp_prelim",
         {
             "Table 1": {
-                ("HE 1", "HE 2", "HE 3", "HE 4", "HE 5", "HE 6", "HE 7", "HE 8", "HE 9", "HE 10", "HE 11", "HE 12", "HE 13", "HE 14", "HE 15", "HE 16", "HE 17", "HE 18", "HE 19", "HE 20", "HE 21", "HE 22", "HE 23", "HE 24",): numpy.dtypes.Float64DType,
-                ("MCP Type",): pandas.core.arrays.string_.StringDtype,
+                ("HE 1", "HE 2", "HE 3", "HE 4", "HE 5", "HE 6", "HE 7", "HE 8", "HE 9", "HE 10", "HE 11", "HE 12", "HE 13", "HE 14", "HE 15", "HE 16", "HE 17", "HE 18", "HE 19", "HE 20", "HE 21", "HE 22", "HE 23", "HE 24",): pd.api.types.is_float_dtype,
+                ("MCP Type",): pd.api.types.is_string_dtype,
             },
             "Table 2": {
-                ("HE 1", "HE 2", "HE 3", "HE 4", "HE 5", "HE 6", "HE 7", "HE 8", "HE 9", "HE 10", "HE 11", "HE 12", "HE 13", "HE 14", "HE 15", "HE 16", "HE 17", "HE 18", "HE 19", "HE 20", "HE 21", "HE 22", "HE 23", "HE 24",): numpy.dtypes.Float64DType,
-                ("Zone",): pandas.core.arrays.integer.Int64Dtype,
-                ("Pnode", "MCP Type",): pandas.core.arrays.string_.StringDtype,
+                ("HE 1", "HE 2", "HE 3", "HE 4", "HE 5", "HE 6", "HE 7", "HE 8", "HE 9", "HE 10", "HE 11", "HE 12", "HE 13", "HE 14", "HE 15", "HE 16", "HE 17", "HE 18", "HE 19", "HE 20", "HE 21", "HE 22", "HE 23", "HE 24",): pd.api.types.is_float_dtype,
+                ("Zone",): pd.api.types.is_integer_dtype,
+                ("Pnode", "MCP Type",): pd.api.types.is_string_dtype,
             },
         },
     ),
@@ -1200,13 +1194,13 @@ multiple_dfs_test_list = [
         "asm_rtmcp_final",
         {
             "Table 1": {
-                ("HE 1", "HE 2", "HE 3", "HE 4", "HE 5", "HE 6", "HE 7", "HE 8", "HE 9", "HE 10", "HE 11", "HE 12", "HE 13", "HE 14", "HE 15", "HE 16", "HE 17", "HE 18", "HE 19", "HE 20", "HE 21", "HE 22", "HE 23", "HE 24",): numpy.dtypes.Float64DType,
-                ("MCP Type",): pandas.core.arrays.string_.StringDtype,
+                ("HE 1", "HE 2", "HE 3", "HE 4", "HE 5", "HE 6", "HE 7", "HE 8", "HE 9", "HE 10", "HE 11", "HE 12", "HE 13", "HE 14", "HE 15", "HE 16", "HE 17", "HE 18", "HE 19", "HE 20", "HE 21", "HE 22", "HE 23", "HE 24",): pd.api.types.is_float_dtype,
+                ("MCP Type",): pd.api.types.is_string_dtype,
             },
             "Table 2": {
-                ("HE 1", "HE 2", "HE 3", "HE 4", "HE 5", "HE 6", "HE 7", "HE 8", "HE 9", "HE 10", "HE 11", "HE 12", "HE 13", "HE 14", "HE 15", "HE 16", "HE 17", "HE 18", "HE 19", "HE 20", "HE 21", "HE 22", "HE 23", "HE 24",): numpy.dtypes.Float64DType,
-                ("Zone",): pandas.core.arrays.integer.Int64Dtype,
-                ("Pnode", "MCP Type",): pandas.core.arrays.string_.StringDtype,
+                ("HE 1", "HE 2", "HE 3", "HE 4", "HE 5", "HE 6", "HE 7", "HE 8", "HE 9", "HE 10", "HE 11", "HE 12", "HE 13", "HE 14", "HE 15", "HE 16", "HE 17", "HE 18", "HE 19", "HE 20", "HE 21", "HE 22", "HE 23", "HE 24",): pd.api.types.is_float_dtype,
+                ("Zone",): pd.api.types.is_integer_dtype,
+                ("Pnode", "MCP Type",): pd.api.types.is_string_dtype,
             },
         },
     ),
@@ -1214,13 +1208,13 @@ multiple_dfs_test_list = [
         "asm_expost_damcp",
         {
             "Table 1": {
-                ("HE 1", "HE 2", "HE 3", "HE 4", "HE 5", "HE 6", "HE 7", "HE 8", "HE 9", "HE 10", "HE 11", "HE 12", "HE 13", "HE 14", "HE 15", "HE 16", "HE 17", "HE 18", "HE 19", "HE 20", "HE 21", "HE 22", "HE 23", "HE 24",): numpy.dtypes.Float64DType,
-                ("MCP Type",): pandas.core.arrays.string_.StringDtype,
+                ("HE 1", "HE 2", "HE 3", "HE 4", "HE 5", "HE 6", "HE 7", "HE 8", "HE 9", "HE 10", "HE 11", "HE 12", "HE 13", "HE 14", "HE 15", "HE 16", "HE 17", "HE 18", "HE 19", "HE 20", "HE 21", "HE 22", "HE 23", "HE 24",): pd.api.types.is_float_dtype,
+                ("MCP Type",): pd.api.types.is_string_dtype,
             },
             "Table 2": {
-                ("HE 1", "HE 2", "HE 3", "HE 4", "HE 5", "HE 6", "HE 7", "HE 8", "HE 9", "HE 10", "HE 11", "HE 12", "HE 13", "HE 14", "HE 15", "HE 16", "HE 17", "HE 18", "HE 19", "HE 20", "HE 21", "HE 22", "HE 23", "HE 24",): numpy.dtypes.Float64DType,
-                ("Zone",): pandas.core.arrays.integer.Int64Dtype,
-                ("Pnode", "MCP Type",): pandas.core.arrays.string_.StringDtype,
+                ("HE 1", "HE 2", "HE 3", "HE 4", "HE 5", "HE 6", "HE 7", "HE 8", "HE 9", "HE 10", "HE 11", "HE 12", "HE 13", "HE 14", "HE 15", "HE 16", "HE 17", "HE 18", "HE 19", "HE 20", "HE 21", "HE 22", "HE 23", "HE 24",): pd.api.types.is_float_dtype,
+                ("Zone",): pd.api.types.is_integer_dtype,
+                ("Pnode", "MCP Type",): pd.api.types.is_string_dtype,
             },
         },
     ),
@@ -1228,71 +1222,71 @@ multiple_dfs_test_list = [
         "ftr_annual_results_round_1",
         {
             "Metadata": {
-                ("File 1", "File 2", "File 3", "File 4", "File 5", "File 6", "File 7", "File 8", "File 9", "File 10", "File 11", "File 12",): pandas.core.arrays.string_.StringDtype,
+                ("File 1", "File 2", "File 3", "File 4", "File 5", "File 6", "File 7", "File 8", "File 9", "File 10", "File 11", "File 12",): pd.api.types.is_string_dtype,
             },
             "File 1": {
-                ("Limit", "Flow", "Violation", "MarginalCost",): numpy.dtypes.Float64DType,
-                ("DeviceName", "DeviceType", "ControlArea", "Direction", "Description", "Contingency", "Class",): pandas.core.arrays.string_.StringDtype,
-                ("Round",): pandas.core.arrays.integer.Int64Dtype,
+                ("Limit", "Flow", "Violation", "MarginalCost",): pd.api.types.is_float_dtype,
+                ("DeviceName", "DeviceType", "ControlArea", "Direction", "Description", "Contingency", "Class",): pd.api.types.is_string_dtype,
+                ("Round",): pd.api.types.is_integer_dtype,
             },
             "File 2": {
-                ("Limit", "Flow", "Violation", "MarginalCost",): numpy.dtypes.Float64DType,
-                ("DeviceName", "DeviceType", "ControlArea", "Direction", "Description", "Contingency", "Class",): pandas.core.arrays.string_.StringDtype,
-                ("Round",): pandas.core.arrays.integer.Int64Dtype,
+                ("Limit", "Flow", "Violation", "MarginalCost",): pd.api.types.is_float_dtype,
+                ("DeviceName", "DeviceType", "ControlArea", "Direction", "Description", "Contingency", "Class",): pd.api.types.is_string_dtype,
+                ("Round",): pd.api.types.is_integer_dtype,
             },
             "File 3": {
-                ("Limit", "Flow", "Violation", "MarginalCost",): numpy.dtypes.Float64DType,
-                ("DeviceName", "DeviceType", "ControlArea", "Direction", "Description", "Contingency", "Class",): pandas.core.arrays.string_.StringDtype,
-                ("Round",): pandas.core.arrays.integer.Int64Dtype,
+                ("Limit", "Flow", "Violation", "MarginalCost",): pd.api.types.is_float_dtype,
+                ("DeviceName", "DeviceType", "ControlArea", "Direction", "Description", "Contingency", "Class",): pd.api.types.is_string_dtype,
+                ("Round",): pd.api.types.is_integer_dtype,
             },
             "File 4": {
-                ("Limit", "Flow", "Violation", "MarginalCost",): numpy.dtypes.Float64DType,
-                ("DeviceName", "DeviceType", "ControlArea", "Direction", "Description", "Contingency", "Class",): pandas.core.arrays.string_.StringDtype,
-                ("Round",): pandas.core.arrays.integer.Int64Dtype,
+                ("Limit", "Flow", "Violation", "MarginalCost",): pd.api.types.is_float_dtype,
+                ("DeviceName", "DeviceType", "ControlArea", "Direction", "Description", "Contingency", "Class",): pd.api.types.is_string_dtype,
+                ("Round",): pd.api.types.is_integer_dtype,
             },
             "File 5": {
-                ("MW", "ClearingPrice",): numpy.dtypes.Float64DType,
-                ("FTRID", "Category", "MarketParticipant", "Source", "Sink", "HedgeType", "Type", "Class",): pandas.core.arrays.string_.StringDtype,
-                ("StartDate", "EndDate",): numpy.dtypes.DateTime64DType,
-                ("Round",): pandas.core.arrays.integer.Int64Dtype,
+                ("MW", "ClearingPrice",): pd.api.types.is_float_dtype,
+                ("FTRID", "Category", "MarketParticipant", "Source", "Sink", "HedgeType", "Type", "Class",): pd.api.types.is_string_dtype,
+                ("StartDate", "EndDate",): pd.api.types.is_datetime64_ns_dtype,
+                ("Round",): pd.api.types.is_integer_dtype,
             },
             "File 6": {
-                ("MW", "ClearingPrice",): numpy.dtypes.Float64DType,
-                ("FTRID", "Category", "MarketParticipant", "Source", "Sink", "HedgeType", "Type", "Class",): pandas.core.arrays.string_.StringDtype,
-                ("StartDate", "EndDate",): numpy.dtypes.DateTime64DType,
-                ("Round",): pandas.core.arrays.integer.Int64Dtype,
+                ("MW", "ClearingPrice",): pd.api.types.is_float_dtype,
+                ("FTRID", "Category", "MarketParticipant", "Source", "Sink", "HedgeType", "Type", "Class",): pd.api.types.is_string_dtype,
+                ("StartDate", "EndDate",): pd.api.types.is_datetime64_ns_dtype,
+                ("Round",): pd.api.types.is_integer_dtype,
             },
             "File 7": {
-                ("MW", "ClearingPrice",): numpy.dtypes.Float64DType,
-                ("FTRID", "Category", "MarketParticipant", "Source", "Sink", "HedgeType", "Type", "Class",): pandas.core.arrays.string_.StringDtype,
-                ("StartDate", "EndDate",): numpy.dtypes.DateTime64DType,
-                ("Round",): pandas.core.arrays.integer.Int64Dtype,
+                ("MW", "ClearingPrice",): pd.api.types.is_float_dtype,
+                ("FTRID", "Category", "MarketParticipant", "Source", "Sink", "HedgeType", "Type", "Class",): pd.api.types.is_string_dtype,
+                ("StartDate", "EndDate",): pd.api.types.is_datetime64_ns_dtype,
+                ("Round",): pd.api.types.is_integer_dtype,
             },
             "File 8": {
-                ("MW", "ClearingPrice",): numpy.dtypes.Float64DType,
-                ("FTRID", "Category", "MarketParticipant", "Source", "Sink", "HedgeType", "Type", "Class",): pandas.core.arrays.string_.StringDtype,
-                ("StartDate", "EndDate",): numpy.dtypes.DateTime64DType,
-                ("Round",): pandas.core.arrays.integer.Int64Dtype,
+                ("MW", "ClearingPrice",): pd.api.types.is_float_dtype,
+                ("FTRID", "Category", "MarketParticipant", "Source", "Sink", "HedgeType", "Type", "Class",): pd.api.types.is_string_dtype,
+                ("StartDate", "EndDate",): pd.api.types.is_datetime64_ns_dtype,
+                ("Round",): pd.api.types.is_integer_dtype,
             },
             "File 9": {
-                ("ShadowPrice",): numpy.dtypes.Float64DType,
-                ("Round",): pandas.core.arrays.integer.Int64Dtype,
-                ("SourceSink", "Class",): pandas.core.arrays.string_.StringDtype,
+                ("ShadowPrice",): pd.api.types.is_float_dtype,
+                ("Round",): pd.api.types.is_integer_dtype,
+                ("SourceSink", "Class",): pd.api.types.is_string_dtype,
             },
             "File 10": {
-                ("ShadowPrice",): numpy.dtypes.Float64DType,
-                ("Round",): pandas.core.arrays.integer.Int64Dtype,
-                ("SourceSink", "Class",): pandas.core.arrays.string_.StringDtype,
+                ("ShadowPrice",): pd.api.types.is_float_dtype,
+                ("Round",): pd.api.types.is_integer_dtype,
+                ("SourceSink", "Class",): pd.api.types.is_string_dtype,
             },
             "File 11": {
-                ("ShadowPrice",): numpy.dtypes.Float64DType,
-                ("Round",): pandas.core.arrays.integer.Int64Dtype,
-                ("SourceSink", "Class",): pandas.core.arrays.string_.StringDtype,
+                ("ShadowPrice",): pd.api.types.is_float_dtype,
+                ("Round",): pd.api.types.is_integer_dtype,
+                ("SourceSink", "Class",): pd.api.types.is_string_dtype,
             },
             "File 12": {
-                ("ShadowPrice",): numpy.dtypes.Float64DType,
-                ("Round",): pandas.core.arrays.integer.Int64Dtype,
-                ("SourceSink", "Class",): pandas.core.arrays.string_.StringDtype,
+                ("ShadowPrice",): pd.api.types.is_float_dtype,
+                ("Round",): pd.api.types.is_integer_dtype,
+                ("SourceSink", "Class",): pd.api.types.is_string_dtype,
             },
         },
     ),
@@ -1300,75 +1294,75 @@ multiple_dfs_test_list = [
         "ftr_annual_results_round_2",
         {
             "Metadata": {
-                ("File 1", "File 2", "File 3", "File 4", "File 5", "File 6", "File 7", "File 8", "File 9", "File 10", "File 11", "File 12",): pandas.core.arrays.string_.StringDtype,
+                ("File 1", "File 2", "File 3", "File 4", "File 5", "File 6", "File 7", "File 8", "File 9", "File 10", "File 11", "File 12",): pd.api.types.is_string_dtype,
             },
             "File 1": {
-                ("Limit", "Flow", "Violation", "MarginalCost",): numpy.dtypes.Float64DType,
-                ("DeviceName", "DeviceType", "ControlArea", "Direction", "Description", "Contingency", "Class",): pandas.core.arrays.string_.StringDtype,
-                ("Round",): pandas.core.arrays.integer.Int64Dtype,
+                ("Limit", "Flow", "Violation", "MarginalCost",): pd.api.types.is_float_dtype,
+                ("DeviceName", "DeviceType", "ControlArea", "Direction", "Description", "Contingency", "Class",): pd.api.types.is_string_dtype,
+                ("Round",): pd.api.types.is_integer_dtype,
 
             },
             "File 2": {
-                ("Limit", "Flow", "Violation", "MarginalCost",): numpy.dtypes.Float64DType,
-                ("DeviceName", "DeviceType", "ControlArea", "Direction", "Description", "Contingency", "Class",): pandas.core.arrays.string_.StringDtype,
-                ("Round",): pandas.core.arrays.integer.Int64Dtype,
+                ("Limit", "Flow", "Violation", "MarginalCost",): pd.api.types.is_float_dtype,
+                ("DeviceName", "DeviceType", "ControlArea", "Direction", "Description", "Contingency", "Class",): pd.api.types.is_string_dtype,
+                ("Round",): pd.api.types.is_integer_dtype,
 
             },
             "File 3": {
-                ("Limit", "Flow", "Violation", "MarginalCost",): numpy.dtypes.Float64DType,
-                ("DeviceName", "DeviceType", "ControlArea", "Direction", "Description", "Contingency", "Class",): pandas.core.arrays.string_.StringDtype,
-                ("Round",): pandas.core.arrays.integer.Int64Dtype,
+                ("Limit", "Flow", "Violation", "MarginalCost",): pd.api.types.is_float_dtype,
+                ("DeviceName", "DeviceType", "ControlArea", "Direction", "Description", "Contingency", "Class",): pd.api.types.is_string_dtype,
+                ("Round",): pd.api.types.is_integer_dtype,
 
             },
             "File 4": {
-                ("Limit", "Flow", "Violation", "MarginalCost",): numpy.dtypes.Float64DType,
-                ("DeviceName", "DeviceType", "ControlArea", "Direction", "Description", "Contingency", "Class",): pandas.core.arrays.string_.StringDtype,
-                ("Round",): pandas.core.arrays.integer.Int64Dtype,
+                ("Limit", "Flow", "Violation", "MarginalCost",): pd.api.types.is_float_dtype,
+                ("DeviceName", "DeviceType", "ControlArea", "Direction", "Description", "Contingency", "Class",): pd.api.types.is_string_dtype,
+                ("Round",): pd.api.types.is_integer_dtype,
 
             },
             "File 5": {
-                ("MW", "ClearingPrice",): numpy.dtypes.Float64DType,
-                ("FTRID", "Category", "MarketParticipant", "Source", "Sink", "HedgeType", "Type", "Class",): pandas.core.arrays.string_.StringDtype,
-                ("StartDate", "EndDate",): numpy.dtypes.DateTime64DType,
-                ("Round",): pandas.core.arrays.integer.Int64Dtype,
+                ("MW", "ClearingPrice",): pd.api.types.is_float_dtype,
+                ("FTRID", "Category", "MarketParticipant", "Source", "Sink", "HedgeType", "Type", "Class",): pd.api.types.is_string_dtype,
+                ("StartDate", "EndDate",): pd.api.types.is_datetime64_ns_dtype,
+                ("Round",): pd.api.types.is_integer_dtype,
             },
             "File 6": {
-                ("MW", "ClearingPrice",): numpy.dtypes.Float64DType,
-                ("FTRID", "Category", "MarketParticipant", "Source", "Sink", "HedgeType", "Type", "Class",): pandas.core.arrays.string_.StringDtype,
-                ("StartDate", "EndDate",): numpy.dtypes.DateTime64DType,
-                ("Round",): pandas.core.arrays.integer.Int64Dtype,
+                ("MW", "ClearingPrice",): pd.api.types.is_float_dtype,
+                ("FTRID", "Category", "MarketParticipant", "Source", "Sink", "HedgeType", "Type", "Class",): pd.api.types.is_string_dtype,
+                ("StartDate", "EndDate",): pd.api.types.is_datetime64_ns_dtype,
+                ("Round",): pd.api.types.is_integer_dtype,
             },
             "File 7": {
-                ("MW", "ClearingPrice",): numpy.dtypes.Float64DType,
-                ("FTRID", "Category", "MarketParticipant", "Source", "Sink", "HedgeType", "Type", "Class",): pandas.core.arrays.string_.StringDtype,
-                ("StartDate", "EndDate",): numpy.dtypes.DateTime64DType,
-                ("Round",): pandas.core.arrays.integer.Int64Dtype,
+                ("MW", "ClearingPrice",): pd.api.types.is_float_dtype,
+                ("FTRID", "Category", "MarketParticipant", "Source", "Sink", "HedgeType", "Type", "Class",): pd.api.types.is_string_dtype,
+                ("StartDate", "EndDate",): pd.api.types.is_datetime64_ns_dtype,
+                ("Round",): pd.api.types.is_integer_dtype,
             },
             "File 8": {
-                ("MW", "ClearingPrice",): numpy.dtypes.Float64DType,
-                ("FTRID", "Category", "MarketParticipant", "Source", "Sink", "HedgeType", "Type", "Class",): pandas.core.arrays.string_.StringDtype,
-                ("StartDate", "EndDate",): numpy.dtypes.DateTime64DType,
-                ("Round",): pandas.core.arrays.integer.Int64Dtype,
+                ("MW", "ClearingPrice",): pd.api.types.is_float_dtype,
+                ("FTRID", "Category", "MarketParticipant", "Source", "Sink", "HedgeType", "Type", "Class",): pd.api.types.is_string_dtype,
+                ("StartDate", "EndDate",): pd.api.types.is_datetime64_ns_dtype,
+                ("Round",): pd.api.types.is_integer_dtype,
             },
             "File 9": {
-                ("ShadowPrice",): numpy.dtypes.Float64DType,
-                ("Round",): pandas.core.arrays.integer.Int64Dtype,
-                ("SourceSink", "Class",): pandas.core.arrays.string_.StringDtype,
+                ("ShadowPrice",): pd.api.types.is_float_dtype,
+                ("Round",): pd.api.types.is_integer_dtype,
+                ("SourceSink", "Class",): pd.api.types.is_string_dtype,
             },
             "File 10": {
-                ("ShadowPrice",): numpy.dtypes.Float64DType,
-                ("Round",): pandas.core.arrays.integer.Int64Dtype,
-                ("SourceSink", "Class",): pandas.core.arrays.string_.StringDtype,
+                ("ShadowPrice",): pd.api.types.is_float_dtype,
+                ("Round",): pd.api.types.is_integer_dtype,
+                ("SourceSink", "Class",): pd.api.types.is_string_dtype,
             },
             "File 11": {
-                ("ShadowPrice",): numpy.dtypes.Float64DType,
-                ("Round",): pandas.core.arrays.integer.Int64Dtype,
-                ("SourceSink", "Class",): pandas.core.arrays.string_.StringDtype,
+                ("ShadowPrice",): pd.api.types.is_float_dtype,
+                ("Round",): pd.api.types.is_integer_dtype,
+                ("SourceSink", "Class",): pd.api.types.is_string_dtype,
             },
             "File 12": {
-                ("ShadowPrice",): numpy.dtypes.Float64DType,
-                ("Round",): pandas.core.arrays.integer.Int64Dtype,
-                ("SourceSink", "Class",): pandas.core.arrays.string_.StringDtype,
+                ("ShadowPrice",): pd.api.types.is_float_dtype,
+                ("Round",): pd.api.types.is_integer_dtype,
+                ("SourceSink", "Class",): pd.api.types.is_string_dtype,
             },
         },
     ),
@@ -1376,75 +1370,75 @@ multiple_dfs_test_list = [
         "ftr_annual_results_round_3",
         {
             "Metadata": {
-                ("File 1", "File 2", "File 3", "File 4", "File 5", "File 6", "File 7", "File 8", "File 9", "File 10", "File 11", "File 12",): pandas.core.arrays.string_.StringDtype,
+                ("File 1", "File 2", "File 3", "File 4", "File 5", "File 6", "File 7", "File 8", "File 9", "File 10", "File 11", "File 12",): pd.api.types.is_string_dtype,
             },
             "File 1": {
-                ("Limit", "Flow", "Violation", "MarginalCost",): numpy.dtypes.Float64DType,
-                ("DeviceName", "DeviceType", "ControlArea", "Direction", "Description", "Contingency", "Class",): pandas.core.arrays.string_.StringDtype,
-                ("Round",): pandas.core.arrays.integer.Int64Dtype,
+                ("Limit", "Flow", "Violation", "MarginalCost",): pd.api.types.is_float_dtype,
+                ("DeviceName", "DeviceType", "ControlArea", "Direction", "Description", "Contingency", "Class",): pd.api.types.is_string_dtype,
+                ("Round",): pd.api.types.is_integer_dtype,
 
             },
             "File 2": {
-                ("Limit", "Flow", "Violation", "MarginalCost",): numpy.dtypes.Float64DType,
-                ("DeviceName", "DeviceType", "ControlArea", "Direction", "Description", "Contingency", "Class",): pandas.core.arrays.string_.StringDtype,
-                ("Round",): pandas.core.arrays.integer.Int64Dtype,
+                ("Limit", "Flow", "Violation", "MarginalCost",): pd.api.types.is_float_dtype,
+                ("DeviceName", "DeviceType", "ControlArea", "Direction", "Description", "Contingency", "Class",): pd.api.types.is_string_dtype,
+                ("Round",): pd.api.types.is_integer_dtype,
 
             },
             "File 3": {
-                ("Limit", "Flow", "Violation", "MarginalCost",): numpy.dtypes.Float64DType,
-                ("DeviceName", "DeviceType", "ControlArea", "Direction", "Description", "Contingency", "Class",): pandas.core.arrays.string_.StringDtype,
-                ("Round",): pandas.core.arrays.integer.Int64Dtype,
+                ("Limit", "Flow", "Violation", "MarginalCost",): pd.api.types.is_float_dtype,
+                ("DeviceName", "DeviceType", "ControlArea", "Direction", "Description", "Contingency", "Class",): pd.api.types.is_string_dtype,
+                ("Round",): pd.api.types.is_integer_dtype,
 
             },
             "File 4": {
-                ("Limit", "Flow", "Violation", "MarginalCost",): numpy.dtypes.Float64DType,
-                ("DeviceName", "DeviceType", "ControlArea", "Direction", "Description", "Contingency", "Class",): pandas.core.arrays.string_.StringDtype,
-                ("Round",): pandas.core.arrays.integer.Int64Dtype,
+                ("Limit", "Flow", "Violation", "MarginalCost",): pd.api.types.is_float_dtype,
+                ("DeviceName", "DeviceType", "ControlArea", "Direction", "Description", "Contingency", "Class",): pd.api.types.is_string_dtype,
+                ("Round",): pd.api.types.is_integer_dtype,
 
             },
             "File 5": {
-                ("MW", "ClearingPrice",): numpy.dtypes.Float64DType,
-                ("FTRID", "Category", "MarketParticipant", "Source", "Sink", "HedgeType", "Type", "Class",): pandas.core.arrays.string_.StringDtype,
-                ("StartDate", "EndDate",): numpy.dtypes.DateTime64DType,
-                ("Round",): pandas.core.arrays.integer.Int64Dtype,
+                ("MW", "ClearingPrice",): pd.api.types.is_float_dtype,
+                ("FTRID", "Category", "MarketParticipant", "Source", "Sink", "HedgeType", "Type", "Class",): pd.api.types.is_string_dtype,
+                ("StartDate", "EndDate",): pd.api.types.is_datetime64_ns_dtype,
+                ("Round",): pd.api.types.is_integer_dtype,
             },
             "File 6": {
-                ("MW", "ClearingPrice",): numpy.dtypes.Float64DType,
-                ("FTRID", "Category", "MarketParticipant", "Source", "Sink", "HedgeType", "Type", "Class",): pandas.core.arrays.string_.StringDtype,
-                ("StartDate", "EndDate",): numpy.dtypes.DateTime64DType,
-                ("Round",): pandas.core.arrays.integer.Int64Dtype,
+                ("MW", "ClearingPrice",): pd.api.types.is_float_dtype,
+                ("FTRID", "Category", "MarketParticipant", "Source", "Sink", "HedgeType", "Type", "Class",): pd.api.types.is_string_dtype,
+                ("StartDate", "EndDate",): pd.api.types.is_datetime64_ns_dtype,
+                ("Round",): pd.api.types.is_integer_dtype,
             },
             "File 7": {
-                ("MW", "ClearingPrice",): numpy.dtypes.Float64DType,
-                ("FTRID", "Category", "MarketParticipant", "Source", "Sink", "HedgeType", "Type", "Class",): pandas.core.arrays.string_.StringDtype,
-                ("StartDate", "EndDate",): numpy.dtypes.DateTime64DType,
-                ("Round",): pandas.core.arrays.integer.Int64Dtype,
+                ("MW", "ClearingPrice",): pd.api.types.is_float_dtype,
+                ("FTRID", "Category", "MarketParticipant", "Source", "Sink", "HedgeType", "Type", "Class",): pd.api.types.is_string_dtype,
+                ("StartDate", "EndDate",): pd.api.types.is_datetime64_ns_dtype,
+                ("Round",): pd.api.types.is_integer_dtype,
             },
             "File 8": {
-                ("MW", "ClearingPrice",): numpy.dtypes.Float64DType,
-                ("FTRID", "Category", "MarketParticipant", "Source", "Sink", "HedgeType", "Type", "Class",): pandas.core.arrays.string_.StringDtype,
-                ("StartDate", "EndDate",): numpy.dtypes.DateTime64DType,
-                ("Round",): pandas.core.arrays.integer.Int64Dtype,
+                ("MW", "ClearingPrice",): pd.api.types.is_float_dtype,
+                ("FTRID", "Category", "MarketParticipant", "Source", "Sink", "HedgeType", "Type", "Class",): pd.api.types.is_string_dtype,
+                ("StartDate", "EndDate",): pd.api.types.is_datetime64_ns_dtype,
+                ("Round",): pd.api.types.is_integer_dtype,
             },
             "File 9": {
-                ("ShadowPrice",): numpy.dtypes.Float64DType,
-                ("Round",): pandas.core.arrays.integer.Int64Dtype,
-                ("SourceSink", "Class",): pandas.core.arrays.string_.StringDtype,
+                ("ShadowPrice",): pd.api.types.is_float_dtype,
+                ("Round",): pd.api.types.is_integer_dtype,
+                ("SourceSink", "Class",): pd.api.types.is_string_dtype,
             },
             "File 10": {
-                ("ShadowPrice",): numpy.dtypes.Float64DType,
-                ("Round",): pandas.core.arrays.integer.Int64Dtype,
-                ("SourceSink", "Class",): pandas.core.arrays.string_.StringDtype,
+                ("ShadowPrice",): pd.api.types.is_float_dtype,
+                ("Round",): pd.api.types.is_integer_dtype,
+                ("SourceSink", "Class",): pd.api.types.is_string_dtype,
             },
             "File 11": {
-                ("ShadowPrice",): numpy.dtypes.Float64DType,
-                ("Round",): pandas.core.arrays.integer.Int64Dtype,
-                ("SourceSink", "Class",): pandas.core.arrays.string_.StringDtype,
+                ("ShadowPrice",): pd.api.types.is_float_dtype,
+                ("Round",): pd.api.types.is_integer_dtype,
+                ("SourceSink", "Class",): pd.api.types.is_string_dtype,
             },
             "File 12": {
-                ("ShadowPrice",): numpy.dtypes.Float64DType,
-                ("Round",): pandas.core.arrays.integer.Int64Dtype,
-                ("SourceSink", "Class",): pandas.core.arrays.string_.StringDtype,
+                ("ShadowPrice",): pd.api.types.is_float_dtype,
+                ("Round",): pd.api.types.is_integer_dtype,
+                ("SourceSink", "Class",): pd.api.types.is_string_dtype,
             },
         },
     ),
@@ -1452,12 +1446,12 @@ multiple_dfs_test_list = [
         "sr_ctsl",
         {
             "Cost Paid by Load - Cur Year": {
-                ("Jan Cur Year", "Feb Cur Year", "Mar Cur Year", "Apr Cur Year", "May Cur Year", "Jun Cur Year", "Jul Cur Year", "Aug Cur Year", "Sep Cur Year", "Oct Cur Year", "Nov Cur Year", "Dec Cur Year",): numpy.dtypes.Float64DType,    
-                ("Cost Paid by Load (Hourly Avg per Month)",): pandas.core.arrays.string_.StringDtype,
+                ("Jan Cur Year", "Feb Cur Year", "Mar Cur Year", "Apr Cur Year", "May Cur Year", "Jun Cur Year", "Jul Cur Year", "Aug Cur Year", "Sep Cur Year", "Oct Cur Year", "Nov Cur Year", "Dec Cur Year",): pd.api.types.is_float_dtype,    
+                ("Cost Paid by Load (Hourly Avg per Month)",): pd.api.types.is_string_dtype,
             },
             "Cost Paid by Load - Prior Year": {
-                ("Jan Prior Year", "Feb Prior Year", "Mar Prior Year", "Apr Prior Year", "May Prior Year", "Jun Prior Year", "Jul Prior Year", "Aug Prior Year", "Sep Prior Year", "Oct Prior Year", "Nov Prior Year", "Dec Prior Year",): numpy.dtypes.Float64DType,    
-                ("Cost Paid by Load (Hourly Avg per Month)",): pandas.core.arrays.string_.StringDtype,
+                ("Jan Prior Year", "Feb Prior Year", "Mar Prior Year", "Apr Prior Year", "May Prior Year", "Jun Prior Year", "Jul Prior Year", "Aug Prior Year", "Sep Prior Year", "Oct Prior Year", "Nov Prior Year", "Dec Prior Year",): pd.api.types.is_float_dtype,
+                ("Cost Paid by Load (Hourly Avg per Month)",): pd.api.types.is_string_dtype,
             },
         },
     ),
@@ -1465,24 +1459,24 @@ multiple_dfs_test_list = [
         "rt_pr",
         {
             "Table 1": {
-                ("Demand", "Supply", "Total",): numpy.dtypes.Float64DType,
-                ("Type",): pandas.core.arrays.string_.StringDtype,
+                ("Demand", "Supply", "Total",): pd.api.types.is_float_dtype,
+                ("Type",): pd.api.types.is_string_dtype,
             },
             "Table 2": {
-                ("MISO System", "Illinois Hub", "Michigan Hub", "Minnesota Hub", "Indiana Hub", "Arkansas Hub", "Louisiana Hub", "Texas Hub", "MS.HUB",): numpy.dtypes.Float64DType,
-                ("Hour",): pandas.core.arrays.integer.Int64Dtype,
+                ("MISO System", "Illinois Hub", "Michigan Hub", "Minnesota Hub", "Indiana Hub", "Arkansas Hub", "Louisiana Hub", "Texas Hub", "MS.HUB",): pd.api.types.is_float_dtype,
+                ("Hour",): pd.api.types.is_integer_dtype,
             },
             "Table 3": {
-                ("MISO System", "Illinois Hub", "Michigan Hub", "Minnesota Hub", "Indiana Hub", "Arkansas Hub", "Louisiana Hub", "Texas Hub", "MS.HUB",): numpy.dtypes.Float64DType,
-                ("Around the Clock",): pandas.core.arrays.string_.StringDtype,
+                ("MISO System", "Illinois Hub", "Michigan Hub", "Minnesota Hub", "Indiana Hub", "Arkansas Hub", "Louisiana Hub", "Texas Hub", "MS.HUB",): pd.api.types.is_float_dtype,
+                ("Around the Clock",): pd.api.types.is_string_dtype,
             },
             "Table 4": {
-                ("MISO System", "Illinois Hub", "Michigan Hub", "Minnesota Hub", "Indiana Hub", "Arkansas Hub", "Louisiana Hub", "Texas Hub", "MS.HUB",): numpy.dtypes.Float64DType,
-                ("On-Peak",): pandas.core.arrays.string_.StringDtype,  
+                ("MISO System", "Illinois Hub", "Michigan Hub", "Minnesota Hub", "Indiana Hub", "Arkansas Hub", "Louisiana Hub", "Texas Hub", "MS.HUB",): pd.api.types.is_float_dtype,
+                ("On-Peak",): pd.api.types.is_string_dtype,  
             },
             "Table 5": {
-                ("MISO System", "Illinois Hub", "Michigan Hub", "Minnesota Hub", "Indiana Hub", "Arkansas Hub", "Louisiana Hub", "Texas Hub", "MS.HUB",): numpy.dtypes.Float64DType,
-                ("Off-Peak",): pandas.core.arrays.string_.StringDtype, 
+                ("MISO System", "Illinois Hub", "Michigan Hub", "Minnesota Hub", "Indiana Hub", "Arkansas Hub", "Louisiana Hub", "Texas Hub", "MS.HUB",): pd.api.types.is_float_dtype,
+                ("Off-Peak",): pd.api.types.is_string_dtype, 
             },
         },
     ),
@@ -1490,12 +1484,12 @@ multiple_dfs_test_list = [
         "ms_vlr_srw",
         {
             "Central": {
-                ("DA VLR RSG MWP", "RT VLR RSG MWP", "DA+RT Total",): numpy.dtypes.Float64DType,
-                ("Constraint",): pandas.core.arrays.string_.StringDtype,
+                ("DA VLR RSG MWP", "RT VLR RSG MWP", "DA+RT Total",): pd.api.types.is_float_dtype,
+                ("Constraint",): pd.api.types.is_string_dtype,
             },
             "South": {
-                ("DA VLR RSG MWP", "RT VLR RSG MWP", "DA+RT Total",): numpy.dtypes.Float64DType,
-                ("Constraint",): pandas.core.arrays.string_.StringDtype,
+                ("DA VLR RSG MWP", "RT VLR RSG MWP", "DA+RT Total",): pd.api.types.is_float_dtype,
+                ("Constraint",): pd.api.types.is_string_dtype,
             },
         },
     ),
@@ -1503,44 +1497,44 @@ multiple_dfs_test_list = [
         "Daily_Uplift_by_Local_Resource_Zone",
         {
             "LRZ 1": {
-                ("Day Ahead Capacity", "Day Ahead VLR", "Real Time Capacity", "Real Time VLR", "Real Time Transmission Reliability", "Price Volatility Make Whole Payments",): numpy.dtypes.Float64DType,
-                ("Date",): pandas.core.arrays.string_.StringDtype,
+                ("Day Ahead Capacity", "Day Ahead VLR", "Real Time Capacity", "Real Time VLR", "Real Time Transmission Reliability", "Price Volatility Make Whole Payments",): pd.api.types.is_float_dtype,
+                ("Date",): pd.api.types.is_string_dtype,
             },
             "LRZ 10": {
-                ("Day Ahead Capacity", "Day Ahead VLR", "Real Time Capacity", "Real Time VLR", "Real Time Transmission Reliability", "Price Volatility Make Whole Payments",): numpy.dtypes.Float64DType,
-                ("Date",): pandas.core.arrays.string_.StringDtype,
+                ("Day Ahead Capacity", "Day Ahead VLR", "Real Time Capacity", "Real Time VLR", "Real Time Transmission Reliability", "Price Volatility Make Whole Payments",): pd.api.types.is_float_dtype,
+                ("Date",): pd.api.types.is_string_dtype,
             },
             "LRZ 2": {
-                ("Day Ahead Capacity", "Day Ahead VLR", "Real Time Capacity", "Real Time VLR", "Real Time Transmission Reliability", "Price Volatility Make Whole Payments",): numpy.dtypes.Float64DType,
-                ("Date",): pandas.core.arrays.string_.StringDtype,
+                ("Day Ahead Capacity", "Day Ahead VLR", "Real Time Capacity", "Real Time VLR", "Real Time Transmission Reliability", "Price Volatility Make Whole Payments",): pd.api.types.is_float_dtype,
+                ("Date",): pd.api.types.is_string_dtype,
             },
             "LRZ 3": {
-                ("Day Ahead Capacity", "Day Ahead VLR", "Real Time Capacity", "Real Time VLR", "Real Time Transmission Reliability", "Price Volatility Make Whole Payments",): numpy.dtypes.Float64DType,
-                ("Date",): pandas.core.arrays.string_.StringDtype,
+                ("Day Ahead Capacity", "Day Ahead VLR", "Real Time Capacity", "Real Time VLR", "Real Time Transmission Reliability", "Price Volatility Make Whole Payments",): pd.api.types.is_float_dtype,
+                ("Date",): pd.api.types.is_string_dtype,
             },
             "LRZ 4": {
-                ("Day Ahead Capacity", "Day Ahead VLR", "Real Time Capacity", "Real Time VLR", "Real Time Transmission Reliability", "Price Volatility Make Whole Payments",): numpy.dtypes.Float64DType,
-                ("Date",): pandas.core.arrays.string_.StringDtype,
+                ("Day Ahead Capacity", "Day Ahead VLR", "Real Time Capacity", "Real Time VLR", "Real Time Transmission Reliability", "Price Volatility Make Whole Payments",): pd.api.types.is_float_dtype,
+                ("Date",): pd.api.types.is_string_dtype,
             },
             "LRZ 5": {
-                ("Day Ahead Capacity", "Day Ahead VLR", "Real Time Capacity", "Real Time VLR", "Real Time Transmission Reliability", "Price Volatility Make Whole Payments",): numpy.dtypes.Float64DType,
-                ("Date",): pandas.core.arrays.string_.StringDtype,
+                ("Day Ahead Capacity", "Day Ahead VLR", "Real Time Capacity", "Real Time VLR", "Real Time Transmission Reliability", "Price Volatility Make Whole Payments",): pd.api.types.is_float_dtype,
+                ("Date",): pd.api.types.is_string_dtype,
             },
             "LRZ 6": {
-                ("Day Ahead Capacity", "Day Ahead VLR", "Real Time Capacity", "Real Time VLR", "Real Time Transmission Reliability", "Price Volatility Make Whole Payments",): numpy.dtypes.Float64DType,
-                ("Date",): pandas.core.arrays.string_.StringDtype,
+                ("Day Ahead Capacity", "Day Ahead VLR", "Real Time Capacity", "Real Time VLR", "Real Time Transmission Reliability", "Price Volatility Make Whole Payments",): pd.api.types.is_float_dtype,
+                ("Date",): pd.api.types.is_string_dtype,
             },
             "LRZ 7": {
-                ("Day Ahead Capacity", "Day Ahead VLR", "Real Time Capacity", "Real Time VLR", "Real Time Transmission Reliability", "Price Volatility Make Whole Payments",): numpy.dtypes.Float64DType,
-                ("Date",): pandas.core.arrays.string_.StringDtype,
+                ("Day Ahead Capacity", "Day Ahead VLR", "Real Time Capacity", "Real Time VLR", "Real Time Transmission Reliability", "Price Volatility Make Whole Payments",): pd.api.types.is_float_dtype,
+                ("Date",): pd.api.types.is_string_dtype,
             },
             "LRZ 8": {
-                ("Day Ahead Capacity", "Day Ahead VLR", "Real Time Capacity", "Real Time VLR", "Real Time Transmission Reliability", "Price Volatility Make Whole Payments",): numpy.dtypes.Float64DType,
-                ("Date",): pandas.core.arrays.string_.StringDtype,
+                ("Day Ahead Capacity", "Day Ahead VLR", "Real Time Capacity", "Real Time VLR", "Real Time Transmission Reliability", "Price Volatility Make Whole Payments",): pd.api.types.is_float_dtype,
+                ("Date",): pd.api.types.is_string_dtype,
             },
             "LRZ 9": {
-                ("Day Ahead Capacity", "Day Ahead VLR", "Real Time Capacity", "Real Time VLR", "Real Time Transmission Reliability", "Price Volatility Make Whole Payments",): numpy.dtypes.Float64DType,
-                ("Date",): pandas.core.arrays.string_.StringDtype,
+                ("Day Ahead Capacity", "Day Ahead VLR", "Real Time Capacity", "Real Time VLR", "Real Time Transmission Reliability", "Price Volatility Make Whole Payments",): pd.api.types.is_float_dtype,
+                ("Date",): pd.api.types.is_string_dtype,
             },
         },
     ),
@@ -1548,16 +1542,16 @@ multiple_dfs_test_list = [
         "totalload",
         {
            "ClearedMW": {
-               	("Load_Value",): numpy.dtypes.Float64DType,
-                ("Load_Hour",): pandas.core.arrays.integer.Int64Dtype,
+               	("Load_Value",): pd.api.types.is_float_dtype,
+                ("Load_Hour",): pd.api.types.is_integer_dtype,
            },
            "MediumTermLoadForecast": {
-               	("Load_Forecast",): numpy.dtypes.Float64DType,
-                ("Hour_End",): pandas.core.arrays.integer.Int64Dtype,
+               	("Load_Forecast",): pd.api.types.is_float_dtype,
+                ("Hour_End",): pd.api.types.is_integer_dtype,
            },
            "FiveMinTotalLoad": {
-               	("Load_Value",): numpy.dtypes.Float64DType,
-                ("Load_Time",): numpy.dtypes.DateTime64DType,
+               	("Load_Value",): pd.api.types.is_float_dtype,
+                ("Load_Time",): pd.api.types.is_datetime64_ns_dtype,
            },
         },
     ),
@@ -1565,13 +1559,13 @@ multiple_dfs_test_list = [
         "asm_exante_damcp",
         {
            "Table 1": {
-                ("HE 1", "HE 2", "HE 3", "HE 4", "HE 5", "HE 6", "HE 7", "HE 8", "HE 9", "HE 10", "HE 11", "HE 12", "HE 13", "HE 14", "HE 15", "HE 16", "HE 17", "HE 18", "HE 19", "HE 20", "HE 21", "HE 22", "HE 23", "HE 24",): numpy.dtypes.Float64DType,
-                ("MCP Type",): pandas.core.arrays.string_.StringDtype,
+                ("HE 1", "HE 2", "HE 3", "HE 4", "HE 5", "HE 6", "HE 7", "HE 8", "HE 9", "HE 10", "HE 11", "HE 12", "HE 13", "HE 14", "HE 15", "HE 16", "HE 17", "HE 18", "HE 19", "HE 20", "HE 21", "HE 22", "HE 23", "HE 24",): pd.api.types.is_float_dtype,
+                ("MCP Type",): pd.api.types.is_string_dtype,
            },
            "Table 2": {
-                ("HE 1", "HE 2", "HE 3", "HE 4", "HE 5", "HE 6", "HE 7", "HE 8", "HE 9", "HE 10", "HE 11", "HE 12", "HE 13", "HE 14", "HE 15", "HE 16", "HE 17", "HE 18", "HE 19", "HE 20", "HE 21", "HE 22", "HE 23", "HE 24",): numpy.dtypes.Float64DType,
-                ("Pnode", "MCP Type",): pandas.core.arrays.string_.StringDtype,
-                ("Zone",): pandas.core.arrays.integer.Int64Dtype,
+                ("HE 1", "HE 2", "HE 3", "HE 4", "HE 5", "HE 6", "HE 7", "HE 8", "HE 9", "HE 10", "HE 11", "HE 12", "HE 13", "HE 14", "HE 15", "HE 16", "HE 17", "HE 18", "HE 19", "HE 20", "HE 21", "HE 22", "HE 23", "HE 24",): pd.api.types.is_float_dtype,
+                ("Pnode", "MCP Type",): pd.api.types.is_string_dtype,
+                ("Zone",): pd.api.types.is_integer_dtype,
            },
         },
     ),
@@ -1579,36 +1573,36 @@ multiple_dfs_test_list = [
         "sr_gfm",
         {
            "RT Generation Fuel Mix Central": {
-                ("Coal", "Gas", "Nuclear", "Hydro", "Wind", "Solar", "Other", "Storage", "Total MW",): numpy.dtypes.Float64DType,
-	            ("Market Hour Ending",): pandas.core.arrays.string_.StringDtype,
+                ("Coal", "Gas", "Nuclear", "Hydro", "Wind", "Solar", "Other", "Storage", "Total MW",): pd.api.types.is_float_dtype,
+	            ("Market Hour Ending",): pd.api.types.is_string_dtype,
            },
            "RT Generation Fuel Mix North": {
-                ("Coal", "Gas", "Nuclear", "Hydro", "Wind", "Solar", "Other", "Storage", "Total MW",): numpy.dtypes.Float64DType,
-	            ("Market Hour Ending",): pandas.core.arrays.string_.StringDtype,
+                ("Coal", "Gas", "Nuclear", "Hydro", "Wind", "Solar", "Other", "Storage", "Total MW",): pd.api.types.is_float_dtype,
+	            ("Market Hour Ending",): pd.api.types.is_string_dtype,
            },
            "RT Generation Fuel Mix South": {
-                ("Coal", "Gas", "Nuclear", "Hydro", "Wind", "Solar", "Other", "Total MW",): numpy.dtypes.Float64DType,
-	            ("Market Hour Ending",): pandas.core.arrays.string_.StringDtype,
+                ("Coal", "Gas", "Nuclear", "Hydro", "Wind", "Solar", "Other", "Total MW",): pd.api.types.is_float_dtype,
+	            ("Market Hour Ending",): pd.api.types.is_string_dtype,
            },
            "RT Generation Fuel Mix Totals": {
-                ("Coal", "Gas", "Nuclear", "Hydro", "Wind", "Solar", "Other", "Storage", "MISO",): numpy.dtypes.Float64DType,
-	            ("Market Hour Ending",): pandas.core.arrays.string_.StringDtype,
+                ("Coal", "Gas", "Nuclear", "Hydro", "Wind", "Solar", "Other", "Storage", "MISO",): pd.api.types.is_float_dtype,
+	            ("Market Hour Ending",): pd.api.types.is_string_dtype,
            },
            "DA Cleared Generation Fuel Mix Central": {
-                ("Coal", "Gas", "Nuclear", "Hydro", "Wind", "Solar", "Other", "Storage", "Total MW",): numpy.dtypes.Float64DType,
-	            ("Market Hour Ending",): pandas.core.arrays.string_.StringDtype,
+                ("Coal", "Gas", "Nuclear", "Hydro", "Wind", "Solar", "Other", "Storage", "Total MW",): pd.api.types.is_float_dtype,
+	            ("Market Hour Ending",): pd.api.types.is_string_dtype,
            },
            "DA Cleared Generation Fuel Mix North": {
-                ("Coal", "Gas", "Nuclear", "Hydro", "Wind", "Solar", "Other", "Storage", "Total MW",): numpy.dtypes.Float64DType,
-	            ("Market Hour Ending",): pandas.core.arrays.string_.StringDtype,
+                ("Coal", "Gas", "Nuclear", "Hydro", "Wind", "Solar", "Other", "Storage", "Total MW",): pd.api.types.is_float_dtype,
+	            ("Market Hour Ending",): pd.api.types.is_string_dtype,
            },
            "DA Cleared Generation Fuel Mix South": {
-                ("Coal", "Gas", "Nuclear", "Hydro", "Wind", "Solar", "Other", "Total MW",): numpy.dtypes.Float64DType,
-	            ("Market Hour Ending",): pandas.core.arrays.string_.StringDtype,
+                ("Coal", "Gas", "Nuclear", "Hydro", "Wind", "Solar", "Other", "Total MW",): pd.api.types.is_float_dtype,
+	            ("Market Hour Ending",): pd.api.types.is_string_dtype,
            },
            "DA Cleared Generation Fuel Mix Totals": {
-                ("Coal", "Gas", "Nuclear", "Hydro", "Wind", "Solar", "Other", "Storage", "MISO",): numpy.dtypes.Float64DType,
-	            ("Market Hour Ending",): pandas.core.arrays.string_.StringDtype,
+                ("Coal", "Gas", "Nuclear", "Hydro", "Wind", "Solar", "Other", "Storage", "MISO",): pd.api.types.is_float_dtype,
+	            ("Market Hour Ending",): pd.api.types.is_string_dtype,
            },
         },
     ),
@@ -1616,57 +1610,57 @@ multiple_dfs_test_list = [
         "mom",
         {
            "6 DAYS AHEAD DATES": {
-	            ("Day 1", "Day 2", "Day 3", "Day 4", "Day 5", "Day 6",): pandas.core.arrays.string_.StringDtype,
+	            ("Day 1", "Day 2", "Day 3", "Day 4", "Day 5", "Day 6",): pd.api.types.is_string_dtype,
            },
            "MISO": {
-                ("Day 1", "Day 2", "Day 3", "Day 4", "Day 5", "Day 6",): numpy.dtypes.Float64DType,
-	            ("Resources",): pandas.core.arrays.string_.StringDtype,
+                ("Day 1", "Day 2", "Day 3", "Day 4", "Day 5", "Day 6",): pd.api.types.is_float_dtype,
+	            ("Resources",): pd.api.types.is_string_dtype,
            },
            "NORTH": {
-            	("Day 1", "Day 2", "Day 3", "Day 4", "Day 5", "Day 6",): numpy.dtypes.Float64DType,
-	            ("Resources",): pandas.core.arrays.string_.StringDtype,
+            	("Day 1", "Day 2", "Day 3", "Day 4", "Day 5", "Day 6",): pd.api.types.is_float_dtype,
+	            ("Resources",): pd.api.types.is_string_dtype,
            },
            "CENTRAL": {
-            	("Day 1", "Day 2", "Day 3", "Day 4", "Day 5", "Day 6",): numpy.dtypes.Float64DType,
-	            ("Resources",): pandas.core.arrays.string_.StringDtype,
+            	("Day 1", "Day 2", "Day 3", "Day 4", "Day 5", "Day 6",): pd.api.types.is_float_dtype,
+	            ("Resources",): pd.api.types.is_string_dtype,
            },
            "NORTH+CENTRAL": {
-                ("Day 1", "Day 2", "Day 3", "Day 4", "Day 5", "Day 6",): numpy.dtypes.Float64DType,
-                ("Resources",): pandas.core.arrays.string_.StringDtype,
+                ("Day 1", "Day 2", "Day 3", "Day 4", "Day 5", "Day 6",): pd.api.types.is_float_dtype,
+                ("Resources",): pd.api.types.is_string_dtype,
            },
            "SOUTH": {
-            	("Day 1", "Day 2", "Day 3", "Day 4", "Day 5", "Day 6",): numpy.dtypes.Float64DType,
-	            ("Resources",): pandas.core.arrays.string_.StringDtype,
+            	("Day 1", "Day 2", "Day 3", "Day 4", "Day 5", "Day 6",): pd.api.types.is_float_dtype,
+	            ("Resources",): pd.api.types.is_string_dtype,
            },
            "SOLAR HOURLY": {
-                ("North", "Central", "South", "MISO",): numpy.dtypes.Float64DType,
-                ("DAY HE",): pandas.core.arrays.string_.StringDtype,
+                ("North", "Central", "South", "MISO",): pd.api.types.is_float_dtype,
+                ("DAY HE",): pd.api.types.is_string_dtype,
            },
            "WIND HOURLY": {
-                ("North", "Central", "South", "MISO",): numpy.dtypes.Float64DType,
-                ("DAY HE",): pandas.core.arrays.string_.StringDtype,
+                ("North", "Central", "South", "MISO",): pd.api.types.is_float_dtype,
+                ("DAY HE",): pd.api.types.is_string_dtype,
            },
            "WIND UNCERTAINTY": {
-                ("Day 1", "Day 2", "Day 3", "Day 4", "Day 5", "Day 6",): numpy.dtypes.Float64DType,
-                ("Wind Uncertainty",): pandas.core.arrays.string_.StringDtype,
+                ("Day 1", "Day 2", "Day 3", "Day 4", "Day 5", "Day 6",): pd.api.types.is_float_dtype,
+                ("Wind Uncertainty",): pd.api.types.is_string_dtype,
            },
            "LOAD UNCERTAINTY": {
-                ("Day 1", "Day 2", "Day 3", "Day 4", "Day 5", "Day 6",): numpy.dtypes.Float64DType,
-                ("Load Uncertainty",): pandas.core.arrays.string_.StringDtype,
+                ("Day 1", "Day 2", "Day 3", "Day 4", "Day 5", "Day 6",): pd.api.types.is_float_dtype,
+                ("Load Uncertainty",): pd.api.types.is_string_dtype,
            },
            "7 DAYS AHEAD DATES": {
-	            ("Day 1", "Day 2", "Day 3", "Day 4", "Day 5", "Day 6", "Day 7",): pandas.core.arrays.string_.StringDtype,
+	            ("Day 1", "Day 2", "Day 3", "Day 4", "Day 5", "Day 6", "Day 7",): pd.api.types.is_string_dtype,
            },
            "OUTAGE 7-DAY LOOK-AHEAD": {
-                ("Day 1", "Day 2", "Day 3", "Day 4", "Day 5", "Day 6", "Day 7",): numpy.dtypes.Float64DType,
-                ("Location", "Type",): pandas.core.arrays.string_.StringDtype,
+                ("Day 1", "Day 2", "Day 3", "Day 4", "Day 5", "Day 6", "Day 7",): pd.api.types.is_float_dtype,
+                ("Location", "Type",): pd.api.types.is_string_dtype,
            },
            "30 DAYS BACK DATES": {
-	            ("Day 1", "Day 2", "Day 3", "Day 4", "Day 5", "Day 6", "Day 7", "Day 8", "Day 9", "Day 10", "Day 11", "Day 12", "Day 13", "Day 14", "Day 15", "Day 16", "Day 17", "Day 18", "Day 19", "Day 20", "Day 21", "Day 22", "Day 23", "Day 24", "Day 25", "Day 26", "Day 27", "Day 28", "Day 29", "Day 30",): pandas.core.arrays.string_.StringDtype,
+	            ("Day 1", "Day 2", "Day 3", "Day 4", "Day 5", "Day 6", "Day 7", "Day 8", "Day 9", "Day 10", "Day 11", "Day 12", "Day 13", "Day 14", "Day 15", "Day 16", "Day 17", "Day 18", "Day 19", "Day 20", "Day 21", "Day 22", "Day 23", "Day 24", "Day 25", "Day 26", "Day 27", "Day 28", "Day 29", "Day 30",): pd.api.types.is_string_dtype,
            },
            "OUTAGE 30-DAY LOOK-BACK": {
-                ("Day 1", "Day 2", "Day 3", "Day 4", "Day 5", "Day 6", "Day 7", "Day 8", "Day 9", "Day 10", "Day 11", "Day 12", "Day 13", "Day 14", "Day 15", "Day 16", "Day 17", "Day 18", "Day 19", "Day 20", "Day 21", "Day 22", "Day 23", "Day 24", "Day 25", "Day 26", "Day 27", "Day 28", "Day 29", "Day 30",): numpy.dtypes.Float64DType,
-                ("Location", "Type",): pandas.core.arrays.string_.StringDtype,
+                ("Day 1", "Day 2", "Day 3", "Day 4", "Day 5", "Day 6", "Day 7", "Day 8", "Day 9", "Day 10", "Day 11", "Day 12", "Day 13", "Day 14", "Day 15", "Day 16", "Day 17", "Day 18", "Day 19", "Day 20", "Day 21", "Day 22", "Day 23", "Day 24", "Day 25", "Day 26", "Day 27", "Day 28", "Day 29", "Day 30",): pd.api.types.is_float_dtype,
+                ("Location", "Type",): pd.api.types.is_string_dtype,
            },
         },
     ),
@@ -1674,14 +1668,14 @@ multiple_dfs_test_list = [
         "ftr_allocation_summary",
         {
             "Stage 2 Residual": {
-                ("STAGE2MW", "STAGE2PAYMENT",): numpy.dtypes.Float64DType,
-                ("ID_TOU",): pandas.core.arrays.string_.StringDtype,
-                ("START_DATE",): numpy.dtypes.DateTime64DType,
+                ("STAGE2MW", "STAGE2PAYMENT",): pd.api.types.is_float_dtype,
+                ("ID_TOU",): pd.api.types.is_string_dtype,
+                ("START_DATE",): pd.api.types.is_datetime64_ns_dtype,
             },
             "ARR Annual Allocation Summary": {
-                ("MW",): numpy.dtypes.Float64DType,
-                ("MARKET_NAME", "ID_TOU", "SOURCE_NAME", "SINK_NAME", "STAGE", "TYPE",): pandas.core.arrays.string_.StringDtype,
-                ("DATE_START", "DATE_END",): numpy.dtypes.DateTime64DType,
+                ("MW",): pd.api.types.is_float_dtype,
+                ("MARKET_NAME", "ID_TOU", "SOURCE_NAME", "SINK_NAME", "STAGE", "TYPE",): pd.api.types.is_string_dtype,
+                ("DATE_START", "DATE_END",): pd.api.types.is_datetime64_ns_dtype,
             },
         },
     ),
@@ -1690,93 +1684,93 @@ multiple_dfs_test_list = [
         {
             "MISO Year 1":
             {
-                ("MISO Available Margin (MW)",): numpy.dtypes.Float64DType,
-                ("Date",): numpy.dtypes.DateTime64DType,
+                ("MISO Available Margin (MW)",): pd.api.types.is_float_dtype,
+                ("Date",): pd.api.types.is_datetime64_ns_dtype,
             },
             "MISO Year 2":
             {
-                ("MISO Available Margin (MW)",): numpy.dtypes.Float64DType,
-                ("Date",): numpy.dtypes.DateTime64DType,
+                ("MISO Available Margin (MW)",): pd.api.types.is_float_dtype,
+                ("Date",): pd.api.types.is_datetime64_ns_dtype,
             },
             "MISO Year 3":
             {
-                ("MISO Available Margin (MW)",): numpy.dtypes.Float64DType,
-                ("Date",): numpy.dtypes.DateTime64DType,
+                ("MISO Available Margin (MW)",): pd.api.types.is_float_dtype,
+                ("Date",): pd.api.types.is_datetime64_ns_dtype,
             },
             "MISO Year 4":
             {
-                ("MISO Available Margin (MW)",): numpy.dtypes.Float64DType,
-                ("Date",): numpy.dtypes.DateTime64DType,
+                ("MISO Available Margin (MW)",): pd.api.types.is_float_dtype,
+                ("Date",): pd.api.types.is_datetime64_ns_dtype,
             },
             "Central Year 1":
             {
-                ("Central Available Margin (MW)",): numpy.dtypes.Float64DType,
-                ("Date",): numpy.dtypes.DateTime64DType,
+                ("Central Available Margin (MW)",): pd.api.types.is_float_dtype,
+                ("Date",): pd.api.types.is_datetime64_ns_dtype,
             },
             "Central Year 2":
             {
-                ("Central Available Margin (MW)",): numpy.dtypes.Float64DType,
-                ("Date",): numpy.dtypes.DateTime64DType,
+                ("Central Available Margin (MW)",): pd.api.types.is_float_dtype,
+                ("Date",): pd.api.types.is_datetime64_ns_dtype,
             },
             "Central Year 3":
             {
-                ("Central Available Margin (MW)",): numpy.dtypes.Float64DType,
-                ("Date",): numpy.dtypes.DateTime64DType,
+                ("Central Available Margin (MW)",): pd.api.types.is_float_dtype,
+                ("Date",): pd.api.types.is_datetime64_ns_dtype,
             },
             "Central Year 4":
             {
-                ("Central Available Margin (MW)",): numpy.dtypes.Float64DType,
-                ("Date",): numpy.dtypes.DateTime64DType,
+                ("Central Available Margin (MW)",): pd.api.types.is_float_dtype,
+                ("Date",): pd.api.types.is_datetime64_ns_dtype,
             },
             "North Year 1":
             {
-                ("North Available Margin (MW)",): numpy.dtypes.Float64DType,
-                ("Date",): numpy.dtypes.DateTime64DType,
+                ("North Available Margin (MW)",): pd.api.types.is_float_dtype,
+                ("Date",): pd.api.types.is_datetime64_ns_dtype,
             },
             "North Year 2":
             {
-                ("North Available Margin (MW)",): numpy.dtypes.Float64DType,
-                ("Date",): numpy.dtypes.DateTime64DType,
+                ("North Available Margin (MW)",): pd.api.types.is_float_dtype,
+                ("Date",): pd.api.types.is_datetime64_ns_dtype,
             },
             "North Year 3":
             {
-                ("North Available Margin (MW)",): numpy.dtypes.Float64DType,
-                ("Date",): numpy.dtypes.DateTime64DType,
+                ("North Available Margin (MW)",): pd.api.types.is_float_dtype,
+                ("Date",): pd.api.types.is_datetime64_ns_dtype,
             },
             "North Year 4":
             {
-                ("North Available Margin (MW)",): numpy.dtypes.Float64DType,
-                ("Date",): numpy.dtypes.DateTime64DType,
+                ("North Available Margin (MW)",): pd.api.types.is_float_dtype,
+                ("Date",): pd.api.types.is_datetime64_ns_dtype,
             },
             "South Year 1":
             {
-                ("South Available Margin (MW)",): numpy.dtypes.Float64DType,
-                ("Date",): numpy.dtypes.DateTime64DType,
+                ("South Available Margin (MW)",): pd.api.types.is_float_dtype,
+                ("Date",): pd.api.types.is_datetime64_ns_dtype,
             },
             "South Year 2":
             {
-                ("South Available Margin (MW)",): numpy.dtypes.Float64DType,
-                ("Date",): numpy.dtypes.DateTime64DType,
+                ("South Available Margin (MW)",): pd.api.types.is_float_dtype,
+                ("Date",): pd.api.types.is_datetime64_ns_dtype,
             },
             "South Year 3":
             {
-                ("South Available Margin (MW)",): numpy.dtypes.Float64DType,
-                ("Date",): numpy.dtypes.DateTime64DType,
+                ("South Available Margin (MW)",): pd.api.types.is_float_dtype,
+                ("Date",): pd.api.types.is_datetime64_ns_dtype,
             },
             "South Year 4":
             {
-                ("South Available Margin (MW)",): numpy.dtypes.Float64DType,
-                ("Date",): numpy.dtypes.DateTime64DType,
+                ("South Available Margin (MW)",): pd.api.types.is_float_dtype,
+                ("Date",): pd.api.types.is_datetime64_ns_dtype,
             },
             "Transparency Future":
             {
-                ("Central Region (MW)", "North Region (MW)", "South Region (MW)",): numpy.dtypes.Float64DType,
-                ("Date",): numpy.dtypes.DateTime64DType,
+                ("Central Region (MW)", "North Region (MW)", "South Region (MW)",): pd.api.types.is_float_dtype,
+                ("Date",): pd.api.types.is_datetime64_ns_dtype,
             },
             "Transparency History":
             {
-                ("Central Region (MW)", "North Region (MW)", "South Region (MW)",): numpy.dtypes.Float64DType,
-                ("Date",): numpy.dtypes.DateTime64DType,
+                ("Central Region (MW)", "North Region (MW)", "South Region (MW)",): pd.api.types.is_float_dtype,
+                ("Date",): pd.api.types.is_datetime64_ns_dtype,
             },
         },
     ),
@@ -1784,31 +1778,31 @@ multiple_dfs_test_list = [
         "ms_rsg_srw", 
         {
             "MKT TOT": {
-                ("MISO_RT_RSG_DIST2", "RT_RSG_DIST1", "RT_RSG_MWP", "DA_RSG_MWP", "DA_RSG_DIST",): numpy.dtypes.Float64DType,
-                ("previous 36 months",): pandas.core.arrays.string_.StringDtype,
-                ("START", "STOP",): numpy.dtypes.DateTime64DType,
+                ("MISO_RT_RSG_DIST2", "RT_RSG_DIST1", "RT_RSG_MWP", "DA_RSG_MWP", "DA_RSG_DIST",): pd.api.types.is_float_dtype,
+                ("previous 36 months",): pd.api.types.is_string_dtype,
+                ("START", "STOP",): pd.api.types.is_datetime64_ns_dtype,
             },
             "ATC CMC rate": {
-                ("HE1", "HE2", "HE3", "HE4", "HE5", "HE6", "HE7", "HE8", "HE9", "HE10", "HE11", "HE12", "HE13", "HE14", "HE15", "HE16", "HE17", "HE18", "HE19", "HE20", "HE21", "HE22", "HE23", "HE24",): numpy.dtypes.Float64DType,
-                ("CHNL NBR",): pandas.core.arrays.integer.Int64Dtype,
-                ("BILL_DETERMINANT", "CONSTRAINT NAME",): pandas.core.arrays.string_.StringDtype,
-                ("OPERATING DATE",): numpy.dtypes.DateTime64DType,
+                ("HE1", "HE2", "HE3", "HE4", "HE5", "HE6", "HE7", "HE8", "HE9", "HE10", "HE11", "HE12", "HE13", "HE14", "HE15", "HE16", "HE17", "HE18", "HE19", "HE20", "HE21", "HE22", "HE23", "HE24",): pd.api.types.is_float_dtype,
+                ("CHNL NBR",): pd.api.types.is_integer_dtype,
+                ("BILL_DETERMINANT", "CONSTRAINT NAME",): pd.api.types.is_string_dtype,
+                ("OPERATING DATE",): pd.api.types.is_datetime64_ns_dtype,
             },
             "MISO DDC rate": {
-                ("HE1", "HE2", "HE3", "HE4", "HE5", "HE6", "HE7", "HE8", "HE9", "HE10", "HE11", "HE12", "HE13", "HE14", "HE15", "HE16", "HE17", "HE18", "HE19", "HE20", "HE21", "HE22", "HE23", "HE24",): numpy.dtypes.Float64DType,
-                ("CHNL NBR",): pandas.core.arrays.integer.Int64Dtype,
-                ("BILL_DETERMINANT",): pandas.core.arrays.string_.StringDtype,
-                ("OPERATING DATE",): numpy.dtypes.DateTime64DType,
+                ("HE1", "HE2", "HE3", "HE4", "HE5", "HE6", "HE7", "HE8", "HE9", "HE10", "HE11", "HE12", "HE13", "HE14", "HE15", "HE16", "HE17", "HE18", "HE19", "HE20", "HE21", "HE22", "HE23", "HE24",): pd.api.types.is_float_dtype,
+                ("CHNL NBR",): pd.api.types.is_integer_dtype,
+                ("BILL_DETERMINANT",): pd.api.types.is_string_dtype,
+                ("OPERATING DATE",): pd.api.types.is_datetime64_ns_dtype,
             },
             "VLR DIST": {
-                ("HE1", "HE2", "HE3", "HE4", "HE5", "HE6", "HE7", "HE8", "HE9", "HE10", "HE11", "HE12", "HE13", "HE14", "HE15", "HE16", "HE17", "HE18", "HE19", "HE20", "HE21", "HE22", "HE23", "HE24",): numpy.dtypes.Float64DType,
-                ("CHNL NBR",): pandas.core.arrays.integer.Int64Dtype,
-                ("BILL_DETERMINANT",): pandas.core.arrays.string_.StringDtype,
-                ("OPERATING DATE",): numpy.dtypes.DateTime64DType,
+                ("HE1", "HE2", "HE3", "HE4", "HE5", "HE6", "HE7", "HE8", "HE9", "HE10", "HE11", "HE12", "HE13", "HE14", "HE15", "HE16", "HE17", "HE18", "HE19", "HE20", "HE21", "HE22", "HE23", "HE24",): pd.api.types.is_float_dtype,
+                ("CHNL NBR",): pd.api.types.is_integer_dtype,
+                ("BILL_DETERMINANT",): pd.api.types.is_string_dtype,
+                ("OPERATING DATE",): pd.api.types.is_datetime64_ns_dtype,
             },
             "RSG MONTHLY": {
-                ("DA NVLR DIST", "DA VLR DIST", "RT VLR DIST", "MISO CMC DIST", "MISO DDC DIST", "MISO RT RSG DIST2",): numpy.dtypes.Float64DType,
-                ("OPERATING MONTH",): numpy.dtypes.DateTime64DType,
+                ("DA NVLR DIST", "DA VLR DIST", "RT VLR DIST", "MISO CMC DIST", "MISO DDC DIST", "MISO RT RSG DIST2",): pd.api.types.is_float_dtype,
+                ("OPERATING MONTH",): pd.api.types.is_datetime64_ns_dtype,
             },
         },
     ),
@@ -1816,14 +1810,14 @@ multiple_dfs_test_list = [
         "ms_ri_srw",
         {
             "MKT TOT": {
-                ("DA RI", "RT RI", "TOTAL RI",): numpy.dtypes.Float64DType,
-                ("Previous Months",): pandas.core.arrays.string_.StringDtype,
-                ("START", "STOP",): numpy.dtypes.DateTime64DType,
+                ("DA RI", "RT RI", "TOTAL RI",): pd.api.types.is_float_dtype,
+                ("Previous Months",): pd.api.types.is_string_dtype,
+                ("START", "STOP",): pd.api.types.is_datetime64_ns_dtype,
             },
             "hourly column Worksheet": {
-                ("Total RI hourly", "Total RI cumulative", "DA_RI hourly", "DA_RI cumulative", "RT_RI hourly", "RT_RI cumulative",): numpy.dtypes.Float64DType,
-                ("hrend",): pandas.core.arrays.integer.Int64Dtype,
-                ("date",): numpy.dtypes.DateTime64DType,
+                ("Total RI hourly", "Total RI cumulative", "DA_RI hourly", "DA_RI cumulative", "RT_RI hourly", "RT_RI cumulative",): pd.api.types.is_float_dtype,
+                ("hrend",): pd.api.types.is_integer_dtype,
+                ("date",): pd.api.types.is_datetime64_ns_dtype,
             },
         },
     ),
@@ -1831,22 +1825,22 @@ multiple_dfs_test_list = [
         "ms_ecf_srw",
         {
             "MKT TOT": {
-                ("Da Xs Cg Fnd", "Rt Cc", "Rt Xs Cg Fnd", "Ftr Auc Res", "Ao Ftr Mn Alc", "Ftr Yr Alc *", "Tbs Access", "Net Ecf", "Ftr Shrtfll", "Net Ftr Sf", "Ftr Trg Cr Alc", "Ftr Hr Alc", "Hr Mf", "Hourly Ftr Allocation", "Monthly Ftr Allocation",): numpy.dtypes.Float64DType,
-                ("Type",): pandas.core.arrays.string_.StringDtype,
-                ("Start", "Stop",): numpy.dtypes.DateTime64DType,
+                ("Da Xs Cg Fnd", "Rt Cc", "Rt Xs Cg Fnd", "Ftr Auc Res", "Ao Ftr Mn Alc", "Ftr Yr Alc *", "Tbs Access", "Net Ecf", "Ftr Shrtfll", "Net Ftr Sf", "Ftr Trg Cr Alc", "Ftr Hr Alc", "Hr Mf", "Hourly Ftr Allocation", "Monthly Ftr Allocation",): pd.api.types.is_float_dtype,
+                ("Type",): pd.api.types.is_string_dtype,
+                ("Start", "Stop",): pd.api.types.is_datetime64_ns_dtype,
             },
             "JOA Hourly Totals": {
-                ("DA_JOA", "RT_JOA",): numpy.dtypes.Float64DType,
-                ("CNTR_RTO",): pandas.core.arrays.string_.StringDtype,
-                ("HRBEG",): numpy.dtypes.DateTime64DType,
+                ("DA_JOA", "RT_JOA",): pd.api.types.is_float_dtype,
+                ("CNTR_RTO",): pd.api.types.is_string_dtype,
+                ("HRBEG",): pd.api.types.is_datetime64_ns_dtype,
             },
             "RT CC JOA column": {
-                ("RT CC", "RT JOA", "NET",): numpy.dtypes.Float64DType,
-                ("HRBEG",): numpy.dtypes.DateTime64DType,
+                ("RT CC", "RT JOA", "NET",): pd.api.types.is_float_dtype,
+                ("HRBEG",): pd.api.types.is_datetime64_ns_dtype,
             },
             "ECF": {
-                ("DA_ECF", "RT_ECF", "DART_ECF", "DART_monthly",): numpy.dtypes.Float64DType,
-                ("OD",): numpy.dtypes.DateTime64DType,
+                ("DA_ECF", "RT_ECF", "DART_ECF", "DART_monthly",): pd.api.types.is_float_dtype,
+                ("OD",): pd.api.types.is_datetime64_ns_dtype,
             },
         },
     ),
@@ -1854,13 +1848,13 @@ multiple_dfs_test_list = [
         "sr_la_rg",
         {
             "Table 1": {
-                ("10/24/2024 Thursday Peak Hour: HE  19 MTLF (GW)", "10/24/2024 Thursday Peak Hour: HE  19 Capacity on Outage (GW)", "10/25/2024 Friday   Peak Hour: HE  16 MTLF (GW)", "10/25/2024 Friday   Peak Hour: HE  16 Capacity on Outage (GW)", "10/26/2024 Saturday Peak Hour: HE  19 MTLF (GW)", "10/26/2024 Saturday Peak Hour: HE  19 Capacity on Outage (GW)", "10/27/2024 Sunday   Peak Hour: HE  19 MTLF (GW)", "10/27/2024 Sunday   Peak Hour: HE  19 Capacity on Outage (GW)", "10/28/2024 Monday   Peak Hour: HE  19 MTLF (GW)", "10/28/2024 Monday   Peak Hour: HE  19Capacity on Outage (GW)", "10/29/2024 Tuesday  Peak Hour: HE  19 MTLF (GW)", "10/29/2024 Tuesday  Peak Hour: HE  19 Capacity on Outage (GW)", "10/30/2024 WednesdayPeak Hour: HE  24 MTLF (GW)", "10/30/2024 WednesdayPeak Hour: HE  24 Capacity on Outage (GW)",): numpy.dtypes.Float64DType,
-                ("Hourend_EST",): pandas.core.arrays.integer.Int64Dtype,
-                ("Region",): pandas.core.arrays.string_.StringDtype,
+                ("10/24/2024 Thursday Peak Hour: HE  19 MTLF (GW)", "10/24/2024 Thursday Peak Hour: HE  19 Capacity on Outage (GW)", "10/25/2024 Friday   Peak Hour: HE  16 MTLF (GW)", "10/25/2024 Friday   Peak Hour: HE  16 Capacity on Outage (GW)", "10/26/2024 Saturday Peak Hour: HE  19 MTLF (GW)", "10/26/2024 Saturday Peak Hour: HE  19 Capacity on Outage (GW)", "10/27/2024 Sunday   Peak Hour: HE  19 MTLF (GW)", "10/27/2024 Sunday   Peak Hour: HE  19 Capacity on Outage (GW)", "10/28/2024 Monday   Peak Hour: HE  19 MTLF (GW)", "10/28/2024 Monday   Peak Hour: HE  19Capacity on Outage (GW)", "10/29/2024 Tuesday  Peak Hour: HE  19 MTLF (GW)", "10/29/2024 Tuesday  Peak Hour: HE  19 Capacity on Outage (GW)", "10/30/2024 WednesdayPeak Hour: HE  24 MTLF (GW)", "10/30/2024 WednesdayPeak Hour: HE  24 Capacity on Outage (GW)",): pd.api.types.is_float_dtype,
+                ("Hourend_EST",): pd.api.types.is_integer_dtype,
+                ("Region",): pd.api.types.is_string_dtype,
             },
             "Table 2": {
-                ("10/24/2024 Thursday Peak Hour: HE  19 MTLF (GW)", "10/24/2024 Thursday Peak Hour: HE  19 Capacity on Outage (GW)", "10/25/2024 Friday   Peak Hour: HE  16 MTLF (GW)", "10/25/2024 Friday   Peak Hour: HE  16 Capacity on Outage (GW)", "10/26/2024 Saturday Peak Hour: HE  19 MTLF (GW)", "10/26/2024 Saturday Peak Hour: HE  19 Capacity on Outage (GW)", "10/27/2024 Sunday   Peak Hour: HE  19 MTLF (GW)", "10/27/2024 Sunday   Peak Hour: HE  19 Capacity on Outage (GW)", "10/28/2024 Monday   Peak Hour: HE  19 MTLF (GW)", "10/28/2024 Monday   Peak Hour: HE  19Capacity on Outage (GW)", "10/29/2024 Tuesday  Peak Hour: HE  19 MTLF (GW)", "10/29/2024 Tuesday  Peak Hour: HE  19 Capacity on Outage (GW)", "10/30/2024 WednesdayPeak Hour: HE  24 MTLF (GW)", "10/30/2024 WednesdayPeak Hour: HE  24 Capacity on Outage (GW)",): numpy.dtypes.Float64DType,
-                ("Type", "Region",): pandas.core.arrays.string_.StringDtype,
+                ("10/24/2024 Thursday Peak Hour: HE  19 MTLF (GW)", "10/24/2024 Thursday Peak Hour: HE  19 Capacity on Outage (GW)", "10/25/2024 Friday   Peak Hour: HE  16 MTLF (GW)", "10/25/2024 Friday   Peak Hour: HE  16 Capacity on Outage (GW)", "10/26/2024 Saturday Peak Hour: HE  19 MTLF (GW)", "10/26/2024 Saturday Peak Hour: HE  19 Capacity on Outage (GW)", "10/27/2024 Sunday   Peak Hour: HE  19 MTLF (GW)", "10/27/2024 Sunday   Peak Hour: HE  19 Capacity on Outage (GW)", "10/28/2024 Monday   Peak Hour: HE  19 MTLF (GW)", "10/28/2024 Monday   Peak Hour: HE  19Capacity on Outage (GW)", "10/29/2024 Tuesday  Peak Hour: HE  19 MTLF (GW)", "10/29/2024 Tuesday  Peak Hour: HE  19 Capacity on Outage (GW)", "10/30/2024 WednesdayPeak Hour: HE  24 MTLF (GW)", "10/30/2024 WednesdayPeak Hour: HE  24 Capacity on Outage (GW)",): pd.api.types.is_float_dtype,
+                ("Type", "Region",): pd.api.types.is_string_dtype,
             },
         },
     ),
@@ -1868,13 +1862,13 @@ multiple_dfs_test_list = [
         "da_ex_rg", 
         {
             "Summary": {
-                ("Demand Cleared (GWh) - Physical - Fixed", "Demand Cleared (GWh) - Physical - Price Sen.", "Demand Cleared (GWh) - Virtual", "Demand Cleared (GWh) - Total", "Supply Cleared (GWh) - Physical", "Supply Cleared (GWh) - Virtual", "Supply Cleared (GWh) - Total", "Net Scheduled Imports (GWh)", "Generation Resources Offered (GW at Econ. Max) - Must Run", "Generation Resources Offered (GW at Econ. Max) - Economic", "Generation Resources Offered (GW at Econ. Max) - Emergency", "Generation Resources Offered (GW at Econ. Max) - Total", "Generation Resources Offered (GW at Econ. Min) - Must Run", "Generation Resources Offered (GW at Econ. Min) - Economic", "Generation Resources Offered (GW at Econ. Min) - Emergency", "Generation Resources Offered (GW at Econ. Min) - Total",): numpy.dtypes.Float64DType,
-                ("Hour Ending",): pandas.core.arrays.integer.Int64Dtype,
+                ("Demand Cleared (GWh) - Physical - Fixed", "Demand Cleared (GWh) - Physical - Price Sen.", "Demand Cleared (GWh) - Virtual", "Demand Cleared (GWh) - Total", "Supply Cleared (GWh) - Physical", "Supply Cleared (GWh) - Virtual", "Supply Cleared (GWh) - Total", "Net Scheduled Imports (GWh)", "Generation Resources Offered (GW at Econ. Max) - Must Run", "Generation Resources Offered (GW at Econ. Max) - Economic", "Generation Resources Offered (GW at Econ. Max) - Emergency", "Generation Resources Offered (GW at Econ. Max) - Total", "Generation Resources Offered (GW at Econ. Min) - Must Run", "Generation Resources Offered (GW at Econ. Min) - Economic", "Generation Resources Offered (GW at Econ. Min) - Emergency", "Generation Resources Offered (GW at Econ. Min) - Total",): pd.api.types.is_float_dtype,
+                ("Hour Ending",): pd.api.types.is_integer_dtype,
             },
             "Regional Level": {
-                ("Demand Cleared (GWh) - Physical - Fixed", "Demand Cleared (GWh) - Physical - Price Sen.", "Demand Cleared (GWh) - Virtual", "Demand Cleared (GWh) - Total", "Supply Cleared (GWh) - Physical", "Supply Cleared (GWh) - Virtual", "Supply Cleared (GWh) - Total", "Net Scheduled Imports (GWh)", "Generation Resources Offered (GW at Econ. Max) - Must Run", "Generation Resources Offered (GW at Econ. Max) - Economic", "Generation Resources Offered (GW at Econ. Max) - Emergency", "Generation Resources Offered (GW at Econ. Max) - Total", "Generation Resources Offered (GW at Econ. Min) - Must Run", "Generation Resources Offered (GW at Econ. Min) - Economic", "Generation Resources Offered (GW at Econ. Min) - Emergency", "Generation Resources Offered (GW at Econ. Min) - Total",): numpy.dtypes.Float64DType,
-                ("Hour Ending",): pandas.core.arrays.integer.Int64Dtype,
-                ("Region",): pandas.core.arrays.string_.StringDtype,
+                ("Demand Cleared (GWh) - Physical - Fixed", "Demand Cleared (GWh) - Physical - Price Sen.", "Demand Cleared (GWh) - Virtual", "Demand Cleared (GWh) - Total", "Supply Cleared (GWh) - Physical", "Supply Cleared (GWh) - Virtual", "Supply Cleared (GWh) - Total", "Net Scheduled Imports (GWh)", "Generation Resources Offered (GW at Econ. Max) - Must Run", "Generation Resources Offered (GW at Econ. Max) - Economic", "Generation Resources Offered (GW at Econ. Max) - Emergency", "Generation Resources Offered (GW at Econ. Max) - Total", "Generation Resources Offered (GW at Econ. Min) - Must Run", "Generation Resources Offered (GW at Econ. Min) - Economic", "Generation Resources Offered (GW at Econ. Min) - Emergency", "Generation Resources Offered (GW at Econ. Min) - Total",): pd.api.types.is_float_dtype,
+                ("Hour Ending",): pd.api.types.is_integer_dtype,
+                ("Region",): pd.api.types.is_string_dtype,
             },
         },
     ),
@@ -1882,12 +1876,12 @@ multiple_dfs_test_list = [
         "lmpconsolidatedtable", 
         {
             "Metadata": {
-                ("Type",): pandas.core.arrays.string_.StringDtype,
-	            ("Timing",): numpy.dtypes.DateTime64DType,
+                ("Type",): pd.api.types.is_string_dtype,
+	            ("Timing",): pd.api.types.is_datetime64_ns_dtype,
             },
             "Data": {
-                ("LMP - FiveMinLMP", "MLC - FiveMinLMP", "MCC - FiveMinLMP", "REGMCP - FiveMinLMP", "REGMILEAGEMCP - FiveMinLMP", "SPINMCP - FiveMinLMP", "SUPPMCP - FiveMinLMP", "STRMCP - FiveMinLMP", "RCUPMCP - FiveMinLMP", "RCDOWNMCP - FiveMinLMP", "LMP - HourlyIntegratedLmp", "MLC - HourlyIntegratedLmp", "MCC - HourlyIntegratedLmp", "LMP - DayAheadExAnteLmp", "MLC - DayAheadExAnteLmp", "MCC - DayAheadExAnteLmp", "LMP - DayAheadExPostLmp", "MLC - DayAheadExPostLmp", "MCC - DayAheadExPostLmp",): numpy.dtypes.Float64DType,
-	            ("Name",): pandas.core.arrays.string_.StringDtype,
+                ("LMP - FiveMinLMP", "MLC - FiveMinLMP", "MCC - FiveMinLMP", "REGMCP - FiveMinLMP", "REGMILEAGEMCP - FiveMinLMP", "SPINMCP - FiveMinLMP", "SUPPMCP - FiveMinLMP", "STRMCP - FiveMinLMP", "RCUPMCP - FiveMinLMP", "RCDOWNMCP - FiveMinLMP", "LMP - HourlyIntegratedLmp", "MLC - HourlyIntegratedLmp", "MCC - HourlyIntegratedLmp", "LMP - DayAheadExAnteLmp", "MLC - DayAheadExAnteLmp", "MCC - DayAheadExAnteLmp", "LMP - DayAheadExPostLmp", "MLC - DayAheadExPostLmp", "MCC - DayAheadExPostLmp",): pd.api.types.is_float_dtype,
+	            ("Name",): pd.api.types.is_string_dtype,
             },
         }
     ),
@@ -1925,11 +1919,11 @@ def test_get_df_multiple_dfs_correct_columns_and_matching_df_names(report_name, 
         if columns_mapping_columns_set != res_df_columns_set:
             raise ValueError(f"Expected columns {columns_mapping_columns_set} do not match df columns {res_df_columns_set}.")
 
-        for columns_tuple, column_type in columns_mapping.items():
+        for columns_tuple, dtype_checker in columns_mapping.items():
             columns = list(columns_tuple)
 
-            assert frozenset([column_type]) == get_dtype_frozenset(res_df, columns), \
-                f"For multi-df report {report_name}, df {df_name}, columns {columns} are not of type {column_type}."
+            assert uses_correct_dtypes(res_df, columns, dtype_checker), \
+                f"For multi-df report {report_name}, df {df_name}, columns {columns} do not pass {dtype_checker.__name__}."
 
 
 def test_get_df_test_test_names_have_no_duplicates(get_df_test_names):
@@ -1991,12 +1985,14 @@ def test_MISOMarketReportsURLBuilder_add_to_datetime(
     assert url == expected, f"Expected {expected}, got {url}."
     
 
+nsi_test_list = [
+    "nsi1",
+    "nsi5",
+]
+
 
 @pytest.mark.parametrize(
-    "report_name", [
-        "nsi1",
-        "nsi5",
-    ]
+    "report_name", nsi_test_list
 )
 def test_get_df_nsi_with_changing_columns(report_name):
     """Edge case tests for nsi reports which have changing columns.
@@ -2007,7 +2003,7 @@ def test_get_df_nsi_with_changing_columns(report_name):
     )
 
     int_columns = df.columns.difference(["timestamp"])
-    
-    assert df["timestamp"].dtype == np.dtype("datetime64[ns]")
-    assert df[int_columns].dtypes.apply(lambda x: x == pandas.core.arrays.integer.Int64Dtype()).all()
+
+    assert pd.api.types.is_datetime64_ns_dtype(df["timestamp"])
+    assert df[int_columns].dtypes.apply(lambda x: pd.api.types.is_integer_dtype(x)).all()
 

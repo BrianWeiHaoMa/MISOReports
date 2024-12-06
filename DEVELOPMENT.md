@@ -31,18 +31,18 @@ Continue to use the same naming scheme as the previous code.
 
 When in doubt, check the entries for previously completed reports.
 
-Map every single column type to one of the below data types:
-* **pandas.core.arrays.string_.StringDtype()** ex. "Toronto".
-* **numpy.dtypes.DateTime64DType()** ex. "2024-02-02 08:24:36 PM" or "2024-02-02 16:24:36" or "2024-01-03" or "13:05:00" etc..
-* **numpy.dtypes.Float64DType()** ex. 34.13.
-* **pandas.core.arrays.integer.Int64Dtype()** ex. 34.
+Map every single column type to one of the below data pandas types:
+* **string** ex. "Toronto".
+* **datetime64\[ns\]** ex. "2024-02-02 08:24:36 PM" or "2024-02-02 16:24:36" or "2024-01-03" or "13:05:00" etc..
+* **Float64** ex. 34.13.
+* **Int64** ex. 34.
 
 When looking at the report, use this checklist:
 * Ignore null/empty values when deciding with the below guidelines.
-* If there is any string (ex. names, codes, etc.) in the column, the column type should be **pandas.core.arrays.string_.StringDtype()**.
-* Otherwise if the column is clearly meant to portray datetime/date/time, the column type should be **numpy.dtypes.DateTime64DType()**.
-* Otherwise if any number in the column has a decimal, the column type should be **numpy.dtypes.Float64DType()**.
-* Otherwise if the numbers in the column are all integers, the column type should be **pandas.core.arrays.integer.Int64Dtype()**.
+* If there is any string (ex. names, codes, etc.) in the column, the column type should be **string**.
+* Otherwise if the column is clearly meant to portray datetime/date/time, the column type should be **datetime64[ns]**.
+* Otherwise if any number in the column has a decimal, the column type should be **Float64**.
+* Otherwise if the numbers in the column are all integers, the column type should be **Int64**.
 * Otherwise make note of the new case here.
 
 ## Report Parser Reference
@@ -58,8 +58,8 @@ def parse_rt_lmp_prelim(
         filepath_or_buffer=io.StringIO(csv_data),
     )
 
-    df[["HE 1", "HE 2", "HE 3", "HE 4", "HE 5", "HE 6", "HE 7", "HE 8", "HE 9", "HE 10", "HE 11", "HE 12", "HE 13", "HE 14", "HE 15", "HE 16", "HE 17", "HE 18", "HE 19", "HE 20", "HE 21", "HE 22", "HE 23", "HE 24"]] = df[["HE 1", "HE 2", "HE 3", "HE 4", "HE 5", "HE 6", "HE 7", "HE 8", "HE 9", "HE 10", "HE 11", "HE 12", "HE 13", "HE 14", "HE 15", "HE 16", "HE 17", "HE 18", "HE 19", "HE 20", "HE 21", "HE 22", "HE 23", "HE 24"]].astype(numpy.dtypes.Float64DType())
-    df[["Node", "Type", "Value"]] = df[["Node", "Type", "Value"]].astype(pandas.core.arrays.string_.StringDtype())
+    df[["HE 1", "HE 2", "HE 3", "HE 4", "HE 5", "HE 6", "HE 7", "HE 8", "HE 9", "HE 10", "HE 11", "HE 12", "HE 13", "HE 14", "HE 15", "HE 16", "HE 17", "HE 18", "HE 19", "HE 20", "HE 21", "HE 22", "HE 23", "HE 24"]] = df[["HE 1", "HE 2", "HE 3", "HE 4", "HE 5", "HE 6", "HE 7", "HE 8", "HE 9", "HE 10", "HE 11", "HE 12", "HE 13", "HE 14", "HE 15", "HE 16", "HE 17", "HE 18", "HE 19", "HE 20", "HE 21", "HE 22", "HE 23", "HE 24"]].astype("Float64")
+    df[["Node", "Type", "Value"]] = df[["Node", "Type", "Value"]].astype("string")
 
     return df
 ```
@@ -77,8 +77,8 @@ def parse_SolarForecast(
     )
 
     df[["DateTimeEST"]] = df[["DateTimeEST"]].apply(pd.to_datetime, format="%Y-%m-%d %I:%M:%S %p")
-    df[["HourEndingEST"]] = df[["HourEndingEST"]].astype(pandas.core.arrays.integer.Int64Dtype())
-    df[["Value"]] = df[["Value"]].astype(numpy.dtypes.Float64DType())
+    df[["HourEndingEST"]] = df[["HourEndingEST"]].astype("Int64")
+    df[["Value"]] = df[["Value"]].astype("Float64")
 
     return df
 ```
@@ -98,8 +98,8 @@ def parse_DA_LMPs(
     )
 
     df[["MARKET_DAY"]] = df[["MARKET_DAY"]].apply(pd.to_datetime, format="%m/%d/%Y")
-    df[["HE1", "HE2", "HE3", "HE4", "HE5", "HE6", "HE7", "HE8", "HE9", "HE10", "HE11", "HE12", "HE13", "HE14", "HE15", "HE16", "HE17", "HE18", "HE19", "HE20", "HE21", "HE22", "HE23", "HE24"]] = df[["HE1", "HE2", "HE3", "HE4", "HE5", "HE6", "HE7", "HE8", "HE9", "HE10", "HE11", "HE12", "HE13", "HE14", "HE15", "HE16", "HE17", "HE18", "HE19", "HE20", "HE21", "HE22", "HE23", "HE24"]].astype(numpy.dtypes.Float64DType())
-    df[["NODE", "TYPE", "VALUE"]] = df[["NODE", "TYPE", "VALUE"]].astype(pandas.core.arrays.string_.StringDtype())
+    df[["HE1", "HE2", "HE3", "HE4", "HE5", "HE6", "HE7", "HE8", "HE9", "HE10", "HE11", "HE12", "HE13", "HE14", "HE15", "HE16", "HE17", "HE18", "HE19", "HE20", "HE21", "HE22", "HE23", "HE24"]] = df[["HE1", "HE2", "HE3", "HE4", "HE5", "HE6", "HE7", "HE8", "HE9", "HE10", "HE11", "HE12", "HE13", "HE14", "HE15", "HE16", "HE17", "HE18", "HE19", "HE20", "HE21", "HE22", "HE23", "HE24"]].astype("Float64")
+    df[["NODE", "TYPE", "VALUE"]] = df[["NODE", "TYPE", "VALUE"]].astype("string")
 
     return df
 ```
@@ -114,8 +114,8 @@ def parse_5min_exante_lmp(
         skiprows=3,
     ).iloc[:-1]
 
-    df[["RT Ex-Ante LMP", "RT Ex-Ante MEC", "RT Ex-Ante MLC", "RT Ex-Ante MCC"]] = df[["RT Ex-Ante LMP", "RT Ex-Ante MEC", "RT Ex-Ante MLC", "RT Ex-Ante MCC"]].astype(numpy.dtypes.Float64DType())
-    df[["CP Node"]] = df[["CP Node"]].astype(pandas.core.arrays.string_.StringDtype())
+    df[["RT Ex-Ante LMP", "RT Ex-Ante MEC", "RT Ex-Ante MLC", "RT Ex-Ante MCC"]] = df[["RT Ex-Ante LMP", "RT Ex-Ante MEC", "RT Ex-Ante MLC", "RT Ex-Ante MCC"]].astype("Float64")
+    df[["CP Node"]] = df[["CP Node"]].astype("string")
     df[["Time (EST)"]] = df[["Time (EST)"]].apply(pd.to_datetime, format="%Y-%m-%d %I:%M:%S %p")
 
     return df

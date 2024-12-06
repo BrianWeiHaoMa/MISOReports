@@ -7,8 +7,8 @@ import json
 import zipfile
 
 import requests
-import pandas as pd, pandas
-import numpy as np, numpy
+import pandas as pd
+import numpy as np
 
 
 """A file to hold the parsers for the different reports.
@@ -28,9 +28,9 @@ def parse_currentinterval(
         filepath_or_buffer=io.StringIO(text),   
     )
 
-    df[["LMP", "MLC", "MCC"]] = df[["LMP", "MLC", "MCC"]].astype(numpy.dtypes.Float64DType())
+    df[["LMP", "MLC", "MCC"]] = df[["LMP", "MLC", "MCC"]].astype("Float64")
     df[["INTERVAL"]] = df[["INTERVAL"]].apply(pd.to_datetime, format="%Y-%m-%dT%H:%M:%S")
-    df[["CPNODE"]] = df[["CPNODE"]].astype(pandas.core.arrays.string_.StringDtype())
+    df[["CPNODE"]] = df[["CPNODE"]].astype("string")
 
     return df
 
@@ -45,9 +45,9 @@ def parse_rt_bc_HIST(
     df = pd.read_csv(
         filepath_or_buffer=io.StringIO(csv_data),   
         dtype={
-            "Flowgate NERCID": pandas.core.arrays.string_.StringDtype(),
-            "Constraint_ID": pandas.core.arrays.string_.StringDtype(),
-            "Preliminary Shadow Price": pandas.core.arrays.string_.StringDtype(),
+            "Flowgate NERCID": "string",
+            "Constraint_ID": "string",
+            "Preliminary Shadow Price": "string",
         }, 
         low_memory=False,
     )
@@ -58,11 +58,11 @@ def parse_rt_bc_HIST(
         r"\)": "",
     }, regex=True)
     
-    df[["BP1", "PC1", "BP2", "PC2", "Preliminary Shadow Price"]] = df[["BP1", "PC1", "BP2", "PC2", "Preliminary Shadow Price"]].astype(numpy.dtypes.Float64DType())
-    df[["Override"]] = df[["Override"]].astype(pandas.core.arrays.integer.Int64Dtype())
+    df[["BP1", "PC1", "BP2", "PC2", "Preliminary Shadow Price"]] = df[["BP1", "PC1", "BP2", "PC2", "Preliminary Shadow Price"]].astype("Float64")
+    df[["Override"]] = df[["Override"]].astype("Int64")
     df[["Market Date"]] = df[["Market Date"]].apply(pd.to_datetime, format="%m/%d/%Y")
     df[["Hour of Occurrence"]] = df[["Hour of Occurrence"]].apply(pd.to_datetime, format="%H:%M")
-    df[["Constraint Name", "Branch Name ( Branch Type / From CA / To CA )", "Contingency Description", "Constraint Description", "Curve Type"]] = df[["Constraint Name", "Branch Name ( Branch Type / From CA / To CA )", "Contingency Description", "Constraint Description", "Curve Type"]].astype(pandas.core.arrays.string_.StringDtype())
+    df[["Constraint Name", "Branch Name ( Branch Type / From CA / To CA )", "Contingency Description", "Constraint Description", "Curve Type"]] = df[["Constraint Name", "Branch Name ( Branch Type / From CA / To CA )", "Contingency Description", "Constraint Description", "Curve Type"]].astype("string")
 
     return df
 
@@ -77,11 +77,11 @@ def parse_RT_UDS_Approved_Case_Percentage(
     df = pd.read_csv(
         filepath_or_buffer=io.StringIO(csv_data),   
         dtype={
-            "UDS Case ID": pandas.core.arrays.string_.StringDtype(),
+            "UDS Case ID": "string",
         }
     )
 
-    df[["Percentage"]] = df[["Percentage"]].astype(numpy.dtypes.Float64DType())
+    df[["Percentage"]] = df[["Percentage"]].astype("Float64")
     df[["Dispatch Interval"]] = df[["Dispatch Interval"]].apply(pd.to_datetime, format="%m/%d/%Y %H:%M")
 
     return df
@@ -94,13 +94,13 @@ def parse_Resource_Uplift_by_Commitment_Reason(
         io=io.BytesIO(res.content),
         skiprows=10,
         dtype={
-            "REASON ID": pandas.core.arrays.string_.StringDtype(),
-            "REASON": pandas.core.arrays.string_.StringDtype(),
+            "REASON ID": "string",
+            "REASON": "string",
         }
     ).iloc[:-2]
 
-    df[["ECONOMIC MAX"]] = df[["ECONOMIC MAX"]].astype(numpy.dtypes.Float64DType())
-    df[["LOCAL RESOURCE ZONE"]] = df[["LOCAL RESOURCE ZONE"]].astype(pandas.core.arrays.integer.Int64Dtype())
+    df[["ECONOMIC MAX"]] = df[["ECONOMIC MAX"]].astype("Float64")
+    df[["LOCAL RESOURCE ZONE"]] = df[["LOCAL RESOURCE ZONE"]].astype("Int64")
     df[["STARTTIME"]] = df[["STARTTIME"]].apply(pd.to_datetime, format="%Y/%m/%d %I:%M:%S %p")
 
     return df
@@ -114,9 +114,9 @@ def parse_rt_rpe(
         skiprows=3,
     ).iloc[:-1]
 
-    df[["Shadow Price"]] = df[["Shadow Price"]].astype(numpy.dtypes.Float64DType())
+    df[["Shadow Price"]] = df[["Shadow Price"]].astype("Float64")
     df[["Time of Occurence"]] = df[["Time of Occurence"]].apply(pd.to_datetime, format="%m-%d-%Y %H:%M:%S")
-    df[["Constraint Name", "Constraint Description"]] = df[["Constraint Name", "Constraint Description"]].astype(pandas.core.arrays.string_.StringDtype())
+    df[["Constraint Name", "Constraint Description"]] = df[["Constraint Name", "Constraint Description"]].astype("string")
 
     return df
 
@@ -132,9 +132,9 @@ def parse_Historical_RT_RSG_Commitment(
         filepath_or_buffer=io.StringIO(csv_data),   
     )
 
-    df[["TOTAL_ECON_MAX"]] = df[["TOTAL_ECON_MAX"]].astype(numpy.dtypes.Float64DType())
+    df[["TOTAL_ECON_MAX"]] = df[["TOTAL_ECON_MAX"]].astype("Float64")
     df[["MKT_INT_END_EST"]] = df[["MKT_INT_END_EST"]].apply(pd.to_datetime, format="%Y-%m-%dT%H:%M:%S")
-    df[["COMMIT_REASON", "NUM_RESOURCES"]] = df[["COMMIT_REASON", "NUM_RESOURCES"]].astype(pandas.core.arrays.string_.StringDtype())
+    df[["COMMIT_REASON", "NUM_RESOURCES"]] = df[["COMMIT_REASON", "NUM_RESOURCES"]].astype("string")
 
     return df
 
@@ -149,8 +149,8 @@ def parse_da_pr(
     )
     df1.rename(columns={df1.columns[0]: "Type"}, inplace=True)
     df1.drop(labels=df1.columns[5:], axis=1, inplace=True)
-    df1[["Type"]] = df1[["Type"]].astype(pandas.core.arrays.string_.StringDtype())
-    df1[["Demand Fixed", " Demand Price Sensitive", "Demand Virtual", "Demand Total"]] = df1[["Demand Fixed", " Demand Price Sensitive", "Demand Virtual", "Demand Total"]].astype(numpy.dtypes.Float64DType())
+    df1[["Type"]] = df1[["Type"]].astype("string")
+    df1[["Demand Fixed", " Demand Price Sensitive", "Demand Virtual", "Demand Total"]] = df1[["Demand Fixed", " Demand Price Sensitive", "Demand Virtual", "Demand Total"]].astype("Float64")
 
     df2 = pd.read_excel(
         io=io.BytesIO(res.content),
@@ -159,8 +159,8 @@ def parse_da_pr(
     )
     df2.rename(columns={df2.columns[0]: "Type"}, inplace=True)
     df2.drop(labels=df2.columns[4:], axis=1, inplace=True)
-    df2[["Type"]] = df2[["Type"]].astype(pandas.core.arrays.string_.StringDtype())
-    df2[["Supply Physical", "Supply Virtual", "Supply Total"]] = df2[["Supply Physical", "Supply Virtual", "Supply Total"]].astype(numpy.dtypes.Float64DType())
+    df2[["Type"]] = df2[["Type"]].astype("string")
+    df2[["Supply Physical", "Supply Virtual", "Supply Total"]] = df2[["Supply Physical", "Supply Virtual", "Supply Total"]].astype("Float64")
 
     df3 = pd.read_excel(
         io=io.BytesIO(res.content),
@@ -170,8 +170,8 @@ def parse_da_pr(
     shared_column_names = list(df3.columns)[1:]
 
     df3.rename(columns={df3.columns[0]: "Hour"}, inplace=True)
-    df3[["Hour"]] = df3[["Hour"]].replace('[^\\d]+', '', regex=True).astype(pandas.core.arrays.integer.Int64Dtype())
-    df3[shared_column_names] = df3[shared_column_names].astype(numpy.dtypes.Float64DType())            
+    df3[["Hour"]] = df3[["Hour"]].replace('[^\\d]+', '', regex=True).astype("Int64")
+    df3[shared_column_names] = df3[shared_column_names].astype("Float64")            
 
     df4 = pd.read_excel(
         io=io.BytesIO(res.content),
@@ -197,8 +197,8 @@ def parse_da_pr(
     bottom_dfs = [df4, df5, df6]
     for i in range(len(bottom_dfs)):
         first_column = bottom_dfs[i].columns[0]
-        bottom_dfs[i][[first_column]] = bottom_dfs[i][[first_column]].astype(pandas.core.arrays.string_.StringDtype())
-        bottom_dfs[i][shared_column_names] = bottom_dfs[i][shared_column_names].astype(numpy.dtypes.Float64DType())
+        bottom_dfs[i][[first_column]] = bottom_dfs[i][[first_column]].astype("string")
+        bottom_dfs[i][shared_column_names] = bottom_dfs[i][shared_column_names].astype("Float64")
 
     # No names written for any of the tables in the report.
     df = pd.DataFrame({
@@ -231,9 +231,9 @@ def parse_da_pbc(
     )
 
     df[["MARKET_HOUR_EST"]] = df[["MARKET_HOUR_EST"]].apply(pd.to_datetime, format="%m/%d/%Y %H:%M:%S")
-    df[["PRELIMINARY_SHADOW_PRICE"]] = df[["PRELIMINARY_SHADOW_PRICE"]].astype(numpy.dtypes.Float64DType())
-    df[["BP1", "PC1", "BP2", "PC2", "BP3", "PC3", "BP4", "PC4", "OVERRIDE"]] = df[["BP1", "PC1", "BP2", "PC2", "BP3", "PC3", "BP4", "PC4", "OVERRIDE"]].astype(pandas.core.arrays.integer.Int64Dtype())
-    df[["CONSTRAINT_NAME", "CURVETYPE", "REASON"]] = df[["CONSTRAINT_NAME", "CURVETYPE", "REASON"]].astype(pandas.core.arrays.string_.StringDtype())
+    df[["PRELIMINARY_SHADOW_PRICE"]] = df[["PRELIMINARY_SHADOW_PRICE"]].astype("Float64")
+    df[["BP1", "PC1", "BP2", "PC2", "BP3", "PC3", "BP4", "PC4", "OVERRIDE"]] = df[["BP1", "PC1", "BP2", "PC2", "BP3", "PC3", "BP4", "PC4", "OVERRIDE"]].astype("Int64")
+    df[["CONSTRAINT_NAME", "CURVETYPE", "REASON"]] = df[["CONSTRAINT_NAME", "CURVETYPE", "REASON"]].astype("string")
 
     return df
 
@@ -246,9 +246,9 @@ def parse_da_bc(
         skiprows=3,
     )
 
-    df[["Shadow Price", "BP1", "PC1", "BP2", "PC2"]] = df[["Shadow Price", "BP1", "PC1", "BP2", "PC2"]].astype(numpy.dtypes.Float64DType())
-    df[["Hour of Occurrence", "Override"]] = df[["Hour of Occurrence", "Override"]].astype(pandas.core.arrays.integer.Int64Dtype())
-    df[["Flowgate NERC ID", "Constraint_ID", "Constraint Name", "Branch Name ( Branch Type / From CA / To CA )", "Contingency Description", "Constraint Description", "Curve Type", "Reason"]] = df[["Flowgate NERC ID", "Constraint_ID", "Constraint Name", "Branch Name ( Branch Type / From CA / To CA )", "Contingency Description", "Constraint Description", "Curve Type", "Reason"]].astype(pandas.core.arrays.string_.StringDtype())
+    df[["Shadow Price", "BP1", "PC1", "BP2", "PC2"]] = df[["Shadow Price", "BP1", "PC1", "BP2", "PC2"]].astype("Float64")
+    df[["Hour of Occurrence", "Override"]] = df[["Hour of Occurrence", "Override"]].astype("Int64")
+    df[["Flowgate NERC ID", "Constraint_ID", "Constraint Name", "Branch Name ( Branch Type / From CA / To CA )", "Contingency Description", "Constraint Description", "Curve Type", "Reason"]] = df[["Flowgate NERC ID", "Constraint_ID", "Constraint Name", "Branch Name ( Branch Type / From CA / To CA )", "Contingency Description", "Constraint Description", "Curve Type", "Reason"]].astype("string")
 
     return df
 
@@ -272,8 +272,8 @@ def parse_da_bcsf(
 
     df = pd.concat(objs=[sheet1, sheet2]).reset_index(drop=True)
 
-    df[["From KV", "To KV", "Direction"]] = df[["From KV", "To KV", "Direction"]].round().astype(pandas.core.arrays.integer.Int64Dtype())
-    df[["Constraint ID", "Constraint Name", "Contingency Name", "Constraint Type", "Flowgate Name", "Device Type", "Key1", "Key2", "Key3", "From Area", "To Area", "From Station", "To Station"]] = df[["Constraint ID", "Constraint Name", "Contingency Name", "Constraint Type", "Flowgate Name", "Device Type", "Key1", "Key2", "Key3", "From Area", "To Area", "From Station", "To Station"]].astype(pandas.core.arrays.string_.StringDtype())
+    df[["From KV", "To KV", "Direction"]] = df[["From KV", "To KV", "Direction"]].round().astype("Int64")
+    df[["Constraint ID", "Constraint Name", "Contingency Name", "Constraint Type", "Flowgate Name", "Device Type", "Key1", "Key2", "Key3", "From Area", "To Area", "From Station", "To Station"]] = df[["Constraint ID", "Constraint Name", "Contingency Name", "Constraint Type", "Flowgate Name", "Device Type", "Key1", "Key2", "Key3", "From Area", "To Area", "From Station", "To Station"]].astype("string")
 
     return df
 
@@ -299,8 +299,8 @@ def parse_rt_pr(
     
     df1_and_df2 = pd.concat(objs=[df1, df2]).reset_index(drop=True)
 
-    df1_and_df2[["Type"]] = df1_and_df2[["Type"]].astype(pandas.core.arrays.string_.StringDtype())
-    df1_and_df2[["Demand", "Supply", "Total"]] = df1_and_df2[["Demand", "Supply", "Total"]].astype(numpy.dtypes.Float64DType())
+    df1_and_df2[["Type"]] = df1_and_df2[["Type"]].astype("string")
+    df1_and_df2[["Demand", "Supply", "Total"]] = df1_and_df2[["Demand", "Supply", "Total"]].astype("Float64")
 
     df3 = pd.read_excel(
         io=io.BytesIO(res.content),
@@ -310,8 +310,8 @@ def parse_rt_pr(
     shared_column_names = list(df3.columns)[1:]
 
     df3.rename(columns={df3.columns[0]: "Hour"}, inplace=True)
-    df3[["Hour"]] = df3[["Hour"]].replace('[^\\d]+', '', regex=True).astype(pandas.core.arrays.integer.Int64Dtype())
-    df3[shared_column_names] = df3[shared_column_names].astype(numpy.dtypes.Float64DType())            
+    df3[["Hour"]] = df3[["Hour"]].replace('[^\\d]+', '', regex=True).astype("Int64")
+    df3[shared_column_names] = df3[shared_column_names].astype("Float64")            
 
     df4 = pd.read_excel(
         io=io.BytesIO(res.content),
@@ -337,8 +337,8 @@ def parse_rt_pr(
     bottom_dfs = [df4, df5, df6]
     for i in range(len(bottom_dfs)):
         first_column = bottom_dfs[i].columns[0]
-        bottom_dfs[i][[first_column]] = bottom_dfs[i][[first_column]].astype(pandas.core.arrays.string_.StringDtype())
-        bottom_dfs[i][shared_column_names] = bottom_dfs[i][shared_column_names].astype(numpy.dtypes.Float64DType())
+        bottom_dfs[i][[first_column]] = bottom_dfs[i][[first_column]].astype("string")
+        bottom_dfs[i][shared_column_names] = bottom_dfs[i][shared_column_names].astype("Float64")
 
     # No names written for any of the tables in the report.
     df = pd.DataFrame({
@@ -372,8 +372,8 @@ def parse_rt_irsf(
         inplace=True,
     )
 
-    df[["INTRAREGIONAL_SCHEDULED_FLOW"]] = df[["INTRAREGIONAL_SCHEDULED_FLOW"]].astype(numpy.dtypes.Float64DType())
-    df[["CONSTRAINT_NAME"]] = df[["CONSTRAINT_NAME"]].astype(pandas.core.arrays.string_.StringDtype())
+    df[["INTRAREGIONAL_SCHEDULED_FLOW"]] = df[["INTRAREGIONAL_SCHEDULED_FLOW"]].astype("Float64")
+    df[["CONSTRAINT_NAME"]] = df[["CONSTRAINT_NAME"]].astype("string")
     df[["MKTHOUR_EST"]] = df[["MKTHOUR_EST"]].apply(pd.to_datetime, format="%m/%d/%Y %H:%M:%S")
 
     return df
@@ -387,8 +387,8 @@ def parse_rt_mf(
         skiprows=3,
     ).iloc[:-1]
 
-    df[["Unit Count", "Hour Ending"]] = df[["Unit Count", "Hour Ending"]].astype(pandas.core.arrays.integer.Int64Dtype())
-    df[["Peak Flag", "Region Name", "Fuel Type"]] = df[["Peak Flag", "Region Name", "Fuel Type"]].astype(pandas.core.arrays.string_.StringDtype())
+    df[["Unit Count", "Hour Ending"]] = df[["Unit Count", "Hour Ending"]].astype("Int64")
+    df[["Peak Flag", "Region Name", "Fuel Type"]] = df[["Peak Flag", "Region Name", "Fuel Type"]].astype("string")
     df[["Time Interval EST"]] = df[["Time Interval EST"]].apply(pd.to_datetime, format="%m/%d/%Y %I:%M:%S %p")
 
     return df
@@ -409,9 +409,9 @@ def parse_rt_ex(
         inplace=True,
     )
 
-    df[["Committed (GW at Economic Maximum) - Forward", "Committed (GW at Economic Maximum) - Real-Time", "Committed (GW at Economic Maximum) - Delta", "Load (GW) - Forward", "Load (GW) - Real-Time", "Load (GW) - Delta", "Net Scheduled Imports (GW) - Forward", "Net Scheduled Imports (GW) - Real-Time", "Net Scheduled Imports (GW) - Delta", "Outages (GW at Economic Maximum) - Forward", "Outages (GW at Economic Maximum) - Real-Time", "Outages (GW at Economic Maximum) - Delta", "Offer Changes (GW at Economic Maximum) - Forward", "Offer Changes (GW at Economic Maximum) - Real-Time", "Offer Changes (GW at Economic Maximum) - Delta"]] = df[["Committed (GW at Economic Maximum) - Forward", "Committed (GW at Economic Maximum) - Real-Time", "Committed (GW at Economic Maximum) - Delta", "Load (GW) - Forward", "Load (GW) - Real-Time", "Load (GW) - Delta", "Net Scheduled Imports (GW) - Forward", "Net Scheduled Imports (GW) - Real-Time", "Net Scheduled Imports (GW) - Delta", "Outages (GW at Economic Maximum) - Forward", "Outages (GW at Economic Maximum) - Real-Time", "Outages (GW at Economic Maximum) - Delta", "Offer Changes (GW at Economic Maximum) - Forward", "Offer Changes (GW at Economic Maximum) - Real-Time", "Offer Changes (GW at Economic Maximum) - Delta"]].astype(numpy.dtypes.Float64DType())           
-    df["Hour"] = df["Hour"].replace('[^\\d]+', '', regex=True).astype(pandas.core.arrays.integer.Int64Dtype())
-    df[["Real-Time Binding Constraints - (#)"]] = df[["Real-Time Binding Constraints - (#)"]].astype(pandas.core.arrays.integer.Int64Dtype())
+    df[["Committed (GW at Economic Maximum) - Forward", "Committed (GW at Economic Maximum) - Real-Time", "Committed (GW at Economic Maximum) - Delta", "Load (GW) - Forward", "Load (GW) - Real-Time", "Load (GW) - Delta", "Net Scheduled Imports (GW) - Forward", "Net Scheduled Imports (GW) - Real-Time", "Net Scheduled Imports (GW) - Delta", "Outages (GW at Economic Maximum) - Forward", "Outages (GW at Economic Maximum) - Real-Time", "Outages (GW at Economic Maximum) - Delta", "Offer Changes (GW at Economic Maximum) - Forward", "Offer Changes (GW at Economic Maximum) - Real-Time", "Offer Changes (GW at Economic Maximum) - Delta"]] = df[["Committed (GW at Economic Maximum) - Forward", "Committed (GW at Economic Maximum) - Real-Time", "Committed (GW at Economic Maximum) - Delta", "Load (GW) - Forward", "Load (GW) - Real-Time", "Load (GW) - Delta", "Net Scheduled Imports (GW) - Forward", "Net Scheduled Imports (GW) - Real-Time", "Net Scheduled Imports (GW) - Delta", "Outages (GW at Economic Maximum) - Forward", "Outages (GW at Economic Maximum) - Real-Time", "Outages (GW at Economic Maximum) - Delta", "Offer Changes (GW at Economic Maximum) - Forward", "Offer Changes (GW at Economic Maximum) - Real-Time", "Offer Changes (GW at Economic Maximum) - Delta"]].astype("Float64")           
+    df["Hour"] = df["Hour"].replace('[^\\d]+', '', regex=True).astype("Int64")
+    df[["Real-Time Binding Constraints - (#)"]] = df[["Real-Time Binding Constraints - (#)"]].astype("Int64")
 
     return df
 
@@ -446,9 +446,9 @@ def parse_rt_pbc(
         inplace=True,
     )
 
-    df[["PRELIMINARY_SHADOW_PRICE"]] = df[["PRELIMINARY_SHADOW_PRICE"]].astype(numpy.dtypes.Float64DType())
-    df[["BP1", "PC1", "BP2", "PC2", "BP3", "PC3", "BP4", "PC4", "OVERRIDE"]] = df[["BP1", "PC1", "BP2", "PC2", "BP3", "PC3", "BP4", "PC4", "OVERRIDE"]].astype(pandas.core.arrays.integer.Int64Dtype())
-    df[["REASON", "CONSTRAINT_NAME", "CURVETYPE"]] = df[["REASON", "CONSTRAINT_NAME", "CURVETYPE"]].astype(pandas.core.arrays.string_.StringDtype())
+    df[["PRELIMINARY_SHADOW_PRICE"]] = df[["PRELIMINARY_SHADOW_PRICE"]].astype("Float64")
+    df[["BP1", "PC1", "BP2", "PC2", "BP3", "PC3", "BP4", "PC4", "OVERRIDE"]] = df[["BP1", "PC1", "BP2", "PC2", "BP3", "PC3", "BP4", "PC4", "OVERRIDE"]].astype("Int64")
+    df[["REASON", "CONSTRAINT_NAME", "CURVETYPE"]] = df[["REASON", "CONSTRAINT_NAME", "CURVETYPE"]].astype("string")
     df[["MARKET_HOUR_EST"]] = df[["MARKET_HOUR_EST"]].apply(pd.to_datetime, format="%m/%d/%Y %H:%M:%S")
 
     return df
@@ -469,10 +469,10 @@ def parse_rt_bc(
         inplace=True,
     )
 
-    df[["Preliminary Shadow Price", "BP1", "PC1", "BP2", "PC2"]] = df[["Preliminary Shadow Price", "BP1", "PC1", "BP2", "PC2"]].astype(numpy.dtypes.Float64DType())
-    df[["Override"]] = df[["Override"]].astype(pandas.core.arrays.integer.Int64Dtype())
-    df[["Constraint Name", "Branch Name ( Branch Type / From CA / To CA )", "Contingency Description", "Constraint Description", "Curve Type"]] = df[["Constraint Name", "Branch Name ( Branch Type / From CA / To CA )", "Contingency Description", "Constraint Description", "Curve Type"]].astype(pandas.core.arrays.string_.StringDtype())
-    df[["Constraint ID", "Flowgate NERC ID"]] = df[["Constraint ID", "Flowgate NERC ID"]].astype(pandas.core.arrays.integer.Int64Dtype()).astype(pandas.core.arrays.string_.StringDtype())            
+    df[["Preliminary Shadow Price", "BP1", "PC1", "BP2", "PC2"]] = df[["Preliminary Shadow Price", "BP1", "PC1", "BP2", "PC2"]].astype("Float64")
+    df[["Override"]] = df[["Override"]].astype("Int64")
+    df[["Constraint Name", "Branch Name ( Branch Type / From CA / To CA )", "Contingency Description", "Constraint Description", "Curve Type"]] = df[["Constraint Name", "Branch Name ( Branch Type / From CA / To CA )", "Contingency Description", "Constraint Description", "Curve Type"]].astype("string")
+    df[["Constraint ID", "Flowgate NERC ID"]] = df[["Constraint ID", "Flowgate NERC ID"]].astype("Int64").astype("string")            
     df[["Hour of Occurrence"]] = df[["Hour of Occurrence"]].apply(pd.to_datetime, format="%H:%M")
 
     return df
@@ -493,10 +493,10 @@ def parse_rt_or(
         inplace=True,
     )
     
-    df[["Preliminary Shadow Price", "BP1", "PC1", "BP2", "PC2"]] = df[["Preliminary Shadow Price", "BP1", "PC1", "BP2", "PC2"]].astype(numpy.dtypes.Float64DType())
-    df[["Override"]] = df[["Override"]].astype(pandas.core.arrays.integer.Int64Dtype())
-    df[["Constraint Name", "Branch Name ( Branch Type / From CA / To CA )", "Contingency Description", "Constraint Description", "Curve Type", "Reason"]] = df[["Constraint Name", "Branch Name ( Branch Type / From CA / To CA )", "Contingency Description", "Constraint Description", "Curve Type", "Reason"]].astype(pandas.core.arrays.string_.StringDtype())
-    df[["Flowgate NERC ID"]] = df[["Flowgate NERC ID"]].astype(pandas.core.arrays.integer.Int64Dtype()).astype(pandas.core.arrays.string_.StringDtype())            
+    df[["Preliminary Shadow Price", "BP1", "PC1", "BP2", "PC2"]] = df[["Preliminary Shadow Price", "BP1", "PC1", "BP2", "PC2"]].astype("Float64")
+    df[["Override"]] = df[["Override"]].astype("Int64")
+    df[["Constraint Name", "Branch Name ( Branch Type / From CA / To CA )", "Contingency Description", "Constraint Description", "Curve Type", "Reason"]] = df[["Constraint Name", "Branch Name ( Branch Type / From CA / To CA )", "Contingency Description", "Constraint Description", "Curve Type", "Reason"]].astype("string")
+    df[["Flowgate NERC ID"]] = df[["Flowgate NERC ID"]].astype("Int64").astype("string")            
     df[["Hour of Occurrence"]] = df[["Hour of Occurrence"]].apply(pd.to_datetime, format="%H:%M")
 
     return df
@@ -513,8 +513,8 @@ def parse_rt_fuel_on_margin(
         skiprows=3,
     ).iloc[:-1]
 
-    df[["Unit Count", "Hour Ending"]] = df[["Unit Count", "Hour Ending"]].astype(pandas.core.arrays.integer.Int64Dtype())
-    df[["Peak Flag", "Region Name", "Fuel Type"]] = df[["Peak Flag", "Region Name", "Fuel Type"]].astype(pandas.core.arrays.string_.StringDtype())
+    df[["Unit Count", "Hour Ending"]] = df[["Unit Count", "Hour Ending"]].astype("Int64")
+    df[["Peak Flag", "Region Name", "Fuel Type"]] = df[["Peak Flag", "Region Name", "Fuel Type"]].astype("string")
     df[["Time Interval EST"]] = df[["Time Interval EST"]].apply(pd.to_datetime, format="%m/%d/%Y %I:%M:%S %p")
 
     return df
@@ -528,8 +528,8 @@ def parse_Total_Uplift_by_Resource(
         skiprows=6,
     ).iloc[:-2]
 
-    df[["Total Uplift Amount"]] = df[["Total Uplift Amount"]].astype(numpy.dtypes.Float64DType())
-    df[["Resource Name"]] = df[["Resource Name"]].astype(pandas.core.arrays.string_.StringDtype())
+    df[["Total Uplift Amount"]] = df[["Total Uplift Amount"]].astype("Float64")
+    df[["Resource Name"]] = df[["Resource Name"]].astype("string")
 
     return df
 
@@ -547,8 +547,8 @@ def parse_ms_vlr_srw(
         nrows=3,
         usecols=column_names,
     )
-    df1[float_columns] = df1[float_columns].astype(numpy.dtypes.Float64DType())
-    df1[string_columns] = df1[string_columns].astype(pandas.core.arrays.string_.StringDtype())
+    df1[float_columns] = df1[float_columns].astype("Float64")
+    df1[string_columns] = df1[string_columns].astype("string")
 
     df2 = pd.read_excel(
         io=io.BytesIO(res.content),
@@ -556,8 +556,8 @@ def parse_ms_vlr_srw(
         nrows=7,
         usecols=column_names,
     )
-    df2[float_columns] = df2[float_columns].astype(numpy.dtypes.Float64DType())
-    df2[string_columns] = df2[string_columns].astype(pandas.core.arrays.string_.StringDtype())
+    df2[float_columns] = df2[float_columns].astype("Float64")
+    df2[string_columns] = df2[string_columns].astype("string")
 
     df = pd.DataFrame({
         MULTI_DF_NAMES_COLUMN: [
@@ -586,8 +586,8 @@ def parse_ms_rsg_srw(
         skipfooter=2,
     )
 
-    df1[["MISO_RT_RSG_DIST2", "RT_RSG_DIST1", "RT_RSG_MWP", "DA_RSG_MWP", "DA_RSG_DIST"]] = df1[["MISO_RT_RSG_DIST2", "RT_RSG_DIST1", "RT_RSG_MWP", "DA_RSG_MWP", "DA_RSG_DIST"]].astype(numpy.dtypes.Float64DType())
-    df1[["previous 36 months"]] = df1[["previous 36 months"]].astype(pandas.core.arrays.string_.StringDtype())
+    df1[["MISO_RT_RSG_DIST2", "RT_RSG_DIST1", "RT_RSG_MWP", "DA_RSG_MWP", "DA_RSG_DIST"]] = df1[["MISO_RT_RSG_DIST2", "RT_RSG_DIST1", "RT_RSG_MWP", "DA_RSG_MWP", "DA_RSG_DIST"]].astype("Float64")
+    df1[["previous 36 months"]] = df1[["previous 36 months"]].astype("string")
     df1[["START", "STOP"]] = df1[["START", "STOP"]].apply(pd.to_datetime, format="%m/%d/%Y")
     df1 = df1.drop(columns=["Unnamed: 6"])
 
@@ -600,14 +600,14 @@ def parse_ms_rsg_srw(
             skiprows=1,
         )
 
-        df_middle[["HE1", "HE2", "HE3", "HE4", "HE5", "HE6", "HE7", "HE8", "HE9", "HE10", "HE11", "HE12", "HE13", "HE14", "HE15", "HE16", "HE17", "HE18", "HE19", "HE20", "HE21", "HE22", "HE23", "HE24"]] = df_middle[["HE1", "HE2", "HE3", "HE4", "HE5", "HE6", "HE7", "HE8", "HE9", "HE10", "HE11", "HE12", "HE13", "HE14", "HE15", "HE16", "HE17", "HE18", "HE19", "HE20", "HE21", "HE22", "HE23", "HE24"]].astype(numpy.dtypes.Float64DType())
-        df_middle[["CHNL NBR"]] = df_middle[["CHNL NBR"]].astype(pandas.core.arrays.integer.Int64Dtype())
+        df_middle[["HE1", "HE2", "HE3", "HE4", "HE5", "HE6", "HE7", "HE8", "HE9", "HE10", "HE11", "HE12", "HE13", "HE14", "HE15", "HE16", "HE17", "HE18", "HE19", "HE20", "HE21", "HE22", "HE23", "HE24"]] = df_middle[["HE1", "HE2", "HE3", "HE4", "HE5", "HE6", "HE7", "HE8", "HE9", "HE10", "HE11", "HE12", "HE13", "HE14", "HE15", "HE16", "HE17", "HE18", "HE19", "HE20", "HE21", "HE22", "HE23", "HE24"]].astype("Float64")
+        df_middle[["CHNL NBR"]] = df_middle[["CHNL NBR"]].astype("Int64")
         df_middle[["OPERATING DATE"]] = df_middle[["OPERATING DATE"]].apply(pd.to_datetime, format="%Y-%m-%d")
-        df_middle[["BILL_DETERMINANT"]] = df_middle[["BILL_DETERMINANT"]].astype(pandas.core.arrays.string_.StringDtype())
+        df_middle[["BILL_DETERMINANT"]] = df_middle[["BILL_DETERMINANT"]].astype("string")
 
 
         if idx == 1:
-            df_middle[["CONSTRAINT NAME"]] = df_middle[["CONSTRAINT NAME"]].astype(pandas.core.arrays.string_.StringDtype())
+            df_middle[["CONSTRAINT NAME"]] = df_middle[["CONSTRAINT NAME"]].astype("string")
 
         dfs.append(df_middle)
 
@@ -619,7 +619,7 @@ def parse_ms_rsg_srw(
 
     df5.drop(columns=["Unnamed: 0"], inplace=True)
     
-    df5[["DA NVLR DIST", "DA VLR DIST", "RT VLR DIST", "MISO CMC DIST", "MISO DDC DIST", "MISO RT RSG DIST2"]] = df5[["DA NVLR DIST", "DA VLR DIST", "RT VLR DIST", "MISO CMC DIST", "MISO DDC DIST", "MISO RT RSG DIST2"]].astype(numpy.dtypes.Float64DType())
+    df5[["DA NVLR DIST", "DA VLR DIST", "RT VLR DIST", "MISO CMC DIST", "MISO DDC DIST", "MISO RT RSG DIST2"]] = df5[["DA NVLR DIST", "DA VLR DIST", "RT VLR DIST", "MISO CMC DIST", "MISO DDC DIST", "MISO RT RSG DIST2"]].astype("Float64")
     df5[["OPERATING MONTH"]] = df5[["OPERATING MONTH"]].apply(pd.to_datetime, format="%Y-%m-%d")
 
     dfs.append(df5)
@@ -645,8 +645,8 @@ def parse_ms_rnu_srw(
         sheet_name=SHEET1,
     ).iloc[:-2]
 
-    df1[["JOA_MISO_UPLIFT", "MISO_RT_GFACO_DIST", "MISO_RT_GFAOB_DIST", "MISO_RT_RSG_DIST2", "RT_CC", "DA_RI", "RT_RI", "ASM_RI", "STRDFC_UPLIFT", "CRDFC_UPLIFT", "MISO_PV_MWP_UPLIFT", "MISO_DRR_COMP_UPL", "MISO_TOT_MIL_UPL", "RC_DIST", "TOTAL RNU"]] = df1[["JOA_MISO_UPLIFT", "MISO_RT_GFACO_DIST", "MISO_RT_GFAOB_DIST", "MISO_RT_RSG_DIST2", "RT_CC", "DA_RI", "RT_RI", "ASM_RI", "STRDFC_UPLIFT", "CRDFC_UPLIFT", "MISO_PV_MWP_UPLIFT", "MISO_DRR_COMP_UPL", "MISO_TOT_MIL_UPL", "RC_DIST", "TOTAL RNU"]].astype(numpy.dtypes.Float64DType())
-    df1[["previous 36 months"]] = df1[["previous 36 months"]].astype(pandas.core.arrays.string_.StringDtype())
+    df1[["JOA_MISO_UPLIFT", "MISO_RT_GFACO_DIST", "MISO_RT_GFAOB_DIST", "MISO_RT_RSG_DIST2", "RT_CC", "DA_RI", "RT_RI", "ASM_RI", "STRDFC_UPLIFT", "CRDFC_UPLIFT", "MISO_PV_MWP_UPLIFT", "MISO_DRR_COMP_UPL", "MISO_TOT_MIL_UPL", "RC_DIST", "TOTAL RNU"]] = df1[["JOA_MISO_UPLIFT", "MISO_RT_GFACO_DIST", "MISO_RT_GFAOB_DIST", "MISO_RT_RSG_DIST2", "RT_CC", "DA_RI", "RT_RI", "ASM_RI", "STRDFC_UPLIFT", "CRDFC_UPLIFT", "MISO_PV_MWP_UPLIFT", "MISO_DRR_COMP_UPL", "MISO_TOT_MIL_UPL", "RC_DIST", "TOTAL RNU"]].astype("Float64")
+    df1[["previous 36 months"]] = df1[["previous 36 months"]].astype("string")
     df1[["START", "STOP"]] = df1[["START", "STOP"]].apply(pd.to_datetime, format="$m/$d/Y")
 
     df2 = pd.read_excel(
@@ -655,17 +655,17 @@ def parse_ms_rnu_srw(
         sheet_name=SHEET2,
     )
 
-    df2[["HE1", "HE2", "HE3", "HE4", "HE5", "HE6", "HE7", "HE8", "HE9", "HE10", "HE11", "HE12", "HE13", "HE14", "HE15", "HE16", "HE17", "HE18", "HE19", "HE20", "HE21", "HE22", "HE23", "HE24"]] = df2[["HE1", "HE2", "HE3", "HE4", "HE5", "HE6", "HE7", "HE8", "HE9", "HE10", "HE11", "HE12", "HE13", "HE14", "HE15", "HE16", "HE17", "HE18", "HE19", "HE20", "HE21", "HE22", "HE23", "HE24"]].astype(numpy.dtypes.Float64DType())
-    df2[["CHANNEL"]] = df2[["CHANNEL"]].astype(pandas.core.arrays.integer.Int64Dtype())
+    df2[["HE1", "HE2", "HE3", "HE4", "HE5", "HE6", "HE7", "HE8", "HE9", "HE10", "HE11", "HE12", "HE13", "HE14", "HE15", "HE16", "HE17", "HE18", "HE19", "HE20", "HE21", "HE22", "HE23", "HE24"]] = df2[["HE1", "HE2", "HE3", "HE4", "HE5", "HE6", "HE7", "HE8", "HE9", "HE10", "HE11", "HE12", "HE13", "HE14", "HE15", "HE16", "HE17", "HE18", "HE19", "HE20", "HE21", "HE22", "HE23", "HE24"]].astype("Float64")
+    df2[["CHANNEL"]] = df2[["CHANNEL"]].astype("Int64")
     df2[["STARTTIME"]] = df2[["STARTTIME"]].apply(pd.to_datetime, format="%m/%d/%Y")
-    df2[["BILL_DETERMINANT"]] = df2[["BILL_DETERMINANT"]].astype(pandas.core.arrays.string_.StringDtype())
+    df2[["BILL_DETERMINANT"]] = df2[["BILL_DETERMINANT"]].astype("string")
 
     df3 = pd.read_excel(
         io=io.BytesIO(res.content),
         sheet_name=SHEET3,
     )
 
-    df3[["RT CC", "RT JOA", "NET"]] = df3[["RT CC", "RT JOA", "NET"]].astype(numpy.dtypes.Float64DType())
+    df3[["RT CC", "RT JOA", "NET"]] = df3[["RT CC", "RT JOA", "NET"]].astype("Float64")
     df3[["HRBEG"]] = df3[["HRBEG"]].apply(pd.to_datetime, format="%m/%d/%Y %H:%M:%S")
 
     df = pd.DataFrame({
@@ -699,8 +699,8 @@ def parse_ms_ri_srw(
         sheet_name=SHEET1,
     ).iloc[:-2]
 
-    df1[["DA RI", "RT RI", "TOTAL RI"]] = df1[["DA RI", "RT RI", "TOTAL RI"]].astype(numpy.dtypes.Float64DType())
-    df1[["Previous Months"]] = df1[["Previous Months"]].astype(pandas.core.arrays.string_.StringDtype())
+    df1[["DA RI", "RT RI", "TOTAL RI"]] = df1[["DA RI", "RT RI", "TOTAL RI"]].astype("Float64")
+    df1[["Previous Months"]] = df1[["Previous Months"]].astype("string")
     df1[["START", "STOP"]] = df1[["START", "STOP"]].apply(pd.to_datetime, format="%m/%d/%Y")
     df1 = df1.drop(columns=["Unnamed: 5"])
 
@@ -724,8 +724,8 @@ def parse_ms_ri_srw(
         ],
     )
 
-    df2[["Total RI hourly", "Total RI cumulative", "DA_RI hourly", "DA_RI cumulative", "RT_RI hourly", "RT_RI cumulative"]] = df2[["Total RI hourly", "Total RI cumulative", "DA_RI hourly", "DA_RI cumulative", "RT_RI hourly", "RT_RI cumulative"]].astype(numpy.dtypes.Float64DType())
-    df2[["hrend"]] = df2[["hrend"]].astype(pandas.core.arrays.integer.Int64Dtype())
+    df2[["Total RI hourly", "Total RI cumulative", "DA_RI hourly", "DA_RI cumulative", "RT_RI hourly", "RT_RI cumulative"]] = df2[["Total RI hourly", "Total RI cumulative", "DA_RI hourly", "DA_RI cumulative", "RT_RI hourly", "RT_RI cumulative"]].astype("Float64")
+    df2[["hrend"]] = df2[["hrend"]].astype("Int64")
     df2[["date"]] = df2[["date"]].apply(pd.to_datetime, format="%m/%d/%Y %H:%M:%S")
 
     df = pd.DataFrame({
@@ -764,8 +764,8 @@ def parse_MARKET_SETTLEMENT_DATA_SRW(
     )
 
     df["DATE"] = pd.to_datetime(df["DATE"], format="%m/%d/%Y")
-    df["BILL_DET"] = df["BILL_DET"].astype(pandas.core.arrays.string_.StringDtype())
-    df[["HR01", "HR02", "HR03", "HR04", "HR05", "HR06", "HR07", "HR08", "HR09", "HR10", "HR11", "HR12", "HR13", "HR14", "HR15", "HR16", "HR17", "HR18", "HR19", "HR20", "HR21", "HR22", "HR23", "HR24"]] = df[["HR01", "HR02", "HR03", "HR04", "HR05", "HR06", "HR07", "HR08", "HR09", "HR10", "HR11", "HR12", "HR13", "HR14", "HR15", "HR16", "HR17", "HR18", "HR19", "HR20", "HR21", "HR22", "HR23", "HR24"]].astype(numpy.dtypes.Float64DType())
+    df["BILL_DET"] = df["BILL_DET"].astype("string")
+    df[["HR01", "HR02", "HR03", "HR04", "HR05", "HR06", "HR07", "HR08", "HR09", "HR10", "HR11", "HR12", "HR13", "HR14", "HR15", "HR16", "HR17", "HR18", "HR19", "HR20", "HR21", "HR22", "HR23", "HR24"]] = df[["HR01", "HR02", "HR03", "HR04", "HR05", "HR06", "HR07", "HR08", "HR09", "HR10", "HR11", "HR12", "HR13", "HR14", "HR15", "HR16", "HR17", "HR18", "HR19", "HR20", "HR21", "HR22", "HR23", "HR24"]].astype("Float64")
 
     return df
 
@@ -779,9 +779,9 @@ def parse_ms_vlr_HIST_SRW(
     ).iloc[:-2]
 
     df[["OPERATING DATE"]] = df[["OPERATING DATE"]].apply(pd.to_datetime, format="%m/%d/%Y")
-    df[["DA_VLR_MWP", "RT_VLR_MWP", "DA+RT Total"]] = df[["DA_VLR_MWP", "RT_VLR_MWP", "DA+RT Total"]].astype(numpy.dtypes.Float64DType())
-    df[["SETTLEMENT RUN"]] = df[["SETTLEMENT RUN"]].astype(pandas.core.arrays.integer.Int64Dtype())
-    df[["REGION", "CONSTRAINT"]] = df[["REGION", "CONSTRAINT"]].astype(pandas.core.arrays.string_.StringDtype())
+    df[["DA_VLR_MWP", "RT_VLR_MWP", "DA+RT Total"]] = df[["DA_VLR_MWP", "RT_VLR_MWP", "DA+RT Total"]].astype("Float64")
+    df[["SETTLEMENT RUN"]] = df[["SETTLEMENT RUN"]].astype("Int64")
+    df[["REGION", "CONSTRAINT"]] = df[["REGION", "CONSTRAINT"]].astype("string")
 
     return df
 
@@ -803,8 +803,8 @@ def parse_ms_ecf_srw(
     df1.rename(columns={"Unnamed: 0": "Type"}, inplace=True)
     df1.drop(columns=["Unnamed: 11"], inplace=True)
 
-    df1[["Da Xs Cg Fnd", "Rt Cc", "Rt Xs Cg Fnd", "Ftr Auc Res", "Ao Ftr Mn Alc", "Ftr Yr Alc *", "Tbs Access", "Net Ecf", "Ftr Shrtfll", "Net Ftr Sf", "Ftr Trg Cr Alc", "Ftr Hr Alc", "Hr Mf", "Hourly Ftr Allocation", "Monthly Ftr Allocation"]] = df1[["Da Xs Cg Fnd", "Rt Cc", "Rt Xs Cg Fnd", "Ftr Auc Res", "Ao Ftr Mn Alc", "Ftr Yr Alc *", "Tbs Access", "Net Ecf", "Ftr Shrtfll", "Net Ftr Sf", "Ftr Trg Cr Alc", "Ftr Hr Alc", "Hr Mf", "Hourly Ftr Allocation", "Monthly Ftr Allocation"]].replace(',','', regex=True).astype(numpy.dtypes.Float64DType())
-    df1[["Type"]] = df1[["Type"]].astype(pandas.core.arrays.string_.StringDtype())
+    df1[["Da Xs Cg Fnd", "Rt Cc", "Rt Xs Cg Fnd", "Ftr Auc Res", "Ao Ftr Mn Alc", "Ftr Yr Alc *", "Tbs Access", "Net Ecf", "Ftr Shrtfll", "Net Ftr Sf", "Ftr Trg Cr Alc", "Ftr Hr Alc", "Hr Mf", "Hourly Ftr Allocation", "Monthly Ftr Allocation"]] = df1[["Da Xs Cg Fnd", "Rt Cc", "Rt Xs Cg Fnd", "Ftr Auc Res", "Ao Ftr Mn Alc", "Ftr Yr Alc *", "Tbs Access", "Net Ecf", "Ftr Shrtfll", "Net Ftr Sf", "Ftr Trg Cr Alc", "Ftr Hr Alc", "Hr Mf", "Hourly Ftr Allocation", "Monthly Ftr Allocation"]].replace(',','', regex=True).astype("Float64")
+    df1[["Type"]] = df1[["Type"]].astype("string")
     df1[["Start", "Stop"]] = df1[["Start", "Stop"]].apply(pd.to_datetime, format="%m/%d/%Y")
 
     df2 = pd.read_excel(
@@ -822,9 +822,9 @@ def parse_ms_ecf_srw(
         ],
     )
     
-    df2[["DA_JOA", "RT_JOA"]] = df2[["DA_JOA", "RT_JOA"]].astype(numpy.dtypes.Float64DType())
+    df2[["DA_JOA", "RT_JOA"]] = df2[["DA_JOA", "RT_JOA"]].astype("Float64")
     df2[["HRBEG"]] = df2[["HRBEG"]].apply(pd.to_datetime, format="%m/%d/%Y %H:%M:%S")
-    df2[["CNTR_RTO"]] = df2[["CNTR_RTO"]].astype(pandas.core.arrays.string_.StringDtype())
+    df2[["CNTR_RTO"]] = df2[["CNTR_RTO"]].astype("string")
 
     df3 = pd.read_excel(
         io=io.BytesIO(res.content),
@@ -839,7 +839,7 @@ def parse_ms_ecf_srw(
             "NET",
         ],
     )
-    df3[["RT CC", "RT JOA", "NET"]] = df3[["RT CC", "RT JOA", "NET"]].astype(numpy.dtypes.Float64DType())
+    df3[["RT CC", "RT JOA", "NET"]] = df3[["RT CC", "RT JOA", "NET"]].astype("Float64")
     df3[["HRBEG"]] = df3[["HRBEG"]].apply(pd.to_datetime, format="%m/%d/%Y %H:%M:%S")
 
     df4 = pd.read_excel(
@@ -848,7 +848,7 @@ def parse_ms_ecf_srw(
     )
     df4.rename(columns={"OD\n": "OD"}, inplace=True)
 
-    df4[["DA_ECF", "RT_ECF", "DART_ECF", "DART_monthly"]] = df4[["DA_ECF", "RT_ECF", "DART_ECF", "DART_monthly"]].astype(numpy.dtypes.Float64DType())
+    df4[["DA_ECF", "RT_ECF", "DART_ECF", "DART_monthly"]] = df4[["DA_ECF", "RT_ECF", "DART_ECF", "DART_monthly"]].astype("Float64")
     df4[["OD"]] = df4[["OD"]].apply(pd.to_datetime, format="%m/%d/%Y")
 
     df = pd.DataFrame({
@@ -879,8 +879,8 @@ def parse_ccf_co(
         filepath_or_buffer=io.StringIO(csv_data),
     )
 
-    df[["HOUR1", "HOUR2", "HOUR3", "HOUR4", "HOUR5", "HOUR6", "HOUR7", "HOUR8", "HOUR9", "HOUR10", "HOUR11", "HOUR12", "HOUR13", "HOUR14", "HOUR15", "HOUR16", "HOUR17", "HOUR18", "HOUR19", "HOUR20", "HOUR21", "HOUR22", "HOUR23", "HOUR24"]] = df[["HOUR1", "HOUR2", "HOUR3", "HOUR4", "HOUR5", "HOUR6", "HOUR7", "HOUR8", "HOUR9", "HOUR10", "HOUR11", "HOUR12", "HOUR13", "HOUR14", "HOUR15", "HOUR16", "HOUR17", "HOUR18", "HOUR19", "HOUR20", "HOUR21", "HOUR22", "HOUR23", "HOUR24"]].astype(numpy.dtypes.Float64DType())
-    df[["CONSTRAINT NAME", "NODE NAME"]] = df[["CONSTRAINT NAME", "NODE NAME"]].astype(pandas.core.arrays.string_.StringDtype())
+    df[["HOUR1", "HOUR2", "HOUR3", "HOUR4", "HOUR5", "HOUR6", "HOUR7", "HOUR8", "HOUR9", "HOUR10", "HOUR11", "HOUR12", "HOUR13", "HOUR14", "HOUR15", "HOUR16", "HOUR17", "HOUR18", "HOUR19", "HOUR20", "HOUR21", "HOUR22", "HOUR23", "HOUR24"]] = df[["HOUR1", "HOUR2", "HOUR3", "HOUR4", "HOUR5", "HOUR6", "HOUR7", "HOUR8", "HOUR9", "HOUR10", "HOUR11", "HOUR12", "HOUR13", "HOUR14", "HOUR15", "HOUR16", "HOUR17", "HOUR18", "HOUR19", "HOUR20", "HOUR21", "HOUR22", "HOUR23", "HOUR24"]].astype("Float64")
+    df[["CONSTRAINT NAME", "NODE NAME"]] = df[["CONSTRAINT NAME", "NODE NAME"]].astype("string")
     df[["OPERATING DATE"]] = df[["OPERATING DATE"]].apply(pd.to_datetime, format="%m/%d/%Y")
 
     return df
@@ -896,9 +896,9 @@ def parse_ms_vlr_HIST(
         filepath_or_buffer=io.StringIO(csv_data),
     )
 
-    df[["DA_VLR_MWP", "RT_VLR_MWP", "DA+RT Total"]] = df[["DA_VLR_MWP", "RT_VLR_MWP", "DA+RT Total"]].astype(numpy.dtypes.Float64DType())
-    df[["SETTLEMENT RUN"]] = df[["SETTLEMENT RUN"]].astype(pandas.core.arrays.integer.Int64Dtype())
-    df[["REGION", "CONSTRAINT"]] = df[["REGION", "CONSTRAINT"]].astype(pandas.core.arrays.string_.StringDtype())
+    df[["DA_VLR_MWP", "RT_VLR_MWP", "DA+RT Total"]] = df[["DA_VLR_MWP", "RT_VLR_MWP", "DA+RT Total"]].astype("Float64")
+    df[["SETTLEMENT RUN"]] = df[["SETTLEMENT RUN"]].astype("Int64")
+    df[["REGION", "CONSTRAINT"]] = df[["REGION", "CONSTRAINT"]].astype("string")
     df[["OPERATING DATE"]] = df[["OPERATING DATE"]].apply(pd.to_datetime, format="%m/%d/%Y")
 
     return df
@@ -937,8 +937,8 @@ def parse_Daily_Uplift_by_Local_Resource_Zone(
         }, inplace=True)
         df.drop(labels=df.columns[0], axis=1, inplace=True)
 
-        df[["Date"]] = df[["Date"]].astype(pandas.core.arrays.string_.StringDtype())
-        df[["Day Ahead Capacity", "Day Ahead VLR", "Real Time Capacity", "Real Time VLR", "Real Time Transmission Reliability", "Price Volatility Make Whole Payments"]] = df[["Day Ahead Capacity", "Day Ahead VLR", "Real Time Capacity", "Real Time VLR", "Real Time Transmission Reliability", "Price Volatility Make Whole Payments"]].astype(numpy.dtypes.Float64DType())
+        df[["Date"]] = df[["Date"]].astype("string")
+        df[["Day Ahead Capacity", "Day Ahead VLR", "Real Time Capacity", "Real Time VLR", "Real Time Transmission Reliability", "Price Volatility Make Whole Payments"]] = df[["Day Ahead Capacity", "Day Ahead VLR", "Real Time Capacity", "Real Time VLR", "Real Time Transmission Reliability", "Price Volatility Make Whole Payments"]].astype("Float64")
 
         return df
 
@@ -979,8 +979,8 @@ def parse_fuelmix(
         filepath_or_buffer=io.StringIO(csv_data),
     )
 
-    df[["ACT", "TOTALMW"]] = df[["ACT", "TOTALMW"]].astype(pandas.core.arrays.integer.Int64Dtype())
-    df[["CATEGORY"]] = df[["CATEGORY"]].astype(pandas.core.arrays.string_.StringDtype())
+    df[["ACT", "TOTALMW"]] = df[["ACT", "TOTALMW"]].astype("Int64")
+    df[["CATEGORY"]] = df[["CATEGORY"]].astype("string")
     df[["INTERVALEST"]] = df[["INTERVALEST"]].apply(pd.to_datetime, format="%Y-%m-%d %I:%M:%S %p")
 
     return df
@@ -996,7 +996,7 @@ def parse_ace(
         filepath_or_buffer=io.StringIO(csv_data),
     )
 
-    df[["value"]] = df[["value"]].astype(numpy.dtypes.Float64DType())
+    df[["value"]] = df[["value"]].astype("Float64")
     df[["instantEST"]] = df[["instantEST"]].apply(pd.to_datetime, format="%Y-%m-%d %I:%M:%S %p")
 
     return df
@@ -1016,8 +1016,8 @@ def parse_AncillaryServicesMCP(
 
     df1.rename(columns={" GenRegMCP": "GenRegMCP"}, inplace=True)
 
-    df1[["number"]] = df1[["number"]].astype(pandas.core.arrays.integer.Int64Dtype())
-    df1[["GenRegMCP", "GenSpinMCP", "GenSuppMCP", "StrMcp", "DemandRegMcp", "DemandSpinMcp", "DemandSuppMCP", "RcpUpMcp", "RcpDownMcp"]] = df1[["GenRegMCP", "GenSpinMCP", "GenSuppMCP", "StrMcp", "DemandRegMcp", "DemandSpinMcp", "DemandSuppMCP", "RcpUpMcp", "RcpDownMcp"]].astype(numpy.dtypes.Float64DType())
+    df1[["number"]] = df1[["number"]].astype("Int64")
+    df1[["GenRegMCP", "GenSpinMCP", "GenSuppMCP", "StrMcp", "DemandRegMcp", "DemandSpinMcp", "DemandSuppMCP", "RcpUpMcp", "RcpDownMcp"]] = df1[["GenRegMCP", "GenSpinMCP", "GenSuppMCP", "StrMcp", "DemandRegMcp", "DemandSpinMcp", "DemandSuppMCP", "RcpUpMcp", "RcpDownMcp"]].astype("Float64")
 
     csv2_lines = csv2.splitlines()
 
@@ -1025,8 +1025,8 @@ def parse_AncillaryServicesMCP(
         filepath_or_buffer=io.StringIO("\n".join(csv2_lines[1:])),
     )
 
-    df2[["number"]] = df2[["number"]].astype(pandas.core.arrays.integer.Int64Dtype())
-    df2[["GenRegMCP", "GenSpinMCP", "GenSuppMCP", "StrMcp", "DemandRegMcp", "DemandSpinMcp", "DemandSuppMCP", "RcpUpMcp", "RcpDownMcp"]] = df2[["GenRegMCP", "GenSpinMCP", "GenSuppMCP", "StrMcp", "DemandRegMcp", "DemandSpinMcp", "DemandSuppMCP", "RcpUpMcp", "RcpDownMcp"]].astype(numpy.dtypes.Float64DType())
+    df2[["number"]] = df2[["number"]].astype("Int64")
+    df2[["GenRegMCP", "GenSpinMCP", "GenSuppMCP", "StrMcp", "DemandRegMcp", "DemandSpinMcp", "DemandSuppMCP", "RcpUpMcp", "RcpDownMcp"]] = df2[["GenRegMCP", "GenSpinMCP", "GenSuppMCP", "StrMcp", "DemandRegMcp", "DemandSpinMcp", "DemandSuppMCP", "RcpUpMcp", "RcpDownMcp"]].astype("Float64")
     
     df = pd.DataFrame({
         MULTI_DF_NAMES_COLUMN: [
@@ -1052,7 +1052,7 @@ def parse_cts(
         filepath_or_buffer=io.StringIO(csv_data),
     )
 
-    df[["PJMFORECASTEDLMP"]] = df[["PJMFORECASTEDLMP"]].astype(numpy.dtypes.Float64DType())
+    df[["PJMFORECASTEDLMP"]] = df[["PJMFORECASTEDLMP"]].astype("Float64")
     df[["CASEAPPROVALDATE", "SOLUTIONTIME"]] = df[["CASEAPPROVALDATE", "SOLUTIONTIME"]].apply(pd.to_datetime, format="%Y-%m-%d %I:%M:%S %p")
 
     return df
@@ -1069,8 +1069,8 @@ def parse_combinedwindsolar(
     )
 
     df[["ForecastDateTimeEST", "ActualDateTimeEST"]] = df[["ForecastDateTimeEST", "ActualDateTimeEST"]].apply(pd.to_datetime, format="%Y-%m-%d %I:%M:%S %p")
-    df[["ForecastHourEndingEST", "ActualHourEndingEST"]] = df[["ForecastHourEndingEST", "ActualHourEndingEST"]].astype(pandas.core.arrays.integer.Int64Dtype())
-    df[["ForecastWindValue", "ForecastSolarValue", "ActualWindValue", "ActualSolarValue"]] = df[["ForecastWindValue", "ForecastSolarValue", "ActualWindValue", "ActualSolarValue"]].astype(numpy.dtypes.Float64DType())
+    df[["ForecastHourEndingEST", "ActualHourEndingEST"]] = df[["ForecastHourEndingEST", "ActualHourEndingEST"]].astype("Int64")
+    df[["ForecastWindValue", "ForecastSolarValue", "ActualWindValue", "ActualSolarValue"]] = df[["ForecastWindValue", "ForecastSolarValue", "ActualWindValue", "ActualSolarValue"]].astype("Float64")
 
     return df
 
@@ -1085,8 +1085,8 @@ def parse_WindForecast(
         data=dictionary["Forecast"],
     )
 
-    df[["Value"]] = df[["Value"]].astype(numpy.dtypes.Float64DType())
-    df[["HourEndingEST"]] = df[["HourEndingEST"]].astype(pandas.core.arrays.integer.Int64Dtype())
+    df[["Value"]] = df[["Value"]].astype("Float64")
+    df[["HourEndingEST"]] = df[["HourEndingEST"]].astype("Int64")
     df[["DateTimeEST"]] = df[["DateTimeEST"]].apply(pd.to_datetime, format="%Y-%m-%d %I:%M:%S %p")
 
     return df
@@ -1102,8 +1102,8 @@ def parse_Wind(
         filepath_or_buffer=io.StringIO(csv_data),
     )
 
-    df[["ForecastValue", "ActualValue"]] = df[["ForecastValue", "ActualValue"]].astype(numpy.dtypes.Float64DType())
-    df[["ForecastHourEndingEST", "ActualHourEndingEST"]] = df[["ForecastHourEndingEST", "ActualHourEndingEST"]].astype(pandas.core.arrays.integer.Int64Dtype())
+    df[["ForecastValue", "ActualValue"]] = df[["ForecastValue", "ActualValue"]].astype("Float64")
+    df[["ForecastHourEndingEST", "ActualHourEndingEST"]] = df[["ForecastHourEndingEST", "ActualHourEndingEST"]].astype("Int64")
     df[["ForecastDateTimeEST", "ActualDateTimeEST"]] = df[["ForecastDateTimeEST", "ActualDateTimeEST"]].apply(pd.to_datetime, format="%Y-%m-%d %I:%M:%S %p")
 
     return df
@@ -1120,8 +1120,8 @@ def parse_SolarForecast(
     )
 
     df[["DateTimeEST"]] = df[["DateTimeEST"]].apply(pd.to_datetime, format="%Y-%m-%d %I:%M:%S %p")
-    df[["HourEndingEST"]] = df[["HourEndingEST"]].astype(pandas.core.arrays.integer.Int64Dtype())
-    df[["Value"]] = df[["Value"]].astype(numpy.dtypes.Float64DType())
+    df[["HourEndingEST"]] = df[["HourEndingEST"]].astype("Int64")
+    df[["Value"]] = df[["Value"]].astype("Float64")
 
     return df
 
@@ -1136,8 +1136,8 @@ def parse_Solar(
         filepath_or_buffer=io.StringIO(csv_data),
     )
 
-    df[["ForecastValue", "ActualValue"]] = df[["ForecastValue", "ActualValue"]].astype(numpy.dtypes.Float64DType())
-    df[["ForecastHourEndingEST", "ActualHourEndingEST"]] = df[["ForecastHourEndingEST", "ActualHourEndingEST"]].astype(pandas.core.arrays.integer.Int64Dtype())
+    df[["ForecastValue", "ActualValue"]] = df[["ForecastValue", "ActualValue"]].astype("Float64")
+    df[["ForecastHourEndingEST", "ActualHourEndingEST"]] = df[["ForecastHourEndingEST", "ActualHourEndingEST"]].astype("Int64")
     df[["ForecastDateTimeEST", "ActualDateTimeEST"]] = df[["ForecastDateTimeEST", "ActualDateTimeEST"]].apply(pd.to_datetime, format="%Y-%m-%d %I:%M:%S %p")
 
     return df
@@ -1153,8 +1153,8 @@ def parse_exantelmp(
         filepath_or_buffer=io.StringIO(csv_data),
     )
 
-    df[["LMP", "Loss", "Congestion"]] = df[["LMP", "Loss", "Congestion"]].astype(numpy.dtypes.Float64DType())
-    df[["Name"]] = df[["Name"]].astype(pandas.core.arrays.string_.StringDtype())
+    df[["LMP", "Loss", "Congestion"]] = df[["LMP", "Loss", "Congestion"]].astype("Float64")
+    df[["Name"]] = df[["Name"]].astype("string")
 
     return df
 
@@ -1169,8 +1169,8 @@ def parse_da_exante_lmp(
         filepath_or_buffer=io.StringIO(csv_data),
     )
 
-    df[["HE 1", "HE 2", "HE 3", "HE 4", "HE 5", "HE 6", "HE 7", "HE 8", "HE 9", "HE 10", "HE 11", "HE 12", "HE 13", "HE 14", "HE 15", "HE 16", "HE 17", "HE 18", "HE 19", "HE 20", "HE 21", "HE 22", "HE 23", "HE 24"]] = df[["HE 1", "HE 2", "HE 3", "HE 4", "HE 5", "HE 6", "HE 7", "HE 8", "HE 9", "HE 10", "HE 11", "HE 12", "HE 13", "HE 14", "HE 15", "HE 16", "HE 17", "HE 18", "HE 19", "HE 20", "HE 21", "HE 22", "HE 23", "HE 24"]].astype(numpy.dtypes.Float64DType())
-    df[["Node", "Type", "Value"]] = df[["Node", "Type", "Value"]].astype(pandas.core.arrays.string_.StringDtype())
+    df[["HE 1", "HE 2", "HE 3", "HE 4", "HE 5", "HE 6", "HE 7", "HE 8", "HE 9", "HE 10", "HE 11", "HE 12", "HE 13", "HE 14", "HE 15", "HE 16", "HE 17", "HE 18", "HE 19", "HE 20", "HE 21", "HE 22", "HE 23", "HE 24"]] = df[["HE 1", "HE 2", "HE 3", "HE 4", "HE 5", "HE 6", "HE 7", "HE 8", "HE 9", "HE 10", "HE 11", "HE 12", "HE 13", "HE 14", "HE 15", "HE 16", "HE 17", "HE 18", "HE 19", "HE 20", "HE 21", "HE 22", "HE 23", "HE 24"]].astype("Float64")
+    df[["Node", "Type", "Value"]] = df[["Node", "Type", "Value"]].astype("string")
 
     return df
 
@@ -1185,8 +1185,8 @@ def parse_da_expost_lmp(
         filepath_or_buffer=io.StringIO(csv_data),
     )
 
-    df[["HE 1", "HE 2", "HE 3", "HE 4", "HE 5", "HE 6", "HE 7", "HE 8", "HE 9", "HE 10", "HE 11", "HE 12", "HE 13", "HE 14", "HE 15", "HE 16", "HE 17", "HE 18", "HE 19", "HE 20", "HE 21", "HE 22", "HE 23", "HE 24"]] = df[["HE 1", "HE 2", "HE 3", "HE 4", "HE 5", "HE 6", "HE 7", "HE 8", "HE 9", "HE 10", "HE 11", "HE 12", "HE 13", "HE 14", "HE 15", "HE 16", "HE 17", "HE 18", "HE 19", "HE 20", "HE 21", "HE 22", "HE 23", "HE 24"]].astype(numpy.dtypes.Float64DType())
-    df[["Node", "Type", "Value"]] = df[["Node", "Type", "Value"]].astype(pandas.core.arrays.string_.StringDtype())
+    df[["HE 1", "HE 2", "HE 3", "HE 4", "HE 5", "HE 6", "HE 7", "HE 8", "HE 9", "HE 10", "HE 11", "HE 12", "HE 13", "HE 14", "HE 15", "HE 16", "HE 17", "HE 18", "HE 19", "HE 20", "HE 21", "HE 22", "HE 23", "HE 24"]] = df[["HE 1", "HE 2", "HE 3", "HE 4", "HE 5", "HE 6", "HE 7", "HE 8", "HE 9", "HE 10", "HE 11", "HE 12", "HE 13", "HE 14", "HE 15", "HE 16", "HE 17", "HE 18", "HE 19", "HE 20", "HE 21", "HE 22", "HE 23", "HE 24"]].astype("Float64")
+    df[["Node", "Type", "Value"]] = df[["Node", "Type", "Value"]].astype("string")
 
     return df
 
@@ -1201,8 +1201,8 @@ def parse_rt_lmp_final(
         filepath_or_buffer=io.StringIO(csv_data),
     )
 
-    df[["HE 1", "HE 2", "HE 3", "HE 4", "HE 5", "HE 6", "HE 7", "HE 8", "HE 9", "HE 10", "HE 11", "HE 12", "HE 13", "HE 14", "HE 15", "HE 16", "HE 17", "HE 18", "HE 19", "HE 20", "HE 21", "HE 22", "HE 23", "HE 24"]] = df[["HE 1", "HE 2", "HE 3", "HE 4", "HE 5", "HE 6", "HE 7", "HE 8", "HE 9", "HE 10", "HE 11", "HE 12", "HE 13", "HE 14", "HE 15", "HE 16", "HE 17", "HE 18", "HE 19", "HE 20", "HE 21", "HE 22", "HE 23", "HE 24"]].astype(numpy.dtypes.Float64DType())
-    df[["Node", "Type", "Value"]] = df[["Node", "Type", "Value"]].astype(pandas.core.arrays.string_.StringDtype())
+    df[["HE 1", "HE 2", "HE 3", "HE 4", "HE 5", "HE 6", "HE 7", "HE 8", "HE 9", "HE 10", "HE 11", "HE 12", "HE 13", "HE 14", "HE 15", "HE 16", "HE 17", "HE 18", "HE 19", "HE 20", "HE 21", "HE 22", "HE 23", "HE 24"]] = df[["HE 1", "HE 2", "HE 3", "HE 4", "HE 5", "HE 6", "HE 7", "HE 8", "HE 9", "HE 10", "HE 11", "HE 12", "HE 13", "HE 14", "HE 15", "HE 16", "HE 17", "HE 18", "HE 19", "HE 20", "HE 21", "HE 22", "HE 23", "HE 24"]].astype("Float64")
+    df[["Node", "Type", "Value"]] = df[["Node", "Type", "Value"]].astype("string")
 
     return df
 
@@ -1217,8 +1217,8 @@ def parse_rt_lmp_prelim(
         filepath_or_buffer=io.StringIO(csv_data),
     )
 
-    df[["HE 1", "HE 2", "HE 3", "HE 4", "HE 5", "HE 6", "HE 7", "HE 8", "HE 9", "HE 10", "HE 11", "HE 12", "HE 13", "HE 14", "HE 15", "HE 16", "HE 17", "HE 18", "HE 19", "HE 20", "HE 21", "HE 22", "HE 23", "HE 24"]] = df[["HE 1", "HE 2", "HE 3", "HE 4", "HE 5", "HE 6", "HE 7", "HE 8", "HE 9", "HE 10", "HE 11", "HE 12", "HE 13", "HE 14", "HE 15", "HE 16", "HE 17", "HE 18", "HE 19", "HE 20", "HE 21", "HE 22", "HE 23", "HE 24"]].astype(numpy.dtypes.Float64DType())
-    df[["Node", "Type", "Value"]] = df[["Node", "Type", "Value"]].astype(pandas.core.arrays.string_.StringDtype())
+    df[["HE 1", "HE 2", "HE 3", "HE 4", "HE 5", "HE 6", "HE 7", "HE 8", "HE 9", "HE 10", "HE 11", "HE 12", "HE 13", "HE 14", "HE 15", "HE 16", "HE 17", "HE 18", "HE 19", "HE 20", "HE 21", "HE 22", "HE 23", "HE 24"]] = df[["HE 1", "HE 2", "HE 3", "HE 4", "HE 5", "HE 6", "HE 7", "HE 8", "HE 9", "HE 10", "HE 11", "HE 12", "HE 13", "HE 14", "HE 15", "HE 16", "HE 17", "HE 18", "HE 19", "HE 20", "HE 21", "HE 22", "HE 23", "HE 24"]].astype("Float64")
+    df[["Node", "Type", "Value"]] = df[["Node", "Type", "Value"]].astype("string")
 
     return df
 
@@ -1235,8 +1235,8 @@ def parse_DA_Load_EPNodes(
         filepath_or_buffer=io.StringIO(csv_data),
     )
 
-    df[["HE1", "HE2", "HE3", "HE4", "HE5", "HE6", "HE7", "HE8", "HE9", "HE10", "HE11", "HE12", "HE13", "HE14", "HE15", "HE16", "HE17", "HE18", "HE19", "HE20", "HE21", "HE22", "HE23", "HE24"]] = df[["HE1", "HE2", "HE3", "HE4", "HE5", "HE6", "HE7", "HE8", "HE9", "HE10", "HE11", "HE12", "HE13", "HE14", "HE15", "HE16", "HE17", "HE18", "HE19", "HE20", "HE21", "HE22", "HE23", "HE24"]].astype(numpy.dtypes.Float64DType())
-    df[["EPNode", "Value"]] = df[["EPNode", "Value"]].astype(pandas.core.arrays.string_.StringDtype())
+    df[["HE1", "HE2", "HE3", "HE4", "HE5", "HE6", "HE7", "HE8", "HE9", "HE10", "HE11", "HE12", "HE13", "HE14", "HE15", "HE16", "HE17", "HE18", "HE19", "HE20", "HE21", "HE22", "HE23", "HE24"]] = df[["HE1", "HE2", "HE3", "HE4", "HE5", "HE6", "HE7", "HE8", "HE9", "HE10", "HE11", "HE12", "HE13", "HE14", "HE15", "HE16", "HE17", "HE18", "HE19", "HE20", "HE21", "HE22", "HE23", "HE24"]].astype("Float64")
+    df[["EPNode", "Value"]] = df[["EPNode", "Value"]].astype("string")
 
     return df
 
@@ -1254,8 +1254,8 @@ def parse_DA_LMPs(
     )
 
     df[["MARKET_DAY"]] = df[["MARKET_DAY"]].apply(pd.to_datetime, format="%m/%d/%Y")
-    df[["HE1", "HE2", "HE3", "HE4", "HE5", "HE6", "HE7", "HE8", "HE9", "HE10", "HE11", "HE12", "HE13", "HE14", "HE15", "HE16", "HE17", "HE18", "HE19", "HE20", "HE21", "HE22", "HE23", "HE24"]] = df[["HE1", "HE2", "HE3", "HE4", "HE5", "HE6", "HE7", "HE8", "HE9", "HE10", "HE11", "HE12", "HE13", "HE14", "HE15", "HE16", "HE17", "HE18", "HE19", "HE20", "HE21", "HE22", "HE23", "HE24"]].astype(numpy.dtypes.Float64DType())
-    df[["NODE", "TYPE", "VALUE"]] = df[["NODE", "TYPE", "VALUE"]].astype(pandas.core.arrays.string_.StringDtype())
+    df[["HE1", "HE2", "HE3", "HE4", "HE5", "HE6", "HE7", "HE8", "HE9", "HE10", "HE11", "HE12", "HE13", "HE14", "HE15", "HE16", "HE17", "HE18", "HE19", "HE20", "HE21", "HE22", "HE23", "HE24"]] = df[["HE1", "HE2", "HE3", "HE4", "HE5", "HE6", "HE7", "HE8", "HE9", "HE10", "HE11", "HE12", "HE13", "HE14", "HE15", "HE16", "HE17", "HE18", "HE19", "HE20", "HE21", "HE22", "HE23", "HE24"]].astype("Float64")
+    df[["NODE", "TYPE", "VALUE"]] = df[["NODE", "TYPE", "VALUE"]].astype("string")
 
     return df
 
@@ -1268,8 +1268,8 @@ def parse_5min_exante_lmp(
         skiprows=3,
     ).iloc[:-1]
 
-    df[["RT Ex-Ante LMP", "RT Ex-Ante MEC", "RT Ex-Ante MLC", "RT Ex-Ante MCC"]] = df[["RT Ex-Ante LMP", "RT Ex-Ante MEC", "RT Ex-Ante MLC", "RT Ex-Ante MCC"]].astype(numpy.dtypes.Float64DType())
-    df[["CP Node"]] = df[["CP Node"]].astype(pandas.core.arrays.string_.StringDtype())
+    df[["RT Ex-Ante LMP", "RT Ex-Ante MEC", "RT Ex-Ante MLC", "RT Ex-Ante MCC"]] = df[["RT Ex-Ante LMP", "RT Ex-Ante MEC", "RT Ex-Ante MLC", "RT Ex-Ante MCC"]].astype("Float64")
+    df[["CP Node"]] = df[["CP Node"]].astype("string")
     df[["Time (EST)"]] = df[["Time (EST)"]].apply(pd.to_datetime, format="%Y-%m-%d %I:%M:%S %p")
 
     return df
@@ -1288,7 +1288,7 @@ def parse_nsi1(
     int_columns = df.columns.difference(["timestamp"])
 
     df[["timestamp"]] = df[["timestamp"]].apply(pd.to_datetime, format="%Y-%m-%d %H:%M:%S")
-    df[int_columns] = df[int_columns].astype(pandas.core.arrays.integer.Int64Dtype())
+    df[int_columns] = df[int_columns].astype("Int64")
 
     return df
 
@@ -1306,7 +1306,7 @@ def parse_nsi5(
     int_columns = df.columns.difference(["timestamp"])
 
     df[["timestamp"]] = df[["timestamp"]].apply(pd.to_datetime, format="%Y-%m-%d %H:%M:%S")
-    df[int_columns] = df[int_columns].astype(pandas.core.arrays.integer.Int64Dtype())
+    df[int_columns] = df[int_columns].astype("Int64")
 
     return df
     
@@ -1322,7 +1322,7 @@ def parse_nsi1miso(
     )
 
     df[["timestamp"]] = df[["timestamp"]].apply(pd.to_datetime, format="%Y-%m-%d %H:%M:%S")
-    df[["NSI"]] = df[["NSI"]].astype(pandas.core.arrays.integer.Int64Dtype())
+    df[["NSI"]] = df[["NSI"]].astype("Int64")
 
     return df
 
@@ -1338,7 +1338,7 @@ def parse_nsi5miso(
     )
 
     df[["timestamp"]] = df[["timestamp"]].apply(pd.to_datetime, format="%Y-%m-%d %H:%M:%S")
-    df[["NSI"]] = df[["NSI"]].astype(pandas.core.arrays.integer.Int64Dtype())
+    df[["NSI"]] = df[["NSI"]].astype("Int64")
 
     return df
 
@@ -1354,7 +1354,7 @@ def parse_importtotal5(
     )
 
     df[["Time"]] = df[["Time"]].apply(pd.to_datetime, format="%Y-%m-%d %I:%M:%S %p")
-    df[["Value"]] = df[["Value"]].astype(numpy.dtypes.Float64DType())
+    df[["Value"]] = df[["Value"]].astype("Float64")
 
     return df
 
@@ -1369,9 +1369,9 @@ def parse_reservebindingconstraints(
         filepath_or_buffer=io.StringIO(csv_data),
     )
 
-    df[["Price"]] = df[["Price"]].astype(numpy.dtypes.Float64DType())
+    df[["Price"]] = df[["Price"]].astype("Float64")
     df[["Period"]] = df[["Period"]].apply(pd.to_datetime, format="%Y-%m-%dT%H:%M:%S")
-    df[["Name", "Description"]] = df[["Name", "Description"]].astype(pandas.core.arrays.string_.StringDtype())
+    df[["Name", "Description"]] = df[["Name", "Description"]].astype("string")
 
     return df
 
@@ -1387,8 +1387,8 @@ def parse_totalload(
         skiprows=3,
         nrows=24,
     )
-    df1[["Load_Hour"]] = df1[["Load_Hour"]].astype(pandas.core.arrays.integer.Int64Dtype())
-    df1[["Load_Value"]] = df1[["Load_Value"]].astype(numpy.dtypes.Float64DType())
+    df1[["Load_Hour"]] = df1[["Load_Hour"]].astype("Int64")
+    df1[["Load_Value"]] = df1[["Load_Value"]].astype("Float64")
 
     table_2 = "MediumTermLoadForecast"
     df2 = pd.read_csv(
@@ -1396,8 +1396,8 @@ def parse_totalload(
         skiprows=29,
         nrows=24,
     )
-    df2[["Hour_End"]] = df2[["Hour_End"]].astype(pandas.core.arrays.integer.Int64Dtype())
-    df2[["Load_Forecast"]] = df2[["Load_Forecast"]].astype(numpy.dtypes.Float64DType())
+    df2[["Hour_End"]] = df2[["Hour_End"]].astype("Int64")
+    df2[["Load_Forecast"]] = df2[["Load_Forecast"]].astype("Float64")
 
     table_3 = "FiveMinTotalLoad"
     df3 = pd.read_csv(
@@ -1405,7 +1405,7 @@ def parse_totalload(
         skiprows=55,
     )
     df3[["Load_Time"]] = df3[["Load_Time"]].apply(pd.to_datetime, format="%H:%M")
-    df3[["Load_Value"]] = df3[["Load_Value"]].astype(numpy.dtypes.Float64DType())
+    df3[["Load_Value"]] = df3[["Load_Value"]].astype("Float64")
 
     df = pd.DataFrame({
         MULTI_DF_NAMES_COLUMN: [
@@ -1433,9 +1433,9 @@ def parse_RSG(
         filepath_or_buffer=io.StringIO(csv_data),
     )
 
-    df[["TOTAL_ECON_MAX"]] = df[["TOTAL_ECON_MAX"]].astype(numpy.dtypes.Float64DType())
+    df[["TOTAL_ECON_MAX"]] = df[["TOTAL_ECON_MAX"]].astype("Float64")
     df[["MKT_INT_END_EST"]] = df[["MKT_INT_END_EST"]].apply(pd.to_datetime, format="%Y-%m-%d %H:%M:%S %p")
-    df[["COMMIT_REASON", "NUM_RESOURCES"]] = df[["COMMIT_REASON", "NUM_RESOURCES"]].astype(pandas.core.arrays.string_.StringDtype())
+    df[["COMMIT_REASON", "NUM_RESOURCES"]] = df[["COMMIT_REASON", "NUM_RESOURCES"]].astype("string")
 
     return df
 
@@ -1450,8 +1450,8 @@ def parse_WindActual(
         data=dictionary["instance"],
     )
 
-    df[["Value"]] = df[["Value"]].astype(numpy.dtypes.Float64DType())
-    df[["HourEndingEST"]] = df[["HourEndingEST"]].astype(pandas.core.arrays.integer.Int64Dtype())
+    df[["Value"]] = df[["Value"]].astype("Float64")
+    df[["HourEndingEST"]] = df[["HourEndingEST"]].astype("Int64")
     df[["DateTimeEST"]] = df[["DateTimeEST"]].apply(pd.to_datetime, format="%Y-%m-%d %I:%M:%S %p")
 
     return df  
@@ -1467,8 +1467,8 @@ def parse_SolarActual(
         data=dictionary["instance"],
     )
 
-    df[["Value"]] = df[["Value"]].astype(numpy.dtypes.Float64DType())
-    df[["HourEndingEST"]] = df[["HourEndingEST"]].astype(pandas.core.arrays.integer.Int64Dtype())
+    df[["Value"]] = df[["Value"]].astype("Float64")
+    df[["HourEndingEST"]] = df[["HourEndingEST"]].astype("Int64")
     df[["DateTimeEST"]] = df[["DateTimeEST"]].apply(pd.to_datetime, format="%Y-%m-%d %I:%M:%S %p")
 
     return df 
@@ -1484,8 +1484,8 @@ def parse_NAI(
         filepath_or_buffer=io.StringIO(csv_data),
     )
 
-    df[["Name"]] = df[["Name"]].astype(pandas.core.arrays.string_.StringDtype())
-    df[["Value"]] = df[["Value"]].astype(numpy.dtypes.Float64DType())
+    df[["Name"]] = df[["Name"]].astype("string")
+    df[["Value"]] = df[["Value"]].astype("Float64")
 
     return df  
 
@@ -1500,7 +1500,7 @@ def parse_regionaldirectionaltransfer(
         filepath_or_buffer=io.StringIO(csv_data),
     )
 
-    df[["NORTH_SOUTH_LIMIT", "SOUTH_NORTH_LIMIT", "RAW_MW", " UDSFLOW_MW"]] = df[["NORTH_SOUTH_LIMIT", "SOUTH_NORTH_LIMIT", "RAW_MW", " UDSFLOW_MW"]].astype(pandas.core.arrays.integer.Int64Dtype())
+    df[["NORTH_SOUTH_LIMIT", "SOUTH_NORTH_LIMIT", "RAW_MW", " UDSFLOW_MW"]] = df[["NORTH_SOUTH_LIMIT", "SOUTH_NORTH_LIMIT", "RAW_MW", " UDSFLOW_MW"]].astype("Int64")
     df[["INTERVALEST"]] = df[["INTERVALEST"]].apply(pd.to_datetime, format="%Y-%m-%d %H:%M:%S %p")
 
     return df
@@ -1516,9 +1516,9 @@ def parse_generationoutagesplusminusfivedays(
         filepath_or_buffer=io.StringIO(csv_data),
     )
 
-    df[["Unplanned", "Planned", "Forced", "Derated"]] = df[["Unplanned", "Planned", "Forced", "Derated"]].astype(pandas.core.arrays.integer.Int64Dtype())  
+    df[["Unplanned", "Planned", "Forced", "Derated"]] = df[["Unplanned", "Planned", "Forced", "Derated"]].astype("Int64")  
     df[["OutageDate"]] = df[["OutageDate"]].apply(pd.to_datetime, format="%Y-%m-%d %H:%M:%S %p")
-    df[["OutageMonthDay"]] = df[["OutageMonthDay"]].astype(pandas.core.arrays.string_.StringDtype())
+    df[["OutageMonthDay"]] = df[["OutageMonthDay"]].astype("string")
 
     return df  
 
@@ -1534,7 +1534,7 @@ def parse_apiversion(
         data=[dictionary]
     )
 
-    df[["Semantic"]] = df[["Semantic"]].astype(pandas.core.arrays.string_.StringDtype())
+    df[["Semantic"]] = df[["Semantic"]].astype("string")
 
     return df
 
@@ -1587,15 +1587,15 @@ def parse_lmpconsolidatedtable(
 
     df.columns =  pd.Index(new_column_names)
 
-    df[["LMP - FiveMinLMP", "MLC - FiveMinLMP", "MCC - FiveMinLMP", "REGMCP - FiveMinLMP", "REGMILEAGEMCP - FiveMinLMP", "SPINMCP - FiveMinLMP", "SUPPMCP - FiveMinLMP", "STRMCP - FiveMinLMP", "RCUPMCP - FiveMinLMP", "RCDOWNMCP - FiveMinLMP", "LMP - HourlyIntegratedLmp", "MLC - HourlyIntegratedLmp", "MCC - HourlyIntegratedLmp", "LMP - DayAheadExAnteLmp", "MLC - DayAheadExAnteLmp", "MCC - DayAheadExAnteLmp", "LMP - DayAheadExPostLmp", "MLC - DayAheadExPostLmp", "MCC - DayAheadExPostLmp"]] = df[["LMP - FiveMinLMP", "MLC - FiveMinLMP", "MCC - FiveMinLMP", "REGMCP - FiveMinLMP", "REGMILEAGEMCP - FiveMinLMP", "SPINMCP - FiveMinLMP", "SUPPMCP - FiveMinLMP", "STRMCP - FiveMinLMP", "RCUPMCP - FiveMinLMP", "RCDOWNMCP - FiveMinLMP", "LMP - HourlyIntegratedLmp", "MLC - HourlyIntegratedLmp", "MCC - HourlyIntegratedLmp", "LMP - DayAheadExAnteLmp", "MLC - DayAheadExAnteLmp", "MCC - DayAheadExAnteLmp", "LMP - DayAheadExPostLmp", "MLC - DayAheadExPostLmp", "MCC - DayAheadExPostLmp"]].astype(numpy.dtypes.Float64DType())
-    df[["Name"]] = df[["Name"]].astype(pandas.core.arrays.string_.StringDtype())
+    df[["LMP - FiveMinLMP", "MLC - FiveMinLMP", "MCC - FiveMinLMP", "REGMCP - FiveMinLMP", "REGMILEAGEMCP - FiveMinLMP", "SPINMCP - FiveMinLMP", "SUPPMCP - FiveMinLMP", "STRMCP - FiveMinLMP", "RCUPMCP - FiveMinLMP", "RCDOWNMCP - FiveMinLMP", "LMP - HourlyIntegratedLmp", "MLC - HourlyIntegratedLmp", "MCC - HourlyIntegratedLmp", "LMP - DayAheadExAnteLmp", "MLC - DayAheadExAnteLmp", "MCC - DayAheadExAnteLmp", "LMP - DayAheadExPostLmp", "MLC - DayAheadExPostLmp", "MCC - DayAheadExPostLmp"]] = df[["LMP - FiveMinLMP", "MLC - FiveMinLMP", "MCC - FiveMinLMP", "REGMCP - FiveMinLMP", "REGMILEAGEMCP - FiveMinLMP", "SPINMCP - FiveMinLMP", "SUPPMCP - FiveMinLMP", "STRMCP - FiveMinLMP", "RCUPMCP - FiveMinLMP", "RCDOWNMCP - FiveMinLMP", "LMP - HourlyIntegratedLmp", "MLC - HourlyIntegratedLmp", "MCC - HourlyIntegratedLmp", "LMP - DayAheadExAnteLmp", "MLC - DayAheadExAnteLmp", "MCC - DayAheadExAnteLmp", "LMP - DayAheadExPostLmp", "MLC - DayAheadExPostLmp", "MCC - DayAheadExPostLmp"]].astype("Float64")
+    df[["Name"]] = df[["Name"]].astype("string")
 
     metadata_df = pd.DataFrame({
         "Type": metadata_names,
         "Timing": metadata_times,
     })
 
-    metadata_df[["Type"]] = metadata_df[["Type"]].astype(pandas.core.arrays.string_.StringDtype())
+    metadata_df[["Type"]] = metadata_df[["Type"]].astype("string")
     metadata_df[["Timing"]] = metadata_df[["Timing"]].apply(pd.to_datetime, format="%H:%M")
 
     df = pd.DataFrame({
@@ -1622,10 +1622,10 @@ def parse_realtimebindingconstraints(
         filepath_or_buffer=io.StringIO(csv_data),
     )
 
-    df[["Price"]] = df[["Price"]].astype(numpy.dtypes.Float64DType())
-    df[["OVERRIDE", "BP1", "PC1", "BP2", "PC2"]] = df[["OVERRIDE", "BP1", "PC1", "BP2", "PC2"]].astype(pandas.core.arrays.integer.Int64Dtype())
+    df[["Price"]] = df[["Price"]].astype("Float64")
+    df[["OVERRIDE", "BP1", "PC1", "BP2", "PC2"]] = df[["OVERRIDE", "BP1", "PC1", "BP2", "PC2"]].astype("Int64")
     df[["Period"]] = df[["Period"]].apply(pd.to_datetime, format="%Y-%m-%dT%H:%M:%S")
-    df[["Name", "CURVETYPE"]] = df[["Name", "CURVETYPE"]].astype(pandas.core.arrays.string_.StringDtype())
+    df[["Name", "CURVETYPE"]] = df[["Name", "CURVETYPE"]].astype("string")
     
     return df
 
@@ -1640,10 +1640,10 @@ def parse_realtimebindingsrpbconstraints(
         filepath_or_buffer=io.StringIO(csv_data),
     )
 
-    df[["Price"]] = df[["Price"]].astype(numpy.dtypes.Float64DType())
-    df[["OVERRIDE", "BP1", "PC1", "BP2", "PC2", "BP3", "PC3", "BP4", "PC4"]] = df[["OVERRIDE", "BP1", "PC1", "BP2", "PC2", "BP3", "PC3", "BP4", "PC4"]].astype(pandas.core.arrays.integer.Int64Dtype())
+    df[["Price"]] = df[["Price"]].astype("Float64")
+    df[["OVERRIDE", "BP1", "PC1", "BP2", "PC2", "BP3", "PC3", "BP4", "PC4"]] = df[["OVERRIDE", "BP1", "PC1", "BP2", "PC2", "BP3", "PC3", "BP4", "PC4"]].astype("Int64")
     df[["Period"]] = df[["Period"]].apply(pd.to_datetime, format="%Y-%m-%dT%H:%M:%S")
-    df[["Name", "REASON", "CURVETYPE"]] = df[["Name", "REASON", "CURVETYPE"]].astype(pandas.core.arrays.string_.StringDtype())
+    df[["Name", "REASON", "CURVETYPE"]] = df[["Name", "REASON", "CURVETYPE"]].astype("string")
 
     return df
 
@@ -1660,8 +1660,8 @@ def parse_RT_Load_EPNodes(
         filepath_or_buffer=io.StringIO(csv_data),
     )[:-1]
 
-    df[["HE1", "HE2", "HE3", "HE4", "HE5", "HE6", "HE7", "HE8", "HE9", "HE10", "HE11", "HE12", "HE13", "HE14", "HE15", "HE16", "HE17", "HE18", "HE19", "HE20", "HE21", "HE22", "HE23", "HE24"]] = df[["HE1", "HE2", "HE3", "HE4", "HE5", "HE6", "HE7", "HE8", "HE9", "HE10", "HE11", "HE12", "HE13", "HE14", "HE15", "HE16", "HE17", "HE18", "HE19", "HE20", "HE21", "HE22", "HE23", "HE24"]].astype(numpy.dtypes.Float64DType())
-    df[["EPNode", "Value"]] = df[["EPNode", "Value"]].astype(pandas.core.arrays.string_.StringDtype())
+    df[["HE1", "HE2", "HE3", "HE4", "HE5", "HE6", "HE7", "HE8", "HE9", "HE10", "HE11", "HE12", "HE13", "HE14", "HE15", "HE16", "HE17", "HE18", "HE19", "HE20", "HE21", "HE22", "HE23", "HE24"]] = df[["HE1", "HE2", "HE3", "HE4", "HE5", "HE6", "HE7", "HE8", "HE9", "HE10", "HE11", "HE12", "HE13", "HE14", "HE15", "HE16", "HE17", "HE18", "HE19", "HE20", "HE21", "HE22", "HE23", "HE24"]].astype("Float64")
+    df[["EPNode", "Value"]] = df[["EPNode", "Value"]].astype("string")
 
     return df
 
@@ -1678,9 +1678,9 @@ def parse_5MIN_LMP(
         filepath_or_buffer=io.StringIO(csv_data),
     )
 
-    df[["LMP", "CON_LMP", "LOSS_LMP"]] = df[["LMP", "CON_LMP", "LOSS_LMP"]].astype(numpy.dtypes.Float64DType())
+    df[["LMP", "CON_LMP", "LOSS_LMP"]] = df[["LMP", "CON_LMP", "LOSS_LMP"]].astype("Float64")
     df[["MKTHOUR_EST"]] = df[["MKTHOUR_EST"]].apply(pd.to_datetime, format="%m/%d/%Y %H:%M")
-    df[["PNODENAME"]] = df[["PNODENAME"]].astype(pandas.core.arrays.string_.StringDtype())
+    df[["PNODENAME"]] = df[["PNODENAME"]].astype("string")
 
     return df
 
@@ -1695,9 +1695,9 @@ def parse_bids_cb(
         filepath_or_buffer=io.StringIO(csv_data),
     )
 
-    df[["MW", "LMP", "PRICE1", "MW1", "PRICE2", "MW2", "PRICE3", "MW3", "PRICE4", "MW4", "PRICE5", "MW5", "PRICE6", "MW6", "PRICE7", "MW7", "PRICE8", "MW8", "PRICE9", "MW9"]] = df[["MW", "LMP", "PRICE1", "MW1", "PRICE2", "MW2", "PRICE3", "MW3", "PRICE4", "MW4", "PRICE5", "MW5", "PRICE6", "MW6", "PRICE7", "MW7", "PRICE8", "MW8", "PRICE9", "MW9"]].astype(numpy.dtypes.Float64DType())
+    df[["MW", "LMP", "PRICE1", "MW1", "PRICE2", "MW2", "PRICE3", "MW3", "PRICE4", "MW4", "PRICE5", "MW5", "PRICE6", "MW6", "PRICE7", "MW7", "PRICE8", "MW8", "PRICE9", "MW9"]] = df[["MW", "LMP", "PRICE1", "MW1", "PRICE2", "MW2", "PRICE3", "MW3", "PRICE4", "MW4", "PRICE5", "MW5", "PRICE6", "MW6", "PRICE7", "MW7", "PRICE8", "MW8", "PRICE9", "MW9"]].astype("Float64")
     df[["Date/Time Beginning (EST)", "Date/Time End (EST)"]] = df[["Date/Time Beginning (EST)", "Date/Time End (EST)"]].apply(pd.to_datetime, format="%m/%d/%Y %H:%M:%S")
-    df[["Market Participant Code", "Region", "Type of Bid", "Bid ID"]] = df[["Market Participant Code", "Region", "Type of Bid", "Bid ID"]].astype(pandas.core.arrays.string_.StringDtype())
+    df[["Market Participant Code", "Region", "Type of Bid", "Bid ID"]] = df[["Market Participant Code", "Region", "Type of Bid", "Bid ID"]].astype("string")
 
     return df
 
@@ -1715,8 +1715,8 @@ def helper_parse_asm(
     df1.drop(columns=["Unnamed: 0", "Unnamed: 1"], inplace=True)
 
     hours = [f"HE {i}" for i in range(1, 25)]
-    df1[hours] = df1[hours].astype(numpy.dtypes.Float64DType())
-    df1[["MCP Type"]] = df1[["MCP Type"]].astype(pandas.core.arrays.string_.StringDtype())
+    df1[hours] = df1[hours].astype("Float64")
+    df1[["MCP Type"]] = df1[["MCP Type"]].astype("string")
 
     table_2 = "Table 2"
 
@@ -1725,9 +1725,9 @@ def helper_parse_asm(
         skipinitialspace=True,
     )
 
-    df2[hours] = df2[hours].astype(numpy.dtypes.Float64DType())
-    df2[["Zone"]] = df2[["Zone"]].replace('[^\\d]+', '', regex=True).astype(pandas.core.arrays.integer.Int64Dtype())
-    df2[["Pnode", "MCP Type"]] = df2[["Pnode", "MCP Type"]].astype(pandas.core.arrays.string_.StringDtype())
+    df2[hours] = df2[hours].astype("Float64")
+    df2[["Zone"]] = df2[["Zone"]].replace('[^\\d]+', '', regex=True).astype("Int64")
+    df2[["Pnode", "MCP Type"]] = df2[["Pnode", "MCP Type"]].astype("string")
 
     df = pd.DataFrame({
         MULTI_DF_NAMES_COLUMN: [
@@ -1781,8 +1781,8 @@ def helper_parse_ftr_allocation(
             filepath_or_buffer=io.StringIO(data),
         )
 
-        df[float_columns] = df[float_columns].astype(numpy.dtypes.Float64DType())
-        df[string_columns] = df[string_columns].astype(pandas.core.arrays.string_.StringDtype())
+        df[float_columns] = df[float_columns].astype("Float64")
+        df[string_columns] = df[string_columns].astype("string")
 
         dfs.append(df)
 
@@ -1832,17 +1832,17 @@ def parse_ftr_allocation_summary(
         io=io.BytesIO(residule_content),
     ).iloc[:-4]
 
-    df_residule[["STAGE2MW", "STAGE2PAYMENT"]] = df_residule[["STAGE2MW", "STAGE2PAYMENT"]].astype(numpy.dtypes.Float64DType())
-    df_residule[["ID_TOU"]] = df_residule[["ID_TOU"]].astype(pandas.core.arrays.string_.StringDtype())
+    df_residule[["STAGE2MW", "STAGE2PAYMENT"]] = df_residule[["STAGE2MW", "STAGE2PAYMENT"]].astype("Float64")
+    df_residule[["ID_TOU"]] = df_residule[["ID_TOU"]].astype("string")
     df_residule[["START_DATE"]] = df_residule[["START_DATE"]].apply(pd.to_datetime, format="%Y-%m-%d %H:%M:%S")
 
     df_allocation = pd.read_excel(
         io=io.BytesIO(allocation_content),
     )
 
-    df_allocation[["MW"]] = df_allocation[["MW"]].astype(numpy.dtypes.Float64DType())
+    df_allocation[["MW"]] = df_allocation[["MW"]].astype("Float64")
     df_allocation[["DATE_START", "DATE_END"]] = df_allocation[["DATE_START", "DATE_END"]].apply(pd.to_datetime, format="%m/%d/%Y %I:%M:%S %p")
-    df_allocation[["MARKET_NAME", "ID_TOU", "SOURCE_NAME", "SINK_NAME", "STAGE", "TYPE"]] = df_allocation[["MARKET_NAME", "ID_TOU", "SOURCE_NAME", "SINK_NAME", "STAGE", "TYPE"]].astype(pandas.core.arrays.string_.StringDtype())
+    df_allocation[["MARKET_NAME", "ID_TOU", "SOURCE_NAME", "SINK_NAME", "STAGE", "TYPE"]] = df_allocation[["MARKET_NAME", "ID_TOU", "SOURCE_NAME", "SINK_NAME", "STAGE", "TYPE"]].astype("string")
 
     df = pd.DataFrame(data={
         MULTI_DF_NAMES_COLUMN: [residual_file, allocation_file], 
@@ -1891,9 +1891,9 @@ def helper_parse_ftr_results(
             filepath_or_buffer=io.StringIO(csv_file["data"]),
         )
 
-        df[["Round"]] = df[["Round"]].replace('[^\\d]+', '', regex=True).astype(pandas.core.arrays.integer.Int64Dtype())
-        df[["Flow", "Limit", "MarginalCost", "Violation"]] = df[["Flow", "Limit", "MarginalCost", "Violation"]].astype(numpy.dtypes.Float64DType())
-        df[["DeviceName", "DeviceType", "ControlArea", "Direction", "Contingency", "Class", "Description"]] = df[["DeviceName", "DeviceType", "ControlArea", "Direction", "Contingency", "Class", "Description"]].astype(pandas.core.arrays.string_.StringDtype())
+        df[["Round"]] = df[["Round"]].replace('[^\\d]+', '', regex=True).astype("Int64")
+        df[["Flow", "Limit", "MarginalCost", "Violation"]] = df[["Flow", "Limit", "MarginalCost", "Violation"]].astype("Float64")
+        df[["DeviceName", "DeviceType", "ControlArea", "Direction", "Contingency", "Class", "Description"]] = df[["DeviceName", "DeviceType", "ControlArea", "Direction", "Contingency", "Class", "Description"]].astype("string")
         
         file_counter += 1
         df_names.append(f"File {file_counter}")
@@ -1913,9 +1913,9 @@ def helper_parse_ftr_results(
             filepath_or_buffer=io.StringIO(csv_file["data"]),
         )
 
-        df[["Round"]] = df[["Round"]].replace('[^\\d]+', '', regex=True).astype(pandas.core.arrays.integer.Int64Dtype())
-        df[["MW", "ClearingPrice"]] = df[["MW", "ClearingPrice"]].astype(numpy.dtypes.Float64DType())
-        df[["MarketParticipant", "Source", "Sink", "Category", "FTRID", "HedgeType", "Type", "Class"]] = df[["MarketParticipant", "Source", "Sink", "Category", "FTRID", "HedgeType", "Type", "Class"]].astype(pandas.core.arrays.string_.StringDtype())
+        df[["Round"]] = df[["Round"]].replace('[^\\d]+', '', regex=True).astype("Int64")
+        df[["MW", "ClearingPrice"]] = df[["MW", "ClearingPrice"]].astype("Float64")
+        df[["MarketParticipant", "Source", "Sink", "Category", "FTRID", "HedgeType", "Type", "Class"]] = df[["MarketParticipant", "Source", "Sink", "Category", "FTRID", "HedgeType", "Type", "Class"]].astype("string")
         df[["StartDate", "EndDate"]] = df[["StartDate", "EndDate"]].apply(pd.to_datetime, format="%m/%d/%Y")
  
         file_counter += 1
@@ -1936,9 +1936,9 @@ def helper_parse_ftr_results(
             filepath_or_buffer=io.StringIO(csv_file["data"]),
         )
 
-        df[["Round"]] = df[["Round"]].replace('[^\\d]+', '', regex=True).astype(pandas.core.arrays.integer.Int64Dtype())
-        df[["ShadowPrice"]] = df[["ShadowPrice"]].astype(numpy.dtypes.Float64DType())
-        df[["SourceSink", "Class"]] = df[["SourceSink", "Class"]].astype(pandas.core.arrays.string_.StringDtype())
+        df[["Round"]] = df[["Round"]].replace('[^\\d]+', '', regex=True).astype("Int64")
+        df[["ShadowPrice"]] = df[["ShadowPrice"]].astype("Float64")
+        df[["SourceSink", "Class"]] = df[["SourceSink", "Class"]].astype("string")
 
         file_counter += 1
         df_names.append(f"File {file_counter}")
@@ -1952,7 +1952,7 @@ def helper_parse_ftr_results(
     })
 
     metadata_columns = [f"File {num}" for num in range(1, len(file_names) + 1)]
-    metadata_df[metadata_columns] = metadata_df[metadata_columns].astype(pandas.core.arrays.string_.StringDtype())
+    metadata_df[metadata_columns] = metadata_df[metadata_columns].astype("string")
         
     df = pd.DataFrame(data={
         MULTI_DF_NAMES_COLUMN: ["Metadata"] + df_names, 
@@ -2023,12 +2023,12 @@ def parse_ftr_annual_bids_offers(
 
     df = pd.read_csv(
         filepath_or_buffer=io.StringIO(csv_data),
-        dtype={"Asset Owner ID": pandas.core.arrays.string_.StringDtype()},
+        dtype={"Asset Owner ID": "string"},
     )[:-1]
 
-    df[["Round"]] = df[["Round"]].replace('[^\\d]+', '', regex=True).astype(pandas.core.arrays.integer.Int64Dtype())
-    df[["MW1", "PRICE1", "MW2", "PRICE2", "MW3", "PRICE3", "MW4", "PRICE4", "MW5", "PRICE5", "MW6", "PRICE6", "MW7", "PRICE7", "MW8", "PRICE8", "MW9", "PRICE9", "MW10", "PRICE10"]] = df[["MW1", "PRICE1", "MW2", "PRICE2", "MW3", "PRICE3", "MW4", "PRICE4", "MW5", "PRICE5", "MW6", "PRICE6", "MW7", "PRICE7", "MW8", "PRICE8", "MW9", "PRICE9", "MW10", "PRICE10"]].astype(numpy.dtypes.Float64DType())
-    df[["Market Name", "Source", "Sink", "Hedge Type", "Class", "Type"]] = df[["Market Name", "Source", "Sink", "Hedge Type", "Class", "Type"]].astype(pandas.core.arrays.string_.StringDtype())
+    df[["Round"]] = df[["Round"]].replace('[^\\d]+', '', regex=True).astype("Int64")
+    df[["MW1", "PRICE1", "MW2", "PRICE2", "MW3", "PRICE3", "MW4", "PRICE4", "MW5", "PRICE5", "MW6", "PRICE6", "MW7", "PRICE7", "MW8", "PRICE8", "MW9", "PRICE9", "MW10", "PRICE10"]] = df[["MW1", "PRICE1", "MW2", "PRICE2", "MW3", "PRICE3", "MW4", "PRICE4", "MW5", "PRICE5", "MW6", "PRICE6", "MW7", "PRICE7", "MW8", "PRICE8", "MW9", "PRICE9", "MW10", "PRICE10"]].astype("Float64")
+    df[["Market Name", "Source", "Sink", "Hedge Type", "Class", "Type"]] = df[["Market Name", "Source", "Sink", "Hedge Type", "Class", "Type"]].astype("string")
     df[["Start Date", "End Date"]] = df[["Start Date", "End Date"]].apply(pd.to_datetime, format="%m/%d/%Y")
     
     return df
@@ -2060,12 +2060,12 @@ def parse_ftr_mpma_bids_offers(
 
     df = pd.read_csv(
         filepath_or_buffer=io.StringIO(csv_data),
-        dtype={"Asset Owner ID": pandas.core.arrays.string_.StringDtype()},
+        dtype={"Asset Owner ID": "string"},
     )[:-1]
 
-    df[["Round"]] = df[["Round"]].replace('[^\\d]+', '', regex=True).astype(pandas.core.arrays.integer.Int64Dtype())
-    df[["MW1", "PRICE1", "MW2", "PRICE2", "MW3", "PRICE3", "MW4", "PRICE4", "MW5", "PRICE5", "MW6", "PRICE6", "MW7", "PRICE7", "MW8", "PRICE8", "MW9", "PRICE9", "MW10", "PRICE10"]] = df[["MW1", "PRICE1", "MW2", "PRICE2", "MW3", "PRICE3", "MW4", "PRICE4", "MW5", "PRICE5", "MW6", "PRICE6", "MW7", "PRICE7", "MW8", "PRICE8", "MW9", "PRICE9", "MW10", "PRICE10"]].astype(numpy.dtypes.Float64DType())
-    df[["Market Name", "Source", "Sink", "Hedge Type", "Class", "Type"]] = df[["Market Name", "Source", "Sink", "Hedge Type", "Class", "Type"]].astype(pandas.core.arrays.string_.StringDtype())
+    df[["Round"]] = df[["Round"]].replace('[^\\d]+', '', regex=True).astype("Int64")
+    df[["MW1", "PRICE1", "MW2", "PRICE2", "MW3", "PRICE3", "MW4", "PRICE4", "MW5", "PRICE5", "MW6", "PRICE6", "MW7", "PRICE7", "MW8", "PRICE8", "MW9", "PRICE9", "MW10", "PRICE10"]] = df[["MW1", "PRICE1", "MW2", "PRICE2", "MW3", "PRICE3", "MW4", "PRICE4", "MW5", "PRICE5", "MW6", "PRICE6", "MW7", "PRICE7", "MW8", "PRICE8", "MW9", "PRICE9", "MW10", "PRICE10"]].astype("Float64")
+    df[["Market Name", "Source", "Sink", "Hedge Type", "Class", "Type"]] = df[["Market Name", "Source", "Sink", "Hedge Type", "Class", "Type"]].astype("string")
     df[["Start Date", "End Date"]] = df[["Start Date", "End Date"]].apply(pd.to_datetime, format="%m/%d/%Y")
 
     return df
@@ -2111,8 +2111,8 @@ def parse_5min_exante_mcp(
         skiprows=3,
     ).iloc[:-1]
 
-    df[["RT Ex-Ante MCP Regulation", "RT Ex-Ante MCP Spin", "RT Ex-Ante MCP Supp"]] = df[["RT Ex-Ante MCP Regulation", "RT Ex-Ante MCP Spin", "RT Ex-Ante MCP Supp"]].astype(numpy.dtypes.Float64DType())
-    df[["Zone"]] = df[["Zone"]].replace('[^\\d]+', '', regex=True).astype(pandas.core.arrays.integer.Int64Dtype())
+    df[["RT Ex-Ante MCP Regulation", "RT Ex-Ante MCP Spin", "RT Ex-Ante MCP Supp"]] = df[["RT Ex-Ante MCP Regulation", "RT Ex-Ante MCP Spin", "RT Ex-Ante MCP Supp"]].astype("Float64")
+    df[["Zone"]] = df[["Zone"]].replace('[^\\d]+', '', regex=True).astype("Int64")
     df[["Time (EST)"]] = df[["Time (EST)"]].apply(pd.to_datetime, format="%Y-%m-%d %I:%M:%S %p")
 
     return df
@@ -2126,8 +2126,8 @@ def parse_5min_expost_mcp(
         skiprows=3,
     ).iloc[:-1]
 
-    df[["RT MCP Regulation", "RT MCP Spin", "RT MCP Supp"]] = df[["RT MCP Regulation", "RT MCP Spin", "RT MCP Supp"]].astype(numpy.dtypes.Float64DType())
-    df[["Zone"]] = df[["Zone"]].replace('[^\\d]+', '', regex=True).astype(pandas.core.arrays.integer.Int64Dtype())
+    df[["RT MCP Regulation", "RT MCP Spin", "RT MCP Supp"]] = df[["RT MCP Regulation", "RT MCP Spin", "RT MCP Supp"]].astype("Float64")
+    df[["Zone"]] = df[["Zone"]].replace('[^\\d]+', '', regex=True).astype("Int64")
     df[["Time (EST)"]] = df[["Time (EST)"]].apply(pd.to_datetime, format="%Y-%m-%d %I:%M:%S %p")
 
     return df
@@ -2149,8 +2149,8 @@ def parse_da_exante_ramp_mcp(
         for direction in ["DA MCP Ramp Up Ex-Ante 1 Hour", "DA MCP Ramp Down Ex-Ante 1 Hour"]
     ])
     
-    df[["Reserve Zone 1 - DA MCP Ramp Up Ex-Ante 1 Hour", "Reserve Zone 1 - DA MCP Ramp Down Ex-Ante 1 Hour", "Reserve Zone 2 - DA MCP Ramp Up Ex-Ante 1 Hour", "Reserve Zone 2 - DA MCP Ramp Down Ex-Ante 1 Hour", "Reserve Zone 3 - DA MCP Ramp Up Ex-Ante 1 Hour", "Reserve Zone 3 - DA MCP Ramp Down Ex-Ante 1 Hour", "Reserve Zone 4 - DA MCP Ramp Up Ex-Ante 1 Hour", "Reserve Zone 4 - DA MCP Ramp Down Ex-Ante 1 Hour", "Reserve Zone 5 - DA MCP Ramp Up Ex-Ante 1 Hour", "Reserve Zone 5 - DA MCP Ramp Down Ex-Ante 1 Hour", "Reserve Zone 6 - DA MCP Ramp Up Ex-Ante 1 Hour", "Reserve Zone 6 - DA MCP Ramp Down Ex-Ante 1 Hour", "Reserve Zone 7 - DA MCP Ramp Up Ex-Ante 1 Hour", "Reserve Zone 7 - DA MCP Ramp Down Ex-Ante 1 Hour", "Reserve Zone 8 - DA MCP Ramp Up Ex-Ante 1 Hour", "Reserve Zone 8 - DA MCP Ramp Down Ex-Ante 1 Hour"]] = df[["Reserve Zone 1 - DA MCP Ramp Up Ex-Ante 1 Hour", "Reserve Zone 1 - DA MCP Ramp Down Ex-Ante 1 Hour", "Reserve Zone 2 - DA MCP Ramp Up Ex-Ante 1 Hour", "Reserve Zone 2 - DA MCP Ramp Down Ex-Ante 1 Hour", "Reserve Zone 3 - DA MCP Ramp Up Ex-Ante 1 Hour", "Reserve Zone 3 - DA MCP Ramp Down Ex-Ante 1 Hour", "Reserve Zone 4 - DA MCP Ramp Up Ex-Ante 1 Hour", "Reserve Zone 4 - DA MCP Ramp Down Ex-Ante 1 Hour", "Reserve Zone 5 - DA MCP Ramp Up Ex-Ante 1 Hour", "Reserve Zone 5 - DA MCP Ramp Down Ex-Ante 1 Hour", "Reserve Zone 6 - DA MCP Ramp Up Ex-Ante 1 Hour", "Reserve Zone 6 - DA MCP Ramp Down Ex-Ante 1 Hour", "Reserve Zone 7 - DA MCP Ramp Up Ex-Ante 1 Hour", "Reserve Zone 7 - DA MCP Ramp Down Ex-Ante 1 Hour", "Reserve Zone 8 - DA MCP Ramp Up Ex-Ante 1 Hour", "Reserve Zone 8 - DA MCP Ramp Down Ex-Ante 1 Hour"]].astype(numpy.dtypes.Float64DType())
-    df[["Hour Ending"]] = df[["Hour Ending"]].astype(pandas.core.arrays.integer.Int64Dtype())
+    df[["Reserve Zone 1 - DA MCP Ramp Up Ex-Ante 1 Hour", "Reserve Zone 1 - DA MCP Ramp Down Ex-Ante 1 Hour", "Reserve Zone 2 - DA MCP Ramp Up Ex-Ante 1 Hour", "Reserve Zone 2 - DA MCP Ramp Down Ex-Ante 1 Hour", "Reserve Zone 3 - DA MCP Ramp Up Ex-Ante 1 Hour", "Reserve Zone 3 - DA MCP Ramp Down Ex-Ante 1 Hour", "Reserve Zone 4 - DA MCP Ramp Up Ex-Ante 1 Hour", "Reserve Zone 4 - DA MCP Ramp Down Ex-Ante 1 Hour", "Reserve Zone 5 - DA MCP Ramp Up Ex-Ante 1 Hour", "Reserve Zone 5 - DA MCP Ramp Down Ex-Ante 1 Hour", "Reserve Zone 6 - DA MCP Ramp Up Ex-Ante 1 Hour", "Reserve Zone 6 - DA MCP Ramp Down Ex-Ante 1 Hour", "Reserve Zone 7 - DA MCP Ramp Up Ex-Ante 1 Hour", "Reserve Zone 7 - DA MCP Ramp Down Ex-Ante 1 Hour", "Reserve Zone 8 - DA MCP Ramp Up Ex-Ante 1 Hour", "Reserve Zone 8 - DA MCP Ramp Down Ex-Ante 1 Hour"]] = df[["Reserve Zone 1 - DA MCP Ramp Up Ex-Ante 1 Hour", "Reserve Zone 1 - DA MCP Ramp Down Ex-Ante 1 Hour", "Reserve Zone 2 - DA MCP Ramp Up Ex-Ante 1 Hour", "Reserve Zone 2 - DA MCP Ramp Down Ex-Ante 1 Hour", "Reserve Zone 3 - DA MCP Ramp Up Ex-Ante 1 Hour", "Reserve Zone 3 - DA MCP Ramp Down Ex-Ante 1 Hour", "Reserve Zone 4 - DA MCP Ramp Up Ex-Ante 1 Hour", "Reserve Zone 4 - DA MCP Ramp Down Ex-Ante 1 Hour", "Reserve Zone 5 - DA MCP Ramp Up Ex-Ante 1 Hour", "Reserve Zone 5 - DA MCP Ramp Down Ex-Ante 1 Hour", "Reserve Zone 6 - DA MCP Ramp Up Ex-Ante 1 Hour", "Reserve Zone 6 - DA MCP Ramp Down Ex-Ante 1 Hour", "Reserve Zone 7 - DA MCP Ramp Up Ex-Ante 1 Hour", "Reserve Zone 7 - DA MCP Ramp Down Ex-Ante 1 Hour", "Reserve Zone 8 - DA MCP Ramp Up Ex-Ante 1 Hour", "Reserve Zone 8 - DA MCP Ramp Down Ex-Ante 1 Hour"]].astype("Float64")
+    df[["Hour Ending"]] = df[["Hour Ending"]].astype("Int64")
 
     return df
 
@@ -2165,8 +2165,8 @@ def parse_da_exante_str_mcp(
         
     df = df.rename(columns={idx: f"Reserve Zone {idx}" for idx in range(1, 9)})
 
-    df[["Reserve Zone 1", "Reserve Zone 2", "Reserve Zone 3", "Reserve Zone 4", "Reserve Zone 5", "Reserve Zone 6", "Reserve Zone 7", "Reserve Zone 8"]] = df[["Reserve Zone 1", "Reserve Zone 2", "Reserve Zone 3", "Reserve Zone 4", "Reserve Zone 5", "Reserve Zone 6", "Reserve Zone 7", "Reserve Zone 8"]].astype(numpy.dtypes.Float64DType())
-    df[["Hour Ending"]] = df[["Hour Ending"]].astype(pandas.core.arrays.integer.Int64Dtype())
+    df[["Reserve Zone 1", "Reserve Zone 2", "Reserve Zone 3", "Reserve Zone 4", "Reserve Zone 5", "Reserve Zone 6", "Reserve Zone 7", "Reserve Zone 8"]] = df[["Reserve Zone 1", "Reserve Zone 2", "Reserve Zone 3", "Reserve Zone 4", "Reserve Zone 5", "Reserve Zone 6", "Reserve Zone 7", "Reserve Zone 8"]].astype("Float64")
+    df[["Hour Ending"]] = df[["Hour Ending"]].astype("Int64")
 
     return df
 
@@ -2187,8 +2187,8 @@ def parse_da_expost_ramp_mcp(
         for direction in ["DA MCP Ramp Up Ex-Post 1 Hour", "DA MCP Ramp Down Ex-Post 1 Hour"]
     ])
 
-    df[["Reserve Zone 1 - DA MCP Ramp Up Ex-Post 1 Hour", "Reserve Zone 1 - DA MCP Ramp Down Ex-Post 1 Hour", "Reserve Zone 2 - DA MCP Ramp Up Ex-Post 1 Hour", "Reserve Zone 2 - DA MCP Ramp Down Ex-Post 1 Hour", "Reserve Zone 3 - DA MCP Ramp Up Ex-Post 1 Hour", "Reserve Zone 3 - DA MCP Ramp Down Ex-Post 1 Hour", "Reserve Zone 4 - DA MCP Ramp Up Ex-Post 1 Hour", "Reserve Zone 4 - DA MCP Ramp Down Ex-Post 1 Hour", "Reserve Zone 5 - DA MCP Ramp Up Ex-Post 1 Hour", "Reserve Zone 5 - DA MCP Ramp Down Ex-Post 1 Hour", "Reserve Zone 6 - DA MCP Ramp Up Ex-Post 1 Hour", "Reserve Zone 6 - DA MCP Ramp Down Ex-Post 1 Hour", "Reserve Zone 7 - DA MCP Ramp Up Ex-Post 1 Hour", "Reserve Zone 7 - DA MCP Ramp Down Ex-Post 1 Hour", "Reserve Zone 8 - DA MCP Ramp Up Ex-Post 1 Hour", "Reserve Zone 8 - DA MCP Ramp Down Ex-Post 1 Hour"]] = df[["Reserve Zone 1 - DA MCP Ramp Up Ex-Post 1 Hour", "Reserve Zone 1 - DA MCP Ramp Down Ex-Post 1 Hour", "Reserve Zone 2 - DA MCP Ramp Up Ex-Post 1 Hour", "Reserve Zone 2 - DA MCP Ramp Down Ex-Post 1 Hour", "Reserve Zone 3 - DA MCP Ramp Up Ex-Post 1 Hour", "Reserve Zone 3 - DA MCP Ramp Down Ex-Post 1 Hour", "Reserve Zone 4 - DA MCP Ramp Up Ex-Post 1 Hour", "Reserve Zone 4 - DA MCP Ramp Down Ex-Post 1 Hour", "Reserve Zone 5 - DA MCP Ramp Up Ex-Post 1 Hour", "Reserve Zone 5 - DA MCP Ramp Down Ex-Post 1 Hour", "Reserve Zone 6 - DA MCP Ramp Up Ex-Post 1 Hour", "Reserve Zone 6 - DA MCP Ramp Down Ex-Post 1 Hour", "Reserve Zone 7 - DA MCP Ramp Up Ex-Post 1 Hour", "Reserve Zone 7 - DA MCP Ramp Down Ex-Post 1 Hour", "Reserve Zone 8 - DA MCP Ramp Up Ex-Post 1 Hour", "Reserve Zone 8 - DA MCP Ramp Down Ex-Post 1 Hour"]].astype(numpy.dtypes.Float64DType())
-    df[["Hour Ending"]] = df[["Hour Ending"]].astype(pandas.core.arrays.integer.Int64Dtype())
+    df[["Reserve Zone 1 - DA MCP Ramp Up Ex-Post 1 Hour", "Reserve Zone 1 - DA MCP Ramp Down Ex-Post 1 Hour", "Reserve Zone 2 - DA MCP Ramp Up Ex-Post 1 Hour", "Reserve Zone 2 - DA MCP Ramp Down Ex-Post 1 Hour", "Reserve Zone 3 - DA MCP Ramp Up Ex-Post 1 Hour", "Reserve Zone 3 - DA MCP Ramp Down Ex-Post 1 Hour", "Reserve Zone 4 - DA MCP Ramp Up Ex-Post 1 Hour", "Reserve Zone 4 - DA MCP Ramp Down Ex-Post 1 Hour", "Reserve Zone 5 - DA MCP Ramp Up Ex-Post 1 Hour", "Reserve Zone 5 - DA MCP Ramp Down Ex-Post 1 Hour", "Reserve Zone 6 - DA MCP Ramp Up Ex-Post 1 Hour", "Reserve Zone 6 - DA MCP Ramp Down Ex-Post 1 Hour", "Reserve Zone 7 - DA MCP Ramp Up Ex-Post 1 Hour", "Reserve Zone 7 - DA MCP Ramp Down Ex-Post 1 Hour", "Reserve Zone 8 - DA MCP Ramp Up Ex-Post 1 Hour", "Reserve Zone 8 - DA MCP Ramp Down Ex-Post 1 Hour"]] = df[["Reserve Zone 1 - DA MCP Ramp Up Ex-Post 1 Hour", "Reserve Zone 1 - DA MCP Ramp Down Ex-Post 1 Hour", "Reserve Zone 2 - DA MCP Ramp Up Ex-Post 1 Hour", "Reserve Zone 2 - DA MCP Ramp Down Ex-Post 1 Hour", "Reserve Zone 3 - DA MCP Ramp Up Ex-Post 1 Hour", "Reserve Zone 3 - DA MCP Ramp Down Ex-Post 1 Hour", "Reserve Zone 4 - DA MCP Ramp Up Ex-Post 1 Hour", "Reserve Zone 4 - DA MCP Ramp Down Ex-Post 1 Hour", "Reserve Zone 5 - DA MCP Ramp Up Ex-Post 1 Hour", "Reserve Zone 5 - DA MCP Ramp Down Ex-Post 1 Hour", "Reserve Zone 6 - DA MCP Ramp Up Ex-Post 1 Hour", "Reserve Zone 6 - DA MCP Ramp Down Ex-Post 1 Hour", "Reserve Zone 7 - DA MCP Ramp Up Ex-Post 1 Hour", "Reserve Zone 7 - DA MCP Ramp Down Ex-Post 1 Hour", "Reserve Zone 8 - DA MCP Ramp Up Ex-Post 1 Hour", "Reserve Zone 8 - DA MCP Ramp Down Ex-Post 1 Hour"]].astype("Float64")
+    df[["Hour Ending"]] = df[["Hour Ending"]].astype("Int64")
 
     return df
 
@@ -2203,8 +2203,8 @@ def parse_da_expost_str_mcp(
         
     df = df.rename(columns={idx: f"Reserve Zone {idx}" for idx in range(1, 9)})
 
-    df[["Reserve Zone 1", "Reserve Zone 2", "Reserve Zone 3", "Reserve Zone 4", "Reserve Zone 5", "Reserve Zone 6", "Reserve Zone 7", "Reserve Zone 8"]] = df[["Reserve Zone 1", "Reserve Zone 2", "Reserve Zone 3", "Reserve Zone 4", "Reserve Zone 5", "Reserve Zone 6", "Reserve Zone 7", "Reserve Zone 8"]].astype(numpy.dtypes.Float64DType())
-    df[["Hour Ending"]] = df[["Hour Ending"]].astype(pandas.core.arrays.integer.Int64Dtype())
+    df[["Reserve Zone 1", "Reserve Zone 2", "Reserve Zone 3", "Reserve Zone 4", "Reserve Zone 5", "Reserve Zone 6", "Reserve Zone 7", "Reserve Zone 8"]] = df[["Reserve Zone 1", "Reserve Zone 2", "Reserve Zone 3", "Reserve Zone 4", "Reserve Zone 5", "Reserve Zone 6", "Reserve Zone 7", "Reserve Zone 8"]].astype("Float64")
+    df[["Hour Ending"]] = df[["Hour Ending"]].astype("Int64")
 
     return df
 
@@ -2226,9 +2226,9 @@ def parse_rt_expost_ramp_5min_mcp(
         for direction in ["RT MCP Ramp Up Ex-Post 5 Min", "RT MCP Ramp Down Ex-Post 5 Min"]
     ])
 
-    df[["Reserve Zone 1 - RT MCP Ramp Up Ex-Post 5 Min", "Reserve Zone 1 - RT MCP Ramp Down Ex-Post 5 Min", "Reserve Zone 2 - RT MCP Ramp Up Ex-Post 5 Min", "Reserve Zone 2 - RT MCP Ramp Down Ex-Post 5 Min", "Reserve Zone 3 - RT MCP Ramp Up Ex-Post 5 Min", "Reserve Zone 3 - RT MCP Ramp Down Ex-Post 5 Min", "Reserve Zone 4 - RT MCP Ramp Up Ex-Post 5 Min", "Reserve Zone 4 - RT MCP Ramp Down Ex-Post 5 Min", "Reserve Zone 5 - RT MCP Ramp Up Ex-Post 5 Min", "Reserve Zone 5 - RT MCP Ramp Down Ex-Post 5 Min", "Reserve Zone 6 - RT MCP Ramp Up Ex-Post 5 Min", "Reserve Zone 6 - RT MCP Ramp Down Ex-Post 5 Min", "Reserve Zone 7 - RT MCP Ramp Up Ex-Post 5 Min", "Reserve Zone 7 - RT MCP Ramp Down Ex-Post 5 Min", "Reserve Zone 8 - RT MCP Ramp Up Ex-Post 5 Min", "Reserve Zone 8 - RT MCP Ramp Down Ex-Post 5 Min"]] = df[["Reserve Zone 1 - RT MCP Ramp Up Ex-Post 5 Min", "Reserve Zone 1 - RT MCP Ramp Down Ex-Post 5 Min", "Reserve Zone 2 - RT MCP Ramp Up Ex-Post 5 Min", "Reserve Zone 2 - RT MCP Ramp Down Ex-Post 5 Min", "Reserve Zone 3 - RT MCP Ramp Up Ex-Post 5 Min", "Reserve Zone 3 - RT MCP Ramp Down Ex-Post 5 Min", "Reserve Zone 4 - RT MCP Ramp Up Ex-Post 5 Min", "Reserve Zone 4 - RT MCP Ramp Down Ex-Post 5 Min", "Reserve Zone 5 - RT MCP Ramp Up Ex-Post 5 Min", "Reserve Zone 5 - RT MCP Ramp Down Ex-Post 5 Min", "Reserve Zone 6 - RT MCP Ramp Up Ex-Post 5 Min", "Reserve Zone 6 - RT MCP Ramp Down Ex-Post 5 Min", "Reserve Zone 7 - RT MCP Ramp Up Ex-Post 5 Min", "Reserve Zone 7 - RT MCP Ramp Down Ex-Post 5 Min", "Reserve Zone 8 - RT MCP Ramp Up Ex-Post 5 Min", "Reserve Zone 8 - RT MCP Ramp Down Ex-Post 5 Min"]].astype(numpy.dtypes.Float64DType())
+    df[["Reserve Zone 1 - RT MCP Ramp Up Ex-Post 5 Min", "Reserve Zone 1 - RT MCP Ramp Down Ex-Post 5 Min", "Reserve Zone 2 - RT MCP Ramp Up Ex-Post 5 Min", "Reserve Zone 2 - RT MCP Ramp Down Ex-Post 5 Min", "Reserve Zone 3 - RT MCP Ramp Up Ex-Post 5 Min", "Reserve Zone 3 - RT MCP Ramp Down Ex-Post 5 Min", "Reserve Zone 4 - RT MCP Ramp Up Ex-Post 5 Min", "Reserve Zone 4 - RT MCP Ramp Down Ex-Post 5 Min", "Reserve Zone 5 - RT MCP Ramp Up Ex-Post 5 Min", "Reserve Zone 5 - RT MCP Ramp Down Ex-Post 5 Min", "Reserve Zone 6 - RT MCP Ramp Up Ex-Post 5 Min", "Reserve Zone 6 - RT MCP Ramp Down Ex-Post 5 Min", "Reserve Zone 7 - RT MCP Ramp Up Ex-Post 5 Min", "Reserve Zone 7 - RT MCP Ramp Down Ex-Post 5 Min", "Reserve Zone 8 - RT MCP Ramp Up Ex-Post 5 Min", "Reserve Zone 8 - RT MCP Ramp Down Ex-Post 5 Min"]] = df[["Reserve Zone 1 - RT MCP Ramp Up Ex-Post 5 Min", "Reserve Zone 1 - RT MCP Ramp Down Ex-Post 5 Min", "Reserve Zone 2 - RT MCP Ramp Up Ex-Post 5 Min", "Reserve Zone 2 - RT MCP Ramp Down Ex-Post 5 Min", "Reserve Zone 3 - RT MCP Ramp Up Ex-Post 5 Min", "Reserve Zone 3 - RT MCP Ramp Down Ex-Post 5 Min", "Reserve Zone 4 - RT MCP Ramp Up Ex-Post 5 Min", "Reserve Zone 4 - RT MCP Ramp Down Ex-Post 5 Min", "Reserve Zone 5 - RT MCP Ramp Up Ex-Post 5 Min", "Reserve Zone 5 - RT MCP Ramp Down Ex-Post 5 Min", "Reserve Zone 6 - RT MCP Ramp Up Ex-Post 5 Min", "Reserve Zone 6 - RT MCP Ramp Down Ex-Post 5 Min", "Reserve Zone 7 - RT MCP Ramp Up Ex-Post 5 Min", "Reserve Zone 7 - RT MCP Ramp Down Ex-Post 5 Min", "Reserve Zone 8 - RT MCP Ramp Up Ex-Post 5 Min", "Reserve Zone 8 - RT MCP Ramp Down Ex-Post 5 Min"]].astype("Float64")
     df[["Time (EST)"]] = df[["Time (EST)"]].apply(pd.to_datetime, format="%m/%d/%Y  %I:%M:%S %p")
-    df[["Preliminary / Final"]] = df[["Preliminary / Final"]].astype(pandas.core.arrays.string_.StringDtype())
+    df[["Preliminary / Final"]] = df[["Preliminary / Final"]].astype("string")
 
     return df
 
@@ -2251,10 +2251,10 @@ def parse_rt_expost_ramp_mcp(
         for direction in ["RT MCP Ramp Up Ex-Post Hourly", "RT MCP Ramp Down Ex-Post Hourly"]
     ])
 
-    df[["Reserve Zone 1 - RT MCP Ramp Up Ex-Post Hourly", "Reserve Zone 1 - RT MCP Ramp Down Ex-Post Hourly", "Reserve Zone 2 - RT MCP Ramp Up Ex-Post Hourly", "Reserve Zone 2 - RT MCP Ramp Down Ex-Post Hourly", "Reserve Zone 3 - RT MCP Ramp Up Ex-Post Hourly", "Reserve Zone 3 - RT MCP Ramp Down Ex-Post Hourly", "Reserve Zone 4 - RT MCP Ramp Up Ex-Post Hourly", "Reserve Zone 4 - RT MCP Ramp Down Ex-Post Hourly", "Reserve Zone 5 - RT MCP Ramp Up Ex-Post Hourly", "Reserve Zone 5 - RT MCP Ramp Down Ex-Post Hourly", "Reserve Zone 6 - RT MCP Ramp Up Ex-Post Hourly", "Reserve Zone 6 - RT MCP Ramp Down Ex-Post Hourly", "Reserve Zone 7 - RT MCP Ramp Up Ex-Post Hourly", "Reserve Zone 7 - RT MCP Ramp Down Ex-Post Hourly", "Reserve Zone 8 - RT MCP Ramp Up Ex-Post Hourly", "Reserve Zone 8 - RT MCP Ramp Down Ex-Post Hourly"]] = df[["Reserve Zone 1 - RT MCP Ramp Up Ex-Post Hourly", "Reserve Zone 1 - RT MCP Ramp Down Ex-Post Hourly", "Reserve Zone 2 - RT MCP Ramp Up Ex-Post Hourly", "Reserve Zone 2 - RT MCP Ramp Down Ex-Post Hourly", "Reserve Zone 3 - RT MCP Ramp Up Ex-Post Hourly", "Reserve Zone 3 - RT MCP Ramp Down Ex-Post Hourly", "Reserve Zone 4 - RT MCP Ramp Up Ex-Post Hourly", "Reserve Zone 4 - RT MCP Ramp Down Ex-Post Hourly", "Reserve Zone 5 - RT MCP Ramp Up Ex-Post Hourly", "Reserve Zone 5 - RT MCP Ramp Down Ex-Post Hourly", "Reserve Zone 6 - RT MCP Ramp Up Ex-Post Hourly", "Reserve Zone 6 - RT MCP Ramp Down Ex-Post Hourly", "Reserve Zone 7 - RT MCP Ramp Up Ex-Post Hourly", "Reserve Zone 7 - RT MCP Ramp Down Ex-Post Hourly", "Reserve Zone 8 - RT MCP Ramp Up Ex-Post Hourly", "Reserve Zone 8 - RT MCP Ramp Down Ex-Post Hourly"]].astype(numpy.dtypes.Float64DType())
+    df[["Reserve Zone 1 - RT MCP Ramp Up Ex-Post Hourly", "Reserve Zone 1 - RT MCP Ramp Down Ex-Post Hourly", "Reserve Zone 2 - RT MCP Ramp Up Ex-Post Hourly", "Reserve Zone 2 - RT MCP Ramp Down Ex-Post Hourly", "Reserve Zone 3 - RT MCP Ramp Up Ex-Post Hourly", "Reserve Zone 3 - RT MCP Ramp Down Ex-Post Hourly", "Reserve Zone 4 - RT MCP Ramp Up Ex-Post Hourly", "Reserve Zone 4 - RT MCP Ramp Down Ex-Post Hourly", "Reserve Zone 5 - RT MCP Ramp Up Ex-Post Hourly", "Reserve Zone 5 - RT MCP Ramp Down Ex-Post Hourly", "Reserve Zone 6 - RT MCP Ramp Up Ex-Post Hourly", "Reserve Zone 6 - RT MCP Ramp Down Ex-Post Hourly", "Reserve Zone 7 - RT MCP Ramp Up Ex-Post Hourly", "Reserve Zone 7 - RT MCP Ramp Down Ex-Post Hourly", "Reserve Zone 8 - RT MCP Ramp Up Ex-Post Hourly", "Reserve Zone 8 - RT MCP Ramp Down Ex-Post Hourly"]] = df[["Reserve Zone 1 - RT MCP Ramp Up Ex-Post Hourly", "Reserve Zone 1 - RT MCP Ramp Down Ex-Post Hourly", "Reserve Zone 2 - RT MCP Ramp Up Ex-Post Hourly", "Reserve Zone 2 - RT MCP Ramp Down Ex-Post Hourly", "Reserve Zone 3 - RT MCP Ramp Up Ex-Post Hourly", "Reserve Zone 3 - RT MCP Ramp Down Ex-Post Hourly", "Reserve Zone 4 - RT MCP Ramp Up Ex-Post Hourly", "Reserve Zone 4 - RT MCP Ramp Down Ex-Post Hourly", "Reserve Zone 5 - RT MCP Ramp Up Ex-Post Hourly", "Reserve Zone 5 - RT MCP Ramp Down Ex-Post Hourly", "Reserve Zone 6 - RT MCP Ramp Up Ex-Post Hourly", "Reserve Zone 6 - RT MCP Ramp Down Ex-Post Hourly", "Reserve Zone 7 - RT MCP Ramp Up Ex-Post Hourly", "Reserve Zone 7 - RT MCP Ramp Down Ex-Post Hourly", "Reserve Zone 8 - RT MCP Ramp Up Ex-Post Hourly", "Reserve Zone 8 - RT MCP Ramp Down Ex-Post Hourly"]].astype("Float64")
     df[["Market Date"]] = df[["Market Date"]].apply(pd.to_datetime, format="%Y-%m-%d")
-    df[["Preliminary / Final"]] = df[["Preliminary / Final"]].astype(pandas.core.arrays.string_.StringDtype())
-    df[["Hour Ending"]] = df[["Hour Ending"]].astype(pandas.core.arrays.integer.Int64Dtype())
+    df[["Preliminary / Final"]] = df[["Preliminary / Final"]].astype("string")
+    df[["Hour Ending"]] = df[["Hour Ending"]].astype("Int64")
 
     return df
 
@@ -2270,9 +2270,9 @@ def parse_rt_expost_str_5min_mcp(
     df = df.rename(columns={idx: f"RESERVE ZONE {idx}" for idx in range(1, 9)})
     df = df.drop(columns=["Unnamed: 0"])
 
-    df[["RESERVE ZONE 1", "RESERVE ZONE 2", "RESERVE ZONE 3", "RESERVE ZONE 4", "RESERVE ZONE 5", "RESERVE ZONE 6", "RESERVE ZONE 7", "RESERVE ZONE 8"]] = df[["RESERVE ZONE 1", "RESERVE ZONE 2", "RESERVE ZONE 3", "RESERVE ZONE 4", "RESERVE ZONE 5", "RESERVE ZONE 6", "RESERVE ZONE 7", "RESERVE ZONE 8"]].astype(numpy.dtypes.Float64DType())
+    df[["RESERVE ZONE 1", "RESERVE ZONE 2", "RESERVE ZONE 3", "RESERVE ZONE 4", "RESERVE ZONE 5", "RESERVE ZONE 6", "RESERVE ZONE 7", "RESERVE ZONE 8"]] = df[["RESERVE ZONE 1", "RESERVE ZONE 2", "RESERVE ZONE 3", "RESERVE ZONE 4", "RESERVE ZONE 5", "RESERVE ZONE 6", "RESERVE ZONE 7", "RESERVE ZONE 8"]].astype("Float64")
     df[["Time(EST)"]] = df[["Time(EST)"]].apply(pd.to_datetime, format="%m/%d/%Y  %I:%M:%S %p")
-    df[["Preliminary/ Final"]] = df[["Preliminary/ Final"]].astype(pandas.core.arrays.string_.StringDtype())
+    df[["Preliminary/ Final"]] = df[["Preliminary/ Final"]].astype("string")
 
     return df
 
@@ -2287,10 +2287,10 @@ def parse_rt_expost_str_mcp(
         
     df = df.rename(columns={idx: f"RESERVE ZONE {idx}" for idx in range(1, 9)})
 
-    df[["RESERVE ZONE 1", "RESERVE ZONE 2", "RESERVE ZONE 3", "RESERVE ZONE 4", "RESERVE ZONE 5", "RESERVE ZONE 6", "RESERVE ZONE 7", "RESERVE ZONE 8"]] = df[["RESERVE ZONE 1", "RESERVE ZONE 2", "RESERVE ZONE 3", "RESERVE ZONE 4", "RESERVE ZONE 5", "RESERVE ZONE 6", "RESERVE ZONE 7", "RESERVE ZONE 8"]].astype(numpy.dtypes.Float64DType())
+    df[["RESERVE ZONE 1", "RESERVE ZONE 2", "RESERVE ZONE 3", "RESERVE ZONE 4", "RESERVE ZONE 5", "RESERVE ZONE 6", "RESERVE ZONE 7", "RESERVE ZONE 8"]] = df[["RESERVE ZONE 1", "RESERVE ZONE 2", "RESERVE ZONE 3", "RESERVE ZONE 4", "RESERVE ZONE 5", "RESERVE ZONE 6", "RESERVE ZONE 7", "RESERVE ZONE 8"]].astype("Float64")
     df[["MARKET DATE"]] = df[["MARKET DATE"]].apply(pd.to_datetime, format="%m/%d/%Y")
-    df[["Preliminary/ Final"]] = df[["Preliminary/ Final"]].astype(pandas.core.arrays.string_.StringDtype())
-    df[["Hour Ending"]] = df[["Hour Ending"]].astype(pandas.core.arrays.integer.Int64Dtype())
+    df[["Preliminary/ Final"]] = df[["Preliminary/ Final"]].astype("string")
+    df[["Hour Ending"]] = df[["Hour Ending"]].astype("Int64")
 
     return df
 
@@ -2306,9 +2306,9 @@ def parse_Allocation_on_MISO_Flowgates(
         thousands=",",
     )
 
-    df[["Allocation (MW)"]] = df[["Allocation (MW)"]].astype(numpy.dtypes.Float64DType())
-    df[["Allocation to Rating Percentage"]] = df[["Allocation to Rating Percentage"]].astype(pandas.core.arrays.integer.Int64Dtype())
-    df[["NERC ID", "Flowgate Owner", "Flowgate Description", "Entity", "Direction", "Reciprocal Status on Flowgate"]] = df[["NERC ID", "Flowgate Owner", "Flowgate Description", "Entity", "Direction", "Reciprocal Status on Flowgate"]].astype(pandas.core.arrays.string_.StringDtype())
+    df[["Allocation (MW)"]] = df[["Allocation (MW)"]].astype("Float64")
+    df[["Allocation to Rating Percentage"]] = df[["Allocation to Rating Percentage"]].astype("Int64")
+    df[["NERC ID", "Flowgate Owner", "Flowgate Description", "Entity", "Direction", "Reciprocal Status on Flowgate"]] = df[["NERC ID", "Flowgate Owner", "Flowgate Description", "Entity", "Direction", "Reciprocal Status on Flowgate"]].astype("string")
 
     return df
 
@@ -2324,8 +2324,8 @@ def parse_M2M_FFE(
         thousands=",",
     )
 
-    df[["Adjusted FFE", "Non Monitoring RTO FFE"]] = df[["Adjusted FFE", "Non Monitoring RTO FFE"]].astype(numpy.dtypes.Float64DType())
-    df[["NERC Flowgate ID", "Monitoring RTO", "Non Monitoring RTO", "Flowgate Description"]] = df[["NERC Flowgate ID", "Monitoring RTO", "Non Monitoring RTO", "Flowgate Description"]].astype(pandas.core.arrays.string_.StringDtype())
+    df[["Adjusted FFE", "Non Monitoring RTO FFE"]] = df[["Adjusted FFE", "Non Monitoring RTO FFE"]].astype("Float64")
+    df[["NERC Flowgate ID", "Monitoring RTO", "Non Monitoring RTO", "Flowgate Description"]] = df[["NERC Flowgate ID", "Monitoring RTO", "Non Monitoring RTO", "Flowgate Description"]].astype("string")
     df[["Hour Ending"]] = df[["Hour Ending"]].apply(pd.to_datetime, format="%m/%d/%Y  %I:%M:%S %p")
 
     return df
@@ -2340,7 +2340,7 @@ def parse_M2M_Flowgates_as_of(
         filepath_or_buffer=io.StringIO(csv_data),
     )
 
-    df[["Flowgate ID", "Monitoring RTO", "Non Monitoring RTO", "Flowgate Description"]] = df[["Flowgate ID", "Monitoring RTO", "Non Monitoring RTO", "Flowgate Description"]].astype(pandas.core.arrays.string_.StringDtype())
+    df[["Flowgate ID", "Monitoring RTO", "Non Monitoring RTO", "Flowgate Description"]] = df[["Flowgate ID", "Monitoring RTO", "Non Monitoring RTO", "Flowgate Description"]].astype("string")
 
     return df
 
@@ -2362,9 +2362,9 @@ def parse_M2M_Settlement_srw(
 
     df["HOUR_ENDING"] = [(datetime.datetime.strptime(dtime.replace(" 24:00:00", " 00:00:00"), "%Y-%m-%d %H:%M:%S") + datetime.timedelta(days=1)).strftime("%Y-%m-%d %H:%M:%S") if dtime.endswith("24:00:00") else dtime for dtime in df["HOUR_ENDING"]]
     
-    df[["MISO_SHADOW_PRICE", "CP_SHADOW_PRICE", "MISO_CREDIT", "CP_CREDIT"]] = df[["MISO_SHADOW_PRICE", "CP_SHADOW_PRICE", "MISO_CREDIT", "CP_CREDIT"]].astype(numpy.dtypes.Float64DType())
-    df[["FLOWGATE_ID", "MONITORING_RTO", "CP_RTO", "FLOWGATE_NAME"]] = df[["FLOWGATE_ID", "MONITORING_RTO", "CP_RTO", "FLOWGATE_NAME"]].astype(pandas.core.arrays.string_.StringDtype())
-    df[["MISO_MKT_FLOW", "MISO_FFE", "CP_MKT_FLOW", "CP_FFE"]] = df[["MISO_MKT_FLOW", "MISO_FFE", "CP_MKT_FLOW", "CP_FFE"]].astype(pandas.core.arrays.integer.Int64Dtype())
+    df[["MISO_SHADOW_PRICE", "CP_SHADOW_PRICE", "MISO_CREDIT", "CP_CREDIT"]] = df[["MISO_SHADOW_PRICE", "CP_SHADOW_PRICE", "MISO_CREDIT", "CP_CREDIT"]].astype("Float64")
+    df[["FLOWGATE_ID", "MONITORING_RTO", "CP_RTO", "FLOWGATE_NAME"]] = df[["FLOWGATE_ID", "MONITORING_RTO", "CP_RTO", "FLOWGATE_NAME"]].astype("string")
+    df[["MISO_MKT_FLOW", "MISO_FFE", "CP_MKT_FLOW", "CP_FFE"]] = df[["MISO_MKT_FLOW", "MISO_FFE", "CP_MKT_FLOW", "CP_FFE"]].astype("Int64")
     df[["HOUR_ENDING"]] = df[["HOUR_ENDING"]].apply(pd.to_datetime, format="%Y-%m-%d %H:%M:%S")
 
     return df
@@ -2396,7 +2396,7 @@ def parse_MM_Annual_Report(
                     sheet_name=sheet,
                 )
 
-                df[[f"{region} Available Margin (MW)"]] = df[[f"{region} Available Margin (MW)"]].astype(numpy.dtypes.Float64DType())
+                df[[f"{region} Available Margin (MW)"]] = df[[f"{region} Available Margin (MW)"]].astype("Float64")
                 df[["Date"]] = df[["Date"]].apply(pd.to_datetime, format="%m/%d/%Y")
 
                 dfs.append(df)
@@ -2411,7 +2411,7 @@ def parse_MM_Annual_Report(
                 sheet_name=sheet,
             )
 
-            df_transparency[["Central Region (MW)", "North Region (MW)", "South Region (MW)"]] = df_transparency[["Central Region (MW)", "North Region (MW)", "South Region (MW)"]].astype(numpy.dtypes.Float64DType())
+            df_transparency[["Central Region (MW)", "North Region (MW)", "South Region (MW)"]] = df_transparency[["Central Region (MW)", "North Region (MW)", "South Region (MW)"]].astype("Float64")
             df_transparency[["Date"]] = df_transparency[["Date"]].apply(pd.to_datetime, format="%m/%d/%Y %I:%M:%S %p")
 
             dfs.append(df_transparency)
@@ -2435,9 +2435,9 @@ def parse_asm_da_co(
         filepath_or_buffer=io.StringIO(csv_data),
     )
 
-    df[["RegulationMax", "RegulationMin", "RegulationOffer Price", "RegulationSelfScheduleMW", "SpinningOffer Price", "SpinSelfScheduleMW", "OnlineSupplementalOffer", "OnlineSupplementalSelfScheduleMW", "OfflineSupplementalOffer", "OfflineSupplementalSelfScheduleMW", "RegMCP", "RegMW", "SpinMCP", "SpinMW", "SuppMCP", "SuppMW", "OfflineSTR", "STRMCP", "STRMW", "MinEnergyStorageLevel", "MaxEnergyStorageLevel", "EmerMinEnergyStorageLevel", "EmerMaxEnergyStorageLevel"]] = df[["RegulationMax", "RegulationMin", "RegulationOffer Price", "RegulationSelfScheduleMW", "SpinningOffer Price", "SpinSelfScheduleMW", "OnlineSupplementalOffer", "OnlineSupplementalSelfScheduleMW", "OfflineSupplementalOffer", "OfflineSupplementalSelfScheduleMW", "RegMCP", "RegMW", "SpinMCP", "SpinMW", "SuppMCP", "SuppMW", "OfflineSTR", "STRMCP", "STRMW", "MinEnergyStorageLevel", "MaxEnergyStorageLevel", "EmerMinEnergyStorageLevel", "EmerMaxEnergyStorageLevel"]].astype(numpy.dtypes.Float64DType())
+    df[["RegulationMax", "RegulationMin", "RegulationOffer Price", "RegulationSelfScheduleMW", "SpinningOffer Price", "SpinSelfScheduleMW", "OnlineSupplementalOffer", "OnlineSupplementalSelfScheduleMW", "OfflineSupplementalOffer", "OfflineSupplementalSelfScheduleMW", "RegMCP", "RegMW", "SpinMCP", "SpinMW", "SuppMCP", "SuppMW", "OfflineSTR", "STRMCP", "STRMW", "MinEnergyStorageLevel", "MaxEnergyStorageLevel", "EmerMinEnergyStorageLevel", "EmerMaxEnergyStorageLevel"]] = df[["RegulationMax", "RegulationMin", "RegulationOffer Price", "RegulationSelfScheduleMW", "SpinningOffer Price", "SpinSelfScheduleMW", "OnlineSupplementalOffer", "OnlineSupplementalSelfScheduleMW", "OfflineSupplementalOffer", "OfflineSupplementalSelfScheduleMW", "RegMCP", "RegMW", "SpinMCP", "SpinMW", "SuppMCP", "SuppMW", "OfflineSTR", "STRMCP", "STRMW", "MinEnergyStorageLevel", "MaxEnergyStorageLevel", "EmerMinEnergyStorageLevel", "EmerMaxEnergyStorageLevel"]].astype("Float64")
     df[["Date/Time Beginning (EST)", "Date/Time End (EST)"]] = df[["Date/Time Beginning (EST)", "Date/Time End (EST)"]].apply(pd.to_datetime, format="%m/%d/%Y %H:%M:%S")
-    df[["Region", "Unit Code"]] = df[["Region", "Unit Code"]].astype(pandas.core.arrays.string_.StringDtype())
+    df[["Region", "Unit Code"]] = df[["Region", "Unit Code"]].astype("string")
 
     return df
 
@@ -2452,9 +2452,9 @@ def parse_asm_rt_co(
         filepath_or_buffer=io.StringIO(csv_data),
     )
 
-    df[["RegulationMax", "RegulationMin", "RegulationOffer Price", "RegulationSelfScheduleMW", "SpinningOffer Price", "SpinSelfScheduleMW", "OnlineSupplementalOffer", "OnlineSupplementalSelfScheduleMW", "OfflineSupplementalOffer", "OfflineSupplementalSelfScheduleMW", "RegMCP1", "RegMW1", "RegMCP2", "RegMW2", "RegMCP3", "RegMW3", "RegMCP4", "RegMW4", "RegMCP5", "RegMW5", "RegMCP6", "RegMW6", "RegMCP7", "RegMW7", "RegMCP8", "RegMW8", "RegMCP9", "RegMW9", "RegMCP10", "RegMW10", "RegMCP11", "RegMW11", "RegMCP12", "RegMW12", "SpinMCP1", "SpinMW1", "SpinMCP2", "SpinMW2", "SpinMCP3", "SpinMW3", "SpinMCP4", "SpinMW4", "SpinMCP5", "SpinMW5", "SpinMCP6", "SpinMW6", "SpinMCP7", "SpinMW7", "SpinMCP8", "SpinMW8", "SpinMCP9", "SpinMW9", "SpinMCP10", "SpinMW10", "SpinMCP11", "SpinMW11", "SpinMCP12", "SpinMW12", "SuppMCP1", "SuppMW1", "SuppMCP2", "SuppMW2", "SuppMCP3", "SuppMW3", "SuppMCP4", "SuppMW4", "SuppMCP5", "SuppMW5", "SuppMCP6", "SuppMW6", "SuppMCP7", "SuppMW7", "SuppMCP8", "SuppMW8", "SuppMCP9", "SuppMW9", "SuppMCP10", "SuppMW10", "SuppMCP11", "SuppMW11", "SuppMCP12", "SuppMW12", "StrOfflineOfferRate", "STRMCP1", "STRMW1", "STRMCP2", "STRMW2", "STRMCP3", "STRMW3", "STRMCP4", "STRMW4", "STRMCP5", "STRMW5", "STRMCP6", "STRMW6", "STRMCP7", "STRMW7", "STRMCP8", "STRMW8", "STRMCP9", "STRMW9", "STRMCP10", "STRMW10", "STRMCP11", "STRMW11", "STRMCP12", "STRMW12", "MinEnergyStorageLevel", "MaxEnergyStorageLevel", "EmerMinEnergyStorageLevel", "EmerMaxEnergyStorageLevel"]] = df[["RegulationMax", "RegulationMin", "RegulationOffer Price", "RegulationSelfScheduleMW", "SpinningOffer Price", "SpinSelfScheduleMW", "OnlineSupplementalOffer", "OnlineSupplementalSelfScheduleMW", "OfflineSupplementalOffer", "OfflineSupplementalSelfScheduleMW", "RegMCP1", "RegMW1", "RegMCP2", "RegMW2", "RegMCP3", "RegMW3", "RegMCP4", "RegMW4", "RegMCP5", "RegMW5", "RegMCP6", "RegMW6", "RegMCP7", "RegMW7", "RegMCP8", "RegMW8", "RegMCP9", "RegMW9", "RegMCP10", "RegMW10", "RegMCP11", "RegMW11", "RegMCP12", "RegMW12", "SpinMCP1", "SpinMW1", "SpinMCP2", "SpinMW2", "SpinMCP3", "SpinMW3", "SpinMCP4", "SpinMW4", "SpinMCP5", "SpinMW5", "SpinMCP6", "SpinMW6", "SpinMCP7", "SpinMW7", "SpinMCP8", "SpinMW8", "SpinMCP9", "SpinMW9", "SpinMCP10", "SpinMW10", "SpinMCP11", "SpinMW11", "SpinMCP12", "SpinMW12", "SuppMCP1", "SuppMW1", "SuppMCP2", "SuppMW2", "SuppMCP3", "SuppMW3", "SuppMCP4", "SuppMW4", "SuppMCP5", "SuppMW5", "SuppMCP6", "SuppMW6", "SuppMCP7", "SuppMW7", "SuppMCP8", "SuppMW8", "SuppMCP9", "SuppMW9", "SuppMCP10", "SuppMW10", "SuppMCP11", "SuppMW11", "SuppMCP12", "SuppMW12", "StrOfflineOfferRate", "STRMCP1", "STRMW1", "STRMCP2", "STRMW2", "STRMCP3", "STRMW3", "STRMCP4", "STRMW4", "STRMCP5", "STRMW5", "STRMCP6", "STRMW6", "STRMCP7", "STRMW7", "STRMCP8", "STRMW8", "STRMCP9", "STRMW9", "STRMCP10", "STRMW10", "STRMCP11", "STRMW11", "STRMCP12", "STRMW12", "MinEnergyStorageLevel", "MaxEnergyStorageLevel", "EmerMinEnergyStorageLevel", "EmerMaxEnergyStorageLevel"]].astype(numpy.dtypes.Float64DType())
+    df[["RegulationMax", "RegulationMin", "RegulationOffer Price", "RegulationSelfScheduleMW", "SpinningOffer Price", "SpinSelfScheduleMW", "OnlineSupplementalOffer", "OnlineSupplementalSelfScheduleMW", "OfflineSupplementalOffer", "OfflineSupplementalSelfScheduleMW", "RegMCP1", "RegMW1", "RegMCP2", "RegMW2", "RegMCP3", "RegMW3", "RegMCP4", "RegMW4", "RegMCP5", "RegMW5", "RegMCP6", "RegMW6", "RegMCP7", "RegMW7", "RegMCP8", "RegMW8", "RegMCP9", "RegMW9", "RegMCP10", "RegMW10", "RegMCP11", "RegMW11", "RegMCP12", "RegMW12", "SpinMCP1", "SpinMW1", "SpinMCP2", "SpinMW2", "SpinMCP3", "SpinMW3", "SpinMCP4", "SpinMW4", "SpinMCP5", "SpinMW5", "SpinMCP6", "SpinMW6", "SpinMCP7", "SpinMW7", "SpinMCP8", "SpinMW8", "SpinMCP9", "SpinMW9", "SpinMCP10", "SpinMW10", "SpinMCP11", "SpinMW11", "SpinMCP12", "SpinMW12", "SuppMCP1", "SuppMW1", "SuppMCP2", "SuppMW2", "SuppMCP3", "SuppMW3", "SuppMCP4", "SuppMW4", "SuppMCP5", "SuppMW5", "SuppMCP6", "SuppMW6", "SuppMCP7", "SuppMW7", "SuppMCP8", "SuppMW8", "SuppMCP9", "SuppMW9", "SuppMCP10", "SuppMW10", "SuppMCP11", "SuppMW11", "SuppMCP12", "SuppMW12", "StrOfflineOfferRate", "STRMCP1", "STRMW1", "STRMCP2", "STRMW2", "STRMCP3", "STRMW3", "STRMCP4", "STRMW4", "STRMCP5", "STRMW5", "STRMCP6", "STRMW6", "STRMCP7", "STRMW7", "STRMCP8", "STRMW8", "STRMCP9", "STRMW9", "STRMCP10", "STRMW10", "STRMCP11", "STRMW11", "STRMCP12", "STRMW12", "MinEnergyStorageLevel", "MaxEnergyStorageLevel", "EmerMinEnergyStorageLevel", "EmerMaxEnergyStorageLevel"]] = df[["RegulationMax", "RegulationMin", "RegulationOffer Price", "RegulationSelfScheduleMW", "SpinningOffer Price", "SpinSelfScheduleMW", "OnlineSupplementalOffer", "OnlineSupplementalSelfScheduleMW", "OfflineSupplementalOffer", "OfflineSupplementalSelfScheduleMW", "RegMCP1", "RegMW1", "RegMCP2", "RegMW2", "RegMCP3", "RegMW3", "RegMCP4", "RegMW4", "RegMCP5", "RegMW5", "RegMCP6", "RegMW6", "RegMCP7", "RegMW7", "RegMCP8", "RegMW8", "RegMCP9", "RegMW9", "RegMCP10", "RegMW10", "RegMCP11", "RegMW11", "RegMCP12", "RegMW12", "SpinMCP1", "SpinMW1", "SpinMCP2", "SpinMW2", "SpinMCP3", "SpinMW3", "SpinMCP4", "SpinMW4", "SpinMCP5", "SpinMW5", "SpinMCP6", "SpinMW6", "SpinMCP7", "SpinMW7", "SpinMCP8", "SpinMW8", "SpinMCP9", "SpinMW9", "SpinMCP10", "SpinMW10", "SpinMCP11", "SpinMW11", "SpinMCP12", "SpinMW12", "SuppMCP1", "SuppMW1", "SuppMCP2", "SuppMW2", "SuppMCP3", "SuppMW3", "SuppMCP4", "SuppMW4", "SuppMCP5", "SuppMW5", "SuppMCP6", "SuppMW6", "SuppMCP7", "SuppMW7", "SuppMCP8", "SuppMW8", "SuppMCP9", "SuppMW9", "SuppMCP10", "SuppMW10", "SuppMCP11", "SuppMW11", "SuppMCP12", "SuppMW12", "StrOfflineOfferRate", "STRMCP1", "STRMW1", "STRMCP2", "STRMW2", "STRMCP3", "STRMW3", "STRMCP4", "STRMW4", "STRMCP5", "STRMW5", "STRMCP6", "STRMW6", "STRMCP7", "STRMW7", "STRMCP8", "STRMW8", "STRMCP9", "STRMW9", "STRMCP10", "STRMW10", "STRMCP11", "STRMW11", "STRMCP12", "STRMW12", "MinEnergyStorageLevel", "MaxEnergyStorageLevel", "EmerMinEnergyStorageLevel", "EmerMaxEnergyStorageLevel"]].astype("Float64")
     df[["Mkthour Begin (EST)"]] = df[["Mkthour Begin (EST)"]].apply(pd.to_datetime, format="%m/%d/%Y %H:%M:%S")
-    df[["Region", "Unit Code"]] = df[["Region", "Unit Code"]].astype(pandas.core.arrays.string_.StringDtype())
+    df[["Region", "Unit Code"]] = df[["Region", "Unit Code"]].astype("string")
 
     return df
 
@@ -2475,7 +2475,7 @@ def parse_Dead_Node_Report(
     df = df.reset_index(drop=True)
 
     df[["Mkt Hour"]] = df[["Mkt Hour"]].apply(pd.to_datetime, format="%m/%d/%Y %H:%M:%S")
-    df[["PNODE Name"]] = df[["PNODE Name"]].astype(pandas.core.arrays.string_.StringDtype())
+    df[["PNODE Name"]] = df[["PNODE Name"]].astype("string")
 
     return df
 
@@ -2490,10 +2490,10 @@ def parse_rt_co(
         filepath_or_buffer=io.StringIO(csv_data), 
     )
 
-    df[["Cleared MW1", "Cleared MW2", "Cleared MW3", "Cleared MW4", "Cleared MW5", "Cleared MW6", "Cleared MW7", "Cleared MW8", "Cleared MW9", "Cleared MW10", "Cleared MW11", "Cleared MW12", "Economic Max", "Economic Min", "Emergency Max", "Emergency Min", "Self Scheduled MW", "Target MW Reduction", "Curtailment Offer Price", "Price1", "MW1", "Price2", "MW2", "Price3", "MW3", "Price4", "MW4", "Price5", "MW5", "Price6", "MW6", "Price7", "MW7", "Price8", "MW8", "Price9", "MW9", "Price10", "MW10", "MinEnergyStorageLevel", "MaxEnergyStorageLevel", "EmerMinEnergyStorageLevel", "EmerMaxEnergyStorageLevel"]] = df[["Cleared MW1", "Cleared MW2", "Cleared MW3", "Cleared MW4", "Cleared MW5", "Cleared MW6", "Cleared MW7", "Cleared MW8", "Cleared MW9", "Cleared MW10", "Cleared MW11", "Cleared MW12", "Economic Max", "Economic Min", "Emergency Max", "Emergency Min", "Self Scheduled MW", "Target MW Reduction", "Curtailment Offer Price", "Price1", "MW1", "Price2", "MW2", "Price3", "MW3", "Price4", "MW4", "Price5", "MW5", "Price6", "MW6", "Price7", "MW7", "Price8", "MW8", "Price9", "MW9", "Price10", "MW10", "MinEnergyStorageLevel", "MaxEnergyStorageLevel", "EmerMinEnergyStorageLevel", "EmerMaxEnergyStorageLevel"]].astype(numpy.dtypes.Float64DType())
-    df[["Economic Flag", "Emergency Flag", "Must Run Flag", "Unit Available Flag", "Slope"]] = df[["Economic Flag", "Emergency Flag", "Must Run Flag", "Unit Available Flag", "Slope"]].astype(pandas.core.arrays.integer.Int64Dtype())
+    df[["Cleared MW1", "Cleared MW2", "Cleared MW3", "Cleared MW4", "Cleared MW5", "Cleared MW6", "Cleared MW7", "Cleared MW8", "Cleared MW9", "Cleared MW10", "Cleared MW11", "Cleared MW12", "Economic Max", "Economic Min", "Emergency Max", "Emergency Min", "Self Scheduled MW", "Target MW Reduction", "Curtailment Offer Price", "Price1", "MW1", "Price2", "MW2", "Price3", "MW3", "Price4", "MW4", "Price5", "MW5", "Price6", "MW6", "Price7", "MW7", "Price8", "MW8", "Price9", "MW9", "Price10", "MW10", "MinEnergyStorageLevel", "MaxEnergyStorageLevel", "EmerMinEnergyStorageLevel", "EmerMaxEnergyStorageLevel"]] = df[["Cleared MW1", "Cleared MW2", "Cleared MW3", "Cleared MW4", "Cleared MW5", "Cleared MW6", "Cleared MW7", "Cleared MW8", "Cleared MW9", "Cleared MW10", "Cleared MW11", "Cleared MW12", "Economic Max", "Economic Min", "Emergency Max", "Emergency Min", "Self Scheduled MW", "Target MW Reduction", "Curtailment Offer Price", "Price1", "MW1", "Price2", "MW2", "Price3", "MW3", "Price4", "MW4", "Price5", "MW5", "Price6", "MW6", "Price7", "MW7", "Price8", "MW8", "Price9", "MW9", "Price10", "MW10", "MinEnergyStorageLevel", "MaxEnergyStorageLevel", "EmerMinEnergyStorageLevel", "EmerMaxEnergyStorageLevel"]].astype("Float64")
+    df[["Economic Flag", "Emergency Flag", "Must Run Flag", "Unit Available Flag", "Slope"]] = df[["Economic Flag", "Emergency Flag", "Must Run Flag", "Unit Available Flag", "Slope"]].astype("Int64")
     df[["Mkthour Begin (EST)"]] = df[["Mkthour Begin (EST)"]].apply(pd.to_datetime, format="%m/%d/%Y %H:%M:%S")
-    df[["Region", "Unit Code"]] = df[["Region", "Unit Code"]].astype(pandas.core.arrays.string_.StringDtype())
+    df[["Region", "Unit Code"]] = df[["Region", "Unit Code"]].astype("string")
 
     return df
 
@@ -2508,10 +2508,10 @@ def parse_da_co(
         filepath_or_buffer=io.StringIO(csv_data), 
     )
 
-    df[["Economic Max", "Economic Min", "Emergency Max", "Emergency Min", "Self Scheduled MW", "Target MW Reduction", "MW", "Curtailment Offer Price", "Price1", "MW1", "Price2", "MW2", "Price3", "MW3", "Price4", "MW4", "Price5", "MW5", "Price6", "MW6", "Price7", "MW7", "Price8", "MW8", "Price9", "MW9", "Price10", "MW10", "MinEnergyStorageLevel", "MaxEnergyStorageLevel", "EmerMinEnergyStorageLevel", "EmerMaxEnergyStorageLevel"]] = df[["Economic Max", "Economic Min", "Emergency Max", "Emergency Min", "Self Scheduled MW", "Target MW Reduction", "MW", "Curtailment Offer Price", "Price1", "MW1", "Price2", "MW2", "Price3", "MW3", "Price4", "MW4", "Price5", "MW5", "Price6", "MW6", "Price7", "MW7", "Price8", "MW8", "Price9", "MW9", "Price10", "MW10", "MinEnergyStorageLevel", "MaxEnergyStorageLevel", "EmerMinEnergyStorageLevel", "EmerMaxEnergyStorageLevel"]].astype(numpy.dtypes.Float64DType())
-    df[["Economic Flag", "Emergency Flag", "Must Run Flag", "Unit Available Flag", "Slope"]] = df[["Economic Flag", "Emergency Flag", "Must Run Flag", "Unit Available Flag", "Slope"]].astype(pandas.core.arrays.integer.Int64Dtype())
+    df[["Economic Max", "Economic Min", "Emergency Max", "Emergency Min", "Self Scheduled MW", "Target MW Reduction", "MW", "Curtailment Offer Price", "Price1", "MW1", "Price2", "MW2", "Price3", "MW3", "Price4", "MW4", "Price5", "MW5", "Price6", "MW6", "Price7", "MW7", "Price8", "MW8", "Price9", "MW9", "Price10", "MW10", "MinEnergyStorageLevel", "MaxEnergyStorageLevel", "EmerMinEnergyStorageLevel", "EmerMaxEnergyStorageLevel"]] = df[["Economic Max", "Economic Min", "Emergency Max", "Emergency Min", "Self Scheduled MW", "Target MW Reduction", "MW", "Curtailment Offer Price", "Price1", "MW1", "Price2", "MW2", "Price3", "MW3", "Price4", "MW4", "Price5", "MW5", "Price6", "MW6", "Price7", "MW7", "Price8", "MW8", "Price9", "MW9", "Price10", "MW10", "MinEnergyStorageLevel", "MaxEnergyStorageLevel", "EmerMinEnergyStorageLevel", "EmerMaxEnergyStorageLevel"]].astype("Float64")
+    df[["Economic Flag", "Emergency Flag", "Must Run Flag", "Unit Available Flag", "Slope"]] = df[["Economic Flag", "Emergency Flag", "Must Run Flag", "Unit Available Flag", "Slope"]].astype("Int64")
     df[["Date/Time Beginning (EST)", "Date/Time End (EST)"]] = df[["Date/Time Beginning (EST)", "Date/Time End (EST)"]].apply(pd.to_datetime, format="%m/%d/%Y %H:%M:%S")
-    df[["Region", "Unit Code"]] = df[["Region", "Unit Code"]].astype(pandas.core.arrays.string_.StringDtype())
+    df[["Region", "Unit Code"]] = df[["Region", "Unit Code"]].astype("string")
 
     return df
 
@@ -2524,8 +2524,8 @@ def parse_cpnode_reszone(
         skiprows=3,
     ).iloc[:-1]
 
-    df[["Reserve Zone"]] = df[["Reserve Zone"]].astype(pandas.core.arrays.integer.Int64Dtype())
-    df[["CP Node Name"]] = df[["CP Node Name"]].astype(pandas.core.arrays.string_.StringDtype())
+    df[["Reserve Zone"]] = df[["Reserve Zone"]].astype("Int64")
+    df[["CP Node Name"]] = df[["CP Node Name"]].astype("string")
 
     return df
 
@@ -2578,8 +2578,8 @@ def parse_sr_ctsl(
             inplace=True,
         )
 
-        df[["Cost Paid by Load (Hourly Avg per Month)"]] = df[["Cost Paid by Load (Hourly Avg per Month)"]].astype(pandas.core.arrays.string_.StringDtype())
-        df[[f"Jan {year}", f"Feb {year}", f"Mar {year}", f"Apr {year}", f"May {year}", f"Jun {year}", f"Jul {year}", f"Aug {year}", f"Sep {year}", f"Oct {year}", f"Nov {year}", f"Dec {year}"]] = df[[f"Jan {year}", f"Feb {year}", f"Mar {year}", f"Apr {year}", f"May {year}", f"Jun {year}", f"Jul {year}", f"Aug {year}", f"Sep {year}", f"Oct {year}", f"Nov {year}", f"Dec {year}"]].replace(r'[\$,()]', '', regex=True).replace(r'^\s*$', np.nan, regex=True).astype(numpy.dtypes.Float64DType())
+        df[["Cost Paid by Load (Hourly Avg per Month)"]] = df[["Cost Paid by Load (Hourly Avg per Month)"]].astype("string")
+        df[[f"Jan {year}", f"Feb {year}", f"Mar {year}", f"Apr {year}", f"May {year}", f"Jun {year}", f"Jul {year}", f"Aug {year}", f"Sep {year}", f"Oct {year}", f"Nov {year}", f"Dec {year}"]] = df[[f"Jan {year}", f"Feb {year}", f"Mar {year}", f"Apr {year}", f"May {year}", f"Jun {year}", f"Jul {year}", f"Aug {year}", f"Sep {year}", f"Oct {year}", f"Nov {year}", f"Dec {year}"]].replace(r'[\$,()]', '', regex=True).replace(r'^\s*$', np.nan, regex=True).astype("Float64")
 
         dfs.append(df)
         df_names.append(f"Cost Paid by Load - {year}")
@@ -2605,8 +2605,8 @@ def parse_df_al(
     df = df[df["Market Day"] != "Market Day"]
     df = df[df["HourEnding"].notna()]
     df = df.reset_index(drop=True)
-    df[["HourEnding"]] = df[["HourEnding"]].astype(pandas.core.arrays.integer.Int64Dtype())
-    df[["LRZ1 MTLF (MWh)", "LRZ1 ActualLoad (MWh)", "LRZ2_7 MTLF (MWh)", "LRZ2_7 ActualLoad (MWh)", "LRZ3_5 MTLF (MWh)", "LRZ3_5 ActualLoad (MWh)", "LRZ4 MTLF (MWh)", "LRZ4 ActualLoad (MWh)", "LRZ6 MTLF (MWh)", "LRZ6 ActualLoad (MWh)", "LRZ8_9_10 MTLF (MWh)", "LRZ8_9_10 ActualLoad (MWh)", "MISO MTLF (MWh)", "MISO ActualLoad (MWh)"]] = df[["LRZ1 MTLF (MWh)", "LRZ1 ActualLoad (MWh)", "LRZ2_7 MTLF (MWh)", "LRZ2_7 ActualLoad (MWh)", "LRZ3_5 MTLF (MWh)", "LRZ3_5 ActualLoad (MWh)", "LRZ4 MTLF (MWh)", "LRZ4 ActualLoad (MWh)", "LRZ6 MTLF (MWh)", "LRZ6 ActualLoad (MWh)", "LRZ8_9_10 MTLF (MWh)", "LRZ8_9_10 ActualLoad (MWh)", "MISO MTLF (MWh)", "MISO ActualLoad (MWh)"]].astype(numpy.dtypes.Float64DType())
+    df[["HourEnding"]] = df[["HourEnding"]].astype("Int64")
+    df[["LRZ1 MTLF (MWh)", "LRZ1 ActualLoad (MWh)", "LRZ2_7 MTLF (MWh)", "LRZ2_7 ActualLoad (MWh)", "LRZ3_5 MTLF (MWh)", "LRZ3_5 ActualLoad (MWh)", "LRZ4 MTLF (MWh)", "LRZ4 ActualLoad (MWh)", "LRZ6 MTLF (MWh)", "LRZ6 ActualLoad (MWh)", "LRZ8_9_10 MTLF (MWh)", "LRZ8_9_10 ActualLoad (MWh)", "MISO MTLF (MWh)", "MISO ActualLoad (MWh)"]] = df[["LRZ1 MTLF (MWh)", "LRZ1 ActualLoad (MWh)", "LRZ2_7 MTLF (MWh)", "LRZ2_7 ActualLoad (MWh)", "LRZ3_5 MTLF (MWh)", "LRZ3_5 ActualLoad (MWh)", "LRZ4 MTLF (MWh)", "LRZ4 ActualLoad (MWh)", "LRZ6 MTLF (MWh)", "LRZ6 ActualLoad (MWh)", "LRZ8_9_10 MTLF (MWh)", "LRZ8_9_10 ActualLoad (MWh)", "MISO MTLF (MWh)", "MISO ActualLoad (MWh)"]].astype("Float64")
     df[["Market Day"]] = df[["Market Day"]].apply(pd.to_datetime, format="%m/%d/%Y")
 
     return df
@@ -2624,8 +2624,8 @@ def parse_rf_al(
     df = df.dropna(how="all")
     df = df[df["Market Day"] != "Market Day"]
     df = df.reset_index(drop=True)
-    df[["HourEnding"]] = df[["HourEnding"]].astype(pandas.core.arrays.integer.Int64Dtype())
-    df[["North MTLF (MWh)", "North ActualLoad (MWh)", "Central MTLF (MWh)", "Central ActualLoad (MWh)", "South MTLF (MWh)", "South ActualLoad (MWh)", "MISO MTLF (MWh)", "MISO ActualLoad (MWh)"]] = df[["North MTLF (MWh)", "North ActualLoad (MWh)", "Central MTLF (MWh)", "Central ActualLoad (MWh)", "South MTLF (MWh)", "South ActualLoad (MWh)", "MISO MTLF (MWh)", "MISO ActualLoad (MWh)"]].astype(numpy.dtypes.Float64DType())
+    df[["HourEnding"]] = df[["HourEnding"]].astype("Int64")
+    df[["North MTLF (MWh)", "North ActualLoad (MWh)", "Central MTLF (MWh)", "Central ActualLoad (MWh)", "South MTLF (MWh)", "South ActualLoad (MWh)", "MISO MTLF (MWh)", "MISO ActualLoad (MWh)"]] = df[["North MTLF (MWh)", "North ActualLoad (MWh)", "Central MTLF (MWh)", "Central ActualLoad (MWh)", "South MTLF (MWh)", "South ActualLoad (MWh)", "MISO MTLF (MWh)", "MISO ActualLoad (MWh)"]].astype("Float64")
     df[["Market Day"]] = df[["Market Day"]].apply(pd.to_datetime, format="%m/%d/%Y")
 
     return df
@@ -2648,10 +2648,10 @@ def parse_da_bc_HIST(
         r"\)": "",
     }, regex=True)
 
-    df[["Shadow Price", "BP1", "PC1", "BP2", "PC2"]] = df[["Shadow Price", "BP1", "PC1", "BP2", "PC2"]].astype(numpy.dtypes.Float64DType())
-    df[["Hour of Occurrence", "Override"]] = df[["Hour of Occurrence", "Override"]].astype(pandas.core.arrays.integer.Int64Dtype())
+    df[["Shadow Price", "BP1", "PC1", "BP2", "PC2"]] = df[["Shadow Price", "BP1", "PC1", "BP2", "PC2"]].astype("Float64")
+    df[["Hour of Occurrence", "Override"]] = df[["Hour of Occurrence", "Override"]].astype("Int64")
     df[["Market Date"]] = df[["Market Date"]].apply(pd.to_datetime, format="%m/%d/%Y")
-    df[["Constraint Name", "Constraint_ID", "Branch Name ( Branch Type / From CA / To CA )", "Contingency Description", "Constraint Description", "Curve Type"]] = df[["Constraint Name", "Constraint_ID", "Branch Name ( Branch Type / From CA / To CA )", "Contingency Description", "Constraint Description", "Curve Type"]].astype(pandas.core.arrays.string_.StringDtype())
+    df[["Constraint Name", "Constraint_ID", "Branch Name ( Branch Type / From CA / To CA )", "Contingency Description", "Constraint Description", "Curve Type"]] = df[["Constraint Name", "Constraint_ID", "Branch Name ( Branch Type / From CA / To CA )", "Contingency Description", "Constraint Description", "Curve Type"]].astype("string")
 
     return df
 
@@ -2668,8 +2668,8 @@ def parse_da_ex_rg(
         sheet_name=sheet_names[0],
     ).iloc[:-1]
 
-    df[["Hour Ending"]] = df[["Hour Ending"]].astype(pandas.core.arrays.integer.Int64Dtype())
-    df[["Demand Cleared (GWh) - Physical - Fixed", "Demand Cleared (GWh) - Physical - Price Sen.", "Demand Cleared (GWh) - Virtual", "Demand Cleared (GWh) - Total", "Supply Cleared (GWh) - Physical", "Supply Cleared (GWh) - Virtual", "Supply Cleared (GWh) - Total", "Net Scheduled Imports (GWh)", "Generation Resources Offered (GW at Econ. Max) - Must Run", "Generation Resources Offered (GW at Econ. Max) - Economic", "Generation Resources Offered (GW at Econ. Max) - Emergency", "Generation Resources Offered (GW at Econ. Max) - Total", "Generation Resources Offered (GW at Econ. Min) - Must Run", "Generation Resources Offered (GW at Econ. Min) - Economic", "Generation Resources Offered (GW at Econ. Min) - Emergency", "Generation Resources Offered (GW at Econ. Min) - Total"]] = df[["Demand Cleared (GWh) - Physical - Fixed", "Demand Cleared (GWh) - Physical - Price Sen.", "Demand Cleared (GWh) - Virtual", "Demand Cleared (GWh) - Total", "Supply Cleared (GWh) - Physical", "Supply Cleared (GWh) - Virtual", "Supply Cleared (GWh) - Total", "Net Scheduled Imports (GWh)", "Generation Resources Offered (GW at Econ. Max) - Must Run", "Generation Resources Offered (GW at Econ. Max) - Economic", "Generation Resources Offered (GW at Econ. Max) - Emergency", "Generation Resources Offered (GW at Econ. Max) - Total", "Generation Resources Offered (GW at Econ. Min) - Must Run", "Generation Resources Offered (GW at Econ. Min) - Economic", "Generation Resources Offered (GW at Econ. Min) - Emergency", "Generation Resources Offered (GW at Econ. Min) - Total"]].astype(numpy.dtypes.Float64DType())
+    df[["Hour Ending"]] = df[["Hour Ending"]].astype("Int64")
+    df[["Demand Cleared (GWh) - Physical - Fixed", "Demand Cleared (GWh) - Physical - Price Sen.", "Demand Cleared (GWh) - Virtual", "Demand Cleared (GWh) - Total", "Supply Cleared (GWh) - Physical", "Supply Cleared (GWh) - Virtual", "Supply Cleared (GWh) - Total", "Net Scheduled Imports (GWh)", "Generation Resources Offered (GW at Econ. Max) - Must Run", "Generation Resources Offered (GW at Econ. Max) - Economic", "Generation Resources Offered (GW at Econ. Max) - Emergency", "Generation Resources Offered (GW at Econ. Max) - Total", "Generation Resources Offered (GW at Econ. Min) - Must Run", "Generation Resources Offered (GW at Econ. Min) - Economic", "Generation Resources Offered (GW at Econ. Min) - Emergency", "Generation Resources Offered (GW at Econ. Min) - Total"]] = df[["Demand Cleared (GWh) - Physical - Fixed", "Demand Cleared (GWh) - Physical - Price Sen.", "Demand Cleared (GWh) - Virtual", "Demand Cleared (GWh) - Total", "Supply Cleared (GWh) - Physical", "Supply Cleared (GWh) - Virtual", "Supply Cleared (GWh) - Total", "Net Scheduled Imports (GWh)", "Generation Resources Offered (GW at Econ. Max) - Must Run", "Generation Resources Offered (GW at Econ. Max) - Economic", "Generation Resources Offered (GW at Econ. Max) - Emergency", "Generation Resources Offered (GW at Econ. Max) - Total", "Generation Resources Offered (GW at Econ. Min) - Must Run", "Generation Resources Offered (GW at Econ. Min) - Economic", "Generation Resources Offered (GW at Econ. Min) - Emergency", "Generation Resources Offered (GW at Econ. Min) - Total"]].astype("Float64")
 
     dfs.append(df)
 
@@ -2692,9 +2692,9 @@ def parse_da_ex_rg(
 
     df["Hour Ending"] = filled_column
 
-    df[["Demand Cleared (GWh) - Physical - Fixed", "Demand Cleared (GWh) - Physical - Price Sen.", "Demand Cleared (GWh) - Virtual", "Demand Cleared (GWh) - Total", "Supply Cleared (GWh) - Physical", "Supply Cleared (GWh) - Virtual", "Supply Cleared (GWh) - Total", "Net Scheduled Imports (GWh)", "Generation Resources Offered (GW at Econ. Max) - Must Run", "Generation Resources Offered (GW at Econ. Max) - Economic", "Generation Resources Offered (GW at Econ. Max) - Emergency", "Generation Resources Offered (GW at Econ. Max) - Total", "Generation Resources Offered (GW at Econ. Min) - Must Run", "Generation Resources Offered (GW at Econ. Min) - Economic", "Generation Resources Offered (GW at Econ. Min) - Emergency", "Generation Resources Offered (GW at Econ. Min) - Total"]] = df[["Demand Cleared (GWh) - Physical - Fixed", "Demand Cleared (GWh) - Physical - Price Sen.", "Demand Cleared (GWh) - Virtual", "Demand Cleared (GWh) - Total", "Supply Cleared (GWh) - Physical", "Supply Cleared (GWh) - Virtual", "Supply Cleared (GWh) - Total", "Net Scheduled Imports (GWh)", "Generation Resources Offered (GW at Econ. Max) - Must Run", "Generation Resources Offered (GW at Econ. Max) - Economic", "Generation Resources Offered (GW at Econ. Max) - Emergency", "Generation Resources Offered (GW at Econ. Max) - Total", "Generation Resources Offered (GW at Econ. Min) - Must Run", "Generation Resources Offered (GW at Econ. Min) - Economic", "Generation Resources Offered (GW at Econ. Min) - Emergency", "Generation Resources Offered (GW at Econ. Min) - Total"]].astype(numpy.dtypes.Float64DType())
-    df[["Hour Ending"]] = df[["Hour Ending"]].astype(pandas.core.arrays.integer.Int64Dtype())
-    df[["Region"]] = df[["Region"]].astype(pandas.core.arrays.string_.StringDtype())
+    df[["Demand Cleared (GWh) - Physical - Fixed", "Demand Cleared (GWh) - Physical - Price Sen.", "Demand Cleared (GWh) - Virtual", "Demand Cleared (GWh) - Total", "Supply Cleared (GWh) - Physical", "Supply Cleared (GWh) - Virtual", "Supply Cleared (GWh) - Total", "Net Scheduled Imports (GWh)", "Generation Resources Offered (GW at Econ. Max) - Must Run", "Generation Resources Offered (GW at Econ. Max) - Economic", "Generation Resources Offered (GW at Econ. Max) - Emergency", "Generation Resources Offered (GW at Econ. Max) - Total", "Generation Resources Offered (GW at Econ. Min) - Must Run", "Generation Resources Offered (GW at Econ. Min) - Economic", "Generation Resources Offered (GW at Econ. Min) - Emergency", "Generation Resources Offered (GW at Econ. Min) - Total"]] = df[["Demand Cleared (GWh) - Physical - Fixed", "Demand Cleared (GWh) - Physical - Price Sen.", "Demand Cleared (GWh) - Virtual", "Demand Cleared (GWh) - Total", "Supply Cleared (GWh) - Physical", "Supply Cleared (GWh) - Virtual", "Supply Cleared (GWh) - Total", "Net Scheduled Imports (GWh)", "Generation Resources Offered (GW at Econ. Max) - Must Run", "Generation Resources Offered (GW at Econ. Max) - Economic", "Generation Resources Offered (GW at Econ. Max) - Emergency", "Generation Resources Offered (GW at Econ. Max) - Total", "Generation Resources Offered (GW at Econ. Min) - Must Run", "Generation Resources Offered (GW at Econ. Min) - Economic", "Generation Resources Offered (GW at Econ. Min) - Emergency", "Generation Resources Offered (GW at Econ. Min) - Total"]].astype("Float64")
+    df[["Hour Ending"]] = df[["Hour Ending"]].astype("Int64")
+    df[["Region"]] = df[["Region"]].astype("string")
 
     dfs.append(df)
 
@@ -2715,8 +2715,8 @@ def parse_da_ex(
     )
 
     df.rename(columns={"Unnamed: 0": "Hour"}, inplace=True)
-    df[["Hour"]] = df[["Hour"]].replace('[^\\d]+', '', regex=True).astype(pandas.core.arrays.integer.Int64Dtype())
-    df[["Demand Cleared (GWh) - Physical - Fixed", "Demand Cleared (GWh) - Physical - Price Sen.", "Demand Cleared (GWh) - Virtual", "Demand Cleared (GWh) - Total", "Supply Cleared (GWh) - Physical", "Supply Cleared (GWh) - Virtual", "Supply Cleared (GWh) - Total", "Net Scheduled Imports (GWh)", "Generation Resources Offered (GW at Econ. Max) - Must Run", "Generation Resources Offered (GW at Econ. Max) - Economic", "Generation Resources Offered (GW at Econ. Max) - Emergency", "Generation Resources Offered (GW at Econ. Max) - Total", "Generation Resources Offered (GW at Econ. Min) - Must Run", "Generation Resources Offered (GW at Econ. Min) - Economic", "Generation Resources Offered (GW at Econ. Min) - Emergency", "Generation Resources Offered (GW at Econ. Min) - Total"]] = df[["Demand Cleared (GWh) - Physical - Fixed", "Demand Cleared (GWh) - Physical - Price Sen.", "Demand Cleared (GWh) - Virtual", "Demand Cleared (GWh) - Total", "Supply Cleared (GWh) - Physical", "Supply Cleared (GWh) - Virtual", "Supply Cleared (GWh) - Total", "Net Scheduled Imports (GWh)", "Generation Resources Offered (GW at Econ. Max) - Must Run", "Generation Resources Offered (GW at Econ. Max) - Economic", "Generation Resources Offered (GW at Econ. Max) - Emergency", "Generation Resources Offered (GW at Econ. Max) - Total", "Generation Resources Offered (GW at Econ. Min) - Must Run", "Generation Resources Offered (GW at Econ. Min) - Economic", "Generation Resources Offered (GW at Econ. Min) - Emergency", "Generation Resources Offered (GW at Econ. Min) - Total"]].astype(numpy.dtypes.Float64DType())
+    df[["Hour"]] = df[["Hour"]].replace('[^\\d]+', '', regex=True).astype("Int64")
+    df[["Demand Cleared (GWh) - Physical - Fixed", "Demand Cleared (GWh) - Physical - Price Sen.", "Demand Cleared (GWh) - Virtual", "Demand Cleared (GWh) - Total", "Supply Cleared (GWh) - Physical", "Supply Cleared (GWh) - Virtual", "Supply Cleared (GWh) - Total", "Net Scheduled Imports (GWh)", "Generation Resources Offered (GW at Econ. Max) - Must Run", "Generation Resources Offered (GW at Econ. Max) - Economic", "Generation Resources Offered (GW at Econ. Max) - Emergency", "Generation Resources Offered (GW at Econ. Max) - Total", "Generation Resources Offered (GW at Econ. Min) - Must Run", "Generation Resources Offered (GW at Econ. Min) - Economic", "Generation Resources Offered (GW at Econ. Min) - Emergency", "Generation Resources Offered (GW at Econ. Min) - Total"]] = df[["Demand Cleared (GWh) - Physical - Fixed", "Demand Cleared (GWh) - Physical - Price Sen.", "Demand Cleared (GWh) - Virtual", "Demand Cleared (GWh) - Total", "Supply Cleared (GWh) - Physical", "Supply Cleared (GWh) - Virtual", "Supply Cleared (GWh) - Total", "Net Scheduled Imports (GWh)", "Generation Resources Offered (GW at Econ. Max) - Must Run", "Generation Resources Offered (GW at Econ. Max) - Economic", "Generation Resources Offered (GW at Econ. Max) - Emergency", "Generation Resources Offered (GW at Econ. Max) - Total", "Generation Resources Offered (GW at Econ. Min) - Must Run", "Generation Resources Offered (GW at Econ. Min) - Economic", "Generation Resources Offered (GW at Econ. Min) - Emergency", "Generation Resources Offered (GW at Econ. Min) - Total"]].astype("Float64")
     
     return df
 
@@ -2729,9 +2729,9 @@ def parse_da_rpe(
         skiprows=3,
     )[:-1]
 
-    df[["Hour of Occurence"]] = df[["Hour of Occurence"]].astype(pandas.core.arrays.integer.Int64Dtype())
-    df[["Constraint Name", "Constraint Description"]] = df[["Constraint Name", "Constraint Description"]].astype(pandas.core.arrays.string_.StringDtype())
-    df[["Shadow Price"]] = df[["Shadow Price"]].astype(numpy.dtypes.Float64DType())
+    df[["Hour of Occurence"]] = df[["Hour of Occurence"]].astype("Int64")
+    df[["Constraint Name", "Constraint Description"]] = df[["Constraint Name", "Constraint Description"]].astype("string")
+    df[["Shadow Price"]] = df[["Shadow Price"]].astype("Float64")
     
     return df
 
@@ -2750,8 +2750,8 @@ def parse_RT_LMPs(
     )
 
     df[["MARKET_DAY"]] = df[["MARKET_DAY"]].apply(pd.to_datetime, format="%m/%d/%Y")
-    df[["HE1", "HE2", "HE3", "HE4", "HE5", "HE6", "HE7", "HE8", "HE9", "HE10", "HE11", "HE12", "HE13", "HE14", "HE15", "HE16", "HE17", "HE18", "HE19", "HE20", "HE21", "HE22", "HE23", "HE24"]] = df[["HE1", "HE2", "HE3", "HE4", "HE5", "HE6", "HE7", "HE8", "HE9", "HE10", "HE11", "HE12", "HE13", "HE14", "HE15", "HE16", "HE17", "HE18", "HE19", "HE20", "HE21", "HE22", "HE23", "HE24"]].astype(numpy.dtypes.Float64DType())
-    df[["NODE", "TYPE", "VALUE"]] = df[["NODE", "TYPE", "VALUE"]].astype(pandas.core.arrays.string_.StringDtype())
+    df[["HE1", "HE2", "HE3", "HE4", "HE5", "HE6", "HE7", "HE8", "HE9", "HE10", "HE11", "HE12", "HE13", "HE14", "HE15", "HE16", "HE17", "HE18", "HE19", "HE20", "HE21", "HE22", "HE23", "HE24"]] = df[["HE1", "HE2", "HE3", "HE4", "HE5", "HE6", "HE7", "HE8", "HE9", "HE10", "HE11", "HE12", "HE13", "HE14", "HE15", "HE16", "HE17", "HE18", "HE19", "HE20", "HE21", "HE22", "HE23", "HE24"]].astype("Float64")
+    df[["NODE", "TYPE", "VALUE"]] = df[["NODE", "TYPE", "VALUE"]].astype("string")
 
     return df
 
@@ -2765,7 +2765,7 @@ def parse_sr_gfm(
         usecols="A",
     )[:-1]
 
-    MarketHourColumn["Market Hour Ending"] = MarketHourColumn["Market Hour Ending"].astype(pandas.core.arrays.string_.StringDtype())
+    MarketHourColumn["Market Hour Ending"] = MarketHourColumn["Market Hour Ending"].astype("string")
 
     df1 = pd.read_excel(
         io=io.BytesIO(res.content),
@@ -2775,7 +2775,7 @@ def parse_sr_gfm(
     )[:-1]
     shared_column_names = list(df1.columns)[:-2]
 
-    df1[["Coal", "Gas", "Nuclear", "Hydro", "Wind", "Solar", "Other", "Storage", "Total MW"]] = df1[["Coal", "Gas", "Nuclear", "Hydro", "Wind", "Solar", "Other", "Storage", "Total MW"]].astype(numpy.dtypes.Float64DType())
+    df1[["Coal", "Gas", "Nuclear", "Hydro", "Wind", "Solar", "Other", "Storage", "Total MW"]] = df1[["Coal", "Gas", "Nuclear", "Hydro", "Wind", "Solar", "Other", "Storage", "Total MW"]].astype("Float64")
     
     df2 = pd.read_excel(
         io=io.BytesIO(res.content),
@@ -2785,7 +2785,7 @@ def parse_sr_gfm(
         names=shared_column_names + ["Storage", "Total MW"],
     )[:-1]
 
-    df2[["Coal", "Gas", "Nuclear", "Hydro", "Wind", "Solar", "Other", "Storage", "Total MW"]] = df2[["Coal", "Gas", "Nuclear", "Hydro", "Wind", "Solar", "Other", "Storage", "Total MW"]].astype(numpy.dtypes.Float64DType())
+    df2[["Coal", "Gas", "Nuclear", "Hydro", "Wind", "Solar", "Other", "Storage", "Total MW"]] = df2[["Coal", "Gas", "Nuclear", "Hydro", "Wind", "Solar", "Other", "Storage", "Total MW"]].astype("Float64")
 
     df3 = pd.read_excel(
         io=io.BytesIO(res.content),
@@ -2795,7 +2795,7 @@ def parse_sr_gfm(
         names=shared_column_names + ["Total MW"],
     )[:-1]
 
-    df3[["Coal", "Gas", "Nuclear", "Hydro", "Wind", "Solar", "Other", "Total MW"]] = df3[["Coal", "Gas", "Nuclear", "Hydro", "Wind", "Solar", "Other", "Total MW"]].astype(numpy.dtypes.Float64DType())
+    df3[["Coal", "Gas", "Nuclear", "Hydro", "Wind", "Solar", "Other", "Total MW"]] = df3[["Coal", "Gas", "Nuclear", "Hydro", "Wind", "Solar", "Other", "Total MW"]].astype("Float64")
 
     df4 = pd.read_excel(
         io=io.BytesIO(res.content),
@@ -2805,7 +2805,7 @@ def parse_sr_gfm(
         names=shared_column_names + ["Storage", "MISO"],
     )[:-1]
 
-    df4[["Coal", "Gas", "Nuclear", "Hydro", "Wind", "Solar", "Other", "Storage", "MISO"]] = df4[["Coal", "Gas", "Nuclear", "Hydro", "Wind", "Solar", "Other", "Storage", "MISO"]].astype(numpy.dtypes.Float64DType())
+    df4[["Coal", "Gas", "Nuclear", "Hydro", "Wind", "Solar", "Other", "Storage", "MISO"]] = df4[["Coal", "Gas", "Nuclear", "Hydro", "Wind", "Solar", "Other", "Storage", "MISO"]].astype("Float64")
 
     df5 = pd.read_excel(
         io=io.BytesIO(res.content),
@@ -2815,7 +2815,7 @@ def parse_sr_gfm(
         names=shared_column_names + ["Storage", "Total MW"],
     )[:-1]
 
-    df5[["Coal", "Gas", "Nuclear", "Hydro", "Wind", "Solar", "Other", "Storage", "Total MW"]] = df5[["Coal", "Gas", "Nuclear", "Hydro", "Wind", "Solar", "Other", "Storage", "Total MW"]].astype(numpy.dtypes.Float64DType())
+    df5[["Coal", "Gas", "Nuclear", "Hydro", "Wind", "Solar", "Other", "Storage", "Total MW"]] = df5[["Coal", "Gas", "Nuclear", "Hydro", "Wind", "Solar", "Other", "Storage", "Total MW"]].astype("Float64")
 
     df6 = pd.read_excel(
         io=io.BytesIO(res.content),
@@ -2825,7 +2825,7 @@ def parse_sr_gfm(
         names=shared_column_names + ["Storage", "Total MW"],
     )[:-1]
 
-    df6[["Coal", "Gas", "Nuclear", "Hydro", "Wind", "Solar", "Other", "Storage", "Total MW"]] = df6[["Coal", "Gas", "Nuclear", "Hydro", "Wind", "Solar", "Other", "Storage", "Total MW"]].astype(numpy.dtypes.Float64DType())
+    df6[["Coal", "Gas", "Nuclear", "Hydro", "Wind", "Solar", "Other", "Storage", "Total MW"]] = df6[["Coal", "Gas", "Nuclear", "Hydro", "Wind", "Solar", "Other", "Storage", "Total MW"]].astype("Float64")
 
     df7 = pd.read_excel(
         io=io.BytesIO(res.content),
@@ -2835,7 +2835,7 @@ def parse_sr_gfm(
         names=shared_column_names + ["Total MW"],
     )[:-1]
 
-    df7[["Coal", "Gas", "Nuclear", "Hydro", "Wind", "Solar", "Other", "Total MW"]] = df7[["Coal", "Gas", "Nuclear", "Hydro", "Wind", "Solar", "Other", "Total MW"]].astype(numpy.dtypes.Float64DType())
+    df7[["Coal", "Gas", "Nuclear", "Hydro", "Wind", "Solar", "Other", "Total MW"]] = df7[["Coal", "Gas", "Nuclear", "Hydro", "Wind", "Solar", "Other", "Total MW"]].astype("Float64")
 
     df8 = pd.read_excel(
         io=io.BytesIO(res.content),
@@ -2845,7 +2845,7 @@ def parse_sr_gfm(
         names=shared_column_names + ["Storage", "MISO"],
     )[:-1]
 
-    df8[["Coal", "Gas", "Nuclear", "Hydro", "Wind", "Solar", "Other", "Storage", "MISO"]] = df8[["Coal", "Gas", "Nuclear", "Hydro", "Wind", "Solar", "Other", "Storage", "MISO"]].astype(numpy.dtypes.Float64DType())
+    df8[["Coal", "Gas", "Nuclear", "Hydro", "Wind", "Solar", "Other", "Storage", "MISO"]] = df8[["Coal", "Gas", "Nuclear", "Hydro", "Wind", "Solar", "Other", "Storage", "MISO"]].astype("Float64")
 
 
     df_list = [df1, df2, df3, df4, df5, df6, df7, df8]
@@ -2893,10 +2893,10 @@ def parse_dfal_HIST(
 
     df = df[df["MarketDay"] != "MarketDay"]
     df = df.reset_index(drop=True)
-    df[["HourEnding"]] = df[["HourEnding"]].astype(pandas.core.arrays.integer.Int64Dtype())
+    df[["HourEnding"]] = df[["HourEnding"]].astype("Int64")
     df[["MarketDay"]] = df[["MarketDay"]].apply(pd.to_datetime, format="%m/%d/%Y")
-    df[["MTLF (MWh)", "ActualLoad (MWh)"]] = df[["MTLF (MWh)", "ActualLoad (MWh)"]].astype(numpy.dtypes.Float64DType())
-    df[["LoadResource Zone"]] = df[["LoadResource Zone"]].astype(pandas.core.arrays.string_.StringDtype())
+    df[["MTLF (MWh)", "ActualLoad (MWh)"]] = df[["MTLF (MWh)", "ActualLoad (MWh)"]].astype("Float64")
+    df[["LoadResource Zone"]] = df[["LoadResource Zone"]].astype("string")
 
     return df
 
@@ -2910,10 +2910,10 @@ def parse_historical_gen_fuel_mix(
         usecols="B:G",
     )
 
-    df[["HourEnding"]] = df[["HourEnding"]].astype(pandas.core.arrays.integer.Int64Dtype())
+    df[["HourEnding"]] = df[["HourEnding"]].astype("Int64")
     df[["Market Date"]] = df[["Market Date"]].apply(pd.to_datetime, format="%Y-%m-%d")
-    df[["DA Cleared UDS Generation", "[RT Generation State Estimator"]] = df[["DA Cleared UDS Generation", "[RT Generation State Estimator"]].astype(numpy.dtypes.Float64DType())
-    df[["Region", "Fuel Type"]] = df[["Region", "Fuel Type"]].astype(pandas.core.arrays.string_.StringDtype())
+    df[["DA Cleared UDS Generation", "[RT Generation State Estimator"]] = df[["DA Cleared UDS Generation", "[RT Generation State Estimator"]].astype("Float64")
+    df[["Region", "Fuel Type"]] = df[["Region", "Fuel Type"]].astype("string")
     
     return df
 
@@ -2928,9 +2928,9 @@ def parse_hwd_HIST(
         filepath_or_buffer=io.StringIO(csv_data),
     )
 
-    df[["Hour Ending"]] = df[["Hour Ending"]].astype(pandas.core.arrays.integer.Int64Dtype())
+    df[["Hour Ending"]] = df[["Hour Ending"]].astype("Int64")
     df[["Market Day	"]] = df[["Market Day	"]].apply(pd.to_datetime, format="%m/%d/%Y")
-    df[["MWh"]] = df[["MWh"]].astype(numpy.dtypes.Float64DType())
+    df[["MWh"]] = df[["MWh"]].astype("Float64")
 
     return df
 
@@ -2946,9 +2946,9 @@ def parse_sr_hist_is(
         sep="|",
     )
 
-    df[["HE1", "HE2", "HE3", "HE4", "HE5", "HE6", "HE7", "HE8", "HE9", "HE10", "HE11", "HE12", "HE13", "HE14", "HE15", "HE16", "HE17", "HE18", "HE19", "HE20", "HE21", "HE22", "HE23", "HE24"]] = df[["HE1", "HE2", "HE3", "HE4", "HE5", "HE6", "HE7", "HE8", "HE9", "HE10", "HE11", "HE12", "HE13", "HE14", "HE15", "HE16", "HE17", "HE18", "HE19", "HE20", "HE21", "HE22", "HE23", "HE24"]].astype(pandas.core.arrays.integer.Int64Dtype())
+    df[["HE1", "HE2", "HE3", "HE4", "HE5", "HE6", "HE7", "HE8", "HE9", "HE10", "HE11", "HE12", "HE13", "HE14", "HE15", "HE16", "HE17", "HE18", "HE19", "HE20", "HE21", "HE22", "HE23", "HE24"]] = df[["HE1", "HE2", "HE3", "HE4", "HE5", "HE6", "HE7", "HE8", "HE9", "HE10", "HE11", "HE12", "HE13", "HE14", "HE15", "HE16", "HE17", "HE18", "HE19", "HE20", "HE21", "HE22", "HE23", "HE24"]].astype("Int64")
     df[["MKTDAY"]] = df[["MKTDAY"]].apply(pd.to_datetime, format="%m/%d/%Y")
-    df[["INTERFACE"]] = df[["INTERFACE"]].astype(pandas.core.arrays.string_.StringDtype())
+    df[["INTERFACE"]] = df[["INTERFACE"]].astype("string")
 
     return df
 
@@ -2962,10 +2962,10 @@ def parse_rfal_HIST(
         usecols="B:G",
     )[:-4]
 
-    df[["HourEnding"]] = df[["HourEnding"]].astype(pandas.core.arrays.integer.Int64Dtype())
+    df[["HourEnding"]] = df[["HourEnding"]].astype("Int64")
     df[["Market Day"]] = df[["Market Day"]].apply(pd.to_datetime, format="%m/%d/%Y")
-    df[["MTLF (MWh)", "Actual Load (MWh)"]] = df[["MTLF (MWh)", "Actual Load (MWh)"]].astype(numpy.dtypes.Float64DType())
-    df[["Region", "Footnote"]] = df[["Region", "Footnote"]].astype(pandas.core.arrays.string_.StringDtype())
+    df[["MTLF (MWh)", "Actual Load (MWh)"]] = df[["MTLF (MWh)", "Actual Load (MWh)"]].astype("Float64")
+    df[["Region", "Footnote"]] = df[["Region", "Footnote"]].astype("string")
 
     return df
 
@@ -2978,7 +2978,7 @@ def parse_sr_lt(
         skiprows=3,
     )
 
-    df[["Minimum (GW)", "Average (GW)", "Maximum (GW)"]] = df[["Minimum (GW)", "Average (GW)", "Maximum (GW)"]].astype(numpy.dtypes.Float64DType())
+    df[["Minimum (GW)", "Average (GW)", "Maximum (GW)"]] = df[["Minimum (GW)", "Average (GW)", "Maximum (GW)"]].astype("Float64")
     df[["Week Starting"]] = df[["Week Starting"]].apply(pd.to_datetime)
     
     return df
@@ -2999,9 +2999,9 @@ def parse_sr_la_rg(
 
     df1 = df1.dropna()
     df1 = df1.reset_index(drop=True)
-    df1[["10/24/2024 Thursday Peak Hour: HE  19 MTLF (GW)", "10/24/2024 Thursday Peak Hour: HE  19 Capacity on Outage (GW)", "10/25/2024 Friday   Peak Hour: HE  16 MTLF (GW)", "10/25/2024 Friday   Peak Hour: HE  16 Capacity on Outage (GW)", "10/26/2024 Saturday Peak Hour: HE  19 MTLF (GW)", "10/26/2024 Saturday Peak Hour: HE  19 Capacity on Outage (GW)", "10/27/2024 Sunday   Peak Hour: HE  19 MTLF (GW)", "10/27/2024 Sunday   Peak Hour: HE  19 Capacity on Outage (GW)", "10/28/2024 Monday   Peak Hour: HE  19 MTLF (GW)", "10/28/2024 Monday   Peak Hour: HE  19Capacity on Outage (GW)", "10/29/2024 Tuesday  Peak Hour: HE  19 MTLF (GW)", "10/29/2024 Tuesday  Peak Hour: HE  19 Capacity on Outage (GW)", "10/30/2024 WednesdayPeak Hour: HE  24 MTLF (GW)", "10/30/2024 WednesdayPeak Hour: HE  24 Capacity on Outage (GW)"]] = df1[["10/24/2024 Thursday Peak Hour: HE  19 MTLF (GW)", "10/24/2024 Thursday Peak Hour: HE  19 Capacity on Outage (GW)", "10/25/2024 Friday   Peak Hour: HE  16 MTLF (GW)", "10/25/2024 Friday   Peak Hour: HE  16 Capacity on Outage (GW)", "10/26/2024 Saturday Peak Hour: HE  19 MTLF (GW)", "10/26/2024 Saturday Peak Hour: HE  19 Capacity on Outage (GW)", "10/27/2024 Sunday   Peak Hour: HE  19 MTLF (GW)", "10/27/2024 Sunday   Peak Hour: HE  19 Capacity on Outage (GW)", "10/28/2024 Monday   Peak Hour: HE  19 MTLF (GW)", "10/28/2024 Monday   Peak Hour: HE  19Capacity on Outage (GW)", "10/29/2024 Tuesday  Peak Hour: HE  19 MTLF (GW)", "10/29/2024 Tuesday  Peak Hour: HE  19 Capacity on Outage (GW)", "10/30/2024 WednesdayPeak Hour: HE  24 MTLF (GW)", "10/30/2024 WednesdayPeak Hour: HE  24 Capacity on Outage (GW)"]].astype(numpy.dtypes.Float64DType())
-    df1[["Region"]] = df1[["Region"]].astype(pandas.core.arrays.string_.StringDtype())
-    df1["Hourend_EST"] = df1["Hourend_EST"].replace('[^\\d]+', '', regex=True).astype(pandas.core.arrays.integer.Int64Dtype())
+    df1[["10/24/2024 Thursday Peak Hour: HE  19 MTLF (GW)", "10/24/2024 Thursday Peak Hour: HE  19 Capacity on Outage (GW)", "10/25/2024 Friday   Peak Hour: HE  16 MTLF (GW)", "10/25/2024 Friday   Peak Hour: HE  16 Capacity on Outage (GW)", "10/26/2024 Saturday Peak Hour: HE  19 MTLF (GW)", "10/26/2024 Saturday Peak Hour: HE  19 Capacity on Outage (GW)", "10/27/2024 Sunday   Peak Hour: HE  19 MTLF (GW)", "10/27/2024 Sunday   Peak Hour: HE  19 Capacity on Outage (GW)", "10/28/2024 Monday   Peak Hour: HE  19 MTLF (GW)", "10/28/2024 Monday   Peak Hour: HE  19Capacity on Outage (GW)", "10/29/2024 Tuesday  Peak Hour: HE  19 MTLF (GW)", "10/29/2024 Tuesday  Peak Hour: HE  19 Capacity on Outage (GW)", "10/30/2024 WednesdayPeak Hour: HE  24 MTLF (GW)", "10/30/2024 WednesdayPeak Hour: HE  24 Capacity on Outage (GW)"]] = df1[["10/24/2024 Thursday Peak Hour: HE  19 MTLF (GW)", "10/24/2024 Thursday Peak Hour: HE  19 Capacity on Outage (GW)", "10/25/2024 Friday   Peak Hour: HE  16 MTLF (GW)", "10/25/2024 Friday   Peak Hour: HE  16 Capacity on Outage (GW)", "10/26/2024 Saturday Peak Hour: HE  19 MTLF (GW)", "10/26/2024 Saturday Peak Hour: HE  19 Capacity on Outage (GW)", "10/27/2024 Sunday   Peak Hour: HE  19 MTLF (GW)", "10/27/2024 Sunday   Peak Hour: HE  19 Capacity on Outage (GW)", "10/28/2024 Monday   Peak Hour: HE  19 MTLF (GW)", "10/28/2024 Monday   Peak Hour: HE  19Capacity on Outage (GW)", "10/29/2024 Tuesday  Peak Hour: HE  19 MTLF (GW)", "10/29/2024 Tuesday  Peak Hour: HE  19 Capacity on Outage (GW)", "10/30/2024 WednesdayPeak Hour: HE  24 MTLF (GW)", "10/30/2024 WednesdayPeak Hour: HE  24 Capacity on Outage (GW)"]].astype("Float64")
+    df1[["Region"]] = df1[["Region"]].astype("string")
+    df1["Hourend_EST"] = df1["Hourend_EST"].replace('[^\\d]+', '', regex=True).astype("Int64")
 
     df2_columns = ["Type"] + list(df1.columns)[1:]
     df2 = pd.read_csv(
@@ -3009,8 +3009,8 @@ def parse_sr_la_rg(
         names=df2_columns,
         header=None,
     )
-    df2[["10/24/2024 Thursday Peak Hour: HE  19 MTLF (GW)", "10/24/2024 Thursday Peak Hour: HE  19 Capacity on Outage (GW)", "10/25/2024 Friday   Peak Hour: HE  16 MTLF (GW)", "10/25/2024 Friday   Peak Hour: HE  16 Capacity on Outage (GW)", "10/26/2024 Saturday Peak Hour: HE  19 MTLF (GW)", "10/26/2024 Saturday Peak Hour: HE  19 Capacity on Outage (GW)", "10/27/2024 Sunday   Peak Hour: HE  19 MTLF (GW)", "10/27/2024 Sunday   Peak Hour: HE  19 Capacity on Outage (GW)", "10/28/2024 Monday   Peak Hour: HE  19 MTLF (GW)", "10/28/2024 Monday   Peak Hour: HE  19Capacity on Outage (GW)", "10/29/2024 Tuesday  Peak Hour: HE  19 MTLF (GW)", "10/29/2024 Tuesday  Peak Hour: HE  19 Capacity on Outage (GW)", "10/30/2024 WednesdayPeak Hour: HE  24 MTLF (GW)", "10/30/2024 WednesdayPeak Hour: HE  24 Capacity on Outage (GW)"]] = df2[["10/24/2024 Thursday Peak Hour: HE  19 MTLF (GW)", "10/24/2024 Thursday Peak Hour: HE  19 Capacity on Outage (GW)", "10/25/2024 Friday   Peak Hour: HE  16 MTLF (GW)", "10/25/2024 Friday   Peak Hour: HE  16 Capacity on Outage (GW)", "10/26/2024 Saturday Peak Hour: HE  19 MTLF (GW)", "10/26/2024 Saturday Peak Hour: HE  19 Capacity on Outage (GW)", "10/27/2024 Sunday   Peak Hour: HE  19 MTLF (GW)", "10/27/2024 Sunday   Peak Hour: HE  19 Capacity on Outage (GW)", "10/28/2024 Monday   Peak Hour: HE  19 MTLF (GW)", "10/28/2024 Monday   Peak Hour: HE  19Capacity on Outage (GW)", "10/29/2024 Tuesday  Peak Hour: HE  19 MTLF (GW)", "10/29/2024 Tuesday  Peak Hour: HE  19 Capacity on Outage (GW)", "10/30/2024 WednesdayPeak Hour: HE  24 MTLF (GW)", "10/30/2024 WednesdayPeak Hour: HE  24 Capacity on Outage (GW)"]].astype(numpy.dtypes.Float64DType())
-    df2[["Type", "Region"]] = df2[["Type", "Region"]].astype(pandas.core.arrays.string_.StringDtype())
+    df2[["10/24/2024 Thursday Peak Hour: HE  19 MTLF (GW)", "10/24/2024 Thursday Peak Hour: HE  19 Capacity on Outage (GW)", "10/25/2024 Friday   Peak Hour: HE  16 MTLF (GW)", "10/25/2024 Friday   Peak Hour: HE  16 Capacity on Outage (GW)", "10/26/2024 Saturday Peak Hour: HE  19 MTLF (GW)", "10/26/2024 Saturday Peak Hour: HE  19 Capacity on Outage (GW)", "10/27/2024 Sunday   Peak Hour: HE  19 MTLF (GW)", "10/27/2024 Sunday   Peak Hour: HE  19 Capacity on Outage (GW)", "10/28/2024 Monday   Peak Hour: HE  19 MTLF (GW)", "10/28/2024 Monday   Peak Hour: HE  19Capacity on Outage (GW)", "10/29/2024 Tuesday  Peak Hour: HE  19 MTLF (GW)", "10/29/2024 Tuesday  Peak Hour: HE  19 Capacity on Outage (GW)", "10/30/2024 WednesdayPeak Hour: HE  24 MTLF (GW)", "10/30/2024 WednesdayPeak Hour: HE  24 Capacity on Outage (GW)"]] = df2[["10/24/2024 Thursday Peak Hour: HE  19 MTLF (GW)", "10/24/2024 Thursday Peak Hour: HE  19 Capacity on Outage (GW)", "10/25/2024 Friday   Peak Hour: HE  16 MTLF (GW)", "10/25/2024 Friday   Peak Hour: HE  16 Capacity on Outage (GW)", "10/26/2024 Saturday Peak Hour: HE  19 MTLF (GW)", "10/26/2024 Saturday Peak Hour: HE  19 Capacity on Outage (GW)", "10/27/2024 Sunday   Peak Hour: HE  19 MTLF (GW)", "10/27/2024 Sunday   Peak Hour: HE  19 Capacity on Outage (GW)", "10/28/2024 Monday   Peak Hour: HE  19 MTLF (GW)", "10/28/2024 Monday   Peak Hour: HE  19Capacity on Outage (GW)", "10/29/2024 Tuesday  Peak Hour: HE  19 MTLF (GW)", "10/29/2024 Tuesday  Peak Hour: HE  19 Capacity on Outage (GW)", "10/30/2024 WednesdayPeak Hour: HE  24 MTLF (GW)", "10/30/2024 WednesdayPeak Hour: HE  24 Capacity on Outage (GW)"]].astype("Float64")
+    df2[["Type", "Region"]] = df2[["Type", "Region"]].astype("string")
 
     df = pd.DataFrame({
         MULTI_DF_NAMES_COLUMN: [
@@ -3041,7 +3041,7 @@ def parse_mom(
         names=time_6,
     )
 
-    df_time_6[time_6] = df_time_6[time_6].astype(pandas.core.arrays.string_.StringDtype())
+    df_time_6[time_6] = df_time_6[time_6].astype("string")
 
     df_time_7 = pd.read_excel(
         io=io.BytesIO(res.content),
@@ -3052,7 +3052,7 @@ def parse_mom(
         names=time_7,
     )
 
-    df_time_7[time_7] = df_time_7[time_7].astype(pandas.core.arrays.string_.StringDtype())
+    df_time_7[time_7] = df_time_7[time_7].astype("string")
 
     df_time_30 = pd.read_excel(
         io=io.BytesIO(res.content),
@@ -3063,7 +3063,7 @@ def parse_mom(
         names=time_30,
     )
 
-    df_time_30[time_30] = df_time_30[time_30].astype(pandas.core.arrays.string_.StringDtype())
+    df_time_30[time_30] = df_time_30[time_30].astype("string")
 
     df1 = pd.read_excel(
         io=io.BytesIO(res.content),
@@ -3073,8 +3073,8 @@ def parse_mom(
     )[:-4]
     
     df1 = df1.dropna(how="all").reset_index(drop=True)
-    df1[time_6] = df1[time_6].astype(numpy.dtypes.Float64DType())
-    df1[["Resources"]] = df1[["Resources"]].astype(pandas.core.arrays.string_.StringDtype())
+    df1[time_6] = df1[time_6].astype("Float64")
+    df1[["Resources"]] = df1[["Resources"]].astype("string")
 
     df2 = pd.read_excel(
         io=io.BytesIO(res.content),
@@ -3084,8 +3084,8 @@ def parse_mom(
     )[:-4]
     
     df2 = df2.dropna(how="all").reset_index(drop=True)
-    df2[time_6] = df2[time_6].astype(numpy.dtypes.Float64DType())
-    df2[["Resources"]] = df2[["Resources"]].astype(pandas.core.arrays.string_.StringDtype())
+    df2[time_6] = df2[time_6].astype("Float64")
+    df2[["Resources"]] = df2[["Resources"]].astype("string")
 
     df3 = pd.read_excel(
         io=io.BytesIO(res.content),
@@ -3095,8 +3095,8 @@ def parse_mom(
     )[:-4]
     
     df3 = df3.dropna(how="all").reset_index(drop=True)
-    df3[time_6] = df3[time_6].astype(numpy.dtypes.Float64DType())
-    df3[["Resources"]] = df3[["Resources"]].astype(pandas.core.arrays.string_.StringDtype())
+    df3[time_6] = df3[time_6].astype("Float64")
+    df3[["Resources"]] = df3[["Resources"]].astype("string")
 
     df4 = pd.read_excel(
         io=io.BytesIO(res.content),
@@ -3106,8 +3106,8 @@ def parse_mom(
     )[:-4]
     
     df4 = df4.dropna(how="all").reset_index(drop=True)
-    df4[time_6] = df4[time_6].replace(',','', regex=True).astype(numpy.dtypes.Float64DType())
-    df4[["Resources"]] = df4[["Resources"]].astype(pandas.core.arrays.string_.StringDtype())
+    df4[time_6] = df4[time_6].replace(',','', regex=True).astype("Float64")
+    df4[["Resources"]] = df4[["Resources"]].astype("string")
 
     df5 = pd.read_excel(
         io=io.BytesIO(res.content),
@@ -3117,8 +3117,8 @@ def parse_mom(
     )[:-4]
     
     df5 = df5.dropna(how="all").reset_index(drop=True)
-    df5[time_6] = df5[time_6].replace(',','', regex=True).astype(numpy.dtypes.Float64DType())
-    df5[["Resources"]] = df5[["Resources"]].astype(pandas.core.arrays.string_.StringDtype())
+    df5[time_6] = df5[time_6].replace(',','', regex=True).astype("Float64")
+    df5[["Resources"]] = df5[["Resources"]].astype("string")
 
     df6 = pd.read_excel(
         io=io.BytesIO(res.content),
@@ -3126,8 +3126,8 @@ def parse_mom(
         sheet_name="SOLAR HOURLY",
     )[:-2]
 
-    df6[["North", "Central", "South", "MISO"]] = df6[["North", "Central", "South", "MISO"]].astype(numpy.dtypes.Float64DType())
-    df6[["DAY HE"]] = df6[["DAY HE"]].astype(pandas.core.arrays.string_.StringDtype())
+    df6[["North", "Central", "South", "MISO"]] = df6[["North", "Central", "South", "MISO"]].astype("Float64")
+    df6[["DAY HE"]] = df6[["DAY HE"]].astype("string")
 
     df7 = pd.read_excel(
         io=io.BytesIO(res.content),
@@ -3135,8 +3135,8 @@ def parse_mom(
         sheet_name="WIND HOURLY",
     )[:-2]
 
-    df7[["North", "Central", "South", "MISO"]] = df7[["North", "Central", "South", "MISO"]].astype(numpy.dtypes.Float64DType())
-    df7[["DAY HE"]] = df7[["DAY HE"]].astype(pandas.core.arrays.string_.StringDtype())
+    df7[["North", "Central", "South", "MISO"]] = df7[["North", "Central", "South", "MISO"]].astype("Float64")
+    df7[["DAY HE"]] = df7[["DAY HE"]].astype("string")
 
     df8 = pd.read_excel(
         io=io.BytesIO(res.content),
@@ -3145,10 +3145,10 @@ def parse_mom(
         names=["Wind Uncertainty"] + time_6
     )[:-3]
 
-    df8[time_6] = df8[time_6].astype(numpy.dtypes.Float64DType())
+    df8[time_6] = df8[time_6].astype("Float64")
     df8.loc[4,"Wind Uncertainty"] = "Standard Deviation Percentage"
     df8.loc[5,"Wind Uncertainty"] = "Standard Deviation in MW"
-    df8[["Wind Uncertainty"]] = df8[["Wind Uncertainty"]].astype(pandas.core.arrays.string_.StringDtype())
+    df8[["Wind Uncertainty"]] = df8[["Wind Uncertainty"]].astype("string")
 
     df9 = pd.read_excel(
         io=io.BytesIO(res.content),
@@ -3157,10 +3157,10 @@ def parse_mom(
         names=["Load Uncertainty"] + time_6
     )[:-3]
 
-    df9[time_6] = df9[time_6].astype(numpy.dtypes.Float64DType())
+    df9[time_6] = df9[time_6].astype("Float64")
     df9.loc[3,"Load Uncertainty"] = "Standard Deviation Percentage"
     df9.loc[4,"Load Uncertainty"] = "Standard Deviation in MW"
-    df9[["Load Uncertainty"]] = df9[["Load Uncertainty"]].astype(pandas.core.arrays.string_.StringDtype())
+    df9[["Load Uncertainty"]] = df9[["Load Uncertainty"]].astype("string")
 
     df10 = pd.read_excel(
         io=io.BytesIO(res.content),
@@ -3170,8 +3170,8 @@ def parse_mom(
         names= ["Location", "Type"] + time_7,
     )
     
-    df10[time_7] = df10[time_7].astype(numpy.dtypes.Float64DType())
-    df10[["Location", "Type"]] = df10[["Location", "Type"]].astype(pandas.core.arrays.string_.StringDtype())
+    df10[time_7] = df10[time_7].astype("Float64")
+    df10[["Location", "Type"]] = df10[["Location", "Type"]].astype("string")
 
     df11 = pd.read_excel(
         io=io.BytesIO(res.content),
@@ -3180,8 +3180,8 @@ def parse_mom(
         names= ["Location", "Type"] + time_30,
     )[:-3]
     
-    df11[time_30] = df11[time_30].astype(numpy.dtypes.Float64DType())
-    df11[["Location", "Type"]] = df11[["Location", "Type"]].astype(pandas.core.arrays.string_.StringDtype())
+    df11[time_30] = df11[time_30].astype("Float64")
+    df11[["Location", "Type"]] = df11[["Location", "Type"]].astype("string")
 
     df = pd.DataFrame({
         MULTI_DF_NAMES_COLUMN: [
@@ -3238,8 +3238,8 @@ def parse_sr_nd_is(
     )
 
     df = df.loc[:, ~df.columns.str.contains('^Unnamed')]
-    df["Hour"] = df["Hour"].replace('[^\\d]+', '', regex=True).astype(pandas.core.arrays.integer.Int64Dtype())
-    df[["GLHB", "IESO", "MHEB", "PJM", "SOCO", "SWPP", "TVA", "AECI", "LGEE", "Other", "Total"]] = df[["GLHB", "IESO", "MHEB", "PJM", "SOCO", "SWPP", "TVA", "AECI", "LGEE", "Other", "Total"]].astype(pandas.core.arrays.integer.Int64Dtype())
+    df["Hour"] = df["Hour"].replace('[^\\d]+', '', regex=True).astype("Int64")
+    df[["GLHB", "IESO", "MHEB", "PJM", "SOCO", "SWPP", "TVA", "AECI", "LGEE", "Other", "Total"]] = df[["GLHB", "IESO", "MHEB", "PJM", "SOCO", "SWPP", "TVA", "AECI", "LGEE", "Other", "Total"]].astype("Int64")
 
     return df
 
@@ -3257,7 +3257,7 @@ def parse_PeakHourOverview(
             key, value = line.split(",")
             data[key] = [value]
         
-        df = pd.DataFrame(data, dtype=pandas.core.arrays.integer.Int64Dtype())
+        df = pd.DataFrame(data, dtype="Int64")
 
         return df
 
@@ -3294,8 +3294,8 @@ def parse_sr_tcdc_group2(
     )
 
     df[["EffectiveTime", "TerminationTime"]] = df[["EffectiveTime", "TerminationTime"]].apply(pd.to_datetime, format="%m/%d/%Y %H:%M:%S")
-    df[["BP1", "PC1", "BP2", "PC2"]] = df[["BP1", "PC1", "BP2", "PC2"]].astype(numpy.dtypes.Float64DType())
-    df[["ContingencyName", "ContingencyDescription", "BranchName", "CurveName", "Reason"]] = df[["ContingencyName", "ContingencyDescription", "BranchName", "CurveName", "Reason"]].astype(pandas.core.arrays.string_.StringDtype())
+    df[["BP1", "PC1", "BP2", "PC2"]] = df[["BP1", "PC1", "BP2", "PC2"]].astype("Float64")
+    df[["ContingencyName", "ContingencyDescription", "BranchName", "CurveName", "Reason"]] = df[["ContingencyName", "ContingencyDescription", "BranchName", "CurveName", "Reason"]].astype("string")
 
     return df
 
@@ -3338,9 +3338,9 @@ def helper_parse_market_report_xml(
 
     df = pd.concat(partial_dfs, ignore_index=True)
 
-    df[["PostedValue", "Hour", "UTCOffset"]] = df[["PostedValue", "Hour", "UTCOffset"]].astype(pandas.core.arrays.integer.Int64Dtype())
+    df[["PostedValue", "Hour", "UTCOffset"]] = df[["PostedValue", "Hour", "UTCOffset"]].astype("Int64")
     df[["Data_Date"]] = df[["Data_Date"]].apply(pd.to_datetime, format="%j%Y")
-    df[["Data_Code", "Data_Type", "PostingType"]] = df[["Data_Code", "Data_Type", "PostingType"]].astype(pandas.core.arrays.string_.StringDtype())
+    df[["Data_Code", "Data_Type", "PostingType"]] = df[["Data_Code", "Data_Type", "PostingType"]].astype("string")
 
     return df
 
