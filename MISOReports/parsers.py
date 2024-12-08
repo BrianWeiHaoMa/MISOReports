@@ -2990,34 +2990,45 @@ def parse_sr_la_rg(
     text = res.text
     delimiter_index = text.rfind(",,,,,,,,,,,,,,,")
 
-    csv_data1 = "\n".join(text[:delimiter_index].splitlines()[3:])
+    columns_data = text.splitlines()[3]
+    csv_data1 = "\n".join(text[:delimiter_index].splitlines()[4:])
     csv_data2 = "\n".join(text[delimiter_index:].splitlines()[1:-1])
+
+    date_columns_df = pd.read_csv(
+        filepath_or_buffer=io.StringIO(columns_data),
+        header=None,
+        names=["Hourend_EST", "Region"] + [f"Column {i}" for i in range(1, 15)],
+    )
+    date_columns_df.drop(labels=["Hourend_EST", "Region"], inplace=True, axis=1)
+    date_columns = list(date_columns_df.columns)
+    date_columns_df[date_columns] = date_columns_df[date_columns].astype("string")
 
     df1 = pd.read_csv(
         filepath_or_buffer=io.StringIO(csv_data1),
+        header=None,
+        names=["Hourend_EST", "Region"] + date_columns,
     )
 
-    df1 = df1.dropna()
-    df1 = df1.reset_index(drop=True)
-    df1[["10/24/2024 Thursday Peak Hour: HE  19 MTLF (GW)", "10/24/2024 Thursday Peak Hour: HE  19 Capacity on Outage (GW)", "10/25/2024 Friday   Peak Hour: HE  16 MTLF (GW)", "10/25/2024 Friday   Peak Hour: HE  16 Capacity on Outage (GW)", "10/26/2024 Saturday Peak Hour: HE  19 MTLF (GW)", "10/26/2024 Saturday Peak Hour: HE  19 Capacity on Outage (GW)", "10/27/2024 Sunday   Peak Hour: HE  19 MTLF (GW)", "10/27/2024 Sunday   Peak Hour: HE  19 Capacity on Outage (GW)", "10/28/2024 Monday   Peak Hour: HE  19 MTLF (GW)", "10/28/2024 Monday   Peak Hour: HE  19Capacity on Outage (GW)", "10/29/2024 Tuesday  Peak Hour: HE  19 MTLF (GW)", "10/29/2024 Tuesday  Peak Hour: HE  19 Capacity on Outage (GW)", "10/30/2024 WednesdayPeak Hour: HE  24 MTLF (GW)", "10/30/2024 WednesdayPeak Hour: HE  24 Capacity on Outage (GW)"]] = df1[["10/24/2024 Thursday Peak Hour: HE  19 MTLF (GW)", "10/24/2024 Thursday Peak Hour: HE  19 Capacity on Outage (GW)", "10/25/2024 Friday   Peak Hour: HE  16 MTLF (GW)", "10/25/2024 Friday   Peak Hour: HE  16 Capacity on Outage (GW)", "10/26/2024 Saturday Peak Hour: HE  19 MTLF (GW)", "10/26/2024 Saturday Peak Hour: HE  19 Capacity on Outage (GW)", "10/27/2024 Sunday   Peak Hour: HE  19 MTLF (GW)", "10/27/2024 Sunday   Peak Hour: HE  19 Capacity on Outage (GW)", "10/28/2024 Monday   Peak Hour: HE  19 MTLF (GW)", "10/28/2024 Monday   Peak Hour: HE  19Capacity on Outage (GW)", "10/29/2024 Tuesday  Peak Hour: HE  19 MTLF (GW)", "10/29/2024 Tuesday  Peak Hour: HE  19 Capacity on Outage (GW)", "10/30/2024 WednesdayPeak Hour: HE  24 MTLF (GW)", "10/30/2024 WednesdayPeak Hour: HE  24 Capacity on Outage (GW)"]].astype("Float64")
+    df1[date_columns] = df1[date_columns].astype("Float64")
     df1[["Region"]] = df1[["Region"]].astype("string")
     df1["Hourend_EST"] = df1["Hourend_EST"].replace('[^\\d]+', '', regex=True).astype("Int64")
 
-    df2_columns = ["Type"] + list(df1.columns)[1:]
     df2 = pd.read_csv(
         filepath_or_buffer=io.StringIO(csv_data2),
-        names=df2_columns,
+        names=["Type", "Region"] + date_columns,
         header=None,
     )
-    df2[["10/24/2024 Thursday Peak Hour: HE  19 MTLF (GW)", "10/24/2024 Thursday Peak Hour: HE  19 Capacity on Outage (GW)", "10/25/2024 Friday   Peak Hour: HE  16 MTLF (GW)", "10/25/2024 Friday   Peak Hour: HE  16 Capacity on Outage (GW)", "10/26/2024 Saturday Peak Hour: HE  19 MTLF (GW)", "10/26/2024 Saturday Peak Hour: HE  19 Capacity on Outage (GW)", "10/27/2024 Sunday   Peak Hour: HE  19 MTLF (GW)", "10/27/2024 Sunday   Peak Hour: HE  19 Capacity on Outage (GW)", "10/28/2024 Monday   Peak Hour: HE  19 MTLF (GW)", "10/28/2024 Monday   Peak Hour: HE  19Capacity on Outage (GW)", "10/29/2024 Tuesday  Peak Hour: HE  19 MTLF (GW)", "10/29/2024 Tuesday  Peak Hour: HE  19 Capacity on Outage (GW)", "10/30/2024 WednesdayPeak Hour: HE  24 MTLF (GW)", "10/30/2024 WednesdayPeak Hour: HE  24 Capacity on Outage (GW)"]] = df2[["10/24/2024 Thursday Peak Hour: HE  19 MTLF (GW)", "10/24/2024 Thursday Peak Hour: HE  19 Capacity on Outage (GW)", "10/25/2024 Friday   Peak Hour: HE  16 MTLF (GW)", "10/25/2024 Friday   Peak Hour: HE  16 Capacity on Outage (GW)", "10/26/2024 Saturday Peak Hour: HE  19 MTLF (GW)", "10/26/2024 Saturday Peak Hour: HE  19 Capacity on Outage (GW)", "10/27/2024 Sunday   Peak Hour: HE  19 MTLF (GW)", "10/27/2024 Sunday   Peak Hour: HE  19 Capacity on Outage (GW)", "10/28/2024 Monday   Peak Hour: HE  19 MTLF (GW)", "10/28/2024 Monday   Peak Hour: HE  19Capacity on Outage (GW)", "10/29/2024 Tuesday  Peak Hour: HE  19 MTLF (GW)", "10/29/2024 Tuesday  Peak Hour: HE  19 Capacity on Outage (GW)", "10/30/2024 WednesdayPeak Hour: HE  24 MTLF (GW)", "10/30/2024 WednesdayPeak Hour: HE  24 Capacity on Outage (GW)"]].astype("Float64")
+    df2[date_columns] = df2[date_columns].astype("Float64")
     df2[["Type", "Region"]] = df2[["Type", "Region"]].astype("string")
 
     df = pd.DataFrame({
         MULTI_DF_NAMES_COLUMN: [
+            "Date Columns",
             "Table 1",
             "Table 2",
         ],
         MULTI_DF_DFS_COLUMN: [
+            date_columns_df,
             df1,
             df2,
         ],
