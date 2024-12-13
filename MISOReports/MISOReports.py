@@ -1232,7 +1232,7 @@ class MISOReports:
             example_url="https://api.misoenergy.org/MISORTWDDataBroker/DataBrokerServices.asmx?messageType=getapiversion&returnType=json",
         ),
 
-        "lmpconsolidatedtable": Report( # TODO review reworked implementation.
+        "lmpconsolidatedtable": Report( # Checked 2024-12-13.
             url_builder=MISORTWDDataBrokerURLBuilder(
                 target="getlmpconsolidatedtable",
                 supported_extensions=["csv", "xml", "json"],
@@ -1356,7 +1356,7 @@ class MISOReports:
             example_datetime=datetime.datetime(year=2024, month=4, day=1),
         ),
 
-        "ftr_allocation_summary": Report( # TODO review.
+        "ftr_allocation_summary": Report( # Checked 2024-12-13.
             url_builder=MISOMarketReportsURLBuilder(
                 target="ftr_allocation_summary",
                 supported_extensions=["zip"],
