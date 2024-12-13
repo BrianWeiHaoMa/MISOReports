@@ -1862,7 +1862,7 @@ def helper_parse_ftr_results(
         date_part = parts[0]
         month_str = date_part[:3]
         year_str = date_part[3:] 
-        months = {"Jan": 1, "Feb": 2, "Mar": 3, "Apr": 4, "May": 5, "Jun": 6, "Jul": 7, "Aug": 8, "Sep": 9, "Oct": 10, "Nov": 11, "Dec": 12}
+        months = {"Jan": 1, "Feb": 2, "Mar": 3, "Apr": 4, "May": 5, "Jun": 6, "Jul": 7, "Aug": 8, "Sep": 9, "Oct": 10, "Nov": 11, "Dec": 12, "Sum": 13, "Fal": 14, "Win": 15, "Spr": 16}
         month = months.get(month_str, 0) 
 
         year_prefix = "20"
