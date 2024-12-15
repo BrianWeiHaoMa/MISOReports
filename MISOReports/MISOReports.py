@@ -1708,7 +1708,7 @@ class MISOReports:
             example_datetime=datetime.datetime(year=2024, month=11, day=2),
         ),
 
-        "MM_Annual_Report": Report(
+        "MM_Annual_Report": Report( # Checked 2024-12-15.
                 url_builder=MISOMarketReportsURLBuilder(
                 target="MM_Annual_Report",
                 supported_extensions=["zip"],
@@ -1721,7 +1721,7 @@ class MISOReports:
             example_datetime=datetime.datetime(year=2024, month=10, day=30),
         ),
 
-        "asm_da_co": Report(
+        "asm_da_co": Report( # Checked 2024-12-15.
                 url_builder=MISOMarketReportsURLBuilder(
                 target="asm_da_co",
                 supported_extensions=["zip"],
@@ -1734,7 +1734,7 @@ class MISOReports:
             example_datetime=datetime.datetime(year=2024, month=8, day=1),
         ),
 
-        "asm_rt_co": Report(
+        "asm_rt_co": Report( # Checked 2024-12-15.
                 url_builder=MISOMarketReportsURLBuilder(
                 target="asm_rt_co",
                 supported_extensions=["zip"],
@@ -1747,7 +1747,7 @@ class MISOReports:
             example_datetime=datetime.datetime(year=2024, month=8, day=1),
         ),
 
-        "Dead_Node_Report": Report(
+        "Dead_Node_Report": Report( # Checked 2024-12-15.
                 url_builder=MISOMarketReportsURLBuilder(
                 target="Dead_Node_Report",
                 supported_extensions=["xls"],
@@ -1760,7 +1760,7 @@ class MISOReports:
             example_datetime=datetime.datetime(year=2024, month=10, day=30),
         ),
 
-        "rt_co": Report(
+        "rt_co": Report( # Checked 2024-12-15.
                 url_builder=MISOMarketReportsURLBuilder(
                 target="rt_co",
                 supported_extensions=["zip"],
@@ -1773,7 +1773,7 @@ class MISOReports:
             example_datetime=datetime.datetime(year=2024, month=8, day=1),
         ),
 
-        "da_co": Report(
+        "da_co": Report( # Checked 2024-12-15.
                 url_builder=MISOMarketReportsURLBuilder(
                 target="da_co",
                 supported_extensions=["zip"],
@@ -1786,7 +1786,7 @@ class MISOReports:
             example_datetime=datetime.datetime(year=2024, month=8, day=1),
         ),
 
-        "cpnode_reszone": Report(
+        "cpnode_reszone": Report( # Checked 2024-12-15.
                 url_builder=MISOMarketReportsURLBuilder(
                 target="cpnode_reszone",
                 supported_extensions=["xlsx"],
@@ -1799,7 +1799,7 @@ class MISOReports:
             example_datetime=datetime.datetime(year=2024, month=10, day=2),
         ),
 
-        "sr_ctsl": Report(
+        "sr_ctsl": Report( # Checked 2024-12-15.
                 url_builder=MISOMarketReportsURLBuilder(
                 target="sr_ctsl",
                 supported_extensions=["pdf"],
@@ -1812,7 +1812,7 @@ class MISOReports:
             example_datetime=datetime.datetime(year=2024, month=10, day=20),
         ),
 
-        "df_al": Report(
+        "df_al": Report( # Checked 2024-12-15.
                 url_builder=MISOMarketReportsURLBuilder(
                 target="df_al",
                 supported_extensions=["xls"],
@@ -1825,7 +1825,7 @@ class MISOReports:
             example_datetime=datetime.datetime(year=2024, month=10, day=30),
         ),
 
-        "rf_al": Report(
+        "rf_al": Report( # Checked 2024-12-15.
                 url_builder=MISOMarketReportsURLBuilder(
                 target="rf_al",
                 supported_extensions=["xls"],
