@@ -1971,12 +1971,18 @@ def parse_ftr_annual_results_round_1(
     files_by_type = defaultdict(list)
 
     with zipfile.ZipFile(file=io.BytesIO(res.content)) as z:
-        for filename in z.namelist():
-            prefix = filename.split('_')[0]
+        namelist = z.namelist()
+        
+        has_dir = len(namelist) and namelist[0][:8].isnumeric()
+
+        for filepath in namelist:
+            csv_filename = filepath.split("/", 1)[-1] if has_dir else filepath
+
+            prefix = csv_filename.split('_')[0]
             
             files_by_type[prefix].append({
-                "name": filename, 
-                "data": z.read(filename).decode("utf-8"),
+                "name": csv_filename, 
+                "data": z.read(filepath).decode("utf-8"),
             })
 
     return helper_parse_ftr_results(res=res, files_by_type=files_by_type)

@@ -1404,8 +1404,8 @@ class MISOReports:
             ),
             type_to_parse="zip",
             parser=parsers.parse_ftr_annual_results_round_1,
-            example_url="https://docs.misoenergy.org/marketreports/20230401_ftr_annual_results_round_1.zip",
-            example_datetime=datetime.datetime(year=2023, month=4, day=1),
+            example_url="https://docs.misoenergy.org/marketreports/20220401_ftr_annual_results_round_1.zip",
+            example_datetime=datetime.datetime(year=2022, month=4, day=1),
         ),
 
         "ftr_annual_results_round_2": Report(  # TODO review reworked implementation.
