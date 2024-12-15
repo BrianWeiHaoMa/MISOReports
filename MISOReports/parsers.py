@@ -552,8 +552,8 @@ def parse_ms_vlr_srw(
 
     df2 = pd.read_excel(
         io=io.BytesIO(res.content),
-        skiprows=15,
-        nrows=7,
+        skiprows=23,
+        nrows=5,
         usecols=column_names,
     )
     df2[float_columns] = df2[float_columns].astype("Float64")

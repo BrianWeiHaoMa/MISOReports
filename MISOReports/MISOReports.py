@@ -774,7 +774,7 @@ class MISOReports:
             example_datetime=datetime.datetime(year=2022, month=1, day=1),
         ),
 
-        "ms_vlr_srw": Report( # Checked 2024-11-24.
+        "ms_vlr_srw": Report( # TODO need to update because rows change and so second df gets moved down.
             url_builder=MISOMarketReportsURLBuilder(
                 target="ms_vlr_srw",
                 supported_extensions=["xlsx"],
@@ -783,8 +783,8 @@ class MISOReports:
             ),
             type_to_parse="xlsx",
             parser=parsers.parse_ms_vlr_srw,
-            example_url="https://docs.misoenergy.org/marketreports/20240901_ms_vlr_srw.xlsx",
-            example_datetime=datetime.datetime(year=2024, month=9, day=1),
+            example_url="https://docs.misoenergy.org/marketreports/20241101_ms_vlr_srw.xlsx",
+            example_datetime=datetime.datetime(year=2024, month=11, day=1),
         ),
 
         "ms_rsg_srw": Report( # Checked 2024-11-26.
