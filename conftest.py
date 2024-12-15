@@ -11,6 +11,6 @@ def pytest_addoption(parser):
         "--number-of-dfs-to-stop-at",
         action="store",              
         type=int,
-        default=1,      
+        default=3,      
         help="The maximum amount of increments dfs to test for a single report",
     )
