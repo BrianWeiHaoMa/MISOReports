@@ -591,10 +591,10 @@ single_df_test_list = [
     (
         "ftr_annual_bids_offers", 
         {
-            ("MW1", "PRICE1", "MW2", "PRICE2", "MW3", "PRICE3", "MW4", "PRICE4", "MW5", "PRICE5", "MW6", "PRICE6", "MW7", "PRICE7", "MW8", "PRICE8", "MW9", "PRICE9", "MW10", "PRICE10",): pd.api.types.is_float_dtype,
-            ("Market Name", "Source", "Sink", "Hedge Type", "Class", "Type", "Asset Owner ID",): pd.api.types.is_string_dtype,
-            ("Start Date", "End Date",): pd.api.types.is_datetime64_ns_dtype,
-            ("Round",): pd.api.types.is_integer_dtype,
+            ("SEGMENT_1_MW", "SEGMENT_1_PRICE", "SEGMENT_2_MW", "SEGMENT_2_PRICE", "SEGMENT_3_MW", "SEGMENT_3_PRICE", "SEGMENT_4_MW", "SEGMENT_4_PRICE", "SEGMENT_5_MW", "SEGMENT_5_PRICE", "SEGMENT_6_MW", "SEGMENT_6_PRICE", "SEGMENT_7_MW", "SEGMENT_7_PRICE", "SEGMENT_8_MW", "SEGMENT_8_PRICE", "SEGMENT_9_MW", "SEGMENT_9_PRICE", "SEGMENT_10_MW", "SEGMENT_10_PRICE",): pd.api.types.is_float_dtype,
+            ("MARKET_NAME", "SOURCE", "SINK", "HEDGE_TYPE", "CLASS", "TYPE", "ID", "BID_ID",): pd.api.types.is_string_dtype,
+            ("START_DATE", "END_DATE",): pd.api.types.is_datetime64_ns_dtype,
+            ("ROUND",): pd.api.types.is_integer_dtype,
         }
     ),
     (

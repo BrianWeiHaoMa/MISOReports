@@ -2028,18 +2028,34 @@ def parse_ftr_annual_bids_offers(
         res: requests.Response,
 ) -> pd.DataFrame:
     with zipfile.ZipFile(file=io.BytesIO(res.content)) as z:
-        csv_data = z.read(z.namelist()[0]).decode("utf-8")
+        files_ordered = sorted(z.namelist())
+        csv1_data = z.read(files_ordered[0]).decode("utf-8")
+        csv2_data = z.read(files_ordered[1]).decode("utf-8")
 
-    df = pd.read_csv(
-        filepath_or_buffer=io.StringIO(csv_data),
+    df1 = pd.read_csv(
+        filepath_or_buffer=io.StringIO(csv1_data),
         dtype={"Asset Owner ID": "string"},
-    )[:-1]
-
-    df[["Round"]] = df[["Round"]].replace('[^\\d]+', '', regex=True).astype("Int64")
-    df[["MW1", "PRICE1", "MW2", "PRICE2", "MW3", "PRICE3", "MW4", "PRICE4", "MW5", "PRICE5", "MW6", "PRICE6", "MW7", "PRICE7", "MW8", "PRICE8", "MW9", "PRICE9", "MW10", "PRICE10"]] = df[["MW1", "PRICE1", "MW2", "PRICE2", "MW3", "PRICE3", "MW4", "PRICE4", "MW5", "PRICE5", "MW6", "PRICE6", "MW7", "PRICE7", "MW8", "PRICE8", "MW9", "PRICE9", "MW10", "PRICE10"]].astype("Float64")
-    df[["Market Name", "Source", "Sink", "Hedge Type", "Class", "Type"]] = df[["Market Name", "Source", "Sink", "Hedge Type", "Class", "Type"]].astype("string")
-    df[["Start Date", "End Date"]] = df[["Start Date", "End Date"]].apply(pd.to_datetime, format="%m/%d/%Y")
+    )
     
+    df2 = pd.read_csv(
+        filepath_or_buffer=io.StringIO(csv2_data),
+        dtype={"Asset Owner ID": "string"},
+    )
+    
+    df = pd.concat([df1, df2], ignore_index=True).reset_index(drop=True)
+
+    df[["SEGMENT_1_MW", "SEGMENT_1_PRICE", "SEGMENT_2_MW", "SEGMENT_2_PRICE", "SEGMENT_3_MW", "SEGMENT_3_PRICE", 
+        "SEGMENT_4_MW", "SEGMENT_4_PRICE", "SEGMENT_5_MW", "SEGMENT_5_PRICE", "SEGMENT_6_MW", "SEGMENT_6_PRICE", 
+        "SEGMENT_7_MW", "SEGMENT_7_PRICE", "SEGMENT_8_MW", "SEGMENT_8_PRICE", "SEGMENT_9_MW", "SEGMENT_9_PRICE", 
+        "SEGMENT_10_MW", "SEGMENT_10_PRICE"]] = df[["SEGMENT_1_MW", "SEGMENT_1_PRICE", "SEGMENT_2_MW", "SEGMENT_2_PRICE", 
+        "SEGMENT_3_MW", "SEGMENT_3_PRICE", "SEGMENT_4_MW", "SEGMENT_4_PRICE", "SEGMENT_5_MW", "SEGMENT_5_PRICE", 
+        "SEGMENT_6_MW", "SEGMENT_6_PRICE", "SEGMENT_7_MW", "SEGMENT_7_PRICE", "SEGMENT_8_MW", "SEGMENT_8_PRICE", 
+        "SEGMENT_9_MW", "SEGMENT_9_PRICE", "SEGMENT_10_MW", "SEGMENT_10_PRICE"]].astype("Float64")
+    
+    df[["ROUND"]] = df[["ROUND"]].replace('[^\\d]+', '', regex=True).astype("Int64")
+    df[["MARKET_NAME", "SOURCE", "SINK", "HEDGE_TYPE", "CLASS", "TYPE", "ID", "BID_ID"]] = df[["MARKET_NAME", "SOURCE", "SINK", "HEDGE_TYPE", "CLASS", "TYPE", "ID", "BID_ID"]].astype("string")
+    df[["START_DATE", "END_DATE"]] = df[["START_DATE", "END_DATE"]].apply(pd.to_datetime, format="%m/%d/%Y")
+
     return df
 
 

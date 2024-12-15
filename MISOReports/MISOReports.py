@@ -1434,7 +1434,7 @@ class MISOReports:
             example_datetime=datetime.datetime(year=2022, month=1, day=1),
         ),
 
-        "ftr_annual_bids_offers": Report( # TODO check.
+        "ftr_annual_bids_offers": Report(  # TODO review reworked implementation.
             url_builder=MISOMarketReportsURLBuilder(
                 target="ftr_annual_bids_offers",
                 supported_extensions=["zip"],
@@ -1443,8 +1443,8 @@ class MISOReports:
             ),
             type_to_parse="zip",
             parser=parsers.parse_ftr_annual_bids_offers,
-            example_url="https://docs.misoenergy.org/marketreports/2022_ftr_annual_bids_offers.zip",
-            example_datetime=datetime.datetime(year=2022, month=1, day=1),
+            example_url="https://docs.misoenergy.org/marketreports/2024_ftr_annual_bids_offers.zip",
+            example_datetime=datetime.datetime(year=2024, month=1, day=1),
         ),
 
         "ftr_mpma_results": Report(  # TODO review reworked implementation.
