@@ -1964,8 +1964,8 @@ class MISOReports:
             ),
             type_to_parse="csv",
             parser=parsers.parse_sr_hist_is,
-            example_url="https://docs.misoenergy.org/marketreports/2024_sr_hist_is.csv",
-            example_datetime=datetime.datetime(year=2024, month=1, day=1),
+            example_url="https://docs.misoenergy.org/marketreports/2021_sr_hist_is.csv",
+            example_datetime=datetime.datetime(year=2021, month=1, day=1),
         ),
 
         "rfal_HIST": Report(
@@ -1977,8 +1977,8 @@ class MISOReports:
             ),
             type_to_parse="xls",
             parser=parsers.parse_rfal_HIST,
-            example_url="https://docs.misoenergy.org/marketreports/20241111_rfal_HIST.xls",
-            example_datetime=datetime.datetime(year=2024, month=11, day=11),
+            example_url="https://docs.misoenergy.org/marketreports/20221231_rfal_HIST.xls",
+            example_datetime=datetime.datetime(year=2022, month=12, day=31),
         ),
 
         "sr_lt": Report(
@@ -1990,8 +1990,8 @@ class MISOReports:
             ),
             type_to_parse="xls",
             parser=parsers.parse_sr_lt,
-            example_url="https://docs.misoenergy.org/marketreports/20241028_sr_lt.xls",
-            example_datetime=datetime.datetime(year=2024, month=10, day=28),
+            example_url="https://docs.misoenergy.org/marketreports/20220103_sr_lt.xls",
+            example_datetime=datetime.datetime(year=2022, month=1, day=3),
         ),
 
         "sr_la_rg": Report( # TODO review.
@@ -2003,8 +2003,8 @@ class MISOReports:
             ),
             type_to_parse="csv",
             parser=parsers.parse_sr_la_rg,
-            example_url="https://docs.misoenergy.org/marketreports/20241024_sr_la_rg.csv",
-            example_datetime=datetime.datetime(year=2024, month=10, day=24),
+            example_url="https://docs.misoenergy.org/marketreports/20220101_sr_la_rg.csv",
+            example_datetime=datetime.datetime(year=2022, month=1, day=1),
         ),
 
         "mom": Report(
@@ -2016,8 +2016,8 @@ class MISOReports:
             ),
             type_to_parse="xlsx",
             parser=parsers.parse_mom,
-            example_url="https://docs.misoenergy.org/marketreports/20241020_mom.xlsx",
-            example_datetime=datetime.datetime(year=2024, month=10, day=20),
+            example_url="https://docs.misoenergy.org/marketreports/20220101_mom.xlsx",
+            example_datetime=datetime.datetime(year=2022, month=1, day=1),
         ),
 
         "sr_nd_is": Report( # Checked 2024-11-29.
@@ -2029,8 +2029,8 @@ class MISOReports:
             ),
             type_to_parse="xls",
             parser=parsers.parse_sr_nd_is,
-            example_url="https://docs.misoenergy.org/marketreports/20241020_sr_nd_is.xls",
-            example_datetime=datetime.datetime(year=2024, month=10, day=20),
+            example_url="https://docs.misoenergy.org/marketreports/20220101_sr_nd_is.xls",
+            example_datetime=datetime.datetime(year=2022, month=1, day=1),
         ),
 
         "PeakHourOverview": Report( # Checked 2024-11-29.
@@ -2055,8 +2055,8 @@ class MISOReports:
             ),
             type_to_parse="csv",
             parser=parsers.parse_sr_tcdc_group2,
-            example_url="https://docs.misoenergy.org/marketreports/2024_sr_tcdc_group2.csv",
-            example_datetime=datetime.datetime(year=2024, month=1, day=1),
+            example_url="https://docs.misoenergy.org/marketreports/2022_sr_tcdc_group2.csv",
+            example_datetime=datetime.datetime(year=2022, month=1, day=1),
         ),
 
         "MISOdaily": Report( # Checked 2024-11-29.
@@ -2068,8 +2068,8 @@ class MISOReports:
             ),
             type_to_parse="xml",
             parser=parsers.parse_MISOdaily,
-            example_url="https://docs.misoenergy.org/marketreports/MISOdaily3042024.xml",
-            example_datetime=datetime.datetime(year=2024, month=10, day=30),
+            example_url="https://docs.misoenergy.org/marketreports/MISOdaily0562015.xml",
+            example_datetime=datetime.datetime(year=2015, month=2, day=25),
         ),
 
         
