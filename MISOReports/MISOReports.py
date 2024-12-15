@@ -1404,8 +1404,8 @@ class MISOReports:
             ),
             type_to_parse="zip",
             parser=parsers.parse_ftr_annual_results_round_1,
-            example_url="https://docs.misoenergy.org/marketreports/20240401_ftr_annual_results_round_1.zip",
-            example_datetime=datetime.datetime(year=2024, month=4, day=1),
+            example_url="https://docs.misoenergy.org/marketreports/20220401_ftr_annual_results_round_1.zip",
+            example_datetime=datetime.datetime(year=2022, month=4, day=1),
         ),
 
         "ftr_annual_results_round_2": Report(  # TODO review reworked implementation.
@@ -1417,8 +1417,8 @@ class MISOReports:
             ),
             type_to_parse="zip",
             parser=parsers.parse_ftr_annual_results_round_2,
-            example_url="https://docs.misoenergy.org/marketreports/20240501_ftr_annual_results_round_2.zip",
-            example_datetime=datetime.datetime(year=2024, month=5, day=1),
+            example_url="https://docs.misoenergy.org/marketreports/20220101_ftr_annual_results_round_2.zip",
+            example_datetime=datetime.datetime(year=2022, month=1, day=1),
         ),
 
         "ftr_annual_results_round_3": Report(  # TODO review reworked implementation.
@@ -1430,8 +1430,8 @@ class MISOReports:
             ),
             type_to_parse="zip",
             parser=parsers.parse_ftr_annual_results_round_3,
-            example_url="https://docs.misoenergy.org/marketreports/20240101_ftr_annual_results_round_3.zip",
-            example_datetime=datetime.datetime(year=2024, month=1, day=1),
+            example_url="https://docs.misoenergy.org/marketreports/20220101_ftr_annual_results_round_3.zip",
+            example_datetime=datetime.datetime(year=2022, month=1, day=1),
         ),
 
         "ftr_annual_bids_offers": Report( # Checked 2024-11-27.
@@ -1443,8 +1443,8 @@ class MISOReports:
             ),
             type_to_parse="zip",
             parser=parsers.parse_ftr_annual_bids_offers,
-            example_url="https://docs.misoenergy.org/marketreports/2023_ftr_annual_bids_offers.zip",
-            example_datetime=datetime.datetime(year=2023, month=1, day=1),
+            example_url="https://docs.misoenergy.org/marketreports/2022_ftr_annual_bids_offers.zip",
+            example_datetime=datetime.datetime(year=2022, month=1, day=1),
         ),
 
         "ftr_mpma_results": Report(  # TODO review reworked implementation.
@@ -1456,8 +1456,8 @@ class MISOReports:
             ),
             type_to_parse="zip",
             parser=parsers.parse_ftr_mpma_results,
-            example_url="https://docs.misoenergy.org/marketreports/20241101_ftr_mpma_results.zip",
-            example_datetime=datetime.datetime(year=2024, month=11, day=1),
+            example_url="https://docs.misoenergy.org/marketreports/20220101_ftr_mpma_results.zip",
+            example_datetime=datetime.datetime(year=2022, month=1, day=1),
         ),
 
         "ftr_mpma_bids_offers": Report( # Checked 2024-11-27.
@@ -1469,8 +1469,8 @@ class MISOReports:
             ),
             type_to_parse="zip",
             parser=parsers.parse_ftr_mpma_bids_offers,
-            example_url="https://docs.misoenergy.org/marketreports/20240801_ftr_mpma_bids_offers.zip",
-            example_datetime=datetime.datetime(year=2024, month=8, day=1),
+            example_url="https://docs.misoenergy.org/marketreports/20220101_ftr_mpma_bids_offers.zip",
+            example_datetime=datetime.datetime(year=2022, month=1, day=1),
         ),
 
         "asm_expost_damcp": Report( # Checked 2024-11-29.
@@ -1482,8 +1482,8 @@ class MISOReports:
             ),
             type_to_parse="csv",
             parser=parsers.parse_asm_expost_damcp,
-            example_url="https://docs.misoenergy.org/marketreports/20241030_asm_expost_damcp.csv",
-            example_datetime=datetime.datetime(year=2024, month=10, day=30),
+            example_url="https://docs.misoenergy.org/marketreports/20220101_asm_expost_damcp.csv",
+            example_datetime=datetime.datetime(year=2022, month=1, day=1),
         ),
 
         "asm_rtmcp_final": Report( # Checked 2024-11-29.
@@ -1495,8 +1495,8 @@ class MISOReports:
             ),
             type_to_parse="csv",
             parser=parsers.parse_asm_rtmcp_final,
-            example_url="https://docs.misoenergy.org/marketreports/20241026_asm_rtmcp_final.csv",
-            example_datetime=datetime.datetime(year=2024, month=10, day=26),
+            example_url="https://docs.misoenergy.org/marketreports/20220101_asm_rtmcp_final.csv",
+            example_datetime=datetime.datetime(year=2022, month=1, day=1),
         ),
 
         "asm_rtmcp_prelim": Report( # Checked 2024-11-29.
@@ -1508,8 +1508,8 @@ class MISOReports:
             ),
             type_to_parse="csv",
             parser=parsers.parse_asm_rtmcp_prelim,
-            example_url="https://docs.misoenergy.org/marketreports/20241128_asm_rtmcp_prelim.csv",
-            example_datetime=datetime.datetime(year=2024, month=11, day=28),
+            example_url="https://docs.misoenergy.org/marketreports/20241212_asm_rtmcp_prelim.csv",
+            example_datetime=datetime.datetime(year=2024, month=12, day=12),
         ),
 
         "5min_exante_mcp": Report( # Checked 2024-11-29.
@@ -1521,8 +1521,8 @@ class MISOReports:
             ),
             type_to_parse="xlsx",
             parser=parsers.parse_5min_exante_mcp,
-            example_url="https://docs.misoenergy.org/marketreports/20241030_5min_exante_mcp.xlsx",
-            example_datetime=datetime.datetime(year=2024, month=10, day=30),
+            example_url="https://docs.misoenergy.org/marketreports/20220101_5min_exante_mcp.xlsx",
+            example_datetime=datetime.datetime(year=2022, month=1, day=1),
         ),
 
         "5min_expost_mcp": Report( # Checked 2024-11-29.
@@ -1534,8 +1534,8 @@ class MISOReports:
             ),
             type_to_parse="xlsx",
             parser=parsers.parse_5min_expost_mcp,
-            example_url="https://docs.misoenergy.org/marketreports/20241028_5min_expost_mcp.xlsx",
-            example_datetime=datetime.datetime(year=2024, month=10, day=28),
+            example_url="https://docs.misoenergy.org/marketreports/20220103_5min_expost_mcp.xlsx",
+            example_datetime=datetime.datetime(year=2022, month=1, day=3),
         ),
 
         "da_exante_ramp_mcp": Report( # Checked 2024-11-29.
@@ -1547,8 +1547,8 @@ class MISOReports:
             ),
             type_to_parse="xlsx",
             parser=parsers.parse_da_exante_ramp_mcp,
-            example_url="https://docs.misoenergy.org/marketreports/20241030_da_exante_ramp_mcp.xlsx",
-            example_datetime=datetime.datetime(year=2024, month=10, day=30),
+            example_url="https://docs.misoenergy.org/marketreports/20220101_da_exante_ramp_mcp.xlsx",
+            example_datetime=datetime.datetime(year=2022, month=1, day=1),
         ),
 
         "da_exante_str_mcp": Report( # Checked 2024-11-29.
@@ -1560,8 +1560,8 @@ class MISOReports:
             ),
             type_to_parse="xlsx",
             parser=parsers.parse_da_exante_str_mcp,
-            example_url="https://docs.misoenergy.org/marketreports/20241029_da_exante_str_mcp.xlsx",
-            example_datetime=datetime.datetime(year=2024, month=10, day=29),
+            example_url="https://docs.misoenergy.org/marketreports/20220101_da_exante_str_mcp.xlsx",
+            example_datetime=datetime.datetime(year=2022, month=1, day=1),
         ),
 
         "da_expost_ramp_mcp": Report( # Checked 2024-11-29.
