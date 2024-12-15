@@ -14,9 +14,9 @@ class Data:
     """A class to hold relevant download data.
     """
     def __init__(
-        self,
-        df: pd.DataFrame,
-        response: requests.Response,
+            self,
+            df: pd.DataFrame,
+            response: requests.Response,
     ):
         """Constructor for Data class.
 
@@ -34,10 +34,10 @@ class URLBuilder(ABC):
     extension_placeholder = str(uuid.uuid4())
     
     def __init__(
-        self,
-        target: str,
-        supported_extensions: list[str],
-        default_extension: str | None = None,
+            self,
+            target: str,
+            supported_extensions: list[str],
+            default_extension: str | None = None,
     ):
         """Constructor for URLBuilder class.
 
@@ -51,9 +51,9 @@ class URLBuilder(ABC):
 
     @abstractmethod
     def build_url(
-        self,
-        file_extension: str | None,
-        ddatetime: datetime.datetime | None,
+            self,
+            file_extension: str | None,
+            ddatetime: datetime.datetime | None,
     ) -> str:
         """Builds the URL to download from.
 
@@ -64,8 +64,8 @@ class URLBuilder(ABC):
         pass
 
     def _build_url_extension_check(
-        self,
-        file_extension: str | None,
+            self,
+            file_extension: str | None,
     ) -> str:
         """Checks the file extension and returns it if it is supported.
 
@@ -84,9 +84,9 @@ class URLBuilder(ABC):
         return file_extension
     
     def add_to_datetime(
-        self,
-        ddatetime: datetime.datetime | None,
-        direction: int,
+            self,
+            ddatetime: datetime.datetime | None,
+            direction: int,
     ) -> datetime.datetime | None:
         """Changes the datetime by one unit in the direction specified according to URL generator if this
         URL builder uses it, otherwise leaves it unchanged.
@@ -100,10 +100,10 @@ class URLBuilder(ABC):
     
 class MISORTWDDataBrokerURLBuilder(URLBuilder):
     def __init__(
-        self,
-        target: str,
-        supported_extensions: list[str],
-        default_extension: str | None = None,
+            self,
+            target: str,
+            supported_extensions: list[str],
+            default_extension: str | None = None,
     ):
         super().__init__(
             target=target, 
@@ -114,9 +114,9 @@ class MISORTWDDataBrokerURLBuilder(URLBuilder):
         self._format_url = f"https://api.misoenergy.org/MISORTWDDataBroker/DataBrokerServices.asmx?messageType={target}&returnType={URLBuilder.extension_placeholder}"
 
     def build_url(
-        self,
-        file_extension: str | None,
-        ddatetime: datetime.datetime | None = None,
+            self,
+            file_extension: str | None,
+            ddatetime: datetime.datetime | None = None,
     ) -> str:
         file_extension = self._build_url_extension_check(file_extension)
         
@@ -126,10 +126,10 @@ class MISORTWDDataBrokerURLBuilder(URLBuilder):
 
 class MISORTWDBIReporterURLBuilder(URLBuilder):
     def __init__(
-        self,
-        target: str,
-        supported_extensions: list[str],
-        default_extension: str | None = None,
+            self,
+            target: str,
+            supported_extensions: list[str],
+            default_extension: str | None = None,
     ):
         super().__init__(
             target=target, 
@@ -140,9 +140,9 @@ class MISORTWDBIReporterURLBuilder(URLBuilder):
         self._format_url = f"https://api.misoenergy.org/MISORTWDBIReporter/Reporter.asmx?messageType={target}&returnType={URLBuilder.extension_placeholder}"
 
     def build_url(
-        self,
-        file_extension: str | None,
-        ddatetime: datetime.datetime | None = None,
+            self,
+            file_extension: str | None,
+            ddatetime: datetime.datetime | None = None,
     ) -> str:
         file_extension = self._build_url_extension_check(file_extension)
         
@@ -152,11 +152,11 @@ class MISORTWDBIReporterURLBuilder(URLBuilder):
 
 class MISOMarketReportsURLBuilder(URLBuilder):
     def __init__(
-        self,
-        target: str,
-        supported_extensions: list[str],
-        url_generator: Callable[[datetime.datetime | None, str], str],
-        default_extension: str | None = None,
+            self,
+            target: str,
+            supported_extensions: list[str],
+            url_generator: Callable[[datetime.datetime | None, str], str],
+            default_extension: str | None = None,
     ):
         """Constructor for MISOMarketReportsURLBuilder class.
 
@@ -175,9 +175,9 @@ class MISOMarketReportsURLBuilder(URLBuilder):
         self.increment_mappings: dict[Callable[[datetime.datetime | None, str], str], relativedelta] = {}
 
     def build_url(
-        self,
-        file_extension: str | None,
-        ddatetime: datetime.datetime | None,
+            self,
+            file_extension: str | None,
+            ddatetime: datetime.datetime | None,
     ) -> str:
         file_extension = self._build_url_extension_check(file_extension)
         
@@ -186,9 +186,9 @@ class MISOMarketReportsURLBuilder(URLBuilder):
         return res
     
     def add_to_datetime(
-        self,
-        ddatetime: datetime.datetime | None,
-        direction: int,
+            self,
+            ddatetime: datetime.datetime | None,
+            direction: int,
     ) -> datetime.datetime | None:
         """Changes the datetime by one unit (according to the URL generator) 
         in the direction specified.
@@ -223,9 +223,9 @@ class MISOMarketReportsURLBuilder(URLBuilder):
 
     @staticmethod    
     def _url_generator_datetime_first(
-        ddatetime: datetime.datetime | None,
-        target: str,
-        datetime_format: str,
+            ddatetime: datetime.datetime | None,
+            target: str,
+            datetime_format: str,
     ) -> str:
         if ddatetime is None:
             raise ValueError("ddatetime required for this URL builder.")
@@ -236,29 +236,29 @@ class MISOMarketReportsURLBuilder(URLBuilder):
     
     @staticmethod
     def url_generator_YYYYmmdd_first(
-        ddatetime: datetime.datetime | None,
-        target: str,
+            ddatetime: datetime.datetime | None,
+            target: str,
     ) -> str:
         return MISOMarketReportsURLBuilder._url_generator_datetime_first(ddatetime, target, "%Y%m%d")
     
     @staticmethod
     def url_generator_YYYYmm_first(
-        ddatetime: datetime.datetime | None,
-        target: str,
+            ddatetime: datetime.datetime | None,
+            target: str,
     ) -> str:
         return MISOMarketReportsURLBuilder._url_generator_datetime_first(ddatetime, target, "%Y%m")
     
     @staticmethod
     def url_generator_YYYY_first(
-        ddatetime: datetime.datetime | None,
-        target: str,
+            ddatetime: datetime.datetime | None,
+            target: str,
     ) -> str:
         return MISOMarketReportsURLBuilder._url_generator_datetime_first(ddatetime, target, "%Y")
     
     @staticmethod
     def url_generator_YYYY_current_month_name_to_two_months_later_name_first(
-        ddatetime: datetime.datetime | None,
-        target: str,
+            ddatetime: datetime.datetime | None,
+            target: str,
     ) -> str:
         if ddatetime is None:
             raise ValueError("ddatetime required for this URL builder.")
@@ -271,8 +271,8 @@ class MISOMarketReportsURLBuilder(URLBuilder):
 
     @staticmethod
     def url_generator_YYYY_underscore_current_month_name_to_two_months_later_name_first(
-        ddatetime: datetime.datetime | None,
-        target: str,
+            ddatetime: datetime.datetime | None,
+            target: str,
     ) -> str:
         if ddatetime is None:
             raise ValueError("ddatetime required for this URL builder.")
@@ -285,8 +285,8 @@ class MISOMarketReportsURLBuilder(URLBuilder):
     
     @staticmethod
     def url_generator_YYYYmmdd_last(
-        ddatetime: datetime.datetime | None,
-        target: str,
+            ddatetime: datetime.datetime | None,
+            target: str,
     ) -> str:
         if ddatetime is None:
             raise ValueError("ddatetime required for this URL builder.")
@@ -296,8 +296,8 @@ class MISOMarketReportsURLBuilder(URLBuilder):
     
     @staticmethod
     def url_generator_YYYY_mm_dd_last(
-        ddatetime: datetime.datetime | None,
-        target: str,
+            ddatetime: datetime.datetime | None,
+            target: str,
     ) -> str:
         if ddatetime is None:
             raise ValueError("ddatetime required for this URL builder.")
@@ -307,8 +307,8 @@ class MISOMarketReportsURLBuilder(URLBuilder):
     
     @staticmethod
     def url_generator_YYYY_last(
-        ddatetime: datetime.datetime | None,
-        target: str,
+            ddatetime: datetime.datetime | None,
+            target: str,
     ) -> str:
         if ddatetime is None:
             raise ValueError("ddatetime required for this URL builder.")
@@ -318,16 +318,16 @@ class MISOMarketReportsURLBuilder(URLBuilder):
     
     @staticmethod
     def url_generator_no_date(
-        ddatetime: datetime.datetime | None,
-        target: str,
+            ddatetime: datetime.datetime | None,
+            target: str,
     ) -> str:
         res = f"https://docs.misoenergy.org/marketreports/{target}.{URLBuilder.extension_placeholder}"
         return res
     
     @staticmethod
     def url_generator_mmddYYYY_last(
-        ddatetime: datetime.datetime | None,
-        target: str,
+            ddatetime: datetime.datetime | None,
+            target: str,
     ) -> str:
         if ddatetime is None:
             raise ValueError("ddatetime required for this URL builder.")
@@ -337,8 +337,8 @@ class MISOMarketReportsURLBuilder(URLBuilder):
     
     @staticmethod
     def url_generator_dddYYYY_last_but_as_nth_day_in_year_and_no_underscore(
-        ddatetime: datetime.datetime | None,
-        target: str,
+            ddatetime: datetime.datetime | None,
+            target: str,
     ) -> str:
         if ddatetime is None:
             raise ValueError("ddatetime required for this URL builder.")
@@ -351,12 +351,12 @@ class Report:
     """A representation of a report for download.
     """
     def __init__(
-        self,
-        url_builder: URLBuilder,
-        type_to_parse: str,
-        parser: Callable[[requests.Response], pd.DataFrame],
-        example_url: str,
-        example_datetime: datetime.datetime | None = None,
+            self,
+            url_builder: URLBuilder,
+            type_to_parse: str,
+            parser: Callable[[requests.Response], pd.DataFrame],
+            example_url: str,
+            example_datetime: datetime.datetime | None = None,
     ):
         """Constructor for Report class.
 
@@ -378,9 +378,9 @@ class MISOReports:
     """
     @staticmethod
     def get_url(
-        report_name: str,
-        file_extension: str | None = None,
-        ddatetime: datetime.datetime | None = None,
+            report_name: str,
+            file_extension: str | None = None,
+            ddatetime: datetime.datetime | None = None,
     ) -> str:
         """Get the URL for the report.
 
@@ -403,10 +403,10 @@ class MISOReports:
     
     @staticmethod
     def get_response(
-        report_name: str,
-        file_extension: str | None = None, 
-        ddatetime: datetime.datetime | None = None,
-        timeout: int | None = None,
+            report_name: str,
+            file_extension: str | None = None, 
+            ddatetime: datetime.datetime | None = None,
+            timeout: int | None = None,
     ) -> requests.Response:
         """Get the response for the report download.
 
@@ -431,8 +431,8 @@ class MISOReports:
     
     @staticmethod
     def _get_response_helper(
-        url: str,
-        timeout: int | None = None,
+            url: str,
+            timeout: int | None = None,
     ) -> requests.Response:
         """Helper function to get the response in the report download.
 
@@ -451,10 +451,10 @@ class MISOReports:
     
     @staticmethod
     def get_df(
-        report_name: str,
-        url: str | None = None,
-        ddatetime: datetime.datetime | None = None,
-        timeout: int | None = None,
+            report_name: str,
+            url: str | None = None,
+            ddatetime: datetime.datetime | None = None,
+            timeout: int | None = None,
     ) -> pd.DataFrame:
         """Get a parsed DataFrame for the report.
 
@@ -475,10 +475,10 @@ class MISOReports:
 
     @staticmethod
     def get_data(
-        report_name: str,
-        url: str | None = None,
-        ddatetime: datetime.datetime | None = None,
-        timeout: int | None = None,
+            report_name: str,
+            url: str | None = None,
+            ddatetime: datetime.datetime | None = None,
+            timeout: int | None = None,
     ) -> Data:
         """Gets the relevant data for the report.
 
@@ -514,9 +514,9 @@ class MISOReports:
     
     @staticmethod
     def add_to_datetime(
-        report_name: str,
-        ddatetime: datetime.datetime | None,
-        direction: int,
+            report_name: str,
+            ddatetime: datetime.datetime | None,
+            direction: int,
     ) -> datetime.datetime | None:
         """Changes the datetime by one unit in the direction specified according to the report 
         if this report allows for target dates, otherwise leaves it unchanged.

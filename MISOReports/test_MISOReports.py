@@ -1,5 +1,6 @@
 from typing import Callable
 import datetime
+import re
 
 import pytest
 import pandas as pd
@@ -18,9 +19,9 @@ from MISOReports.parsers import (
 
 
 def try_to_get_dfs(
-    report_name: str, 
-    datetime_increment_limit: int,
-    number_of_dfs_to_stop_at: int,
+        report_name: str, 
+        datetime_increment_limit: int,
+        number_of_dfs_to_stop_at: int,
 ) -> list[pd.DataFrame]:
     """Tries to get the df for the report_name and returns it. If a request fails, it will 
     increment the datetime and try again up to datetime_increment_limit times.
@@ -61,10 +62,17 @@ def try_to_get_dfs(
 
 
 def uses_correct_dtypes(
-    df: pd.DataFrame,
-    columns: list[str],
-    dtype_checker: Callable[[object], bool],
+        df: pd.DataFrame,
+        columns: list[str],
+        dtype_checker: Callable[[object], bool],
 ) -> bool:
+    """Checks if the columns in the df have the correct dtypes.
+
+    :param pd.DataFrame df: The df to check the dtypes of.
+    :param list[str] columns: The columns to check the dtypes of.
+    :param Callable[[object], bool] dtype_checker: The function to check the dtypes with.
+    :return bool: True if the columns have the correct dtypes, False otherwise.
+    """
     for column in columns:
         if not dtype_checker(df[column]):
             return False
@@ -77,7 +85,16 @@ def get_df_test_names():
     single_df_tests = [v[0] for v in single_df_test_list]
     multiple_dfs_tests = [v[0] for v in multiple_dfs_test_list]
     nsi_tests = nsi_test_list
-    return single_df_tests + multiple_dfs_tests + nsi_tests
+    ftr_mpma_results_tests = ftr_mpma_results_test_list
+
+    res = [
+        *single_df_tests,
+        *multiple_dfs_tests,
+        *nsi_tests,
+        *ftr_mpma_results_tests,
+    ]
+
+    return res
 
 
 @pytest.fixture
@@ -123,10 +140,10 @@ def test_MISOMarketReportsURLBuilder_add_to_datetime_has_an_increment_mapping_fo
     ]
 )
 def test_MISORTWDDataBrokerURLBuilder_build_url_extension_supported(
-    target, 
-    supported_extensions, 
-    file_extension, 
-    expected,
+        target, 
+        supported_extensions, 
+        file_extension, 
+        expected,
 ):
     url_builder = MISORTWDDataBrokerURLBuilder(
         target=target, 
@@ -145,9 +162,9 @@ def test_MISORTWDDataBrokerURLBuilder_build_url_extension_supported(
     ]
 )
 def test_MISORTWDDataBrokerURLBuilder_build_url_extension_not_supported(
-    target, 
-    supported_extensions, 
-    file_extension, 
+        target, 
+        supported_extensions, 
+        file_extension, 
 ):
     url_builder = MISORTWDDataBrokerURLBuilder(
         target=target, 
@@ -164,10 +181,10 @@ def test_MISORTWDDataBrokerURLBuilder_build_url_extension_not_supported(
     ]
 )
 def test_MISORTWDBIReporterURLBuilder_build_url_extension_supported(
-    target, 
-    supported_extensions, 
-    file_extension, 
-    expected,
+        target, 
+        supported_extensions, 
+        file_extension, 
+        expected,
 ):
     url_builder = MISORTWDBIReporterURLBuilder(
         target=target, 
@@ -183,9 +200,9 @@ def test_MISORTWDBIReporterURLBuilder_build_url_extension_supported(
     ]
 )
 def test_MISORTWDBIReporterURLBuilder_build_url_extension_not_supported(
-    target, 
-    supported_extensions, 
-    file_extension, 
+        target, 
+        supported_extensions, 
+        file_extension, 
 ):
     url_builder = MISORTWDBIReporterURLBuilder(
         target=target, 
@@ -211,12 +228,12 @@ def test_MISORTWDBIReporterURLBuilder_build_url_extension_not_supported(
     ]
 )
 def test_MISOMarketReportsURLBuilder_build_url(   
-    target, 
-    supported_extensions, 
-    url_generator,
-    ddatetime,
-    file_extension,
-    expected, 
+        target, 
+        supported_extensions, 
+        url_generator,
+        ddatetime,
+        file_extension,
+        expected, 
 ):
     url_builder = MISOMarketReportsURLBuilder(
         target=target, 
@@ -1086,82 +1103,6 @@ multiple_dfs_test_list = [
         },
     ),
     (
-        "ftr_mpma_results",
-        {
-            "Metadata": {
-                ("File 1", "File 2", "File 3", "File 4", "File 5", "File 6", "File 7", "File 8", "File 9", "File 10", "File 11", "File 12",): pd.api.types.is_string_dtype,
-            },
-            "File 1": {
-                ("Limit", "Flow", "Violation", "MarginalCost",): pd.api.types.is_float_dtype,
-                ("DeviceName", "DeviceType", "ControlArea", "Direction", "Description", "Contingency", "Class",): pd.api.types.is_string_dtype,
-                ("Round",): pd.api.types.is_integer_dtype,
-
-            },
-            "File 2": {
-                ("Limit", "Flow", "Violation", "MarginalCost",): pd.api.types.is_float_dtype,
-                ("DeviceName", "DeviceType", "ControlArea", "Direction", "Description", "Contingency", "Class",): pd.api.types.is_string_dtype,
-                ("Round",): pd.api.types.is_integer_dtype,
-
-            },
-            "File 3": {
-                ("Limit", "Flow", "Violation", "MarginalCost",): pd.api.types.is_float_dtype,
-                ("DeviceName", "DeviceType", "ControlArea", "Direction", "Description", "Contingency", "Class",): pd.api.types.is_string_dtype,
-                ("Round",): pd.api.types.is_integer_dtype,
-
-            },
-            "File 4": {
-                ("Limit", "Flow", "Violation", "MarginalCost",): pd.api.types.is_float_dtype,
-                ("DeviceName", "DeviceType", "ControlArea", "Direction", "Description", "Contingency", "Class",): pd.api.types.is_string_dtype,
-                ("Round",): pd.api.types.is_integer_dtype,
-
-            },
-            "File 5": {
-                ("MW", "ClearingPrice",): pd.api.types.is_float_dtype,
-                ("FTRID", "Category", "MarketParticipant", "Source", "Sink", "HedgeType", "Type", "Class",): pd.api.types.is_string_dtype,
-                ("StartDate", "EndDate",): pd.api.types.is_datetime64_ns_dtype,
-                ("Round",): pd.api.types.is_integer_dtype,
-            },
-            "File 6": {
-                ("MW", "ClearingPrice",): pd.api.types.is_float_dtype,
-                ("FTRID", "Category", "MarketParticipant", "Source", "Sink", "HedgeType", "Type", "Class",): pd.api.types.is_string_dtype,
-                ("StartDate", "EndDate",): pd.api.types.is_datetime64_ns_dtype,
-                ("Round",): pd.api.types.is_integer_dtype,
-            },
-            "File 7": {
-                ("MW", "ClearingPrice",): pd.api.types.is_float_dtype,
-                ("FTRID", "Category", "MarketParticipant", "Source", "Sink", "HedgeType", "Type", "Class",): pd.api.types.is_string_dtype,
-                ("StartDate", "EndDate",): pd.api.types.is_datetime64_ns_dtype,
-                ("Round",): pd.api.types.is_integer_dtype,
-            },
-            "File 8": {
-                ("MW", "ClearingPrice",): pd.api.types.is_float_dtype,
-                ("FTRID", "Category", "MarketParticipant", "Source", "Sink", "HedgeType", "Type", "Class",): pd.api.types.is_string_dtype,
-                ("StartDate", "EndDate",): pd.api.types.is_datetime64_ns_dtype,
-                ("Round",): pd.api.types.is_integer_dtype,
-            },
-            "File 9": {
-                ("ShadowPrice",): pd.api.types.is_float_dtype,
-                ("Round",): pd.api.types.is_integer_dtype,
-                ("SourceSink", "Class",): pd.api.types.is_string_dtype,
-            },
-            "File 10": {
-                ("ShadowPrice",): pd.api.types.is_float_dtype,
-                ("Round",): pd.api.types.is_integer_dtype,
-                ("SourceSink", "Class",): pd.api.types.is_string_dtype,
-            },
-            "File 11": {
-                ("ShadowPrice",): pd.api.types.is_float_dtype,
-                ("Round",): pd.api.types.is_integer_dtype,
-                ("SourceSink", "Class",): pd.api.types.is_string_dtype,
-            },
-            "File 12": {
-                ("ShadowPrice",): pd.api.types.is_float_dtype,
-                ("Round",): pd.api.types.is_integer_dtype,
-                ("SourceSink", "Class",): pd.api.types.is_string_dtype,
-            },
-        },
-    ),
-    (
         "da_pr",
         {
             "Table 1": {
@@ -1976,13 +1917,13 @@ def test_get_df_test_correct_columns_check_for_every_report(get_df_test_names):
     ]
 )
 def test_MISOMarketReportsURLBuilder_add_to_datetime(
-    direction,
-    target, 
-    supported_extensions, 
-    url_generator,
-    ddatetime,
-    file_extension,
-    expected, 
+        direction,
+        target, 
+        supported_extensions, 
+        url_generator,
+        ddatetime,
+        file_extension,
+        expected, 
 ):
     url_builder = MISOMarketReportsURLBuilder(
         target=target,
@@ -2017,10 +1958,10 @@ def test_MISOMarketReportsURLBuilder_add_to_datetime(
     ]
 )
 def test_MISOMarketReports_add_to_datetime(
-    direction,
-    target, 
-    ddatetime,
-    expected, 
+        direction,
+        target, 
+        ddatetime,
+        expected, 
 ):
     new_datetime = MISOReports.add_to_datetime(
         report_name=target,
@@ -2053,3 +1994,73 @@ def test_get_df_nsi_with_changing_columns(report_name):
     assert pd.api.types.is_datetime64_ns_dtype(df["timestamp"])
     assert df[int_columns].dtypes.apply(lambda x: pd.api.types.is_integer_dtype(x)).all()
 
+
+ftr_mpma_results_test_list = [
+    "ftr_mpma_results",
+]
+
+
+@pytest.mark.parametrize(
+    "report_name", ftr_mpma_results_test_list
+)
+def test_get_df_ftr_mpma_results_with_changing_columns(report_name, datetime_increment_limit, number_of_dfs_to_stop_at):
+    """Edge case tests for ftr_mpma_results report which has changing columns.
+    The assumption is that the report will always give 3 sections of files with
+    the same amount of files for each section. Each file within their respective
+    sections should have the same typing.
+    """
+    dfs = try_to_get_dfs(
+        report_name=report_name,
+        datetime_increment_limit=datetime_increment_limit,
+        number_of_dfs_to_stop_at=number_of_dfs_to_stop_at,
+    )
+
+    for df in dfs:
+        for i, name in enumerate(df[MULTI_DF_NAMES_COLUMN]):
+            if name == "Metadata":
+                n_files = len(df[MULTI_DF_DFS_COLUMN].iloc[i].columns)
+                assert n_files % 3 == 0, f"Expected number of columns to be a multiple of 3, got {n_files}."
+                break
+
+        types_1 = {
+            ("Limit", "Flow", "Violation", "MarginalCost",): pd.api.types.is_float_dtype,
+            ("DeviceName", "DeviceType", "ControlArea", "Direction", "Description", "Contingency", "Class",): pd.api.types.is_string_dtype,
+            ("Round",): pd.api.types.is_integer_dtype,
+        }
+
+        types_2 = {
+            ("MW", "ClearingPrice",): pd.api.types.is_float_dtype,
+            ("FTRID", "Category", "MarketParticipant", "Source", "Sink", "HedgeType", "Type", "Class",): pd.api.types.is_string_dtype,
+            ("StartDate", "EndDate",): pd.api.types.is_datetime64_ns_dtype,
+            ("Round",): pd.api.types.is_integer_dtype,
+        }
+
+        types_3 = {
+            ("ShadowPrice",): pd.api.types.is_float_dtype,
+            ("Round",): pd.api.types.is_integer_dtype,
+            ("SourceSink", "Class",): pd.api.types.is_string_dtype,
+        }
+
+        types_dict = {
+            0: types_1,
+            1: types_2,
+            2: types_3,   
+        }
+        
+        files_per_section = n_files // 3
+        for i, name in enumerate(df[MULTI_DF_NAMES_COLUMN]):
+            if name != "Metadata":
+                reg = re.search(r"File (\d+)", name)
+                if reg is None:
+                    raise ValueError(f"Expected name to match regex, got {name}.")
+                
+                file_number = int(reg.group(1))
+
+                # Assuming file_number starts at 1.
+                section = (file_number - 1) // files_per_section
+                types = types_dict[section]
+
+                for columns, dtype_checker in types.items():
+                    assert uses_correct_dtypes(df[MULTI_DF_DFS_COLUMN].iloc[i], columns, dtype_checker), \
+                        f"For multi-df report {report_name}, df {name}, columns {columns} do not pass {dtype_checker.__name__}."
+                

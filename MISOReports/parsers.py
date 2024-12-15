@@ -20,7 +20,7 @@ MULTI_DF_DFS_COLUMN = "dataframes"
 
 
 def parse_currentinterval(
-    res: requests.Response,
+        res: requests.Response,
 ) -> pd.DataFrame:
     text = res.text
 
@@ -36,7 +36,7 @@ def parse_currentinterval(
 
 
 def parse_rt_bc_HIST(
-    res: requests.Response,
+        res: requests.Response,
 ) -> pd.DataFrame:
     text = res.text
 
@@ -68,7 +68,7 @@ def parse_rt_bc_HIST(
 
 
 def parse_RT_UDS_Approved_Case_Percentage(
-    res: requests.Response,
+        res: requests.Response,
 ) -> pd.DataFrame:
     text = res.text
 
@@ -88,7 +88,7 @@ def parse_RT_UDS_Approved_Case_Percentage(
 
 
 def parse_Resource_Uplift_by_Commitment_Reason(
-    res: requests.Response,
+        res: requests.Response,
 ) -> pd.DataFrame:
     df = pd.read_excel(
         io=io.BytesIO(res.content),
@@ -107,7 +107,7 @@ def parse_Resource_Uplift_by_Commitment_Reason(
 
 
 def parse_rt_rpe(
-    res: requests.Response,
+        res: requests.Response,
 ) -> pd.DataFrame:
     df = pd.read_excel(
         io=io.BytesIO(res.content),
@@ -122,7 +122,7 @@ def parse_rt_rpe(
 
 
 def parse_Historical_RT_RSG_Commitment(
-    res: requests.Response,
+        res: requests.Response,
 ) -> pd.DataFrame:
     text = res.text
 
@@ -140,7 +140,7 @@ def parse_Historical_RT_RSG_Commitment(
 
 
 def parse_da_pr(
-    res: requests.Response,
+        res: requests.Response,
 ) -> pd.DataFrame:
     df1 = pd.read_excel(
         io=io.BytesIO(res.content),
@@ -216,7 +216,7 @@ def parse_da_pr(
 
 
 def parse_da_pbc(
-    res: requests.Response,
+        res: requests.Response,
 ) -> pd.DataFrame:
     text = res.text
 
@@ -239,7 +239,7 @@ def parse_da_pbc(
 
 
 def parse_da_bc(
-    res: requests.Response,
+        res: requests.Response,
 ) -> pd.DataFrame:
     df = pd.read_excel(
         io=io.BytesIO(res.content),
@@ -254,7 +254,7 @@ def parse_da_bc(
 
 
 def parse_da_bcsf(
-    res: requests.Response,
+        res: requests.Response,
 ) -> pd.DataFrame:
     sheet1 = pd.read_excel(
         io=io.BytesIO(res.content),
@@ -279,7 +279,7 @@ def parse_da_bcsf(
 
 
 def parse_rt_pr(
-    res: requests.Response,
+        res: requests.Response,
 ) -> pd.DataFrame:
     df1 = pd.read_excel(
         io=io.BytesIO(res.content),
@@ -355,7 +355,7 @@ def parse_rt_pr(
 
 
 def parse_rt_irsf(
-    res: requests.Response,
+        res: requests.Response,
 ) -> pd.DataFrame:
     text = res.text
     csv_data = "\n".join(text.splitlines()[4:-2])
@@ -380,7 +380,7 @@ def parse_rt_irsf(
 
 
 def parse_rt_mf(
-    res: requests.Response,
+        res: requests.Response,
 ) -> pd.DataFrame:
     df = pd.read_excel(
         io=io.BytesIO(res.content),
@@ -395,7 +395,7 @@ def parse_rt_mf(
 
 
 def parse_rt_ex(
-    res: requests.Response,
+        res: requests.Response,
 ) -> pd.DataFrame:
     df = pd.read_excel(
         io=io.BytesIO(res.content),
@@ -417,7 +417,7 @@ def parse_rt_ex(
 
 
 def parse_rt_pbc(
-    res: requests.Response,
+        res: requests.Response,
 ) -> pd.DataFrame:
     text = res.text
     csv_data = "\n".join(text.splitlines()[4:-2])
@@ -455,7 +455,7 @@ def parse_rt_pbc(
 
 
 def parse_rt_bc(
-    res: requests.Response,
+        res: requests.Response,
 ) -> pd.DataFrame:
     df = pd.read_excel(
         io=io.BytesIO(res.content),
@@ -479,7 +479,7 @@ def parse_rt_bc(
 
 
 def parse_rt_or(
-    res: requests.Response,
+        res: requests.Response,
 ) -> pd.DataFrame:
     df = pd.read_excel(
         io=io.BytesIO(res.content),
@@ -503,7 +503,7 @@ def parse_rt_or(
 
 
 def parse_rt_fuel_on_margin(
-    res: requests.Response,
+        res: requests.Response,
 ) -> pd.DataFrame:
     with zipfile.ZipFile(file=io.BytesIO(res.content)) as z:
         content = z.read(z.namelist()[0])
@@ -521,7 +521,7 @@ def parse_rt_fuel_on_margin(
 
 
 def parse_Total_Uplift_by_Resource(
-    res: requests.Response,
+        res: requests.Response,
 ) -> pd.DataFrame:
     df = pd.read_excel(
         io=io.BytesIO(res.content),
@@ -535,7 +535,7 @@ def parse_Total_Uplift_by_Resource(
 
 
 def parse_ms_vlr_srw(
-    res: requests.Response,
+        res: requests.Response,
 ) -> pd.DataFrame:
     float_columns = ["DA VLR RSG MWP", "RT VLR RSG MWP", "DA+RT Total"]
     string_columns = ["Constraint"]
@@ -574,7 +574,7 @@ def parse_ms_vlr_srw(
 
 
 def parse_ms_rsg_srw(
-    res: requests.Response,
+        res: requests.Response,
 ) -> pd.DataFrame:
     dfs = []
     sheets = ["MKT TOT", "ATC CMC rate", "MISO DDC rate", "VLR DIST", "RSG MONTHLY"]
@@ -633,7 +633,7 @@ def parse_ms_rsg_srw(
 
 
 def parse_ms_rnu_srw(
-    res: requests.Response,
+        res: requests.Response,
 ) -> pd.DataFrame:
     SHEET1 = "MKT TOT"
     SHEET2 = "hourly miso_rt_bill_mtr"
@@ -685,7 +685,7 @@ def parse_ms_rnu_srw(
 
 
 def parse_ms_ri_srw(
-    res: requests.Response,
+        res: requests.Response,
 ) -> pd.DataFrame:
     SHEET1 = "MKT TOT"
     SHEET2 = "hourly column Worksheet"
@@ -743,7 +743,7 @@ def parse_ms_ri_srw(
 
 
 def parse_MARKET_SETTLEMENT_DATA_SRW(
-    res: requests.Response,
+        res: requests.Response,
 ) -> pd.DataFrame:
     with zipfile.ZipFile(file=io.BytesIO(res.content)) as z:
         csv_file_name = ""
@@ -771,7 +771,7 @@ def parse_MARKET_SETTLEMENT_DATA_SRW(
 
 
 def parse_ms_vlr_HIST_SRW(
-    res: requests.Response,
+        res: requests.Response,
 ) -> pd.DataFrame:
     df = pd.read_excel(
         io=io.BytesIO(res.content),
@@ -787,7 +787,7 @@ def parse_ms_vlr_HIST_SRW(
 
 
 def parse_ms_ecf_srw(
-    res: requests.Response,
+        res: requests.Response,
 ) -> pd.DataFrame:
     SHEET1 = "MKT TOT"
     SHEET2 = "JOA Hourly Totals"
@@ -870,7 +870,7 @@ def parse_ms_ecf_srw(
 
 
 def parse_ccf_co(
-    res: requests.Response,
+        res: requests.Response,
 ) -> pd.DataFrame:
     text = res.text
     csv_data = "\n".join(text.splitlines()[4:-1])
@@ -887,7 +887,7 @@ def parse_ccf_co(
 
 
 def parse_ms_vlr_HIST(
-    res: requests.Response,
+        res: requests.Response,
 ) -> pd.DataFrame:
     text = res.text
     csv_data = "\n".join(text.splitlines()[3:-3])
@@ -905,7 +905,7 @@ def parse_ms_vlr_HIST(
 
 
 def parse_Daily_Uplift_by_Local_Resource_Zone(
-    res: requests.Response,
+        res: requests.Response,
 ) -> pd.DataFrame:
     df0 = pd.read_excel(
         io=io.BytesIO(res.content),
@@ -970,7 +970,7 @@ def parse_Daily_Uplift_by_Local_Resource_Zone(
 
 
 def parse_fuelmix(
-    res: requests.Response,
+        res: requests.Response,
 ) -> pd.DataFrame:
     text = res.text
     csv_data = "\n".join(text.splitlines()[2:])
@@ -987,7 +987,7 @@ def parse_fuelmix(
 
 
 def parse_ace(
-    res: requests.Response,
+        res: requests.Response,
 ) -> pd.DataFrame:
     text = res.text
     csv_data = "\n".join(text.splitlines()[2:])
@@ -1003,7 +1003,7 @@ def parse_ace(
 
 
 def parse_AncillaryServicesMCP(
-    res: requests.Response,
+        res: requests.Response,
 ) -> pd.DataFrame:
     text = res.text
     _, csv1, csv2 = text.split("\n\n")
@@ -1043,7 +1043,7 @@ def parse_AncillaryServicesMCP(
 
 
 def parse_cts(
-    res: requests.Response,
+        res: requests.Response,
 ) -> pd.DataFrame:
     text = res.text
     csv_data = "\n".join(text.splitlines()[2:])
@@ -1059,7 +1059,7 @@ def parse_cts(
 
 
 def parse_combinedwindsolar(
-    res: requests.Response,
+        res: requests.Response,
 ) -> pd.DataFrame:
     text = res.text
     csv_data = "\n".join(text.splitlines()[2:])
@@ -1076,7 +1076,7 @@ def parse_combinedwindsolar(
 
 
 def parse_WindForecast(
-    res: requests.Response,
+        res: requests.Response,
 ) -> pd.DataFrame:
     text = res.text
     dictionary = json.loads(text)
@@ -1093,7 +1093,7 @@ def parse_WindForecast(
 
 
 def parse_Wind(
-    res: requests.Response,
+        res: requests.Response,
 ) -> pd.DataFrame:
     text = res.text
     csv_data = "\n".join(text.splitlines()[2:])
@@ -1110,7 +1110,7 @@ def parse_Wind(
 
 
 def parse_SolarForecast(
-    res: requests.Response,
+        res: requests.Response,
 ) -> pd.DataFrame:
     text = res.text
     dictionary = json.loads(text)
@@ -1127,7 +1127,7 @@ def parse_SolarForecast(
 
 
 def parse_Solar(
-    res: requests.Response,
+        res: requests.Response,
 ) -> pd.DataFrame:
     text = res.text
     csv_data = "\n".join(text.splitlines()[2:])
@@ -1144,7 +1144,7 @@ def parse_Solar(
 
 
 def parse_exantelmp(
-    res: requests.Response,
+        res: requests.Response,
 ) -> pd.DataFrame:
     text = res.text
     csv_data = "\n".join(text.splitlines()[2:])
@@ -1160,7 +1160,7 @@ def parse_exantelmp(
 
 
 def parse_da_exante_lmp(
-    res: requests.Response,
+        res: requests.Response,
 ) -> pd.DataFrame:
     text = res.text
     csv_data = "\n".join(text.splitlines()[4:])
@@ -1176,7 +1176,7 @@ def parse_da_exante_lmp(
 
 
 def parse_da_expost_lmp(
-    res: requests.Response,
+        res: requests.Response,
 ) -> pd.DataFrame:
     text = res.text
     csv_data = "\n".join(text.splitlines()[4:])
@@ -1192,7 +1192,7 @@ def parse_da_expost_lmp(
 
 
 def parse_rt_lmp_final(
-    res: requests.Response,
+        res: requests.Response,
 ) -> pd.DataFrame:
     text = res.text
     csv_data = "\n".join(text.splitlines()[4:])
@@ -1208,7 +1208,7 @@ def parse_rt_lmp_final(
 
 
 def parse_rt_lmp_prelim(
-    res: requests.Response,
+        res: requests.Response,
 ) -> pd.DataFrame:
     text = res.text
     csv_data = "\n".join(text.splitlines()[4:])
@@ -1224,7 +1224,7 @@ def parse_rt_lmp_prelim(
 
 
 def parse_DA_Load_EPNodes(
-    res: requests.Response,
+        res: requests.Response,
 ) -> pd.DataFrame:
     with zipfile.ZipFile(file=io.BytesIO(res.content)) as z:
         text = z.read(z.namelist()[0]).decode("utf-8")
@@ -1242,7 +1242,7 @@ def parse_DA_Load_EPNodes(
 
 
 def parse_DA_LMPs(
-    res: requests.Response,
+        res: requests.Response,
 ) -> pd.DataFrame:
     with zipfile.ZipFile(file=io.BytesIO(res.content)) as z:
         text = z.read(z.namelist()[0]).decode("utf-8")
@@ -1261,7 +1261,7 @@ def parse_DA_LMPs(
 
 
 def parse_5min_exante_lmp(
-    res: requests.Response,
+        res: requests.Response,
 ) -> pd.DataFrame:
     df = pd.read_excel(
         io=io.BytesIO(res.content),
@@ -1276,7 +1276,7 @@ def parse_5min_exante_lmp(
 
 
 def parse_nsi1(
-    res: requests.Response,
+        res: requests.Response,
 ) -> pd.DataFrame:
     text = res.text
     csv_data = "\n".join(text.splitlines()[2:])
@@ -1294,7 +1294,7 @@ def parse_nsi1(
 
 
 def parse_nsi5(
-    res: requests.Response,
+        res: requests.Response,
 ) -> pd.DataFrame:
     text = res.text
     csv_data = "\n".join(text.splitlines()[2:])
@@ -1312,7 +1312,7 @@ def parse_nsi5(
     
 
 def parse_nsi1miso(
-    res: requests.Response,
+        res: requests.Response,
 ) -> pd.DataFrame:
     text = res.text
     csv_data = "\n".join(text.splitlines()[2:])
@@ -1328,7 +1328,7 @@ def parse_nsi1miso(
 
 
 def parse_nsi5miso(
-    res: requests.Response,
+        res: requests.Response,
 ) -> pd.DataFrame:
     text = res.text
     csv_data = "\n".join(text.splitlines()[2:])
@@ -1344,7 +1344,7 @@ def parse_nsi5miso(
 
 
 def parse_importtotal5(
-    res: requests.Response,
+        res: requests.Response,
 ) -> pd.DataFrame:
     text = res.text
     dictionary = json.loads(text)
@@ -1360,7 +1360,7 @@ def parse_importtotal5(
 
 
 def parse_reservebindingconstraints(
-    res: requests.Response,
+        res: requests.Response,
 ) -> pd.DataFrame:
     text = res.text
     csv_data = "\n".join(text.splitlines()[2:])
@@ -1377,7 +1377,7 @@ def parse_reservebindingconstraints(
 
 
 def parse_totalload(
-    res: requests.Response,
+        res: requests.Response,
 ) -> pd.DataFrame:
     text = res.text
 
@@ -1424,7 +1424,7 @@ def parse_totalload(
 
 
 def parse_RSG(
-    res: requests.Response,
+        res: requests.Response,
 ) -> pd.DataFrame:
     text = res.text
     csv_data = "\n".join(text.splitlines()[2:])
@@ -1441,7 +1441,7 @@ def parse_RSG(
 
 
 def parse_WindActual(
-    res: requests.Response,
+        res: requests.Response,
 ) -> pd.DataFrame:
     text = res.text
     dictionary = json.loads(text)
@@ -1458,7 +1458,7 @@ def parse_WindActual(
 
 
 def parse_SolarActual(
-    res: requests.Response,
+        res: requests.Response,
 ) -> pd.DataFrame:
     text = res.text
     dictionary = json.loads(text)
@@ -1475,7 +1475,7 @@ def parse_SolarActual(
 
 
 def parse_NAI(
-    res: requests.Response,
+        res: requests.Response,
 ) -> pd.DataFrame:
     text = res.text
     csv_data = "\n".join(text.splitlines()[2:])
@@ -1491,7 +1491,7 @@ def parse_NAI(
 
 
 def parse_regionaldirectionaltransfer(
-    res: requests.Response,
+        res: requests.Response,
 ) -> pd.DataFrame:
     text = res.text
     csv_data = "\n".join(text.splitlines()[2:])
@@ -1507,7 +1507,7 @@ def parse_regionaldirectionaltransfer(
 
 
 def parse_generationoutagesplusminusfivedays(
-    res: requests.Response,
+        res: requests.Response,
 ) -> pd.DataFrame:
     text = res.text
     csv_data = "\n".join(text.splitlines()[2:])
@@ -1524,7 +1524,7 @@ def parse_generationoutagesplusminusfivedays(
 
 
 def parse_apiversion(
-    res: requests.Response,
+        res: requests.Response,
 ) -> pd.DataFrame:
     text = res.text
     dictionary = json.loads(text)
@@ -1540,7 +1540,7 @@ def parse_apiversion(
 
 
 def parse_lmpconsolidatedtable(
-    res: requests.Response,
+        res: requests.Response,
 ) -> pd.DataFrame:
     text = res.text
     csv_lines = text.splitlines()[2:]
@@ -1613,7 +1613,7 @@ def parse_lmpconsolidatedtable(
 
 
 def parse_realtimebindingconstraints(
-    res: requests.Response,
+        res: requests.Response,
 ) -> pd.DataFrame:
     text = res.text
     csv_data = "\n".join(text.splitlines()[2:])
@@ -1631,7 +1631,7 @@ def parse_realtimebindingconstraints(
 
 
 def parse_realtimebindingsrpbconstraints(
-    res: requests.Response,
+        res: requests.Response,
 ) -> pd.DataFrame:
     text = res.text
     csv_data = "\n".join(text.splitlines()[2:])
@@ -1649,7 +1649,7 @@ def parse_realtimebindingsrpbconstraints(
 
 
 def parse_RT_Load_EPNodes(
-    res: requests.Response,
+        res: requests.Response,
 ) -> pd.DataFrame:
     with zipfile.ZipFile(file=io.BytesIO(res.content)) as z:
         text = z.read(z.namelist()[0]).decode("utf-8")
@@ -1667,7 +1667,7 @@ def parse_RT_Load_EPNodes(
 
 
 def parse_5MIN_LMP(
-    res: requests.Response,
+        res: requests.Response,
 ) -> pd.DataFrame:
     with zipfile.ZipFile(file=io.BytesIO(res.content)) as z:
         text = z.read(z.namelist()[0]).decode("utf-8")
@@ -1686,7 +1686,7 @@ def parse_5MIN_LMP(
 
 
 def parse_bids_cb(
-    res: requests.Response,
+        res: requests.Response,
 ) -> pd.DataFrame:
     with zipfile.ZipFile(file=io.BytesIO(res.content)) as z:
         csv_data = z.read(z.namelist()[0]).decode("utf-8")
@@ -1744,7 +1744,7 @@ def helper_parse_asm(
 
 
 def parse_asm_exante_damcp(
-    res: requests.Response,
+        res: requests.Response,
 ) -> pd.DataFrame:
     text = res.text
 
@@ -1757,7 +1757,7 @@ def parse_asm_exante_damcp(
 
 
 def helper_parse_ftr_allocation(
-    res: requests.Response,
+        res: requests.Response,
 ) -> pd.DataFrame:
     data_mapping = {}
 
@@ -1800,25 +1800,25 @@ def helper_parse_ftr_allocation(
 
 
 def parse_ftr_allocation_restoration(
-    res: requests.Response,
+        res: requests.Response,
 ) -> pd.DataFrame:
     return helper_parse_ftr_allocation(res)
 
 
 def parse_ftr_allocation_stage_1A(
-    res: requests.Response,
+        res: requests.Response,
 ) -> pd.DataFrame:
     return helper_parse_ftr_allocation(res)
 
 
 def parse_ftr_allocation_stage_1B(
-    res: requests.Response,
+        res: requests.Response,
 ) -> pd.DataFrame:
     return helper_parse_ftr_allocation(res)
 
 
 def parse_ftr_allocation_summary(
-    res: requests.Response,
+        res: requests.Response,
 ) -> pd.DataFrame:
     with zipfile.ZipFile(file=io.BytesIO(res.content)) as z:
         residual_file, allocation_file = sorted(z.namelist())
@@ -1853,8 +1853,8 @@ def parse_ftr_allocation_summary(
 
 
 def helper_parse_ftr_results(
-    res: requests.Response,
-    files_by_type: defaultdict[str, list[dict[str, str]]],
+        res: requests.Response,
+        files_by_type: defaultdict[str, list[dict[str, str]]],
 ) -> pd.DataFrame:
     def get_date_key(file_path: str) -> tuple[int, int]:
         parts = file_path.split("/")[-1].split("_")[1:]
@@ -1963,7 +1963,7 @@ def helper_parse_ftr_results(
 
 
 def parse_ftr_annual_results_round_1(
-    res: requests.Response,
+        res: requests.Response,
 ) -> pd.DataFrame:
     files_by_type = defaultdict(list)
 
@@ -1980,7 +1980,7 @@ def parse_ftr_annual_results_round_1(
 
 
 def parse_ftr_annual_results_round_2(
-    res: requests.Response,
+        res: requests.Response,
 ) -> pd.DataFrame:
     files_by_type = defaultdict(list)
 
@@ -1998,7 +1998,7 @@ def parse_ftr_annual_results_round_2(
 
 
 def parse_ftr_annual_results_round_3(
-    res: requests.Response,
+        res: requests.Response,
 ) -> pd.DataFrame:
     files_by_type = defaultdict(list)
 
@@ -2016,7 +2016,7 @@ def parse_ftr_annual_results_round_3(
 
 
 def parse_ftr_annual_bids_offers(
-    res: requests.Response,
+        res: requests.Response,
 ) -> pd.DataFrame:
     with zipfile.ZipFile(file=io.BytesIO(res.content)) as z:
         csv_data = z.read(z.namelist()[0]).decode("utf-8")
@@ -2035,7 +2035,7 @@ def parse_ftr_annual_bids_offers(
 
 
 def parse_ftr_mpma_results(
-    res: requests.Response,
+        res: requests.Response,
 ) -> pd.DataFrame:
     files_by_type = defaultdict(list)
 
@@ -2053,7 +2053,7 @@ def parse_ftr_mpma_results(
 
 
 def parse_ftr_mpma_bids_offers(
-    res: requests.Response,
+        res: requests.Response,
 ) -> pd.DataFrame:
     with zipfile.ZipFile(file=io.BytesIO(res.content)) as z:
         csv_data = z.read(z.namelist()[0]).decode("utf-8")
@@ -2072,7 +2072,7 @@ def parse_ftr_mpma_bids_offers(
 
 
 def parse_asm_expost_damcp(
-    res: requests.Response,
+        res: requests.Response,
 ) -> pd.DataFrame:
     text = res.text
     csv1, csv2 = text.split("\n\n\n")
@@ -2086,7 +2086,7 @@ def parse_asm_expost_damcp(
 
 
 def parse_asm_rtmcp_final(
-    res: requests.Response,
+        res: requests.Response,
 ) -> pd.DataFrame:
     text = res.text
     _, _, csv1, csv2 = text.split("\r\n\r\n")
@@ -2095,7 +2095,7 @@ def parse_asm_rtmcp_final(
 
 
 def parse_asm_rtmcp_prelim(
-    res: requests.Response,
+        res: requests.Response,
 ) -> pd.DataFrame:
     text = res.text
     _, _, csv1, csv2 = text.split("\r\n\r\n")
@@ -2104,7 +2104,7 @@ def parse_asm_rtmcp_prelim(
 
 
 def parse_5min_exante_mcp(
-    res: requests.Response,
+        res: requests.Response,
 ) -> pd.DataFrame:
     df = pd.read_excel(
         io=io.BytesIO(res.content),
@@ -2119,7 +2119,7 @@ def parse_5min_exante_mcp(
 
 
 def parse_5min_expost_mcp(
-    res: requests.Response,
+        res: requests.Response,
 ) -> pd.DataFrame:
     df = pd.read_excel(
         io=io.BytesIO(res.content),
@@ -2134,7 +2134,7 @@ def parse_5min_expost_mcp(
 
 
 def parse_da_exante_ramp_mcp(
-    res: requests.Response,
+        res: requests.Response,
 ) -> pd.DataFrame:
     df = pd.read_excel(
         io=io.BytesIO(res.content),
@@ -2156,7 +2156,7 @@ def parse_da_exante_ramp_mcp(
 
 
 def parse_da_exante_str_mcp(
-    res: requests.Response,
+        res: requests.Response,
 ) -> pd.DataFrame:
     df = pd.read_excel(
         io=io.BytesIO(res.content),
@@ -2172,7 +2172,7 @@ def parse_da_exante_str_mcp(
 
 
 def parse_da_expost_ramp_mcp(
-    res: requests.Response,
+        res: requests.Response,
 ) -> pd.DataFrame:
     df = pd.read_excel(
         io=io.BytesIO(res.content),
@@ -2194,7 +2194,7 @@ def parse_da_expost_ramp_mcp(
 
 
 def parse_da_expost_str_mcp(
-    res: requests.Response,
+        res: requests.Response,
 ) -> pd.DataFrame:
     df = pd.read_excel(
         io=io.BytesIO(res.content),
@@ -2210,7 +2210,7 @@ def parse_da_expost_str_mcp(
 
 
 def parse_rt_expost_ramp_5min_mcp(
-    res: requests.Response,
+        res: requests.Response,
 ) -> pd.DataFrame:
     df = pd.read_excel(
         io=io.BytesIO(res.content),
@@ -2234,7 +2234,7 @@ def parse_rt_expost_ramp_5min_mcp(
 
 
 def parse_rt_expost_ramp_mcp(
-    res: requests.Response,
+        res: requests.Response,
 ) -> pd.DataFrame:
     df = pd.read_excel(
         io=io.BytesIO(res.content),
@@ -2260,7 +2260,7 @@ def parse_rt_expost_ramp_mcp(
 
 
 def parse_rt_expost_str_5min_mcp(
-    res: requests.Response,
+        res: requests.Response,
 ) -> pd.DataFrame:
     df = pd.read_excel(
         io=io.BytesIO(res.content),
@@ -2278,7 +2278,7 @@ def parse_rt_expost_str_5min_mcp(
 
 
 def parse_rt_expost_str_mcp(
-    res: requests.Response,
+        res: requests.Response,
 ) -> pd.DataFrame:
     df = pd.read_excel(
         io=io.BytesIO(res.content),
@@ -2296,7 +2296,7 @@ def parse_rt_expost_str_mcp(
 
 
 def parse_Allocation_on_MISO_Flowgates(
-    res: requests.Response,
+        res: requests.Response,
 ) -> pd.DataFrame:
     text = res.text
     csv_data = "\n".join(text.splitlines()[:-2])
@@ -2314,7 +2314,7 @@ def parse_Allocation_on_MISO_Flowgates(
 
 
 def parse_M2M_FFE(
-    res: requests.Response,
+        res: requests.Response,
 ) -> pd.DataFrame:
     text = res.text
     csv_data = "\n".join(text.splitlines()[:-1])
@@ -2332,7 +2332,7 @@ def parse_M2M_FFE(
 
 
 def parse_M2M_Flowgates_as_of(
-    res: requests.Response,
+        res: requests.Response,
 ) -> pd.DataFrame:
     csv_data = res.text
 
@@ -2346,13 +2346,13 @@ def parse_M2M_Flowgates_as_of(
 
 
 def parse_da_M2M_Settlement_srw(
-    res: requests.Response,
+        res: requests.Response,
 ) -> pd.DataFrame:
     raise NotImplementedError("As of 2024-11-19, not a single non-empty report was published yet.")
 
 
 def parse_M2M_Settlement_srw(
-    res: requests.Response,
+        res: requests.Response,
 ) -> pd.DataFrame:
     csv_data = res.text
 
@@ -2371,7 +2371,7 @@ def parse_M2M_Settlement_srw(
 
 
 def parse_MM_Annual_Report(
-    res: requests.Response,
+        res: requests.Response,
 ) -> pd.DataFrame:
         with zipfile.ZipFile(file=io.BytesIO(res.content)) as z:
             annual_files = z.namelist()[:-1]
@@ -2426,7 +2426,7 @@ def parse_MM_Annual_Report(
 
 
 def parse_asm_da_co(
-    res: requests.Response,
+        res: requests.Response,
 ) -> pd.DataFrame:
     with zipfile.ZipFile(file=io.BytesIO(res.content)) as z:
         csv_data = z.read(z.namelist()[0]).decode("utf-8")
@@ -2443,7 +2443,7 @@ def parse_asm_da_co(
 
 
 def parse_asm_rt_co(
-    res: requests.Response,
+        res: requests.Response,
 ) -> pd.DataFrame:
     with zipfile.ZipFile(file=io.BytesIO(res.content)) as z:
         csv_data = z.read(z.namelist()[0]).decode("utf-8")
@@ -2460,7 +2460,7 @@ def parse_asm_rt_co(
 
 
 def parse_Dead_Node_Report(
-    res: requests.Response,
+        res: requests.Response,
 ) -> pd.DataFrame:
     df = pd.read_excel(
         io=io.BytesIO(res.content),
@@ -2481,7 +2481,7 @@ def parse_Dead_Node_Report(
 
 
 def parse_rt_co(
-    res: requests.Response,
+        res: requests.Response,
 ) -> pd.DataFrame:
     with zipfile.ZipFile(file=io.BytesIO(res.content)) as z:
         csv_data = z.read(z.namelist()[0]).decode("utf-8")
@@ -2499,7 +2499,7 @@ def parse_rt_co(
 
 
 def parse_da_co(
-    res: requests.Response,
+        res: requests.Response,
 ) -> pd.DataFrame:
     with zipfile.ZipFile(file=io.BytesIO(res.content)) as z:
         csv_data = z.read(z.namelist()[0]).decode("utf-8")
@@ -2517,7 +2517,7 @@ def parse_da_co(
 
 
 def parse_cpnode_reszone(
-    res: requests.Response,
+        res: requests.Response,
 ) -> pd.DataFrame:
     df = pd.read_excel(
         io=io.BytesIO(res.content),
@@ -2531,7 +2531,7 @@ def parse_cpnode_reszone(
 
 
 def parse_sr_ctsl(
-    res: requests.Response,
+        res: requests.Response,
 ) -> pd.DataFrame:
     import pdfplumber # Importing here because this is the only parser that needs this.
 
@@ -2595,7 +2595,7 @@ def parse_sr_ctsl(
 
 
 def parse_df_al(
-    res: requests.Response,
+        res: requests.Response,
 ) -> pd.DataFrame:
     df = pd.read_excel(
         io=io.BytesIO(res.content),
@@ -2613,7 +2613,7 @@ def parse_df_al(
 
 
 def parse_rf_al(
-    res: requests.Response,
+        res: requests.Response,
 ) -> pd.DataFrame:
     df = pd.read_excel(
         io=io.BytesIO(res.content),
@@ -2632,7 +2632,7 @@ def parse_rf_al(
 
 
 def parse_da_bc_HIST(
-    res: requests.Response,
+        res: requests.Response,
 ) -> pd.DataFrame:
     text = res.text
     csv_data = "\n".join(text.splitlines()[2:-3])
@@ -2657,7 +2657,7 @@ def parse_da_bc_HIST(
 
 
 def parse_da_ex_rg(
-    res: requests.Response,
+        res: requests.Response,
 ) -> pd.DataFrame:
     sheet_names = ["Summary", "Regional Level"]
     dfs = []
@@ -2707,7 +2707,7 @@ def parse_da_ex_rg(
 
 
 def parse_da_ex(
-    res: requests.Response,
+        res: requests.Response,
 ) -> pd.DataFrame:
     df = pd.read_excel(
         io=io.BytesIO(res.content),
@@ -2722,7 +2722,7 @@ def parse_da_ex(
 
 
 def parse_da_rpe(
-    res: requests.Response,
+        res: requests.Response,
 ) -> pd.DataFrame:
     df = pd.read_excel(
         io=io.BytesIO(res.content),
@@ -2737,7 +2737,7 @@ def parse_da_rpe(
 
 
 def parse_RT_LMPs(
-    res: requests.Response,
+        res: requests.Response,
 ) -> pd.DataFrame:
     with zipfile.ZipFile(file=io.BytesIO(res.content)) as z:
         text = z.read(z.namelist()[0]).decode("utf-8")
@@ -2757,7 +2757,7 @@ def parse_RT_LMPs(
 
 
 def parse_sr_gfm(
-    res: requests.Response,
+        res: requests.Response,
 ) -> pd.DataFrame:
     MarketHourColumn = pd.read_excel(
         io=io.BytesIO(res.content),
@@ -2884,7 +2884,7 @@ def parse_sr_gfm(
 
 
 def parse_dfal_HIST(
-    res: requests.Response,
+        res: requests.Response,
 ) -> pd.DataFrame:
     df = pd.read_excel(
         io=io.BytesIO(res.content),
@@ -2902,7 +2902,7 @@ def parse_dfal_HIST(
 
 
 def parse_historical_gen_fuel_mix(
-    res: requests.Response,
+        res: requests.Response,
 ) -> pd.DataFrame:
     df = pd.read_excel(
         io=io.BytesIO(res.content),
@@ -2919,7 +2919,7 @@ def parse_historical_gen_fuel_mix(
 
 
 def parse_hwd_HIST(
-    res: requests.Response,
+        res: requests.Response,
 ) -> pd.DataFrame:
     text = res.text
     csv_data = "\n".join(text.splitlines()[7:-1])
@@ -2936,7 +2936,7 @@ def parse_hwd_HIST(
 
 
 def parse_sr_hist_is(
-    res: requests.Response,
+        res: requests.Response,
 ) -> pd.DataFrame:
     text = res.text
     csv_data = "\n".join(text.splitlines()[1:-2])
@@ -2954,7 +2954,7 @@ def parse_sr_hist_is(
 
 
 def parse_rfal_HIST(
-    res: requests.Response,
+        res: requests.Response,
 ) -> pd.DataFrame:
     df = pd.read_excel(
         io=io.BytesIO(res.content),
@@ -2971,7 +2971,7 @@ def parse_rfal_HIST(
 
 
 def parse_sr_lt(
-    res: requests.Response,
+        res: requests.Response,
 ) -> pd.DataFrame:
     df = pd.read_excel(
         io=io.BytesIO(res.content),
@@ -2985,7 +2985,7 @@ def parse_sr_lt(
 
 
 def parse_sr_la_rg(
-    res: requests.Response,
+        res: requests.Response,
 ) -> pd.DataFrame:
     text = res.text
     delimiter_index = text.rfind(",,,,,,,,,,,,,,,")
@@ -3038,7 +3038,7 @@ def parse_sr_la_rg(
 
 
 def parse_mom(
-    res: requests.Response,
+        res: requests.Response,
 ) -> pd.DataFrame:
     time_6 = [f"Day {i}" for i in range(1, 7)]
     time_7 = [f"Day {i}" for i in range(1, 8)]
@@ -3233,7 +3233,7 @@ def parse_mom(
 
 
 def parse_sr_nd_is(
-    res: requests.Response,
+        res: requests.Response,
 ) -> pd.DataFrame:
     df = pd.read_excel(
         io=io.BytesIO(res.content),
@@ -3256,7 +3256,7 @@ def parse_sr_nd_is(
 
 
 def parse_PeakHourOverview(
-    res: requests.Response,
+        res: requests.Response,
 ) -> pd.DataFrame:
     def handle_table(
         data_lines: list[str],
@@ -3295,7 +3295,7 @@ def parse_PeakHourOverview(
 
 
 def parse_sr_tcdc_group2(
-    res: requests.Response,
+        res: requests.Response,
 ) -> pd.DataFrame:
     text = res.text
     csv_data = "\n".join(text.splitlines()[4:-2])
@@ -3312,7 +3312,7 @@ def parse_sr_tcdc_group2(
 
 
 def helper_parse_market_report_xml(
-    res: requests.Response,
+        res: requests.Response,
 ) -> pd.DataFrame:
     text = res.text
                 
@@ -3357,12 +3357,12 @@ def helper_parse_market_report_xml(
 
 
 def parse_MISOdaily(
-    res: requests.Response,
+        res: requests.Response,
 ) -> pd.DataFrame:
     return helper_parse_market_report_xml(res)
 
 
 def parse_MISOsamedaydemand(
-    res: requests.Response,
+        res: requests.Response,
 ) -> pd.DataFrame:
     return helper_parse_market_report_xml(res)
