@@ -23,52 +23,56 @@ def try_to_get_dfs(
         report_name: str, 
         datetime_increment_limit: int,
         number_of_dfs_to_stop_at: int,
-) -> list[pd.DataFrame]:
-    """Tries to get the df for the report_name and returns it. If a request fails, it will 
-    increment the datetime and try again up to datetime_increment_limit times.
+) -> tuple[list[pd.DataFrame], list[datetime.datetime]]:
+    """Tries to get the df for the report_name and returns it with its respective
+    target datetime. If a request fails, it will increment the datetime and try 
+    again up to datetime_increment_limit times.
 
     :param str report_name: The name of the report to get the df for.
     :param int datetime_increment_limit: The number of times to try to get the df before raising an error.
     :param int number_of_dfs_to_stop_at: The number of successfully downloaded dfs to stop at.
-    :return pd.DataFrame: The df for the report_name.
+    :return tuple[list[pd.DataFrame], list[datetime.datetime]]: The dfs and the target dates they were downloaded for.
     """
     report_mappings = MISOReports.report_mappings
     report = report_mappings[report_name]
 
     increment_cnt = 0
-    curr_target_date = report.example_datetime
+    curr_target_datetime = report.example_datetime
     dfs = []
+    target_datetimes = []
     while increment_cnt <= datetime_increment_limit:
         try:
             df = MISOReports.get_df(
                 report_name=report_name,
-                ddatetime=curr_target_date,
+                ddatetime=curr_target_datetime,
             )
 
-            dfs.append(df)
+            if not df.empty:
+                dfs.append(df)
+                target_datetimes.append(curr_target_datetime)
 
             if len(dfs) >= number_of_dfs_to_stop_at:
                 break
 
-            curr_target_date = report.url_builder.add_to_datetime(
-                ddatetime=curr_target_date, 
+            curr_target_datetime = report.url_builder.add_to_datetime(
+                ddatetime=curr_target_datetime, 
                 direction=1,
             )
             increment_cnt += 1
         except requests.HTTPError as e:
-            curr_target_date = report.url_builder.add_to_datetime(
-                ddatetime=curr_target_date, 
+            curr_target_datetime = report.url_builder.add_to_datetime(
+                ddatetime=curr_target_datetime, 
                 direction=1,
             )
             increment_cnt += 1
     
     if increment_cnt > datetime_increment_limit:
         if len(dfs) == 0:
-            raise ValueError(f"Failed to get a df after {datetime_increment_limit} attempts (last target datetime tried: {curr_target_date}).")
+            raise ValueError(f"Failed to get a df after {datetime_increment_limit} datetime increments (last target datetime tried: {curr_target_datetime}).")
         else:
-            warnings.warn(f"Only got {len(dfs)}/{number_of_dfs_to_stop_at} dfs after {datetime_increment_limit} attempts (last target datetime tried: {curr_target_date}).")
+            warnings.warn(f"Only got {len(dfs)}/{number_of_dfs_to_stop_at} dfs after {datetime_increment_limit} attempts (last target datetime tried: {curr_target_datetime}).")
     
-    return dfs
+    return dfs, target_datetimes
 
 
 def uses_correct_dtypes(
@@ -248,7 +252,7 @@ def test_MISOMarketReportsURLBuilder_build_url(
     url_builder = MISOMarketReportsURLBuilder(
         target=target, 
         supported_extensions=supported_extensions,
-        url_generator=url_generator
+        url_generator=url_generator,
     )
 
     assert url_builder.build_url(ddatetime=ddatetime, file_extension=file_extension) == expected
@@ -980,13 +984,13 @@ single_df_test_list = [
     "report_name, columns_mapping", single_df_test_list
 )
 def test_get_df_single_df_correct_columns(report_name, columns_mapping, datetime_increment_limit, number_of_dfs_to_stop_at):
-    dfs = try_to_get_dfs(
+    dfs, target_datetimes = try_to_get_dfs(
         report_name=report_name,
         datetime_increment_limit=datetime_increment_limit,
         number_of_dfs_to_stop_at=number_of_dfs_to_stop_at,
     )
 
-    for df in dfs: 
+    for df, target_datetime in zip(dfs, target_datetimes): 
         columns_mapping_columns = []
         for columns_group in columns_mapping.keys():
             columns_mapping_columns.extend(columns_group)
@@ -994,14 +998,14 @@ def test_get_df_single_df_correct_columns(report_name, columns_mapping, datetime
         columns_mapping_columns_set = frozenset(columns_mapping_columns)
         df_columns_set = frozenset(df.columns)
 
-        if columns_mapping_columns_set != df_columns_set:
-            raise ValueError(f"Expected columns {columns_mapping_columns_set} do not match df columns {df_columns_set}.")
+        assert columns_mapping_columns_set == df_columns_set, \
+            f"For report {report_name}, expected columns {columns_mapping_columns_set} do not match df columns {df_columns_set}. Target datetime: {target_datetime}."
 
         for columns_tuple, dtype_checker in columns_mapping.items():
             columns = list(columns_tuple)
             
             assert uses_correct_dtypes(df, columns, dtype_checker), \
-                f"For report {report_name}, columns {columns} are not of type {dtype_checker}."
+                f"For report {report_name}, columns {columns} are not of type {dtype_checker}. Target datetime: {target_datetime}."
 
 
 multiple_dfs_test_list = [
@@ -1860,13 +1864,13 @@ multiple_dfs_test_list = [
     "report_name, dfs_mapping", multiple_dfs_test_list
 )
 def test_get_df_multiple_dfs_correct_columns_and_matching_df_names(report_name, dfs_mapping, datetime_increment_limit, number_of_dfs_to_stop_at):
-    dfs = try_to_get_dfs(
+    dfs, target_datetimes = try_to_get_dfs(
         report_name=report_name,
         datetime_increment_limit=datetime_increment_limit,
         number_of_dfs_to_stop_at=number_of_dfs_to_stop_at,
     )
 
-    for df in dfs:
+    for df, target_datetime in zip(dfs, target_datetimes):
         # Check that df names are as expected.
         expected_df_names = frozenset(dfs_mapping.keys())
         actual_df_names = frozenset(list(df[MULTI_DF_NAMES_COLUMN]))
@@ -1886,14 +1890,14 @@ def test_get_df_multiple_dfs_correct_columns_and_matching_df_names(report_name, 
             res_df_columns_set = frozenset(res_df.columns)
 
             # Check that the columns in the df match the expected columns.
-            if columns_mapping_columns_set != res_df_columns_set:
-                raise ValueError(f"Expected columns {columns_mapping_columns_set} do not match df columns {res_df_columns_set}.")
+            assert columns_mapping_columns_set == res_df_columns_set, \
+                f"Expected columns {columns_mapping_columns_set} do not match df columns {res_df_columns_set}. Target datetime {target_datetime}."
 
             for columns_tuple, dtype_checker in columns_mapping.items():
                 columns = list(columns_tuple)
 
                 assert uses_correct_dtypes(res_df, columns, dtype_checker), \
-                    f"For multi-df report {report_name}, df {df_name}, columns {columns} do not pass {dtype_checker.__name__}."
+                    f"For multi-df report {report_name}, df {df_name}, columns {columns} do not pass {dtype_checker.__name__}. Target datetime {target_datetime}."
 
 
 def test_get_df_test_test_names_have_no_duplicates(get_df_test_names):
@@ -2019,13 +2023,13 @@ def test_get_df_ftr_mpma_results_with_changing_columns(report_name, datetime_inc
     the same amount of files for each section. Each file within their respective
     sections should have the same typing.
     """
-    dfs = try_to_get_dfs(
+    dfs, target_datetimes = try_to_get_dfs(
         report_name=report_name,
         datetime_increment_limit=datetime_increment_limit,
         number_of_dfs_to_stop_at=number_of_dfs_to_stop_at,
     )
 
-    for df in dfs:
+    for df, target_datetime in zip(dfs, target_datetimes):
         for i, name in enumerate(df[MULTI_DF_NAMES_COLUMN]):
             if name == "Metadata":
                 n_files = len(df[MULTI_DF_DFS_COLUMN].iloc[i].columns)
@@ -2061,8 +2065,7 @@ def test_get_df_ftr_mpma_results_with_changing_columns(report_name, datetime_inc
         for i, name in enumerate(df[MULTI_DF_NAMES_COLUMN]):
             if name != "Metadata":
                 reg = re.search(r"File (\d+)", name)
-                if reg is None:
-                    raise ValueError(f"Expected name to match regex, got {name}.")
+                assert reg is not None, f"Expected name to match regex, got {name}."
                 
                 file_number = int(reg.group(1))
 
@@ -2072,5 +2075,4 @@ def test_get_df_ftr_mpma_results_with_changing_columns(report_name, datetime_inc
 
                 for columns, dtype_checker in types.items():
                     assert uses_correct_dtypes(df[MULTI_DF_DFS_COLUMN].iloc[i], columns, dtype_checker), \
-                        f"For multi-df report {report_name}, df {name}, columns {columns} do not pass {dtype_checker.__name__}."
-                
+                        f"For multi-df report {report_name}, df {name}, columns {columns} do not pass {dtype_checker.__name__}. Target datetime {target_datetime}."

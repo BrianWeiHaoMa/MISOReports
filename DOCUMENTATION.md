@@ -23,10 +23,10 @@ This is the documentation for MISOReports.
 
 ## Data Types
 All dataframe columns are categorized into one of the following data types:
-* **pandas.core.arrays.string_.StringDtype()** ex. "Toronto"
-* **numpy.dtypes.DateTime64DType()** ex. "2024-02-02 08:24:36 PM" or "2024-02-02 16:24:36" or "2024-01-03" or "13:05:00" etc.
-* **numpy.dtypes.Float64DType()** ex. 34.13
-* **pandas.core.arrays.integer.Int64Dtype()** ex. 34
+* **string** ex. "Toronto".
+* **datetime64\[ns\]** ex. "2024-02-02 08:24:36 PM" or "2024-02-02 16:24:36" or "2024-01-03" or "13:05:00" etc..
+* **Float64** ex. 34.13.
+* **Int64** ex. 34.
 
 ## Supported Reports
 Here are the supported reports along with corresponding example URLs. If the report offers multiple formats,
