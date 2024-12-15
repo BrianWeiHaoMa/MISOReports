@@ -1434,7 +1434,7 @@ class MISOReports:
             example_datetime=datetime.datetime(year=2022, month=1, day=1),
         ),
 
-        "ftr_annual_bids_offers": Report( # TODO check.
+        "ftr_annual_bids_offers": Report(  # TODO review reworked implementation.
             url_builder=MISOMarketReportsURLBuilder(
                 target="ftr_annual_bids_offers",
                 supported_extensions=["zip"],
