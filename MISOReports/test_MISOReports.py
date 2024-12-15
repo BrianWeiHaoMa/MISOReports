@@ -1,6 +1,7 @@
 from typing import Callable
 import datetime
 import re
+import warnings
 
 import pytest
 import pandas as pd
@@ -48,6 +49,12 @@ def try_to_get_dfs(
 
             if len(dfs) >= number_of_dfs_to_stop_at:
                 break
+
+            curr_target_date = report.url_builder.add_to_datetime(
+                ddatetime=curr_target_date, 
+                direction=1,
+            )
+            increment_cnt += 1
         except requests.HTTPError as e:
             curr_target_date = report.url_builder.add_to_datetime(
                 ddatetime=curr_target_date, 
@@ -56,7 +63,10 @@ def try_to_get_dfs(
             increment_cnt += 1
     
     if increment_cnt > datetime_increment_limit:
-        raise ValueError(f"Failed to get {report_name} after {datetime_increment_limit} attempts (last datetime tried: {curr_target_date}).")
+        if len(dfs) == 0:
+            raise ValueError(f"Failed to get a df after {datetime_increment_limit} attempts (last target datetime tried: {curr_target_date}).")
+        else:
+            warnings.warn(f"Only got {len(dfs)}/{number_of_dfs_to_stop_at} dfs after {datetime_increment_limit} attempts (last target datetime tried: {curr_target_date}).")
     
     return dfs
 
