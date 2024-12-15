@@ -1352,8 +1352,8 @@ class MISOReports:
             ),
             type_to_parse="zip",
             parser=parsers.parse_ftr_allocation_restoration,
-            example_url="https://docs.misoenergy.org/marketreports/20220401_ftr_allocation_restoration.zip",
-            example_datetime=datetime.datetime(year=2022, month=4, day=1),
+            example_url="https://docs.misoenergy.org/marketreports/20240401_ftr_allocation_restoration.zip",
+            example_datetime=datetime.datetime(year=2024, month=4, day=1),
         ),
 
         "ftr_allocation_stage_1A": Report( # Checked 2024-11-27.
@@ -1365,8 +1365,8 @@ class MISOReports:
             ),
             type_to_parse="zip",
             parser=parsers.parse_ftr_allocation_stage_1A,
-            example_url="https://docs.misoenergy.org/marketreports/20220401_ftr_allocation_stage_1A.zip",
-            example_datetime=datetime.datetime(year=2022, month=4, day=1),
+            example_url="https://docs.misoenergy.org/marketreports/20240401_ftr_allocation_stage_1A.zip",
+            example_datetime=datetime.datetime(year=2024, month=4, day=1),
         ),
 
         "ftr_allocation_stage_1B": Report( # Checked 2024-11-27.
@@ -1378,8 +1378,8 @@ class MISOReports:
             ),
             type_to_parse="zip",
             parser=parsers.parse_ftr_allocation_stage_1B,
-            example_url="https://docs.misoenergy.org/marketreports/20220401_ftr_allocation_stage_1B.zip",
-            example_datetime=datetime.datetime(year=2022, month=4, day=1),
+            example_url="https://docs.misoenergy.org/marketreports/20240401_ftr_allocation_stage_1B.zip",
+            example_datetime=datetime.datetime(year=2024, month=4, day=1),
         ),
 
         "ftr_allocation_summary": Report( # Checked 2024-12-13.
@@ -1404,8 +1404,8 @@ class MISOReports:
             ),
             type_to_parse="zip",
             parser=parsers.parse_ftr_annual_results_round_1,
-            example_url="https://docs.misoenergy.org/marketreports/20220401_ftr_annual_results_round_1.zip",
-            example_datetime=datetime.datetime(year=2022, month=4, day=1),
+            example_url="https://docs.misoenergy.org/marketreports/20230401_ftr_annual_results_round_1.zip",
+            example_datetime=datetime.datetime(year=2023, month=4, day=1),
         ),
 
         "ftr_annual_results_round_2": Report(  # TODO review reworked implementation.
