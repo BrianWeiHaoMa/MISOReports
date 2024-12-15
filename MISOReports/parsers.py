@@ -99,6 +99,9 @@ def parse_Resource_Uplift_by_Commitment_Reason(
         }
     ).iloc[:-2]
 
+    print(df)
+    exit(1)
+
     df[["ECONOMIC MAX"]] = df[["ECONOMIC MAX"]].astype("Float64")
     df[["LOCAL RESOURCE ZONE"]] = df[["LOCAL RESOURCE ZONE"]].astype("Int64")
     df[["STARTTIME"]] = df[["STARTTIME"]].apply(pd.to_datetime, format="%Y/%m/%d %I:%M:%S %p")
