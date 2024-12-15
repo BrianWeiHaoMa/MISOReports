@@ -1730,8 +1730,8 @@ class MISOReports:
             ),
             type_to_parse="zip",
             parser=parsers.parse_asm_da_co,
-            example_url="https://docs.misoenergy.org/marketreports/20240729_asm_da_co.zip",
-            example_datetime=datetime.datetime(year=2024, month=7, day=29),
+            example_url="https://docs.misoenergy.org/marketreports/20240601_asm_da_co.zip",
+            example_datetime=datetime.datetime(year=2024, month=6, day=1),
         ),
 
         "asm_rt_co": Report( # Checked 2024-12-15.
@@ -1782,8 +1782,8 @@ class MISOReports:
             ),
             type_to_parse="zip",
             parser=parsers.parse_da_co,
-            example_url="https://docs.misoenergy.org/marketreports/20241007_da_rpe.xls",
-            example_datetime=datetime.datetime(year=2024, month=10, day=7),
+            example_url="https://docs.misoenergy.org/marketreports/20240501_da_rpe.xls",
+            example_datetime=datetime.datetime(year=2024, month=5, day=1),
         ),
 
         "cpnode_reszone": Report( # Checked 2024-12-15.
