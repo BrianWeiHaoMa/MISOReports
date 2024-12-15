@@ -512,6 +512,32 @@ class MISOReports:
 
         return res
     
+    @staticmethod
+    def add_to_datetime(
+        report_name: str,
+        ddatetime: datetime.datetime | None,
+        direction: int,
+    ) -> datetime.datetime | None:
+        """Changes the datetime by one unit in the direction specified according to the report 
+        if this report allows for target dates, otherwise leaves it unchanged.
+
+        :param str report_name: The name of the report.
+        :param datetime.datetime | None ddatetime: The datetime to add to.
+        :param int direction: The multiple for the increment (negative for backwards increment).
+        :return datetime.datetime: The new datetime.
+        """
+        if report_name not in MISOReports.report_mappings:
+            raise ValueError(f"Unsupported report: {report_name}")
+
+        report = MISOReports.report_mappings[report_name]
+
+        res = report.url_builder.add_to_datetime(
+            ddatetime=ddatetime,
+            direction=direction,
+        )
+
+        return res
+    
 
     report_mappings: dict[str, Report] = {
         "rt_bc_HIST": Report( # Checked 2024-11-24.
@@ -1232,7 +1258,7 @@ class MISOReports:
             example_url="https://api.misoenergy.org/MISORTWDDataBroker/DataBrokerServices.asmx?messageType=getapiversion&returnType=json",
         ),
 
-        "lmpconsolidatedtable": Report( # TODO review reworked implementation.
+        "lmpconsolidatedtable": Report( # Checked 2024-12-13.
             url_builder=MISORTWDDataBrokerURLBuilder(
                 target="getlmpconsolidatedtable",
                 supported_extensions=["csv", "xml", "json"],
@@ -2071,5 +2097,4 @@ class MISOReports:
             example_url="https://api.misoenergy.org/MISORTWDBIReporter/Reporter.asmx?messageType=currentinterval&returnType=csv",
             example_datetime=datetime.datetime(year=2024, month=10, day=30),
         ),
-
     }

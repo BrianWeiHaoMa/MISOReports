@@ -17,40 +17,47 @@ from MISOReports.parsers import (
 )
 
 
-def try_to_get_df_res(
+def try_to_get_dfs(
     report_name: str, 
     datetime_increment_limit: int,
-) -> pd.DataFrame:
+    number_of_dfs_to_stop_at: int,
+) -> list[pd.DataFrame]:
     """Tries to get the df for the report_name and returns it. If a request fails, it will 
     increment the datetime and try again up to datetime_increment_limit times.
 
     :param str report_name: The name of the report to get the df for.
     :param int datetime_increment_limit: The number of times to try to get the df before raising an error.
+    :param int number_of_dfs_to_stop_at: The number of successfully downloaded dfs to stop at.
     :return pd.DataFrame: The df for the report_name.
     """
     report_mappings = MISOReports.report_mappings
     report = report_mappings[report_name]
 
-    cnt = 0
+    increment_cnt = 0
     curr_target_date = report.example_datetime
-    while cnt <= datetime_increment_limit:
+    dfs = []
+    while increment_cnt <= datetime_increment_limit:
         try:
             df = MISOReports.get_df(
                 report_name=report_name,
                 ddatetime=curr_target_date,
             )
-            break
+
+            dfs.append(df)
+
+            if len(dfs) >= number_of_dfs_to_stop_at:
+                break
         except requests.HTTPError as e:
             curr_target_date = report.url_builder.add_to_datetime(
                 ddatetime=curr_target_date, 
                 direction=1,
             )
-            cnt += 1
+            increment_cnt += 1
     
-    if cnt > datetime_increment_limit:
+    if increment_cnt > datetime_increment_limit:
         raise ValueError(f"Failed to get {report_name} after {datetime_increment_limit} attempts (last datetime tried: {curr_target_date}).")
     
-    return df
+    return dfs
 
 
 def uses_correct_dtypes(
@@ -76,6 +83,11 @@ def get_df_test_names():
 @pytest.fixture
 def datetime_increment_limit(request):
     return request.config.getoption("--datetime-increments-limit")
+
+
+@pytest.fixture
+def number_of_dfs_to_stop_at(request):
+    return request.config.getoption("--number-of-dfs-to-stop-at")
 
 
 def test_MISOMarketReportsURLBuilder_add_to_datetime_has_an_increment_mapping_for_all_url_generators():
@@ -940,27 +952,29 @@ single_df_test_list = [
 @pytest.mark.parametrize(
     "report_name, columns_mapping", single_df_test_list
 )
-def test_get_df_single_df_correct_columns(report_name, columns_mapping, datetime_increment_limit):
-    df = try_to_get_df_res(
+def test_get_df_single_df_correct_columns(report_name, columns_mapping, datetime_increment_limit, number_of_dfs_to_stop_at):
+    dfs = try_to_get_dfs(
         report_name=report_name,
         datetime_increment_limit=datetime_increment_limit,
+        number_of_dfs_to_stop_at=number_of_dfs_to_stop_at,
     )
 
-    columns_mapping_columns = []
-    for columns_group in columns_mapping.keys():
-        columns_mapping_columns.extend(columns_group)
-        
-    columns_mapping_columns_set = frozenset(columns_mapping_columns)
-    df_columns_set = frozenset(df.columns)
+    for df in dfs: 
+        columns_mapping_columns = []
+        for columns_group in columns_mapping.keys():
+            columns_mapping_columns.extend(columns_group)
+            
+        columns_mapping_columns_set = frozenset(columns_mapping_columns)
+        df_columns_set = frozenset(df.columns)
 
-    if columns_mapping_columns_set != df_columns_set:
-        raise ValueError(f"Expected columns {columns_mapping_columns_set} do not match df columns {df_columns_set}.")
+        if columns_mapping_columns_set != df_columns_set:
+            raise ValueError(f"Expected columns {columns_mapping_columns_set} do not match df columns {df_columns_set}.")
 
-    for columns_tuple, dtype_checker in columns_mapping.items():
-        columns = list(columns_tuple)
-        
-        assert uses_correct_dtypes(df, columns, dtype_checker), \
-            f"For report {report_name}, columns {columns} are not of type {dtype_checker}."
+        for columns_tuple, dtype_checker in columns_mapping.items():
+            columns = list(columns_tuple)
+            
+            assert uses_correct_dtypes(df, columns, dtype_checker), \
+                f"For report {report_name}, columns {columns} are not of type {dtype_checker}."
 
 
 multiple_dfs_test_list = [
@@ -1894,39 +1908,41 @@ multiple_dfs_test_list = [
 @pytest.mark.parametrize(
     "report_name, dfs_mapping", multiple_dfs_test_list
 )
-def test_get_df_multiple_dfs_correct_columns_and_matching_df_names(report_name, dfs_mapping, datetime_increment_limit):
-    df = try_to_get_df_res(
+def test_get_df_multiple_dfs_correct_columns_and_matching_df_names(report_name, dfs_mapping, datetime_increment_limit, number_of_dfs_to_stop_at):
+    dfs = try_to_get_dfs(
         report_name=report_name,
         datetime_increment_limit=datetime_increment_limit,
+        number_of_dfs_to_stop_at=number_of_dfs_to_stop_at,
     )
 
-    # Check that df names are as expected.
-    expected_df_names = frozenset(dfs_mapping.keys())
-    actual_df_names = frozenset(list(df[MULTI_DF_NAMES_COLUMN]))
-    assert expected_df_names == actual_df_names, \
-        f"Expected DF names {expected_df_names} do not match actual DF names {actual_df_names}."
-    
-    # Check that df columns are of the expected type.
-    for df_name, columns_mapping in dfs_mapping.items():
-        df_name_idx = list(df[MULTI_DF_NAMES_COLUMN]).index(df_name)
-        res_df = df[MULTI_DF_DFS_COLUMN].iloc[df_name_idx]
+    for df in dfs:
+        # Check that df names are as expected.
+        expected_df_names = frozenset(dfs_mapping.keys())
+        actual_df_names = frozenset(list(df[MULTI_DF_NAMES_COLUMN]))
+        assert expected_df_names == actual_df_names, \
+            f"Expected DF names {expected_df_names} do not match actual DF names {actual_df_names}."
+        
+        # Check that df columns are of the expected type.
+        for df_name, columns_mapping in dfs_mapping.items():
+            df_name_idx = list(df[MULTI_DF_NAMES_COLUMN]).index(df_name)
+            res_df = df[MULTI_DF_DFS_COLUMN].iloc[df_name_idx]
 
-        columns_mapping_columns = []
-        for columns_group in columns_mapping.keys():
-            columns_mapping_columns.extend(columns_group)
+            columns_mapping_columns = []
+            for columns_group in columns_mapping.keys():
+                columns_mapping_columns.extend(columns_group)
 
-        columns_mapping_columns_set = frozenset(columns_mapping_columns)
-        res_df_columns_set = frozenset(res_df.columns)
+            columns_mapping_columns_set = frozenset(columns_mapping_columns)
+            res_df_columns_set = frozenset(res_df.columns)
 
-        # Check that the columns in the df match the expected columns.
-        if columns_mapping_columns_set != res_df_columns_set:
-            raise ValueError(f"Expected columns {columns_mapping_columns_set} do not match df columns {res_df_columns_set}.")
+            # Check that the columns in the df match the expected columns.
+            if columns_mapping_columns_set != res_df_columns_set:
+                raise ValueError(f"Expected columns {columns_mapping_columns_set} do not match df columns {res_df_columns_set}.")
 
-        for columns_tuple, dtype_checker in columns_mapping.items():
-            columns = list(columns_tuple)
+            for columns_tuple, dtype_checker in columns_mapping.items():
+                columns = list(columns_tuple)
 
-            assert uses_correct_dtypes(res_df, columns, dtype_checker), \
-                f"For multi-df report {report_name}, df {df_name}, columns {columns} do not pass {dtype_checker.__name__}."
+                assert uses_correct_dtypes(res_df, columns, dtype_checker), \
+                    f"For multi-df report {report_name}, df {df_name}, columns {columns} do not pass {dtype_checker.__name__}."
 
 
 def test_get_df_test_test_names_have_no_duplicates(get_df_test_names):
@@ -1955,7 +1971,6 @@ def test_get_df_test_correct_columns_check_for_every_report(get_df_test_names):
         (0, "DA_LMPs", ["zip"], MISOMarketReportsURLBuilder.url_generator_YYYY_current_month_name_to_two_months_later_name_first, datetime.datetime(year=2024, month=11, day=1), "zip", "https://docs.misoenergy.org/marketreports/2024-Nov-Jan_DA_LMPs.zip"),
         (-3, "rt_expost_str_5min_mcp", ["xlsx"], MISOMarketReportsURLBuilder.url_generator_YYYYmm_first, datetime.datetime(year=2024, month=10, day=1), "xlsx", "https://docs.misoenergy.org/marketreports/202407_rt_expost_str_5min_mcp.xlsx"),
         (1, "MARKET_SETTLEMENT_DATA_SRW", ["zip"], MISOMarketReportsURLBuilder.url_generator_no_date, datetime.datetime(year=2024, month=10, day=1), "zip", "https://docs.misoenergy.org/marketreports/MARKET_SETTLEMENT_DATA_SRW.zip"),
-        (1, "MARKET_SETTLEMENT_DATA_SRW", ["zip"], MISOMarketReportsURLBuilder.url_generator_no_date, datetime.datetime.now(), "zip", "https://docs.misoenergy.org/marketreports/MARKET_SETTLEMENT_DATA_SRW.zip"),
         (1, "M2M_Settlement_srw", ["csv"], MISOMarketReportsURLBuilder.url_generator_YYYY_last, datetime.datetime(year=2024, month=10, day=1), "csv", "https://docs.misoenergy.org/marketreports/M2M_Settlement_srw_2025.csv"),
         (1, "Allocation_on_MISO_Flowgates", ["csv"], MISOMarketReportsURLBuilder.url_generator_YYYY_mm_dd_last, datetime.datetime(year=2024, month=10, day=29), "csv", "https://docs.misoenergy.org/marketreports/Allocation_on_MISO_Flowgates_2024_10_30.csv"),
     ]
@@ -1986,6 +2001,34 @@ def test_MISOMarketReportsURLBuilder_add_to_datetime(
     )
 
     assert url == expected, f"Expected {expected}, got {url}."
+
+
+@pytest.mark.parametrize(
+    "direction, target, ddatetime, expected", [
+        (4, "DA_Load_EPNodes", datetime.datetime(year=2024, month=10, day=21), datetime.datetime(year=2024, month=10, day=25)),
+        (1, "da_exante_lmp", datetime.datetime(year=2024, month=10, day=26), datetime.datetime(year=2024, month=10, day=27)),
+        (1, "da_expost_lmp", datetime.datetime(year=2024, month=10, day=26), datetime.datetime(year=2024, month=10, day=27)),
+        (-1, "DA_LMPs", datetime.datetime(year=2024, month=7, day=1), datetime.datetime(year=2024, month=4, day=1)),
+        (0, "DA_LMPs", datetime.datetime(year=2024, month=11, day=1), datetime.datetime(year=2024, month=11, day=1)),
+        (-3, "rt_expost_str_5min_mcp", datetime.datetime(year=2024, month=10, day=1), datetime.datetime(year=2024, month=7, day=1)),
+        (1, "MARKET_SETTLEMENT_DATA_SRW", datetime.datetime(year=2024, month=10, day=1), datetime.datetime(year=2024, month=10, day=1)),
+        (1, "M2M_Settlement_srw", datetime.datetime(year=2024, month=10, day=1), datetime.datetime(year=2025, month=10, day=1)),
+        (1, "Allocation_on_MISO_Flowgates", datetime.datetime(year=2024, month=10, day=29), datetime.datetime(year=2024, month=10, day=30)),
+    ]
+)
+def test_MISOMarketReports_add_to_datetime(
+    direction,
+    target, 
+    ddatetime,
+    expected, 
+):
+    new_datetime = MISOReports.add_to_datetime(
+        report_name=target,
+        ddatetime=ddatetime, 
+        direction=direction,
+    )
+
+    assert new_datetime == expected, f"Expected {expected}, got {new_datetime}."
     
 
 nsi_test_list = [
