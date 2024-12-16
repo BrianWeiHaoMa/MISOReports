@@ -936,7 +936,7 @@ single_df_test_list = [
         {
             ("MWh",): pd.api.types.is_float_dtype,
             ("Hour Ending",): pd.api.types.is_integer_dtype,
-            ("Market Day	",): pd.api.types.is_datetime64_ns_dtype,
+            ("Market Day",): pd.api.types.is_datetime64_ns_dtype,
         }
     ),
     (

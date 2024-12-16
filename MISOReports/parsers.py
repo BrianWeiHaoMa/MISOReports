@@ -2661,7 +2661,7 @@ def parse_da_bc_HIST(
         res: requests.Response,
 ) -> pd.DataFrame:
     text = res.text
-    csv_data = "\n".join(text.splitlines()[2:-3])
+    csv_data = "\n".join(text.splitlines()[2:-2])
 
     df = pd.read_csv(
         filepath_or_buffer=io.StringIO(csv_data),
@@ -2706,7 +2706,8 @@ def parse_da_ex_rg(
     ).iloc[:-1]
     
     df.dropna(subset=['Region'], inplace=True)
-
+    df = df.reset_index(drop=True)
+    
     last_value = None
     filled_column = []
 
@@ -2954,8 +2955,15 @@ def parse_hwd_HIST(
         filepath_or_buffer=io.StringIO(csv_data),
     )
 
+    df.rename(
+        columns={
+            "Market Day	": "Market Day",
+        }, 
+        inplace=True,
+    )
+
     df[["Hour Ending"]] = df[["Hour Ending"]].astype("Int64")
-    df[["Market Day	"]] = df[["Market Day	"]].apply(pd.to_datetime, format="%m/%d/%Y")
+    df[["Market Day"]] = df[["Market Day"]].apply(pd.to_datetime, format="%m/%d/%Y")
     df[["MWh"]] = df[["MWh"]].astype("Float64")
 
     return df
