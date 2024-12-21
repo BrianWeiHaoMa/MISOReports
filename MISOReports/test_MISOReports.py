@@ -19,27 +19,46 @@ from MISOReports.parsers import (
 )
 
 
+"""
+The main tests for MISOReports. Most of the tests are for ensuring
+that the column names and column types of the dfs have their respective
+expected values. There are currently no tests against the actual 
+source values of the reports.
+"""
+
+
 def try_to_get_dfs(
         report_name: str, 
         datetime_increment_limit: int,
         number_of_dfs_to_stop_at: int,
 ) -> tuple[list[pd.DataFrame], list[datetime.datetime]]:
-    """Tries to get the df for the report_name and returns it with its respective
-    target datetime. If a request fails, it will increment the datetime and try 
-    again up to datetime_increment_limit times.
+    """Tries to get the df for report_name and returns 
+    it with its respective target datetime. If a request 
+    fails, it will increment the datetime and try again 
+    up to datetime_increment_limit times. The starting
+    datetime used is the example_datetime for the report.
+    If not a single df is successfully returned after
+    datetime_increment_limit increments, a ValueError is
+    raised.
 
-    :param str report_name: The name of the report to get the df for.
-    :param int datetime_increment_limit: The number of times to try to get the df before raising an error.
-    :param int number_of_dfs_to_stop_at: The number of successfully downloaded dfs to stop at.
-    :return tuple[list[pd.DataFrame], list[datetime.datetime]]: The dfs and the target dates they were downloaded for.
+    :param str report_name: The name of the report to get 
+        the df for.
+    :param int datetime_increment_limit: The number of times
+        to try to get the df.
+    :param int number_of_dfs_to_stop_at: The number of
+        successfully downloaded dfs to stop at.
+    :return tuple[list[pd.DataFrame], list[datetime.datetime]]: 
+        The dfs and the target dates they were downloaded for.
     """
     report_mappings = MISOReports.report_mappings
     report = report_mappings[report_name]
 
-    increment_cnt = 0
-    curr_target_datetime = report.example_datetime
     dfs = []
     target_datetimes = []
+    
+    increment_cnt = 0
+    curr_target_datetime = report.example_datetime
+    url_builder = report.url_builder
     while increment_cnt <= datetime_increment_limit:
         try:
             df = MISOReports.get_df(
@@ -54,13 +73,13 @@ def try_to_get_dfs(
             if len(dfs) >= number_of_dfs_to_stop_at:
                 break
 
-            curr_target_datetime = report.url_builder.add_to_datetime(
+            curr_target_datetime = url_builder.add_to_datetime(
                 ddatetime=curr_target_datetime, 
                 direction=1,
             )
             increment_cnt += 1
         except requests.HTTPError as e:
-            curr_target_datetime = report.url_builder.add_to_datetime(
+            curr_target_datetime = url_builder.add_to_datetime(
                 ddatetime=curr_target_datetime, 
                 direction=1,
             )
@@ -68,9 +87,17 @@ def try_to_get_dfs(
     
     if increment_cnt > datetime_increment_limit:
         if len(dfs) == 0:
-            raise ValueError(f"Failed to get a df after {datetime_increment_limit} datetime increments (last target datetime tried: {curr_target_datetime}).")
+            raise ValueError(
+                f"Failed to get a df after {datetime_increment_limit} "
+                + f"datetime increments (last target datetime tried: "
+                + f"{curr_target_datetime})."
+            )
         else:
-            warnings.warn(f"Only got {len(dfs)}/{number_of_dfs_to_stop_at} dfs after {datetime_increment_limit} attempts (last target datetime tried: {curr_target_datetime}).")
+            warnings.warn(
+                f"Only got {len(dfs)}/{number_of_dfs_to_stop_at} dfs "
+                + f"after {datetime_increment_limit} attempts (last target "
+                + f"datetime tried: {curr_target_datetime})."
+            )
     
     return dfs, target_datetimes
 
@@ -83,9 +110,12 @@ def uses_correct_dtypes(
     """Checks if the columns in the df have the correct dtypes.
 
     :param pd.DataFrame df: The df to check the dtypes of.
-    :param list[str] columns: The columns to check the dtypes of.
-    :param Callable[[object], bool] dtype_checker: The function to check the dtypes with.
-    :return bool: True if the columns have the correct dtypes, False otherwise.
+    :param list[str] columns: The columns to check the dtypes of
+        in the df.
+    :param Callable[[object], bool] dtype_checker: The function
+        to check the dtypes with.
+    :return bool: True if the columns have the correct dtypes, 
+        False otherwise.
     """
     for column in columns:
         if not dtype_checker(df[column]):
@@ -96,6 +126,8 @@ def uses_correct_dtypes(
 
 @pytest.fixture
 def get_df_test_names():
+    """Returns the names of the reports to test get_df for.
+    """
     single_df_tests = [v[0] for v in single_df_test_list]
     multiple_dfs_tests = [v[0] for v in multiple_dfs_test_list]
     nsi_tests = nsi_test_list
@@ -119,6 +151,25 @@ def datetime_increment_limit(request):
 @pytest.fixture
 def number_of_dfs_to_stop_at(request):
     return request.config.getoption("--number-of-dfs-to-stop-at")
+
+
+def test_MISOMarketReports_report_example_url_matches_example_datetime():
+    report_mappings = MISOReports.report_mappings
+    for report_name, report in report_mappings.items():
+        if type(report.url_builder) is not MISOMarketReportsURLBuilder:
+            continue
+
+        url_builder = report.url_builder
+        example_datetime = report.example_datetime
+        example_url = report.example_url
+
+        generated_url = url_builder.build_url(
+            ddatetime=example_datetime,
+            file_extension=report.type_to_parse,
+        )
+
+        assert generated_url == example_url, \
+            f"{report_name}: {generated_url} != {example_url}"
 
 
 def test_MISOMarketReportsURLBuilder_add_to_datetime_has_an_increment_mapping_for_all_url_generators():
@@ -1456,6 +1507,10 @@ multiple_dfs_test_list = [
                 ("DA VLR RSG MWP", "RT VLR RSG MWP", "DA+RT Total",): pd.api.types.is_float_dtype,
                 ("Constraint",): pd.api.types.is_string_dtype,
             },
+            "North": {
+                ("DA VLR RSG MWP", "RT VLR RSG MWP", "DA+RT Total",): pd.api.types.is_float_dtype,
+                ("Constraint",): pd.api.types.is_string_dtype,
+            },
             "South": {
                 ("DA VLR RSG MWP", "RT VLR RSG MWP", "DA+RT Total",): pd.api.types.is_float_dtype,
                 ("Constraint",): pd.api.types.is_string_dtype,
@@ -1984,7 +2039,7 @@ def test_MISOMarketReports_add_to_datetime(
     )
 
     assert new_datetime == expected, f"Expected {expected}, got {new_datetime}."
-    
+
 
 nsi_test_list = [
     "nsi1",

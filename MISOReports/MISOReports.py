@@ -20,8 +20,10 @@ class Data:
     ):
         """Constructor for Data class.
 
-        :param pd.DataFrame df: The tabular data from the report.
-        :param requests.Response response: The response from the download.
+        :param pd.DataFrame df: The tabular data from
+            the report.
+        :param requests.Response response: The response 
+            from the download.
         """
         self.df = df
         self.response = response
@@ -41,9 +43,12 @@ class URLBuilder(ABC):
     ):
         """Constructor for URLBuilder class.
 
-        :param str target: A string to be used in the URL to identify the report.
-        :param list[str] supported_extensions: The different file types available for download.
-        :param str | None default_extension: The default file type to download, defaults to None
+        :param str target: A string to be used in
+            the URL to identify the report.
+        :param list[str] supported_extensions: The 
+            different file types available for download.
+        :param str | None default_extension: The default 
+            file type to download, defaults to None
         """
         self.target = target
         self.supported_extensions = supported_extensions
@@ -57,8 +62,10 @@ class URLBuilder(ABC):
     ) -> str:
         """Builds the URL to download from.
 
-        :param str | None file_extension: The file type to download. If None, the default extension is used.
-        :param datetime.datetime | None ddatetime: The datetime to download the report for.
+        :param str | None file_extension: The file type 
+            to download. If None, the default extension is used.
+        :param datetime.datetime | None ddatetime: The datetime 
+            to download the report for.
         :return str: A URL to download the report from.
         """
         pass
@@ -67,14 +74,18 @@ class URLBuilder(ABC):
             self,
             file_extension: str | None,
     ) -> str:
-        """Checks the file extension and returns it if it is supported.
+        """Checks the file extension and returns it if it
+        is supported.
 
-        :param str | None file_extension: The file extension to check. If None, the default extension is used.
+        :param str | None file_extension: The file extension
+            to check. If None, the default extension is used.
         :return str: The file extension if it is supported.
         """
         if file_extension is None:
             if self.default_extension is None:
-                raise ValueError("No file extension provided and no default extension set.")
+                raise ValueError(
+                    "No file extension provided and no default extension set."
+                )
 
             file_extension = self.default_extension
 
@@ -88,11 +99,13 @@ class URLBuilder(ABC):
             ddatetime: datetime.datetime | None,
             direction: int,
     ) -> datetime.datetime | None:
-        """Changes the datetime by one unit in the direction specified according to URL generator if this
-        URL builder uses it, otherwise leaves it unchanged.
+        """Changes the datetime by one unit in the direction specified
+        according to URL generator if this URL builder uses it, otherwise 
+        leaves it unchanged.
 
         :param datetime.datetime | None ddatetime: The datetime to change.
-        :param int direction: The multiple for the increment (negative for backwards increment).
+        :param int direction: The multiple for the increment (negative
+            for backwards increment).
         :return datetime.datetime: The new datetime.
         """
         return ddatetime
@@ -119,7 +132,6 @@ class MISORTWDDataBrokerURLBuilder(URLBuilder):
             ddatetime: datetime.datetime | None = None,
     ) -> str:
         file_extension = self._build_url_extension_check(file_extension)
-        
         res = self._format_url.replace(URLBuilder.extension_placeholder, file_extension)
         return res
 
@@ -145,7 +157,6 @@ class MISORTWDBIReporterURLBuilder(URLBuilder):
             ddatetime: datetime.datetime | None = None,
     ) -> str:
         file_extension = self._build_url_extension_check(file_extension)
-        
         res = self._format_url.replace(URLBuilder.extension_placeholder, file_extension)
         return res
     
@@ -161,9 +172,12 @@ class MISOMarketReportsURLBuilder(URLBuilder):
         """Constructor for MISOMarketReportsURLBuilder class.
 
         :param str target: The target of the URL.
-        :param list[str] supported_extensions: The supported extensions for the URL.
-        :param Callable[[datetime.datetime  |  None, str], str] url_generator: The function to generate the URL.
-        :param str | None default_extension: The default file type to download, defaults to None
+        :param list[str] supported_extensions: The supported 
+            extensions for the URL.
+        :param Callable[[datetime.datetime  |  None, str], str] url_generator: 
+            The function to generate the URL.
+        :param str | None default_extension: 
+            The default file type to download, defaults to None
         """
         super().__init__(
             target=target, 
@@ -194,7 +208,8 @@ class MISOMarketReportsURLBuilder(URLBuilder):
         in the direction specified.
 
         :param datetime.datetime | None ddatetime: The datetime to change.
-        :param int direction: The multiple for the increment (negative for backwards increment).
+        :param int direction: The multiple for the increment (negative 
+            for backwards increment).
         :return datetime.datetime: The new datetime.
         """
         default_increment_mappings: dict[Callable[[datetime.datetime | None, str], str], relativedelta] = {
@@ -214,7 +229,7 @@ class MISOMarketReportsURLBuilder(URLBuilder):
         self.increment_mappings.update(default_increment_mappings)
 
         if self.url_generator not in self.increment_mappings.keys():
-            raise ValueError("This URL generator has no mapped increment.")    
+            raise ValueError("This URL generator has no mapped increment.")
 
         if ddatetime is None:
             return None
@@ -360,11 +375,15 @@ class Report:
     ):
         """Constructor for Report class.
 
-        :param URLBuilder url_builder: The URL builder to be used for the report.
-        :param str type_to_parse: The type of the file to pass as input into the parser.
-        :param Callable[[requests.Response], pd.DataFrame] parser: The parser for the report.
+        :param URLBuilder url_builder: The URL builder to be 
+            used for the report.
+        :param str type_to_parse: The type of the file to pass 
+            as input into the parser.
+        :param Callable[[requests.Response], pd.DataFrame] parser: 
+            The parser for the report.
         :param str example_url: An example URL for the report.
-        :param datetime.datetime | None example_datetime: An example datetime for the report (this should match the example_url).
+        :param datetime.datetime | None example_datetime: An example 
+            datetime for the report (this should match the example_url).
         """
         self.url_builder = url_builder
         self.type_to_parse = type_to_parse
@@ -386,7 +405,8 @@ class MISOReports:
 
         :param str report_name: The name of the report.
         :param str file_extension: The type of file to download.
-        :param datetime.datetime | None ddatetime: The date of the report, defaults to None
+        :param datetime.datetime | None ddatetime: The date 
+            of the report, defaults to None
         :return str: The URL to download the report from.
         """
         if report_name not in MISOReports.report_mappings:
@@ -412,7 +432,8 @@ class MISOReports:
 
         :param str report_name: The name of the report.
         :param str file_extension: The type of file to download.
-        :param datetime.datetime | None ddatetime: The date of the report, defaults to None
+        :param datetime.datetime | None ddatetime: The date of the report, 
+            defaults to None
         :param int | None timeout: The timeout for the request, defaults to None
         :return requests.Response: The response object for the request.
         """
@@ -437,7 +458,8 @@ class MISOReports:
         """Helper function to get the response in the report download.
 
         :param str url: The URL to download the report from.
-        :param int | None timeout: The timeout limit for the request, defaults to None
+        :param int | None timeout: The timeout limit for the request, 
+            defaults to None
         :return requests.Response: The response object for the request.
         """
         res = requests.get(
@@ -460,7 +482,8 @@ class MISOReports:
 
         :param str report_name: The name of the report.
         :param str | None url: A url to download directly from, defaults to None
-        :param datetime.datetime | None ddatetime: The date of the report, defaults to None
+        :param datetime.datetime | None ddatetime: The date of the report, 
+            defaults to None
         :param int | None timeout: The timeout for the request, defaults to None
         :return pd.DataFrame: A DataFrame containing the data of the report.
         """
@@ -484,7 +507,8 @@ class MISOReports:
 
         :param str report_name: The name of the report.
         :param str | None url: The url to download from, defaults to None
-        :param datetime.datetime | None ddatetime: The target datetime to download the report for, defaults to None
+        :param datetime.datetime | None ddatetime: The target datetime to 
+            download the report for, defaults to None
         :param int | None timeout: The timeout for the request, defaults to None
         :return Data: An object containing the DataFrame and the response.
         """
@@ -518,12 +542,14 @@ class MISOReports:
             ddatetime: datetime.datetime | None,
             direction: int,
     ) -> datetime.datetime | None:
-        """Changes the datetime by one unit in the direction specified according to the report 
-        if this report allows for target dates, otherwise leaves it unchanged.
+        """Changes the datetime by one unit in the direction 
+        specified according to the report if this report allows for 
+        target dates, otherwise leaves it unchanged.
 
         :param str report_name: The name of the report.
         :param datetime.datetime | None ddatetime: The datetime to add to.
-        :param int direction: The multiple for the increment (negative for backwards increment).
+        :param int direction: The multiple for the increment (negative 
+            for backwards increment).
         :return datetime.datetime: The new datetime.
         """
         if report_name not in MISOReports.report_mappings:
@@ -640,7 +666,7 @@ class MISOReports:
             ),
             type_to_parse="xls",
             parser=parsers.parse_da_bc,
-            example_url="https://docs.misoenergy.org/marketreports/20220101_da_bc.xls",
+            example_url="https://docs.misoenergy.org/marketreports/20240101_da_bc.xls",
             example_datetime=datetime.datetime(year=2024, month=1, day=1),
         ),
 
@@ -774,7 +800,7 @@ class MISOReports:
             example_datetime=datetime.datetime(year=2022, month=1, day=1),
         ),
 
-        "ms_vlr_srw": Report( # TODO need to update because rows change and so second df gets moved down.
+        "ms_vlr_srw": Report( # Checked 2024-12-21
             url_builder=MISOMarketReportsURLBuilder(
                 target="ms_vlr_srw",
                 supported_extensions=["xlsx"],
@@ -1082,7 +1108,7 @@ class MISOReports:
             url_builder=MISOMarketReportsURLBuilder(
                 target="DA_LMPs",
                 supported_extensions=["zip"],
-                url_generator=MISOMarketReportsURLBuilder.url_generator_YYYY_current_month_name_to_two_months_later_name_first,
+                url_generator=MISOMarketReportsURLBuilder.url_generator_YYYY_underscore_current_month_name_to_two_months_later_name_first,
                 default_extension="zip",
             ),
             type_to_parse="zip",
@@ -1395,7 +1421,7 @@ class MISOReports:
             example_datetime=datetime.datetime(year=2024, month=4, day=1),
         ),
 
-        "ftr_annual_results_round_1": Report(  # TODO review reworked implementation.
+        "ftr_annual_results_round_1": Report( # Checked 2024-12-21.
             url_builder=MISOMarketReportsURLBuilder(
                 target="ftr_annual_results_round_1",
                 supported_extensions=["zip"],
@@ -1408,7 +1434,7 @@ class MISOReports:
             example_datetime=datetime.datetime(year=2022, month=4, day=1),
         ),
 
-        "ftr_annual_results_round_2": Report(  # TODO review reworked implementation.
+        "ftr_annual_results_round_2": Report( # Checked 2024-12-21.
             url_builder=MISOMarketReportsURLBuilder(
                 target="ftr_annual_results_round_2",
                 supported_extensions=["zip"],
@@ -1421,7 +1447,7 @@ class MISOReports:
             example_datetime=datetime.datetime(year=2022, month=1, day=1),
         ),
 
-        "ftr_annual_results_round_3": Report(  # TODO review reworked implementation.
+        "ftr_annual_results_round_3": Report( # Checked 2024-12-21.
             url_builder=MISOMarketReportsURLBuilder(
                 target="ftr_annual_results_round_3",
                 supported_extensions=["zip"],
@@ -1434,7 +1460,7 @@ class MISOReports:
             example_datetime=datetime.datetime(year=2022, month=1, day=1),
         ),
 
-        "ftr_annual_bids_offers": Report(  # TODO review reworked implementation.
+        "ftr_annual_bids_offers": Report( # Checked 2024-12-21.
             url_builder=MISOMarketReportsURLBuilder(
                 target="ftr_annual_bids_offers",
                 supported_extensions=["zip"],
@@ -1447,7 +1473,7 @@ class MISOReports:
             example_datetime=datetime.datetime(year=2024, month=1, day=1),
         ),
 
-        "ftr_mpma_results": Report(  # TODO review reworked implementation.
+        "ftr_mpma_results": Report( # Checked 2024-12-21
             url_builder=MISOMarketReportsURLBuilder(
                 target="ftr_mpma_results",
                 supported_extensions=["zip"],
@@ -1782,7 +1808,7 @@ class MISOReports:
             ),
             type_to_parse="zip",
             parser=parsers.parse_da_co,
-            example_url="https://docs.misoenergy.org/marketreports/20240501_da_rpe.xls",
+            example_url="https://docs.misoenergy.org/marketreports/20240501_da_co.zip",
             example_datetime=datetime.datetime(year=2024, month=5, day=1),
         ),
 

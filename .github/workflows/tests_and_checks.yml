@@ -21,7 +21,7 @@ jobs:
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi  
       - name: Test with pytest  
         run: |  
-          coverage run -m pytest --datetime-increments-limit=150 -m "not completion"  
+          coverage run -m pytest --datetime-increments-limit=150 --number-of-dfs-to-stop-at=15 -m "not completion"  
       - name: Generate coverage report  
         run: |  
           coverage report -m

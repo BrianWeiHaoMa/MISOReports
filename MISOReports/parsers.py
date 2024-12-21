@@ -1,3 +1,4 @@
+import warnings
 import os
 import datetime
 from collections import defaultdict
@@ -537,40 +538,61 @@ def parse_Total_Uplift_by_Resource(
 def parse_ms_vlr_srw(
         res: requests.Response,
 ) -> pd.DataFrame:
-    float_columns = ["DA VLR RSG MWP", "RT VLR RSG MWP", "DA+RT Total"]
-    string_columns = ["Constraint"]
-    column_names = string_columns + float_columns
-
-    df1 = pd.read_excel(
-        io=io.BytesIO(res.content),
-        skiprows=7,
-        nrows=3,
-        usecols=column_names,
+    warnings.warn(
+        "This report is unpredictable in the number of tables " +
+        "it contains and the number of rows in each table. " +
+        "This parser may break in the next report."
     )
-    df1[float_columns] = df1[float_columns].astype("Float64")
-    df1[string_columns] = df1[string_columns].astype("string")
 
-    df2 = pd.read_excel(
-        io=io.BytesIO(res.content),
-        skiprows=23,
-        nrows=5,
-        usecols=column_names,
+    def get_single_table(
+            res: requests.Response,
+            skiprows: int,
+    ) -> pd.DataFrame:
+        float_columns = ["DA VLR RSG MWP", "RT VLR RSG MWP", "DA+RT Total"]
+        string_columns = ["Constraint"]
+        column_names = string_columns + float_columns
+
+        # The number of rows in each table can change.
+        # The tables end on the row where the "Constraint" column is "Total".
+        df0 = pd.read_excel(
+            io=io.BytesIO(res.content),
+            skiprows=skiprows,
+            usecols=column_names,
+        )
+
+        df0_constraint = df0[df0["Constraint"] == "Total"]
+        first_total_idx = df0_constraint.index.min()
+
+        res = df0.iloc[:first_total_idx + 1, :].copy()
+
+        res[float_columns] = res[float_columns].astype("Float64")
+        res[string_columns] = res[string_columns].astype("string")
+
+        return res
+
+    df1 = get_single_table(res=res, skiprows=7)
+    
+    df2 = get_single_table(res=res, skiprows=7 + df1.shape[0] + 5)
+    
+    df3 = get_single_table(
+        res=res, 
+        skiprows=7 + df1.shape[0] + 5 + df2.shape[0] + 5,
     )
-    df2[float_columns] = df2[float_columns].astype("Float64")
-    df2[string_columns] = df2[string_columns].astype("string")
 
-    df = pd.DataFrame({
+    res = pd.DataFrame({
         MULTI_DF_NAMES_COLUMN: [
                 "Central",
+                "North",
                 "South",
         ], 
         MULTI_DF_DFS_COLUMN: [
                 df1, 
                 df2, 
+                df3,
         ],
     })
 
-    return df
+    return res
 
 
 def parse_ms_rsg_srw(
@@ -1247,14 +1269,18 @@ def parse_DA_LMPs(
     with zipfile.ZipFile(file=io.BytesIO(res.content)) as z:
         text = z.read(z.namelist()[0]).decode("utf-8")
 
-    csv_data = "\n".join(text.splitlines()[1:])
+    csv_data = "\n".join(text.lstrip().splitlines())
 
     df = pd.read_csv(
         filepath_or_buffer=io.StringIO(csv_data),
     )
 
     df[["MARKET_DAY"]] = df[["MARKET_DAY"]].apply(pd.to_datetime, format="%m/%d/%Y")
-    df[["HE1", "HE2", "HE3", "HE4", "HE5", "HE6", "HE7", "HE8", "HE9", "HE10", "HE11", "HE12", "HE13", "HE14", "HE15", "HE16", "HE17", "HE18", "HE19", "HE20", "HE21", "HE22", "HE23", "HE24"]] = df[["HE1", "HE2", "HE3", "HE4", "HE5", "HE6", "HE7", "HE8", "HE9", "HE10", "HE11", "HE12", "HE13", "HE14", "HE15", "HE16", "HE17", "HE18", "HE19", "HE20", "HE21", "HE22", "HE23", "HE24"]].astype("Float64")
+
+    float_columns = ["HE1", "HE2", "HE3", "HE4", "HE5", "HE6", "HE7", "HE8", "HE9", "HE10", "HE11", "HE12", "HE13", "HE14", "HE15", "HE16", "HE17", "HE18", "HE19", "HE20", "HE21", "HE22", "HE23", "HE24"]
+    df[float_columns] = df[float_columns].astype("string")
+    df[float_columns] = df[float_columns].apply(lambda x: x.str.replace(',', ''))
+    df[float_columns] = df[float_columns].astype("Float64")
     df[["NODE", "TYPE", "VALUE"]] = df[["NODE", "TYPE", "VALUE"]].astype("string")
 
     return df
