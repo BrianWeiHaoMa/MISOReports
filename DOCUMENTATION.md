@@ -19,7 +19,7 @@ This is the documentation for MISOReports.
         - [Real-Time](#real-time)
         - [Resource Adequacy](#resource-adequacy)
         - [Summary](#summary)
-- [Useful Tricks](#useful-tricks)
+ - [Disclaimer](#disclaimer)
 
 ## Data Types
 All dataframe columns are categorized into one of the following data types:
@@ -248,21 +248,18 @@ def parse_datetime_from_text(text: str):
 # Report link: https://api.misoenergy.org/MISORTWDDataBroker/DataBrokerServices.asmx?messageType=getNAI&returnType=csv.
 report_name = "NAI"
 
-# Download the raw data to get the datetime.
-res = MISOReports.get_response(
+# Download the relevant data.
+data = MISOReports.get_data(
     report_name=report_name,
     file_extension="csv",
 )
+text = data.response.text
+df = data.df
 
 print("Raw data:")
-print(res.text)
+print(text)
 
-# Download the dataframe.
-df = MISOReports.get_df(
-    report_name=report_name,
-)
-
-df["datetime"] = parse_datetime_from_text(res.text)
+df["datetime"] = parse_datetime_from_text(text)
 
 print("Final dataframe:")
 print(df)
@@ -271,12 +268,19 @@ print(df)
 Executing the above gives:
 ```
 Raw data:
-RefId,21-Nov-2024 - Interval 20:50 EST
+RefId,22-Dec-2024 - Interval 17:30 EST
 
 Name,Value
-MISO,-32.77
+MISO,2247.37
 
 Final dataframe:
-   Name  Value            datetime
-0  MISO -32.77 2024-11-21 20:50:00
+   Name    Value            datetime
+0  MISO  2247.37 2024-12-22 17:30:00
 ```
+
+## Disclaimer
+MISO might make changes to the structure of their reports in the future and this could lead to the current parsers breaking.
+It is reasonable to say that the majority of the reports supported by this library do not change very frequently
+but if you want to make sure that the parsers are updated as quickly as possible, we suggest cloning the repository
+and maintaining the parsers yourself. This way, you can leverage the rest of the library, while ensuring that the parsers
+stay updated.

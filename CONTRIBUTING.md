@@ -21,7 +21,7 @@ If you encounter any bugs, please let us know! To make your bug report as effect
 - Steps to reproduce the bug
 - The expected vs. actual behavior
 - Screenshots, error messages, or code snippets if applicable
-- Environment details (e.g., operating system, browser, version)
+- Environment details
 
 You can report bugs by [opening an issue](https://github.com/BrianWeiHaoMa/MISOReports/issues/new?template=bug_report.md). We’ll do our best to address them as soon as possible
 

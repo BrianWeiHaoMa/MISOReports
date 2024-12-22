@@ -502,6 +502,7 @@ class MISOReports:
             url: str | None = None,
             ddatetime: datetime.datetime | None = None,
             timeout: int | None = None,
+            file_extension: str | None = None,
     ) -> Data:
         """Gets the relevant data for the report.
 
@@ -510,6 +511,8 @@ class MISOReports:
         :param datetime.datetime | None ddatetime: The target datetime to 
             download the report for, defaults to None
         :param int | None timeout: The timeout for the request, defaults to None
+        :param str | None file_extension: The file extension to download, defaults 
+            to None in which case the default file extension is used.
         :return Data: An object containing the DataFrame and the response.
         """
         report = MISOReports.report_mappings[report_name]
@@ -522,7 +525,7 @@ class MISOReports:
         else:
             response = MISOReports.get_response(
                 report_name=report_name, 
-                file_extension=report.type_to_parse, 
+                file_extension=file_extension, 
                 ddatetime=ddatetime,
                 timeout=timeout,
             )

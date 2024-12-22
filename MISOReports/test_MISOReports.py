@@ -84,6 +84,11 @@ def try_to_get_dfs(
                 direction=1,
             )
             increment_cnt += 1
+        except Exception as e:
+            raise Exception(
+                f"Unexpected exception for {report_name} at "
+                + f"{curr_target_datetime}: {e}"
+            )
     
     if increment_cnt > datetime_increment_limit:
         if len(dfs) == 0:

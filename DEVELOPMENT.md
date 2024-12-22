@@ -1,24 +1,6 @@
 # Development
 Here you can find the general guidelines for the development of MISOReports.
 
-## Github Workflow
-Before commiting or pushing to github, remember to run these in the terminal and make sure everything passes:
-
-For running all tests:
-```
-pytest 
-```
-
-If you want to skip the completion and long tests:
-```
-pytest -m "not completion and not long"
-```
-
-For checking type annotations:
-```
-mypy --strict .\MISOReports\MISOReports.py 
-```
-
 ## Coding Style
 * We are using the vscode extension, autoDocstring's, one-line-sphinx documentation template.
 * Try to keep the style the same as the code that was previously there in all respects (naming schemes, character length per line, etc.) 
@@ -26,7 +8,7 @@ mypy --strict .\MISOReports\MISOReports.py
 
 ## Reports to Pandas Dataframe Mapping Logic
 Remember to make a parsing function in parsers.py and make a new Report entry in MISOReports.report_mappings.
-As well, make sure to add the report's test in single_df_test_list or multiple_dfs_test_list in test_MISOReports.py.
+As well, make sure to add the report's get_df test in test_MISOReports.py.
 Continue to use the same naming scheme as the previous code.
 
 When in doubt, check the entries for previously completed reports.
@@ -37,7 +19,7 @@ Map every single column type to one of the below data pandas types:
 * **Float64** ex. 34.13.
 * **Int64** ex. 34.
 
-When looking at the report, use this checklist:
+When typing Dataframe columns, use this checklist:
 * Ignore null/empty values when deciding with the below guidelines.
 * If there is any string (ex. names, codes, etc.) in the column, the column type should be **string**.
 * Otherwise if the column is clearly meant to portray datetime/date/time, the column type should be **datetime64[ns]**.
@@ -49,7 +31,7 @@ When looking at the report, use this checklist:
 csv
 ```python
 def parse_rt_lmp_prelim(
-    res: requests.Response,
+        res: requests.Response,
 ) -> pd.DataFrame:
     text = res.text
     csv_data = "\n".join(text.splitlines()[4:])
@@ -67,7 +49,7 @@ def parse_rt_lmp_prelim(
 json
 ```python
 def parse_SolarForecast(
-    res: requests.Response,
+        res: requests.Response,
 ) -> pd.DataFrame:
     text = res.text
     dictionary = json.loads(text)
@@ -86,19 +68,23 @@ def parse_SolarForecast(
 zip with a csv file in the extracted folder
 ```python
 def parse_DA_LMPs(
-    res: requests.Response,
+        res: requests.Response,
 ) -> pd.DataFrame:
     with zipfile.ZipFile(file=io.BytesIO(res.content)) as z:
         text = z.read(z.namelist()[0]).decode("utf-8")
 
-    csv_data = "\n".join(text.splitlines()[1:])
+    csv_data = "\n".join(text.lstrip().splitlines())
 
     df = pd.read_csv(
         filepath_or_buffer=io.StringIO(csv_data),
     )
 
     df[["MARKET_DAY"]] = df[["MARKET_DAY"]].apply(pd.to_datetime, format="%m/%d/%Y")
-    df[["HE1", "HE2", "HE3", "HE4", "HE5", "HE6", "HE7", "HE8", "HE9", "HE10", "HE11", "HE12", "HE13", "HE14", "HE15", "HE16", "HE17", "HE18", "HE19", "HE20", "HE21", "HE22", "HE23", "HE24"]] = df[["HE1", "HE2", "HE3", "HE4", "HE5", "HE6", "HE7", "HE8", "HE9", "HE10", "HE11", "HE12", "HE13", "HE14", "HE15", "HE16", "HE17", "HE18", "HE19", "HE20", "HE21", "HE22", "HE23", "HE24"]].astype("Float64")
+
+    float_columns = ["HE1", "HE2", "HE3", "HE4", "HE5", "HE6", "HE7", "HE8", "HE9", "HE10", "HE11", "HE12", "HE13", "HE14", "HE15", "HE16", "HE17", "HE18", "HE19", "HE20", "HE21", "HE22", "HE23", "HE24"]
+    df[float_columns] = df[float_columns].astype("string")
+    df[float_columns] = df[float_columns].apply(lambda x: x.str.replace(',', ''))
+    df[float_columns] = df[float_columns].astype("Float64")
     df[["NODE", "TYPE", "VALUE"]] = df[["NODE", "TYPE", "VALUE"]].astype("string")
 
     return df
@@ -107,7 +93,7 @@ def parse_DA_LMPs(
 excel
 ```python
 def parse_5min_exante_lmp(
-    res: requests.Response,
+        res: requests.Response,
 ) -> pd.DataFrame:
     df = pd.read_excel(
         io=io.BytesIO(res.content),

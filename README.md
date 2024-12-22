@@ -1,7 +1,7 @@
 # MISOReports
 A comprehensive Python library for downloading Midcontinent Independent System Operator (MISO) public reports into pandas dataframes. 
 
-As of 2024-11-21, MISOReports supports reports from 
+As of 2024-12-22, MISOReports supports reports from 
 [MISORTWDDataBroker](https://api.misoenergy.org/MISORTWDDataBroker/), [MISORTWDBIReporter](https://api.misoenergy.org/MISORTWDBIReporter/),
 and [MISO Market Reports](https://www.misoenergy.org/markets-and-operations/real-time--market-data/market-reports/), totalling to well over 120 different reports.
 
@@ -12,103 +12,14 @@ For documentation and information on currently supported reports, please check o
 
 ## Features
 MISOReports supports these features and more:
-- Downloading reports by date for reports that offer a date option
+- Downloading reports by datetime for reports that offer a datetime option
 - Downloading live reports for reports without a date option
 - Downloading raw report content in any of their supported formats (csv, xml, json, xls, xlsx, etc.)
 - Generating target URLs for the report of your choice
-- Thoroughly tested and well annotated functions and classes with >= 98% test coverage and a pass with mypy --strict 
-
-## Installation
-To install, use
-```
-pip install MISOReports
-```
 
 ## Examples
 
 ### Example 1:
-Download a single-table report from [MISORTWDDataBroker](https://api.misoenergy.org/MISORTWDDataBroker/).
-
-#### Input:
-```python
-from MISOReports.MISOReports import MISOReports
-
-# Single table reports will be stored
-# directly as the dataframe result.
-
-# Downloads the data offered at
-# https://api.misoenergy.org/MISORTWDDataBroker/DataBrokerServices.asmx?messageType=getlmpconsolidatedtable&returnType=csv.
-df = MISOReports.get_df(
-    report_name="lmpconsolidatedtable",
-)
-
-print(df)
-```
-
-#### Output:
-```
-               Name    LMP   MLC   MCC  REGMCP  REGMILEAGEMCP  SPINMCP  SUPPMCP  STRMCP  RCUPMCP  RCDOWNMCP  LMP.1  MLC.1  MCC.1  LMP.2  MLC.2  MCC.2  LMP.3  MLC.3  MCC.3
-0        EES.AXIALL  20.58 -0.56  0.00   13.55           0.75     2.72     0.01     0.0      0.0        0.0  20.37  -0.74   0.00  20.65  -0.35   0.52  20.65  -0.35   0.52
-1    EES.CALCAS1_CT  20.72 -0.42  0.00   13.55           0.75     2.72     0.01     0.0      0.0        0.0  20.51  -0.60   0.00  20.75  -0.25   0.52  20.75  -0.25   0.52
-2    EES.CALCAS2_CT  20.72 -0.42  0.00   13.55           0.75     2.72     0.01     0.0      0.0        0.0  20.51  -0.60   0.00  20.75  -0.25   0.52  20.75  -0.25   0.52
-3        EES.CARV_A  21.00 -0.14  0.00   13.55           0.75     2.72     0.01     0.0      0.0        0.0  20.77  -0.34   0.00  21.13   0.16   0.49  21.13   0.16   0.49
-4       EES.CARV_BC  21.00 -0.14  0.00   13.55           0.75     2.72     0.01     0.0      0.0        0.0  20.77  -0.34   0.00  21.13   0.16   0.49  21.13   0.16   0.49
-..              ...    ...   ...   ...     ...            ...      ...      ...     ...      ...        ...    ...    ...    ...    ...    ...    ...    ...    ...    ...
-322   EAI.WH_BLUFF2  20.64 -0.50  0.00   13.55           0.75     2.72     0.01     0.0      0.0        0.0  20.53  -0.58   0.00  19.90  -0.69   0.11  19.90  -0.69   0.11
-323             EDE  20.53 -0.59 -0.02    0.00           0.00     0.00     0.00     0.0      0.0        0.0  20.62  -0.44  -0.06  21.24  -0.93   1.69  21.24  -0.93   1.69
-324   EES.ACAD2_CT1  20.50 -0.64  0.00   13.55           0.75     2.72     0.01     0.0      0.0        0.0  20.26  -0.85   0.00  20.58  -0.41   0.51  20.58  -0.41   0.51
-325   EES.ACAD2_CT2  20.50 -0.64  0.00   13.55           0.75     2.72     0.01     0.0      0.0        0.0  20.26  -0.85   0.00  20.58  -0.41   0.51  20.58  -0.41   0.51
-326    EES.ACAD2_ST  20.50 -0.64  0.00   13.55           0.75     2.72     0.01     0.0      0.0        0.0  20.26  -0.85   0.00  20.58  -0.41   0.51  20.58  -0.41   0.51
-
-[327 rows x 20 columns]
-```
-
-### Example 2:
-Download a multi-table report from [MISORTWDDataBroker](https://api.misoenergy.org/MISORTWDDataBroker/).
-
-#### Input:
-```python
-from MISOReports.MISOReports import MISOReports
-
-# Downloads the data offered at
-# https://api.misoenergy.org/MISORTWDDataBroker/DataBrokerServices.asmx?messageType=gettotalload&returnType=csv.
-df = MISOReports.get_df(
-    report_name="totalload",
-)
-
-# For multi-table reports, use a for-loop
-# to iterate across the tables.
-for i, table_name in enumerate(df["table_names"]):
-    print(table_name)
-    print(df["dataframes"].iloc[i].head(3))
-    print()
-    print()
-```
-
-#### Output:
-```
-ClearedMW
-   Load_Hour  Load_Value
-0          1     65871.0
-1          2     65521.0
-2          3     64474.0
-
-
-MediumTermLoadForecast
-   Hour_End  Load_Forecast
-0         1        68614.0
-1         2        66566.0
-2         3        66620.0
-
-
-FiveMinTotalLoad
-            Load_Time  Load_Value
-0 1900-01-01 00:00:00     68899.0
-1 1900-01-01 00:05:00     68690.0
-2 1900-01-01 00:10:00     68327.0
-```
-
-### Example 3:
 Download a single-table report with datetime option from [MISO Market Reports](https://www.misoenergy.org/markets-and-operations/real-time--market-data/market-reports/).
 
 #### Input:
@@ -157,8 +68,93 @@ print(df)
 [24 rows x 17 columns]
 ```
 
+### Example 2:
+Download a multi-table report from [MISORTWDDataBroker](https://api.misoenergy.org/MISORTWDDataBroker/).
+
+#### Input:
+```python
+from MISOReports.MISOReports import MISOReports
+
+# Downloads the data offered at
+# https://api.misoenergy.org/MISORTWDDataBroker/DataBrokerServices.asmx?messageType=gettotalload&returnType=csv.
+df = MISOReports.get_df(
+    report_name="totalload",
+)
+
+# For multi-table reports, use a for-loop
+# to iterate across the tables.
+for i, table_name in enumerate(df["table_names"]):
+    print(table_name)
+    print(df["dataframes"].iloc[i].head(3))
+    print()
+    print()
+```
+
+#### Output:
+```
+ClearedMW
+   Load_Hour  Load_Value
+0          1     65871.0
+1          2     65521.0
+2          3     64474.0
+
+
+MediumTermLoadForecast
+   Hour_End  Load_Forecast
+0         1        68614.0
+1         2        66566.0
+2         3        66620.0
+
+
+FiveMinTotalLoad
+            Load_Time  Load_Value
+0 1900-01-01 00:00:00     68899.0
+1 1900-01-01 00:05:00     68690.0
+2 1900-01-01 00:10:00     68327.0
+```
+
+### Example 3:
+Download a multi-table report from [MISORTWDDataBroker](https://api.misoenergy.org/MISORTWDDataBroker/).
+
+#### Input:
+```python
+from MISOReports.MISOReports import MISOReports
+
+# Downloads the data offered at
+# https://api.misoenergy.org/MISORTWDDataBroker/DataBrokerServices.asmx?messageType=getlmpconsolidatedtable&returnType=csv.
+df = MISOReports.get_df(
+    report_name="lmpconsolidatedtable",
+)
+
+# For multi-table reports, use a for-loop
+# to iterate across the tables.
+for i, table_name in enumerate(df["table_names"]):
+    print(table_name)
+    print(df["dataframes"].iloc[i].head(3))
+    print()
+    print()
+```
+
+#### Output:
+```
+Metadata
+                  Type              Timing
+0           FiveMinLMP 1900-01-01 16:45:00
+1  HourlyIntegratedLmp 1900-01-01 16:00:00
+2    DayAheadExAnteLmp 1900-01-01 17:00:00
+
+
+Data
+            Name  LMP - FiveMinLMP  MLC - FiveMinLMP  MCC - FiveMinLMP  REGMCP - FiveMinLMP  ...  MLC - DayAheadExAnteLmp  MCC - DayAheadExAnteLmp  LMP - DayAheadExPostLmp  MLC - DayAheadExPostLmp  MCC - DayAheadExPostLmp
+1  EES.PERVL2_CT             17.49             -1.69            -12.64                 15.0  ...                    -1.15                     -6.1                     21.0                    -1.15                     -6.1
+2      EES.RICE1             17.91             -1.25            -12.66                 15.0  ...                    -0.06                    -6.21                    21.98                    -0.06                    -6.21
+3   EES.RVRBEND1             18.42             -0.98            -12.42                 15.0  ...                    -0.38                    -5.83                    22.04                    -0.38                    -5.83
+
+[3 rows x 20 columns]
+```
+
 ### Example 4:
-Download the raw, unparsed data of a report from [MISO Market Reports](https://www.misoenergy.org/markets-and-operations/real-time--market-data/market-reports/).
+Download a single-table report along with its text content from [MISO Market Reports](https://www.misoenergy.org/markets-and-operations/real-time--market-data/market-reports/).
 
 #### Input:
 ```python
@@ -166,20 +162,31 @@ from MISOReports.MISOReports import MISOReports
 
 # Downloads the data offered at
 # https://api.misoenergy.org/MISORTWDDataBroker/DataBrokerServices.asmx?messageType=getNAI&returnType=csv.
-res = MISOReports.get_response(
+data = MISOReports.get_data(
     report_name="NAI",
     file_extension="csv",
 )
 
-print(res.text)
+print("Text Content:")
+print(data.response.text)
+print()
+
+print("Dataframe:")
+print(data.df)
 ```
 
 #### Output:
 ```
-RefId,17-Nov-2024 - Interval 15:50 EST
+Text Content:
+RefId,22-Dec-2024 - Interval 16:40 EST
 
 Name,Value
-MISO,-2494.86
+MISO,2212.89
+
+
+Dataframe:
+   Name    Value
+0  MISO  2212.89
 ```
 
 ### Example 5:
@@ -195,12 +202,12 @@ from MISOReports.MISOReports import MISOReports
 # Note: the above link's 304 represents
 # the number of days past the start of the year, 
 # 2024, which aligns with the ddatetime given below.
-df = MISOReports.get_df(
+data = MISOReports.get_data(
     report_name="MISOdaily",
     ddatetime=datetime.datetime(year=2024, month=10, day=30),
 )
 
-print(df)
+print(data.df)
 ```
 
 #### Output:
