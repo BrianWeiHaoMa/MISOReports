@@ -563,12 +563,12 @@ def parse_ms_vlr_srw(
         df0_constraint = df0[df0["Constraint"] == "Total"]
         first_total_idx = df0_constraint.index.min()
 
-        res = df0.iloc[:first_total_idx + 1, :].copy()
+        df = df0.iloc[:first_total_idx + 1, :].copy()
 
-        res[float_columns] = res[float_columns].astype("Float64")
-        res[string_columns] = res[string_columns].astype("string")
+        df[float_columns] = df[float_columns].astype("Float64")
+        df[string_columns] = df[string_columns].astype("string")
 
-        return res
+        return df
 
     df1 = get_single_table(res=res, skiprows=7)
     
@@ -579,7 +579,7 @@ def parse_ms_vlr_srw(
         skiprows=7 + df1.shape[0] + 5 + df2.shape[0] + 5,
     )
 
-    res = pd.DataFrame({
+    df = pd.DataFrame({
         MULTI_DF_NAMES_COLUMN: [
                 "Central",
                 "North",
@@ -592,7 +592,7 @@ def parse_ms_vlr_srw(
         ],
     })
 
-    return res
+    return df
 
 
 def parse_ms_rsg_srw(
