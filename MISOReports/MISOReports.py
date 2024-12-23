@@ -414,6 +414,9 @@ class MISOReports:
         
         report = MISOReports.report_mappings[report_name]
         
+        if file_extension is None:
+            file_extension = report.type_to_parse
+
         res = report.url_builder.build_url(
             file_extension=file_extension, 
             ddatetime=ddatetime,
@@ -1181,7 +1184,7 @@ class MISOReports:
             url_builder=MISORTWDDataBrokerURLBuilder(
                 target="getimporttotal5",
                 supported_extensions=["csv", "xml", "json"],
-                default_extension="csv",
+                default_extension="json",
             ),
             type_to_parse="json",
             parser=parsers.parse_importtotal5,
@@ -1524,8 +1527,8 @@ class MISOReports:
             ),
             type_to_parse="csv",
             parser=parsers.parse_asm_rtmcp_final,
-            example_url="https://docs.misoenergy.org/marketreports/20220101_asm_rtmcp_final.csv",
-            example_datetime=datetime.datetime(year=2022, month=1, day=1),
+            example_url="https://docs.misoenergy.org/marketreports/20230101_asm_rtmcp_final.csv",
+            example_datetime=datetime.datetime(year=2023, month=1, day=1),
         ),
 
         "asm_rtmcp_prelim": Report( # Checked 2024-11-29.
