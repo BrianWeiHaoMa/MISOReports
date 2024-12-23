@@ -69,6 +69,8 @@ def try_to_get_dfs(
             if not df.empty:
                 dfs.append(df)
                 target_datetimes.append(curr_target_datetime)
+                if curr_target_datetime is None:
+                    break
 
             if len(dfs) >= number_of_dfs_to_stop_at:
                 break
