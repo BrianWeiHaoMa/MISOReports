@@ -2048,8 +2048,8 @@ class MISOReports:
             ),
             type_to_parse="xlsx",
             parser=parsers.parse_mom,
-            example_url="https://docs.misoenergy.org/marketreports/20240901_mom.xlsx",
-            example_datetime=datetime.datetime(year=2024, month=9, day=1),
+            example_url="https://docs.misoenergy.org/marketreports/20241012_mom.xlsx",
+            example_datetime=datetime.datetime(year=2024, month=10, day=12),
         ),
 
         "sr_nd_is": Report( # Checked 2024-11-29.
