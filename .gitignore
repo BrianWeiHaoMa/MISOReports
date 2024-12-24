@@ -9,3 +9,4 @@ checker_output*
 /_scripts/
 /build/
 /dist/
+/*.egg-info/

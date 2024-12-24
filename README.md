@@ -17,12 +17,18 @@ MISOReports supports these features and more:
 - Downloading raw report content in any of their supported formats (csv, xml, json, xls, xlsx, etc.)
 - Generating target URLs for the report of your choice
 
+## Installation
+To install and use MISOReports, in the command line, run:
+```
+pip install MISOReports
+```
+
 ## Examples
 
 ### Example 1:
 Download a single-table report with datetime option from [MISO Market Reports](https://www.misoenergy.org/markets-and-operations/real-time--market-data/market-reports/).
 
-#### Input:
+#### Code:
 ```python
 import datetime
 from MISOReports.MISOReports import MISOReports
@@ -71,7 +77,7 @@ print(df)
 ### Example 2:
 Download a multi-table report from [MISORTWDDataBroker](https://api.misoenergy.org/MISORTWDDataBroker/).
 
-#### Input:
+#### Code:
 ```python
 from MISOReports.MISOReports import MISOReports
 
@@ -116,7 +122,7 @@ FiveMinTotalLoad
 ### Example 3:
 Download a multi-table report from [MISORTWDDataBroker](https://api.misoenergy.org/MISORTWDDataBroker/).
 
-#### Input:
+#### Code:
 ```python
 from MISOReports.MISOReports import MISOReports
 
@@ -156,7 +162,7 @@ Data
 ### Example 4:
 Download a single-table report along with its text content from [MISO Market Reports](https://www.misoenergy.org/markets-and-operations/real-time--market-data/market-reports/).
 
-#### Input:
+#### Code:
 ```python
 from MISOReports.MISOReports import MISOReports
 
@@ -192,7 +198,7 @@ Dataframe:
 ### Example 5:
 Download a single-table report with datetime option from [MISO Market Reports](https://www.misoenergy.org/markets-and-operations/real-time--market-data/market-reports/).
 
-#### Input:
+#### Code:
 ```python
 import datetime
 from MISOReports.MISOReports import MISOReports
