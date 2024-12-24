@@ -31,7 +31,7 @@ def try_to_get_dfs(
         report_name: str, 
         datetime_increment_limit: int,
         number_of_dfs_to_stop_at: int,
-) -> Generator[tuple[pd.DataFrame, datetime.datetime], None, None]:
+) -> Generator[tuple[pd.DataFrame, datetime.datetime | None], None, None]:
     """Tries to get the df for report_name and returns 
     it with its respective target datetime. If a request 
     fails, it will increment the datetime and try again 
@@ -88,7 +88,7 @@ def try_to_get_dfs(
             increment_cnt += 1
         except Exception as e:
             raise Exception(
-                f"Unexpected exception for {report_name} at "
+                f"Unexpected exception for {report_name} at datetime="
                 + f"{curr_target_datetime}: {e}"
             )
     
