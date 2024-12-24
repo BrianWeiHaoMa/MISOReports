@@ -5,5 +5,7 @@ __pycache__
 .coverage
 .mypy_cache
 run.py
-/scripts/
 checker_output*
+/_scripts/
+/build/
+/dist/
