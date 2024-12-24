@@ -45,7 +45,7 @@ setup(
     ],
 
     python_requires='>=3.10',
-    packages=find_packages(exclude=("tests", "helper_scripts",)),
+    packages=find_packages(exclude=("tests", "scripts", "_scripts")),
     install_requires=[
         'pandas>=2.2.0, <3.0.0',
         'requests>=2.32.0, <3.0.0',
