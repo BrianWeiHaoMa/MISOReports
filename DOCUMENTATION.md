@@ -19,7 +19,8 @@ This is the documentation for MISOReports.
         - [Real-Time](#real-time)
         - [Resource Adequacy](#resource-adequacy)
         - [Summary](#summary)
- - [Disclaimer](#disclaimer)
+- [Useful Tricks](#useful-tricks)
+- [Disclaimer](#disclaimer)
 
 ## Data Types
 All dataframe columns are categorized into one of the following data types:
