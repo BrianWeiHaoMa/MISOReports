@@ -47,7 +47,7 @@ def try_to_get_dfs(
         to try to get the df.
     :param int number_of_dfs_to_stop_at: The number of
         successfully downloaded dfs to stop at.
-    :return Generator[tuple[pd.DataFrame, datetime.datetime], None, None]:
+    :return Generator[tuple[pd.DataFrame, datetime.datetime | None], None, None]:
         A generator that yields a tuple of the df and the respective
         target datetime.
     """
