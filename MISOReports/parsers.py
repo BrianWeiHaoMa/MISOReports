@@ -1599,6 +1599,9 @@ def parse_lmpconsolidatedtable(
                 hour = f"{int(time.split()[1])}:00"
             else:
                 hour = time
+            
+            if hour == "24:00":
+                hour = "00:00"
 
             metadata_names.append(name)
             metadata_times.append(hour)
